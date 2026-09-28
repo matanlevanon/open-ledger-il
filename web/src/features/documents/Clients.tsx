@@ -143,9 +143,7 @@ type ClientFields = {
   email: string;
   phone: string;
   addressEn: string;
-  addressHe: string;
-  cityEn: string;
-  cityHe: string;
+  city: string;
   postalCode: string;
   notes: string;
   paymentInstructions: string;
@@ -163,10 +161,8 @@ function fieldsFrom(c?: Client): ClientFields {
     clientCopyLang: c?.client_copy_lang ?? 'en',
     email: c?.email ?? '',
     phone: c?.phone ?? '',
-    addressEn: c?.address_en ?? '',
-    addressHe: c?.address_he ?? '',
-    cityEn: c?.city_en ?? '',
-    cityHe: c?.city_he ?? '',
+    addressEn: c?.address_en || c?.address_he || '',
+    city: c?.city ?? '',
     postalCode: c?.postal_code ?? '',
     notes: c?.notes ?? '',
     paymentInstructions: c?.payment_instructions ?? '',
@@ -275,10 +271,8 @@ export function ClientForm() {
             </label>
             {text('email', 'clients.form.email', { type: 'email' })}
             {text('phone', 'clients.form.phone')}
-            {text('addressEn', 'clients.form.addressEn')}
-            {text('addressHe', 'clients.form.addressHe', { dir: 'rtl' })}
-            {text('cityEn', 'clients.form.cityEn')}
-            {text('cityHe', 'clients.form.cityHe', { dir: 'rtl' })}
+            {text('addressEn', 'clients.form.address', { dir: 'auto' })}
+            {text('city', 'clients.form.city', { dir: 'auto' })}
             {text('postalCode', 'clients.form.postalCode', { dir: 'ltr' })}
           </div>
           <label className="mt-4 block">

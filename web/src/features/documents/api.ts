@@ -31,8 +31,7 @@ export interface Client {
   phone: string | null;
   address_en: string | null;
   address_he: string | null;
-  city_en: string | null;
-  city_he: string | null;
+  city: string | null;
   postal_code: string | null;
   notes: string | null;
   payment_instructions: string | null;

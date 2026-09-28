@@ -33,8 +33,7 @@ interface ClientRow {
   foreign_resident: number;
   address_en: string | null;
   address_he: string | null;
-  city_en: string | null;
-  city_he: string | null;
+  city: string | null;
   postal_code: string | null;
 }
 
@@ -89,8 +88,7 @@ async function fetchClient(db: D1Database, clientId: number | null): Promise<Ren
     foreignResident: row.foreign_resident === 1,
     addressEn: row.address_en,
     addressHe: row.address_he,
-    cityEn: row.city_en,
-    cityHe: row.city_he,
+    city: row.city,
     postalCode: row.postal_code,
   };
 }

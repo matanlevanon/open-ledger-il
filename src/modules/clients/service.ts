@@ -20,8 +20,7 @@ export interface ClientRow {
   phone: string | null;
   address_en: string | null;
   address_he: string | null;
-  city_en: string | null;
-  city_he: string | null;
+  city: string | null;
   postal_code: string | null;
   notes: string | null;
   payment_instructions: string | null;
@@ -55,9 +54,7 @@ const COLUMNS: [keyof ClientInput, keyof ClientRow][] = [
   ['email', 'email'],
   ['phone', 'phone'],
   ['addressEn', 'address_en'],
-  ['addressHe', 'address_he'],
-  ['cityEn', 'city_en'],
-  ['cityHe', 'city_he'],
+  ['city', 'city'],
   ['postalCode', 'postal_code'],
   ['notes', 'notes'],
   ['paymentInstructions', 'payment_instructions'],

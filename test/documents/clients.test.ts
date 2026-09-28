@@ -290,11 +290,11 @@ describe('payment instructions', () => {
 });
 
 describe('client city and zip code', () => {
-  it('saves city in English and Hebrew and the zip code, and edits them', async () => {
-    const created = await ok('POST', '/clients', { nameEn: 'City Co', addressEn: '1 Main St', cityEn: 'Tel Aviv', cityHe: 'תל אביב', postalCode: '6100000' });
-    expect(created.client).toMatchObject({ city_en: 'Tel Aviv', city_he: 'תל אביב', postal_code: '6100000' });
+  it('saves one address, a city and a zip code, and edits them', async () => {
+    const created = await ok('POST', '/clients', { nameEn: 'City Co', addressEn: 'הרצל 1', city: 'תל אביב', postalCode: '6100000' });
+    expect(created.client).toMatchObject({ address_en: 'הרצל 1', city: 'תל אביב', postal_code: '6100000' });
     const edited = await ok('PATCH', `/clients/${created.client.id}`, { postalCode: '6200000' });
     expect(edited.client.postal_code).toBe('6200000');
-    expect(edited.client.city_en).toBe('Tel Aviv');
+    expect(edited.client.city).toBe('תל אביב');
   });
 });

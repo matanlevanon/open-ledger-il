@@ -11,8 +11,6 @@ import { countByRecordType, DECODE_STUB_NOTE, HISTORY_RECORD_TYPES, recordHash, 
 import type { CommitSummary, HistoryRow, ImportKind, WaveCustomerMapping, WaveInvoiceMapping } from './types';
 import { extractUnifiedFile } from './zip';
 
-const HEBREW = /[\u0590-\u05FF]/;
-
 function decodeText(bytes: ArrayBuffer): string {
   return decodeCsvText(bytes);
 }
@@ -119,9 +117,7 @@ async function upsertClientFromRow(
     email,
     phone: field(record, mapping, 'phone'),
     address_en: field(record, mapping, 'addressEn'),
-    // A Hebrew city (SUMIT exports) goes to the Hebrew field, anything else to the English one.
-    city_en: city && !HEBREW.test(city) ? city : null,
-    city_he: city && HEBREW.test(city) ? city : null,
+    city,
     postal_code: field(record, mapping, 'postalCode'),
     notes: field(record, mapping, 'notes'),
   };
@@ -147,8 +143,8 @@ async function upsertClientFromRow(
 
   const { lastRowId } = await run(
     db,
-    `INSERT INTO clients (name_en, name_he, company_id, vat_number, country, currency, email, phone, address_en, city_en, city_he, postal_code, notes)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO clients (name_en, name_he, company_id, vat_number, country, currency, email, phone, address_en, city, postal_code, notes)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     mapped.name_en,
     mapped.name_he,
     mapped.company_id,
@@ -158,8 +154,7 @@ async function upsertClientFromRow(
     mapped.email,
     mapped.phone,
     mapped.address_en,
-    mapped.city_en,
-    mapped.city_he,
+    mapped.city,
     mapped.postal_code,
     mapped.notes,
   );

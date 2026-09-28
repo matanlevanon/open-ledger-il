@@ -25,11 +25,6 @@ function localizedName(nameEn: string, nameHe: string | null, lang: Lang): strin
   return esc(lang === 'he' ? nameHe || nameEn : nameEn || nameHe || '');
 }
 
-function localizedAddress(en: string | null, he: string | null, lang: Lang): string | null {
-  const value = lang === 'he' ? (he ?? en) : en;
-  return value ? esc(value) : null;
-}
-
 /**
  * "<English> / <Hebrew>", the Hebrew half in its own right-to-left span (R18 task 3): the filed
  * copy of an English document is one bilingual document where every label carries its Hebrew on
@@ -111,10 +106,10 @@ ${createdFrom}
 function clientHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>): string {
   if (!doc.client) return '';
   const name = localizedName(doc.client.nameEn, doc.client.nameHe, lang);
-  const address = localizedAddress(doc.client.addressEn, doc.client.addressHe, lang);
-  // City and zip on their own line under the street address, the city in the document's language.
-  const city = localizedAddress(doc.client.cityEn ?? null, doc.client.cityHe ?? null, lang);
-  const cityLine = [city, doc.client.postalCode ? esc(doc.client.postalCode) : null].filter(Boolean).join(' ');
+  // A client has one address, printed as entered on every copy, with city and zip on the next line.
+  const addressValue = doc.client.addressEn || doc.client.addressHe;
+  const address = addressValue ? esc(addressValue) : null;
+  const cityLine = [doc.client.city ? esc(doc.client.city) : null, doc.client.postalCode ? esc(doc.client.postalCode) : null].filter(Boolean).join(' ');
   const idLine = doc.client.vatNumber
     ? `${esc(t.businessId)}: ${esc(doc.client.vatNumber)}`
     : doc.client.companyId
@@ -321,9 +316,9 @@ function bilingualName(nameEn: string, nameHe: string | null): string {
 function bilingualClientHtml(doc: RenderDocument): string {
   if (!doc.client) return '';
   const name = bilingualName(doc.client.nameEn, doc.client.nameHe);
-  const address = doc.client.addressEn ? esc(doc.client.addressEn) : null;
-  const cityValue = doc.client.cityEn ?? doc.client.cityHe ?? null;
-  const cityLine = [cityValue ? esc(cityValue) : null, doc.client.postalCode ? esc(doc.client.postalCode) : null].filter(Boolean).join(' ');
+  const addressValue = doc.client.addressEn || doc.client.addressHe;
+  const address = addressValue ? esc(addressValue) : null;
+  const cityLine = [doc.client.city ? esc(doc.client.city) : null, doc.client.postalCode ? esc(doc.client.postalCode) : null].filter(Boolean).join(' ');
   const idLine = doc.client.vatNumber
     ? `${bl('businessId')}: ${esc(doc.client.vatNumber)}`
     : doc.client.companyId

@@ -312,13 +312,15 @@ describe('renderDocument: payment instructions', () => {
   });
 });
 
-/** Client city and zip code print under the street address, the city in the document's language. */
-describe('renderDocument: client city and zip', () => {
-  it('prints the English city on an English copy and the Hebrew city on a Hebrew one', () => {
+/** A client has one address, printed as entered on every copy, with city and zip under it. */
+describe('renderDocument: client address, city and zip', () => {
+  it('prints the same address and city line on an English and a Hebrew copy', () => {
     const doc = sampleRenderDocument({ status: 'final' });
-    const withCity = { ...doc, client: { ...doc.client!, cityEn: 'Tel Aviv', cityHe: 'תל אביב', postalCode: '6100000' } };
-    expect(renderDocument(withCity, 'client')).toContain('Tel Aviv 6100000');
-    expect(renderDocument({ ...withCity, langVariant: 'bilingual' }, 'client')).toContain('תל אביב 6100000');
+    const withCity = { ...doc, client: { ...doc.client!, addressEn: 'הרצל 1', addressHe: null, city: 'תל אביב', postalCode: '6100000' } };
+    for (const html of [renderDocument(withCity, 'client'), renderDocument({ ...withCity, langVariant: 'bilingual' }, 'client'), renderDocument(withCity, 'filed')]) {
+      expect(html).toContain('הרצל 1');
+      expect(html).toContain('תל אביב 6100000');
+    }
   });
 });
 

@@ -52,8 +52,7 @@ export interface RenderClient {
   foreignResident: boolean;
   addressEn: string | null;
   addressHe: string | null;
-  cityEn?: string | null;
-  cityHe?: string | null;
+  city?: string | null;
   postalCode?: string | null;
 }
 

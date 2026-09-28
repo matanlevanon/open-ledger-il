@@ -21,10 +21,9 @@ const clientFields = z.object({
   clientCopyLang: z.enum(['en', 'bilingual']).default('en'),
   email: z.string().trim().email('Use a valid email.').max(200).nullish().or(z.literal('').transform(() => null)),
   phone: text(40),
+  /** The client's one address, in English or Hebrew as fits the client. */
   addressEn: text(500),
-  addressHe: text(500),
-  cityEn: text(100),
-  cityHe: text(100),
+  city: text(100),
   postalCode: text(20),
   notes: text(5000),
   /** Prefills a new quote or payment request for this client (R16 task 7); falls back to the business default. */
