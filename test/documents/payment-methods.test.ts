@@ -66,3 +66,31 @@ describe('payment methods catalog (R17 task 2)', () => {
     expect(all.paymentMethods.some((m: any) => m.id === id)).toBe(true);
   });
 });
+
+describe('US bank account for ACH', () => {
+  it('saves a US account with a valid routing number, account number and account type', async () => {
+    const created = await ok('POST', '/payment-methods', {
+      displayName: 'US ACH',
+      type: 'bank_transfer',
+      currency: 'USD',
+      details: { bankCountry: 'US', bankName: 'Example Bank', routingNumber: '021000021', accountNumber: '000123456789', accountType: 'checking', accountHolder: 'Sample Business' },
+    });
+    const row = created.paymentMethods.find((m: any) => m.display_name === 'US ACH');
+    expect(row.details).toMatchObject({ bankCountry: 'US', routingNumber: '021000021', accountType: 'checking' });
+  });
+
+  it('rejects a routing number with a bad check digit, and a US account without one', async () => {
+    const badDigit = await api('POST', '/payment-methods', {
+      displayName: 'Bad ACH',
+      type: 'bank_transfer',
+      details: { bankCountry: 'US', routingNumber: '021000022', accountNumber: '1' },
+    });
+    expect(badDigit.status).toBe(400);
+    const missing = await api('POST', '/payment-methods', {
+      displayName: 'No routing',
+      type: 'bank_transfer',
+      details: { bankCountry: 'US', accountNumber: '1' },
+    });
+    expect(missing.status).toBe(400);
+  });
+});

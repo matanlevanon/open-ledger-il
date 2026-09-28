@@ -14,6 +14,28 @@ export function paymentMethodDetailText(method: RenderPaymentMethod, lang: Lang)
   }
   const d = method.details;
   const parts: string[] = [];
+  if (d.bankCountry === 'US') {
+    // A US account paid by ACH: routing number and account type take the place of bank number and branch.
+    const accountType = d.accountType === 'savings' ? 'Savings' : d.accountType === 'checking' ? 'Checking' : null;
+    if (lang === 'he') {
+      if (d.accountHolder) parts.push(`מוטב: ${d.accountHolder}`);
+      if (d.bankName) parts.push(`בנק: ${d.bankName}`);
+      if (d.routingNumber) parts.push(`Routing (ABA): ${d.routingNumber}`);
+      if (d.accountNumber) parts.push(`חשבון: ${d.accountNumber}`);
+      if (accountType) parts.push(`סוג חשבון: ${accountType}`);
+      if (d.swiftBic) parts.push(`SWIFT/BIC: ${d.swiftBic}`);
+      if (d.bankAddress) parts.push(`כתובת הבנק: ${d.bankAddress}`);
+    } else {
+      if (d.accountHolder) parts.push(`Beneficiary: ${d.accountHolder}`);
+      if (d.bankName) parts.push(`Bank: ${d.bankName}`);
+      if (d.routingNumber) parts.push(`Routing (ABA): ${d.routingNumber}`);
+      if (d.accountNumber) parts.push(`Account: ${d.accountNumber}`);
+      if (accountType) parts.push(`Account type: ${accountType}`);
+      if (d.swiftBic) parts.push(`SWIFT/BIC: ${d.swiftBic}`);
+      if (d.bankAddress) parts.push(`Bank address: ${d.bankAddress}`);
+    }
+    return parts.length > 0 ? parts.join(', ') : method.displayName;
+  }
   if (lang === 'he') {
     if (d.accountHolder) parts.push(`מוטב: ${d.accountHolder}`);
     if (d.bankNumber || d.bankName) parts.push(`בנק: ${[d.bankNumber, d.bankName ? `(${d.bankName})` : null].filter(Boolean).join(' ')}`);

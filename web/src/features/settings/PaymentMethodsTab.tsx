@@ -18,11 +18,21 @@ const TYPE_KEYS: Record<PaymentMethod['type'], MessageKey> = {
 };
 const TYPES = Object.keys(TYPE_KEYS) as PaymentMethod['type'][];
 
+type BankCountry = 'IL' | 'US' | 'OTHER';
+const BANK_COUNTRY_KEYS: Record<BankCountry, MessageKey> = {
+  IL: 'settings.paymentMethods.bankCountry.IL',
+  US: 'settings.paymentMethods.bankCountry.US',
+  OTHER: 'settings.paymentMethods.bankCountry.OTHER',
+};
+
 interface FormState {
   id: number | null;
   displayName: string;
   type: PaymentMethod['type'];
   currency: string;
+  bankCountry: BankCountry;
+  routingNumber: string;
+  accountType: 'checking' | 'savings';
   bankName: string;
   bankNumber: string;
   branch: string;
@@ -39,6 +49,9 @@ const emptyForm = (): FormState => ({
   displayName: '',
   type: 'bank_transfer',
   currency: '',
+  bankCountry: 'IL',
+  routingNumber: '',
+  accountType: 'checking',
   bankName: '',
   bankNumber: '',
   branch: '',
@@ -57,6 +70,9 @@ function toForm(m: PaymentMethod): FormState {
     displayName: m.display_name,
     type: m.type,
     currency: m.currency ?? '',
+    bankCountry: d.bankCountry === 'US' || d.bankCountry === 'OTHER' ? d.bankCountry : 'IL',
+    routingNumber: (d.routingNumber as string) ?? '',
+    accountType: d.accountType === 'savings' ? 'savings' : 'checking',
     bankName: (d.bankName as string) ?? '',
     bankNumber: (d.bankNumber as string) ?? '',
     branch: (d.branch as string) ?? '',
@@ -69,16 +85,29 @@ function toForm(m: PaymentMethod): FormState {
   };
 }
 
+/** A 9-digit ABA routing number with a valid 3-7-1 check digit, the same rule the server applies. */
+function isValidAbaRouting(value: string): boolean {
+  if (!/^\d{9}$/.test(value)) return false;
+  const d = value.split('').map(Number);
+  return (3 * (d[0]! + d[3]! + d[6]!) + 7 * (d[1]! + d[4]! + d[7]!) + (d[2]! + d[5]! + d[8]!)) % 10 === 0;
+}
+
 function toBody(f: FormState) {
+  const us = f.bankCountry === 'US';
+  const il = f.bankCountry === 'IL';
+  // Only the fields the chosen account format shows are sent, so a hidden leftover never prints.
   const details =
     f.type === 'bank_transfer'
       ? {
+          bankCountry: f.bankCountry,
           bankName: f.bankName || null,
-          bankNumber: f.bankNumber || null,
-          branch: f.branch || null,
+          bankNumber: il ? f.bankNumber || null : null,
+          branch: il ? f.branch || null : null,
           accountNumber: f.accountNumber || null,
           accountHolder: f.accountHolder || null,
-          iban: f.iban || null,
+          routingNumber: us ? f.routingNumber.trim() || null : null,
+          accountType: us ? f.accountType : null,
+          iban: us ? null : f.iban || null,
           swiftBic: f.swiftBic || null,
           bankAddress: f.bankAddress || null,
         }
@@ -200,20 +229,54 @@ export function PaymentMethodsTab() {
           </div>
           {form.type === 'bank_transfer' ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <SelectField
+                label={t('settings.paymentMethods.bankCountryLabel')}
+                value={form.bankCountry}
+                onChange={(e) => setForm({ ...form, bankCountry: e.target.value as BankCountry })}
+                options={(Object.keys(BANK_COUNTRY_KEYS) as BankCountry[]).map((v) => ({ value: v, label: t(BANK_COUNTRY_KEYS[v]) }))}
+              />
               <TextField label={t('settings.paymentMethods.bankNameLabel')} value={form.bankName} onChange={(e) => setForm({ ...form, bankName: e.target.value })} />
-              <TextField label={t('settings.paymentMethods.bankNumberLabel')} value={form.bankNumber} onChange={(e) => setForm({ ...form, bankNumber: e.target.value })} />
-              <TextField label={t('settings.paymentMethods.branchLabel')} value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value })} />
+              {form.bankCountry === 'IL' && (
+                <>
+                  <TextField label={t('settings.paymentMethods.bankNumberLabel')} value={form.bankNumber} onChange={(e) => setForm({ ...form, bankNumber: e.target.value })} />
+                  <TextField label={t('settings.paymentMethods.branchLabel')} value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value })} />
+                </>
+              )}
+              {form.bankCountry === 'US' && (
+                <TextField
+                  label={t('settings.paymentMethods.routingNumberLabel')}
+                  dir="ltr"
+                  inputMode="numeric"
+                  maxLength={9}
+                  value={form.routingNumber}
+                  error={form.routingNumber !== '' && !isValidAbaRouting(form.routingNumber) ? t('settings.paymentMethods.routingNumberInvalid') : undefined}
+                  onChange={(e) => setForm({ ...form, routingNumber: e.target.value.replace(/\D/g, '') })}
+                />
+              )}
               <TextField
                 label={t('settings.paymentMethods.accountNumberLabel')}
                 value={form.accountNumber}
                 onChange={(e) => setForm({ ...form, accountNumber: e.target.value })}
               />
+              {form.bankCountry === 'US' && (
+                <SelectField
+                  label={t('settings.paymentMethods.accountTypeLabel')}
+                  value={form.accountType}
+                  onChange={(e) => setForm({ ...form, accountType: e.target.value as 'checking' | 'savings' })}
+                  options={[
+                    { value: 'checking', label: t('settings.paymentMethods.accountType.checking') },
+                    { value: 'savings', label: t('settings.paymentMethods.accountType.savings') },
+                  ]}
+                />
+              )}
               <TextField
                 label={t('settings.paymentMethods.accountHolderLabel')}
                 value={form.accountHolder}
                 onChange={(e) => setForm({ ...form, accountHolder: e.target.value })}
               />
-              <TextField label={t('settings.paymentMethods.ibanLabel')} value={form.iban} onChange={(e) => setForm({ ...form, iban: e.target.value })} />
+              {form.bankCountry !== 'US' && (
+                <TextField label={t('settings.paymentMethods.ibanLabel')} value={form.iban} onChange={(e) => setForm({ ...form, iban: e.target.value })} />
+              )}
               <TextField label={t('settings.paymentMethods.swiftBicLabel')} value={form.swiftBic} onChange={(e) => setForm({ ...form, swiftBic: e.target.value })} />
               <TextField
                 label={t('settings.paymentMethods.bankAddressLabel')}
@@ -227,7 +290,11 @@ export function PaymentMethodsTab() {
           <div className="flex gap-2">
             <button
               type="button"
-              disabled={saving || !form.displayName.trim()}
+              disabled={
+                saving ||
+                !form.displayName.trim() ||
+                (form.type === 'bank_transfer' && form.bankCountry === 'US' && (!isValidAbaRouting(form.routingNumber) || !form.accountNumber.trim()))
+              }
               onClick={save}
               className="w-fit rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90 disabled:opacity-60"
             >

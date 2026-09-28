@@ -6,17 +6,49 @@ export type PaymentMethodType = (typeof PAYMENT_METHOD_TYPES)[number];
 
 const text = (max: number) => z.string().trim().max(max).nullish();
 
-/** Bank transfer's own fields (task 2); bank address only matters for a foreign transfer, but it is never required. */
-export const bankDetails = z.object({
-  bankName: text(200),
-  bankNumber: text(20),
-  branch: text(20),
-  accountNumber: text(40),
-  accountHolder: text(200),
-  iban: text(50),
-  swiftBic: text(20),
-  bankAddress: text(500),
-});
+export const BANK_COUNTRIES = ['IL', 'US', 'OTHER'] as const;
+export const US_ACCOUNT_TYPES = ['checking', 'savings'] as const;
+
+/**
+ * A US ABA routing number: 9 digits whose weighted sum 3-7-1 is a multiple of 10. Catches a typo
+ * before the number is printed on a document a client pays from.
+ */
+export function isValidAbaRouting(value: string): boolean {
+  if (!/^\d{9}$/.test(value)) return false;
+  const d = value.split('').map(Number);
+  const sum = 3 * (d[0]! + d[3]! + d[6]!) + 7 * (d[1]! + d[4]! + d[7]!) + (d[2]! + d[5]! + d[8]!);
+  return sum % 10 === 0;
+}
+
+/**
+ * Bank transfer's own fields (task 2). `bankCountry` picks the account's format: Israel (bank,
+ * branch, account), US for ACH (routing number, account, account type), or another country
+ * (IBAN/SWIFT). Absent means Israel, the format every method saved before it existed. Bank
+ * address only matters for a foreign transfer, but it is never required.
+ */
+export const bankDetails = z
+  .object({
+    bankCountry: z.enum(BANK_COUNTRIES).nullish(),
+    bankName: text(200),
+    bankNumber: text(20),
+    branch: text(20),
+    accountNumber: text(40),
+    accountHolder: text(200),
+    routingNumber: z
+      .string()
+      .trim()
+      .refine(isValidAbaRouting, 'Enter a valid 9-digit US routing number (ABA).')
+      .nullish(),
+    accountType: z.enum(US_ACCOUNT_TYPES).nullish(),
+    iban: text(50),
+    swiftBic: text(20),
+    bankAddress: text(500),
+  })
+  .superRefine((d, ctx) => {
+    if (d.bankCountry !== 'US') return;
+    if (!d.routingNumber) ctx.addIssue({ code: 'custom', path: ['routingNumber'], message: 'A US bank account needs its routing number (ABA).' });
+    if (!d.accountNumber) ctx.addIssue({ code: 'custom', path: ['accountNumber'], message: 'A US bank account needs its account number.' });
+  });
 
 /** Every other type: one free-text identifier (a phone number, an email, a card note, ...). */
 export const genericDetails = z.object({
