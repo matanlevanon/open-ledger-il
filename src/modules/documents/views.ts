@@ -26,6 +26,16 @@ interface ListRow extends DocRow {
   client_name_he: string | null;
   converted: number;
   credited_minor: number;
+  related_json: string | null;
+}
+
+/** A document linked to a list row either way: its source, or what was created from it. */
+export interface RelatedDoc {
+  id: number;
+  type: string;
+  number: number | null;
+  name_en: string;
+  name_he: string;
 }
 
 const LIST_SELECT = `
@@ -38,7 +48,20 @@ const LIST_SELECT = `
     COALESCE((
       SELECT SUM(l.amount_minor) FROM document_links l JOIN documents t ON t.id = l.target_id
       WHERE l.source_id = d.id AND l.kind = 'credit' AND t.status <> 'cancelled'
-    ), 0) AS credited_minor
+    ), 0) AS credited_minor,
+    (
+      SELECT json_group_array(json_object('id', o.id, 'type', o.type, 'number', o.number, 'name_en', ot.name_en, 'name_he', ot.name_he))
+      FROM (
+        SELECT t.id, t.type, t.number FROM document_links l JOIN documents t ON t.id = l.target_id WHERE l.source_id = d.id
+        UNION
+        SELECT s.id, s.type, s.number FROM document_links l JOIN documents s ON s.id = l.source_id WHERE l.target_id = d.id
+        UNION
+        SELECT s.id, s.type, s.number FROM document_meta m JOIN documents s ON s.id = m.source_id WHERE m.document_id = d.id
+        UNION
+        SELECT t.id, t.type, t.number FROM document_meta m JOIN documents t ON t.id = m.document_id WHERE m.source_id = d.id
+      ) o
+      JOIN document_types ot ON ot.code = o.type
+    ) AS related_json
   FROM documents d
   JOIN document_types dt ON dt.code = d.type
   LEFT JOIN clients c ON c.id = d.client_id`;
@@ -61,8 +84,11 @@ function stateOf(row: ListRow, balance: DemandBalance | undefined): DocState {
 function decorate(row: ListRow, balance: DemandBalance | undefined, today: string) {
   const state = stateOf(row, balance);
   const remaining = balance ? balance.remaining_minor : null;
+  const { related_json, ...rest } = row;
+  const related = (JSON.parse(related_json ?? '[]') as RelatedDoc[]).sort((a, b) => a.id - b.id);
   return {
-    ...row,
+    ...rest,
+    related,
     display_number: displayNumber(row.type, row.number),
     state,
     paid_minor: balance?.paid_minor ?? null,

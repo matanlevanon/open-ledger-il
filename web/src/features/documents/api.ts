@@ -105,8 +105,18 @@ export interface DocType {
   enabled: number;
 }
 
+/** A document linked to a list row either way (R24): its source, or a document created from it. */
+export interface RelatedDoc {
+  id: number;
+  type: string;
+  number: number | null;
+  name_en: string;
+  name_he: string;
+}
+
 export interface DocListItem {
   id: number;
+  related: RelatedDoc[];
   type: string;
   type_name_en: string;
   kind: string;

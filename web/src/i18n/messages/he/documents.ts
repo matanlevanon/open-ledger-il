@@ -248,6 +248,8 @@ export const documents: Record<keyof typeof en, string> = {
   'documents.list.colDate': 'תאריך',
   'documents.list.colNumber': 'מספר',
   'documents.list.colClient': 'לקוח',
+  'documents.list.colRelated': 'מסמכים מקושרים',
+  'documents.list.relatedDraft': 'טיוטה',
   'documents.list.colAmount': 'סכום',
   'documents.list.colOpen': 'פתוח',
   'documents.list.actionView': 'הצג',

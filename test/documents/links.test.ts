@@ -111,3 +111,21 @@ describe('rule 6: role and feature checks', () => {
     expect(logged!.n).toBe(4);
   });
 });
+
+describe('links: related documents in the list', () => {
+  it('shows a receipt and the payment request it came from on each other\'s row, in the general and client lists', async () => {
+    const client = await makeClient();
+    const pr = await issue('PR', { clientId: client, lines: [line(40000)] });
+    const draft = await ok('POST', `/documents/${pr.document.id}/convert`, { type: '400' });
+    const receipt = await ok('POST', `/documents/${draft.document.id}/finalize`, {});
+
+    for (const path of ['/documents?tab=all', `/documents?tab=all&clientId=${client}`]) {
+      const list = await ok('GET', path);
+      const prRow = list.items.find((d: any) => d.id === pr.document.id);
+      const receiptRow = list.items.find((d: any) => d.id === receipt.document.id);
+      expect(prRow.related.map((r: any) => r.id)).toEqual([receipt.document.id]);
+      expect(receiptRow.related.map((r: any) => [r.id, r.type, r.name_en])).toEqual([[pr.document.id, 'PR', 'Payment Request']]);
+      expect(receiptRow).not.toHaveProperty('related_json');
+    }
+  });
+});

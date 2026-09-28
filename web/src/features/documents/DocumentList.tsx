@@ -97,13 +97,14 @@ function Rows({ items }: { items: DocListItem[] }) {
   if (items.length === 0) return <p className="py-6 text-center text-muted">{t('documents.list.noDocuments')}</p>;
   return (
     <div className="overflow-x-auto rounded-card border border-line">
-      <table className="w-full min-w-[720px] text-sm">
+      <table className="w-full min-w-[860px] text-sm">
         <thead className="bg-band text-start text-xs uppercase text-muted">
           <tr>
             <th className="px-3 py-2">{t('documents.list.colStatus')}</th>
             <th className="px-3 py-2">{t('documents.list.colDate')}</th>
             <th className="px-3 py-2">{t('documents.list.colNumber')}</th>
             <th className="px-3 py-2">{t('documents.list.colClient')}</th>
+            <th className="px-3 py-2">{t('documents.list.colRelated')}</th>
             <th className="px-3 py-2 text-end">{t('documents.list.colAmount')}</th>
             <th className="px-3 py-2 text-end">{t('documents.list.colOpen')}</th>
             <th className="px-3 py-2" />
@@ -123,6 +124,13 @@ function Rows({ items }: { items: DocListItem[] }) {
                 <span className="block text-xs text-muted">{d.type_name_en}</span>
               </td>
               <td className="px-3 py-2">{clientName({ name_en: d.client_name_en, name_he: d.client_name_he }, locale) || t('documents.noClient')}</td>
+              <td className="px-3 py-2">
+                {(d.related ?? []).map((r) => (
+                  <Link key={r.id} to={`/income/documents/${r.id}`} className="block text-brand hover:underline">
+                    {locale === 'he' ? r.name_he : r.name_en} / {r.number ?? t('documents.list.relatedDraft')}
+                  </Link>
+                ))}
+              </td>
               <td className="ltr-nums px-3 py-2 text-end tabular-nums">
                 {money(d.total_minor, d.currency)}
                 {hasIls(d) && <span className="block text-xs text-muted">{money(d.total_ils_minor!, 'ILS')}</span>}

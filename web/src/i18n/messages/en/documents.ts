@@ -252,6 +252,8 @@ export const documents = {
   'documents.list.colDate': 'Date',
   'documents.list.colNumber': 'Number',
   'documents.list.colClient': 'Client',
+  'documents.list.colRelated': 'Related documents',
+  'documents.list.relatedDraft': 'draft',
   'documents.list.colAmount': 'Amount',
   'documents.list.colOpen': 'Open',
   'documents.list.actionView': 'View',
