@@ -1,0 +1,68 @@
+/**
+ * Chrome, layout and generic-component strings (R16 task 16): the top bar, sidebar, dialogs,
+ * empty states, data tables and the placeholder/not-found pages. Shared by every screen.
+ */
+export const common = {
+  'app.name': 'Open Ledger IL',
+
+  'topbar.openMenu': 'Open menu',
+  'topbar.signingIn': 'Signing in',
+  'topbar.switchToLightTheme': 'Switch to light theme',
+  'topbar.switchToDarkTheme': 'Switch to dark theme',
+  'topbar.switchToEnglish': 'Switch to English',
+  'topbar.switchToHebrew': 'Switch to Hebrew',
+
+  'sidebar.closeMenu': 'Close menu',
+  'sidebar.clients.filterAriaLabel': 'Filter clients',
+  'sidebar.clients.filterPlaceholder': 'Filter clients',
+  'sidebar.clients.active': 'Active',
+  'sidebar.clients.notActive': 'Not active',
+  'sidebar.clients.noMatches': 'No clients match.',
+
+  'nav.dashboard': 'Dashboard',
+  'nav.income': 'Income',
+  'nav.incomeQuotes': 'Quotes',
+  'nav.incomePaymentRequests': 'Payment requests',
+  'nav.incomeProformas': 'Proformas',
+  'nav.incomeDocuments': 'Invoices and receipts',
+  'nav.incomeRecurring': 'Recurring',
+  'nav.incomeStatements': 'Statements',
+  'nav.clients': 'Clients',
+  'nav.services': 'Services',
+  'nav.expenses': 'Expenses',
+  'nav.ita': 'ITA',
+  'nav.reports': 'Reports',
+  'nav.accountant': 'Accountant',
+  'nav.import': 'Import',
+  'nav.settings': 'Settings',
+  'nav.about': 'About',
+
+  'about.title': 'MTN - Open Ledger IL',
+  'about.what': 'An open-source invoicing, expenses and bookkeeping system for Israeli עוסק פטור and עוסק מורשה businesses. It runs on your own Cloudflare account. Your data stays in your own database.',
+  'about.noticeTitle': 'Not tax or legal advice',
+  'about.notice': 'This software is not tax or legal advice. You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant.',
+  'about.license': 'Licensed under the GNU Affero General Public License v3.0. Copyright MTN.',
+  'nav.createNew': 'Create new',
+  'nav.createQuote': 'Quote',
+  'nav.createPaymentRequest': 'Payment Request',
+  'nav.createProforma': 'Pro Forma Invoice',
+  'nav.createReceipt': 'Receipt',
+  'nav.createCreditReceipt': 'Credit',
+  'nav.createInvoice': 'Invoice',
+  'nav.createInvoiceReceipt': 'Invoice / Receipt',
+
+  'dialog.closeDialog': 'Close dialog',
+  'dialog.close': 'Close',
+
+  'dataTable.search': 'Search',
+  'dataTable.nothingHereYet': 'Nothing here yet',
+
+  'ceilingMeter.amountOfLimit': '{current} of {limit}',
+  'ceilingMeter.ariaLabel': '{year} עוסק פטור ceiling',
+  'ceilingMeter.caption': '{year} ceiling',
+
+  'placeholder.comingIn': 'Coming in {run}',
+  'placeholder.laterRun': 'This screen is part of a later build run.',
+  'placeholder.notFoundTitle': 'Page not found',
+  'placeholder.notFoundDescription': 'Check the address or pick a section in the sidebar.',
+};

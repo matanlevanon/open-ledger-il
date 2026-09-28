@@ -1,0 +1,14 @@
+/* Default type (R16 task 14, R17 task 1): bundled locally via @fontsource, never a Google
+   Fonts CDN link. Headings: Bricolage Grotesque. Body: Hanken Grotesk. Hebrew text uses the
+   platform's own Hebrew font (system-ui / Segoe UI / Noto Sans Hebrew, see tokens.css
+   --font-hebrew) rather than a bundled web font, so this file ships no Hebrew face.
+   Each import already splits into per-script @font-face rules with unicode-range, so the browser
+   only downloads the glyphs a page actually uses. */
+@import '@fontsource/bricolage-grotesque/500.css';
+@import '@fontsource/bricolage-grotesque/600.css';
+@import '@fontsource/bricolage-grotesque/700.css';
+@import '@fontsource/bricolage-grotesque/800.css';
+@import '@fontsource/hanken-grotesk/400.css';
+@import '@fontsource/hanken-grotesk/500.css';
+@import '@fontsource/hanken-grotesk/600.css';
+@import '@fontsource/hanken-grotesk/700.css';

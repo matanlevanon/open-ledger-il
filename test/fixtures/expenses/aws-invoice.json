@@ -1,0 +1,10 @@
+{
+  "supplierName": "Amazon Web Services",
+  "supplierId": "US-AWS-001",
+  "documentNumber": "AWS-2026-0091",
+  "date": "2026-10-03",
+  "currency": "USD",
+  "amount": "42.50",
+  "vatAmount": null,
+  "documentType": "Invoice"
+}

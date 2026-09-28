@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/src/brand/default-icon.svg" />
+    <title>Open Ledger IL</title>
+    <script>
+      // Applies the saved theme and interface language before first paint, so there is no
+      // flash of the wrong palette or direction (R16 task 15/16). Kept in sync afterward by
+      // web/src/app/preferences.tsx, which reads these same localStorage keys.
+      (function () {
+        try {
+          var theme = localStorage.getItem('open-ledger-il-theme');
+          if (theme !== 'light' && theme !== 'dark') {
+            theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : null;
+          }
+          if (theme) document.documentElement.dataset.theme = theme;
+
+          var locale = localStorage.getItem('open-ledger-il-locale');
+          if (locale === 'he') {
+            document.documentElement.lang = 'he';
+            document.documentElement.dir = 'rtl';
+          }
+        } catch (e) {
+          // Private browsing or storage disabled: fall back to the light, English default.
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

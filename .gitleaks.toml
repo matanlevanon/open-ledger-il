@@ -1,0 +1,28 @@
+# gitleaks config for MTN - Open Ledger IL. Default rules plus two project rules.
+# Run locally: gitleaks dir . --config .gitleaks.toml
+title = "open-ledger-il"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "cloudflare-d1-database-id"
+description = "A real D1 database id in wrangler.toml. Keep the placeholder."
+regex = '''database_id\s*=\s*"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"'''
+keywords = ["database_id"]
+
+[[rules]]
+id = "cloudflare-access-aud"
+description = "A real Cloudflare Access audience tag. Keep the placeholder."
+regex = '''ACCESS_AUD\s*=\s*"[0-9a-f]{64}"'''
+keywords = ["access_aud"]
+
+[allowlist]
+description = "Test-only values and lockfile integrity hashes"
+paths = [
+  '''package-lock\.json''',
+  '''scripts/leak-denylist\.txt''',
+]
+regexes = [
+  '''test-[a-z-]+-not-a-secret''',
+]

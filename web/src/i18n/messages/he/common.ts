@@ -1,0 +1,66 @@
+import type { common as en } from '../en/common';
+
+export const common: Record<keyof typeof en, string> = {
+  'app.name': 'Open Ledger IL',
+
+  'topbar.openMenu': 'פתח תפריט',
+  'topbar.signingIn': 'מתחבר',
+  'topbar.switchToLightTheme': 'עבור לערכת נושא בהירה',
+  'topbar.switchToDarkTheme': 'עבור לערכת נושא כהה',
+  'topbar.switchToEnglish': 'עבור לאנגלית',
+  'topbar.switchToHebrew': 'עבור לעברית',
+
+  'sidebar.closeMenu': 'סגור תפריט',
+  'sidebar.clients.filterAriaLabel': 'סינון לקוחות',
+  'sidebar.clients.filterPlaceholder': 'סינון לקוחות',
+  'sidebar.clients.active': 'פעילים',
+  'sidebar.clients.notActive': 'לא פעילים',
+  'sidebar.clients.noMatches': 'אין לקוחות תואמים.',
+
+  'nav.dashboard': 'לוח בקרה',
+  'nav.income': 'הכנסות',
+  'nav.incomeQuotes': 'הצעות מחיר',
+  'nav.incomePaymentRequests': 'בקשות תשלום',
+  'nav.incomeProformas': 'פרופורמות',
+  'nav.incomeDocuments': 'חשבוניות וקבלות',
+  'nav.incomeRecurring': 'הוראות קבע',
+  'nav.incomeStatements': 'דפי חשבון',
+  'nav.clients': 'לקוחות',
+  'nav.services': 'שירותים',
+  'nav.expenses': 'הוצאות',
+  'nav.ita': 'רשות המסים',
+  'nav.reports': 'דוחות',
+  'nav.accountant': 'רואה חשבון',
+  'nav.import': 'ייבוא',
+  'nav.settings': 'הגדרות',
+  'nav.about': 'אודות',
+
+  'about.title': 'MTN - Open Ledger IL',
+  'about.what': 'מערכת קוד פתוח לחשבוניות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה בישראל. היא רצה בחשבון Cloudflare שלך. הנתונים נשארים במסד הנתונים שלך.',
+  'about.noticeTitle': 'אין זה ייעוץ מס או ייעוץ משפטי',
+  'about.notice': 'תוכנה זו אינה ייעוץ מס או ייעוץ משפטי. האחריות לעמידה בדין הישראלי ובדרישות רשות המסים חלה עליך. בדוק את ההגדרות עם רואה החשבון שלך.',
+  'about.license': 'ברישיון GNU Affero General Public License v3.0. זכויות יוצרים MTN.',
+  'nav.createNew': 'חדש',
+  'nav.createQuote': 'הצעת מחיר',
+  'nav.createPaymentRequest': 'דרישת תשלום',
+  'nav.createProforma': 'חשבון עסקה',
+  'nav.createReceipt': 'קבלה',
+  'nav.createCreditReceipt': 'מסמך זיכוי',
+  'nav.createInvoice': 'חשבונית מס',
+  'nav.createInvoiceReceipt': 'חשבונית מס קבלה',
+
+  'dialog.closeDialog': 'סגור חלון',
+  'dialog.close': 'סגירה',
+
+  'dataTable.search': 'חיפוש',
+  'dataTable.nothingHereYet': 'אין כאן כלום עדיין',
+
+  'ceilingMeter.amountOfLimit': '{current} מתוך {limit}',
+  'ceilingMeter.ariaLabel': 'תקרת עוסק פטור {year}',
+  'ceilingMeter.caption': 'תקרת {year}',
+
+  'placeholder.comingIn': 'יגיע ב-{run}',
+  'placeholder.laterRun': 'המסך הזה חלק מהרצת פיתוח מאוחרת יותר.',
+  'placeholder.notFoundTitle': 'העמוד לא נמצא',
+  'placeholder.notFoundDescription': 'בדוק את הכתובת או בחר מקטע בתפריט הצד.',
+};

@@ -1,0 +1,10 @@
+{
+  "supplierName": "Office Depot Israel",
+  "supplierId": "512345678",
+  "documentNumber": "OD-778812",
+  "date": "2026-10-05",
+  "currency": "ILS",
+  "amount": "236.00",
+  "vatAmount": "36.00",
+  "documentType": "Tax invoice"
+}

@@ -1,0 +1,96 @@
+# MTN - Open Ledger IL Worker. See docs/architecture.md and docs/deploy.md.
+name = "open-ledger-il"
+main = "src/index.ts"
+compatibility_date = "2026-08-01"
+# R02: @cloudflare/puppeteer (Browser Rendering) needs node:buffer at runtime.
+compatibility_flags = ["nodejs_compat"]
+# Reachable only at your custom domain, behind Cloudflare Access. No workers.dev or preview URLs.
+workers_dev = false
+preview_urls = false
+
+# Custom domain. Uncomment and set your own hostname (docs/deploy.md).
+# routes = [
+#   { pattern = "ledger.example.com", custom_domain = true },
+# ]
+
+# Non-secret configuration. Deployment values are set in the Cloudflare dashboard.
+[vars]
+ENVIRONMENT = "production"          # "production" or "development". Dev auth bypass is refused in production.
+ITA_ENV = "sandbox"                 # "sandbox" or "production". Chooses the ITA credential set (CLAUDE.md rule 7).
+ACCESS_TEAM_DOMAIN = "https://REPLACE_WITH_YOUR_TEAM.cloudflareaccess.com" # Your Cloudflare Access team domain. Empty means every request is refused.
+ACCESS_AUD = "REPLACE_WITH_YOUR_ACCESS_AUD"      # Audience (AUD) tag of the Cloudflare Access application.
+OWNER_EMAIL = "REPLACE_WITH_OWNER_EMAIL"         # Bootstrap: this email becomes the owner on first sign-in when no owner exists.
+PUBLIC_APP_URL = ""                             # e.g. "https://ledger.example.com". Empty falls back to the request origin (R06).
+MAIL_FROM = ""                                  # e.g. "Sample Business Ltd <billing@example.com>", a sender on a domain verified in Resend. Empty disables email.
+
+# Secrets. Set with `wrangler secret put <NAME>` or in the dashboard. Never commit a value.
+# Full list with owners in docs/secrets.md.
+#   OWNER_TAX_ID          Owner ID number (ת"ז): the ITA user id. Fallback for the tax id in Settings > Business
+#   SIGNING_KEY_PEM       PDF signing private key (R03)
+#   SIGNING_CERT_PEM      PDF signing certificate (R03)
+#   ITA_CLIENT_ID_SANDBOX, ITA_CLIENT_SECRET_SANDBOX         (R12)
+#   ITA_CLIENT_ID_PRODUCTION, ITA_CLIENT_SECRET_PRODUCTION   (R12)
+#   ITA_TOKEN_KEY         AES-GCM key for stored ITA tokens, 32 random bytes base64 (R12)
+#   ITA_VAT_NUMBER        Business VAT number sent to the ITA. Optional, defaults to OWNER_TAX_ID (R12)
+#   ANTHROPIC_API_KEY     Expense extraction (R07)
+#   GOOGLE_SERVICE_ACCOUNT_JSON  Drive and Sheets read, expense import and backup (R07, R14, R20)
+#   SLACK_WEBHOOK_URL     Alerts (R08, R09, R12, R14)
+#   DOWNLOAD_SIGN_KEY     HMAC key for signed R2 download links (R09)
+#   MAIL_API_KEY          Outgoing email, Resend (R06)
+#   SEND_LINK_KEY         HMAC key for signed consent and WhatsApp share links (R06)
+#   MCP_TOKEN             Bearer token for /mcp (R14)
+# Local development: copy .dev.vars.example to .dev.vars (git-ignored).
+
+[[d1_databases]]
+binding = "DB"
+database_name = "open-ledger-il"
+database_id = "REPLACE_WITH_YOUR_D1_ID" # From `wrangler d1 create open-ledger-il` (docs/deploy.md).
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "open-ledger-il-files"
+
+# R14: quarterly backup exports and manifests. A bucket separate from FILES, so a backup never
+# competes for the object-locked retention rules on issued documents.
+[[r2_buckets]]
+binding = "BACKUPS"
+bucket_name = "open-ledger-il-backups"
+
+# R02: Cloudflare Browser Rendering, used to turn rendered document HTML into PDF bytes.
+[browser]
+binding = "BROWSER"
+
+[assets]
+directory = "./web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*", "/mcp", "/mcp/*"]
+
+# Cron triggers. One block for the whole Worker. The single scheduled handler in src/scheduled.ts
+# receives every fire and dispatches it to each module that lists the cron in its `crons`.
+# test/scheduled.test.ts fails when this list and the modules disagree.
+[triggers]
+crons = [
+  "0 6 * * *",     # R04: Bank of Israel rates, daily, plus a 7-day healing backfill
+  "*/15 * * * *",  # R12: allocation retry queue
+  "30 5 * * *",    # R12: ITA token refresh check and day-75 reminder
+  "0 8 * * *",     # R09: accountant access expiry reminder and auto-disable. R20: Drive expenses daily sync (when on)
+  "0 7 * * *",     # R06: payment reminders, before and after due date
+  "0 2 * * *",     # R14: nightly gap and hash-chain check
+  "0 3 1 1,4,7,10 *", # R14: quarterly backup
+  "0 7 5 * *",     # R08: monthly accountant pack, 5th of the month
+  "0 9 * * *",     # R08: ceiling alert sweep (70/85/95/100 percent)
+]
+
+# R02: bundles embedded font files as raw bytes, so PDF rendering needs no network.
+[[rules]]
+type = "Data"
+globs = ["**/*.woff2"]
+fallthrough = true
+
+# R17 task 6: bundles the default logo (web/src/brand/default-logo.svg) as inline markup for the PDF header.
+[[rules]]
+type = "Text"
+globs = ["**/*.svg"]
+fallthrough = true

@@ -1,0 +1,132 @@
+/* Theme tokens for Open Ledger IL (R16 task 14/15). The one file to edit to re-brand the app:
+   every colour, font and radius the UI uses is a variable here, with neutral defaults. Two
+   accents: red for destructive actions only, blue for every interactive element. Light shades
+   are picked for WCAG AA contrast on a light background, dark shades for a dark one.
+   Values are RGB triples so Tailwind can apply opacity: rgb(var(--color-x) / <alpha-value>). */
+
+:root {
+  /* Light theme (default; see the dark block below for the system-preference and explicit-choice
+     overrides, per task 15). */
+  --color-canvas: 255 255 255;
+  --color-surface: 245 245 244;
+  --color-surface-2: 237 237 235;
+  --color-band: 240 240 238;
+  --color-ink: 38 38 36;
+  --color-muted: 107 107 104;
+  --color-line: 222 222 218;
+
+  /* Brand moments and destructive actions only (CLAUDE.md-style UI-copy discipline extends to
+     color: red is never a default interactive color). Darkened from the reference's #E63946 for
+     AA contrast against white. */
+  --color-accent: 193 41 58;
+  /* Every interactive element: links, focus rings, primary buttons. Darkened from the
+     reference's #2A6FDB for AA contrast against white (a light-mode button still carries white
+     text). */
+  --color-accent-2: 26 86 219;
+  /* Secondary blue: a calm "notice" tone distinct from both accents, e.g. the ceiling meter's
+     middle band. Darkened from the reference's #3E92CC. */
+  --color-blue-2: 42 114 168;
+
+  --color-brand: var(--color-accent-2);
+  --color-brand-ink: 255 255 255;
+  --color-danger: var(--color-accent);
+  --color-success: 31 138 76;
+  --color-warning: 146 96 10;
+  --color-tile-blue: 227 238 252;
+  --color-tile-green: 225 245 233;
+  --color-tile-peach: 253 238 227;
+  --color-tile-lilac: 239 233 251;
+
+  /* R21 chart series, the dataviz default categorical order (blue, orange, aqua, yellow, magenta),
+     validated for color-vision deficiency on both surfaces. Assigned in fixed order, never cycled.
+     series-1-soft is the lighter step of blue for the "imported" share of an income bar. "Other"
+     in a donut uses --color-muted. */
+  --color-series-1: 42 120 214;
+  --color-series-2: 235 104 52;
+  --color-series-3: 27 175 122;
+  --color-series-4: 237 161 0;
+  --color-series-5: 232 123 164;
+  --color-series-1-soft: 134 182 239;
+
+  /* R17 task 1: Hebrew has no bundled web font, so the Hebrew stack falls back to the platform's
+     own Hebrew-capable sans (Segoe UI on Windows, Noto Sans Hebrew where installed), placed
+     directly after each Latin face so a Hebrew glyph in Latin-mode copy still renders. */
+  --font-hebrew: system-ui, 'Segoe UI', Arial, 'Noto Sans Hebrew', sans-serif;
+  --font-heading: 'Bricolage Grotesque', var(--font-hebrew);
+  --font-sans: 'Hanken Grotesk', var(--font-hebrew);
+
+  --radius-card: 12px;
+  --shadow-card: 0 1px 2px rgb(38 38 36 / 0.06), 0 1px 3px rgb(38 38 36 / 0.08);
+  --sidebar-width: 248px;
+}
+
+/* Hebrew mode puts the Hebrew stack first, heading and body alike (task 16); redefining the two
+   font variables here cascades to every `font-heading`/`font-sans` use with no component change. */
+:root[dir='rtl'] {
+  --font-heading: var(--font-hebrew);
+  --font-sans: var(--font-hebrew);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-canvas: 48 48 48;
+    --color-surface: 58 58 58;
+    --color-surface-2: 54 54 54;
+    --color-band: 42 42 42;
+    --color-ink: 236 236 234;
+    --color-muted: 165 165 163;
+    --color-line: 74 74 74;
+
+    --color-accent: 230 57 70;
+    --color-accent-2: 42 111 219;
+    --color-blue-2: 62 146 204;
+
+    --color-brand: var(--color-accent-2);
+    --color-brand-ink: 255 255 255;
+    --color-danger: var(--color-accent);
+    --color-success: 76 175 109;
+    --color-warning: 224 167 46;
+    --color-tile-blue: 38 54 74;
+    --color-tile-green: 31 59 44;
+    --color-tile-peach: 74 51 36;
+    --color-tile-lilac: 54 44 74;
+    --color-series-1: 57 135 229;
+    --color-series-2: 217 89 38;
+    --color-series-3: 25 158 112;
+    --color-series-4: 201 133 0;
+    --color-series-5: 213 81 129;
+    --color-series-1-soft: 28 92 171;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-canvas: 48 48 48;
+  --color-surface: 58 58 58;
+  --color-surface-2: 54 54 54;
+  --color-band: 42 42 42;
+  --color-ink: 236 236 234;
+  --color-muted: 165 165 163;
+  --color-line: 74 74 74;
+
+  --color-accent: 230 57 70;
+  --color-accent-2: 42 111 219;
+  --color-blue-2: 62 146 204;
+
+  --color-brand: var(--color-accent-2);
+  --color-brand-ink: 255 255 255;
+  --color-danger: var(--color-accent);
+  --color-success: 76 175 109;
+  --color-warning: 224 167 46;
+  --color-tile-blue: 38 54 74;
+  --color-tile-green: 31 59 44;
+  --color-tile-peach: 74 51 36;
+  --color-tile-lilac: 54 44 74;
+  --color-series-1: 57 135 229;
+  --color-series-2: 217 89 38;
+  --color-series-3: 25 158 112;
+  --color-series-4: 201 133 0;
+  --color-series-5: 213 81 129;
+  --color-series-1-soft: 28 92 171;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+}

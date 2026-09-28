@@ -1,0 +1,4 @@
+# Copy to .dev.vars for `npm run dev`. Never commit .dev.vars.
+ENVIRONMENT=development
+DEV_AUTH_EMAIL=owner@example.com
+OWNER_EMAIL=owner@example.com

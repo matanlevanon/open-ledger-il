@@ -1,0 +1,25 @@
+node_modules/
+.wrangler/
+dist/
+web/dist/
+.dev.vars
+*.env
+.env*
+*.pem
+*.key
+*.p12
+*.pfx
+service-account*.json
+credentials*.json
+client_secret*.json
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+coverage/
+*.tsbuildinfo
+.impeccable/
+
+# Claude Code agent worktrees (local only, never committed)
+.claude/worktrees/
+.claude/settings.local.json

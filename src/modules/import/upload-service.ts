@@ -1,0 +1,191 @@
+import { type AuditActor, auditStatement } from '../../core/audit';
+import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
+import { ConflictError, NotFoundError } from '../../core/errors';
+import { HOME_CURRENCY, assertCurrency, parseMajor } from '../../core/money';
+import type { RateSource } from '../fx';
+import { toIlsMinor } from '../fx';
+import { sha256Hex } from '../pdf';
+import type { ExternalDocExtractInput, ExternalDocExtractor } from './upload-extractor';
+import { EMPTY_EXTRACTION, type ExternalDocumentRow, type ExternalDocumentUploadRow, type ExtractedExternalDoc, type FileExternalDocInput } from './upload-types';
+
+export interface UploadDeps {
+  extractor: ExternalDocExtractor;
+  fx: RateSource;
+  files: R2Bucket;
+}
+
+export interface UploadResult {
+  uploadId: number;
+  extraction: ExtractedExternalDoc;
+  extractionError: string | null;
+}
+
+/** R17 task 7: stores the file in R2, runs extraction (best-effort), and stages it for review. */
+export async function uploadExternalDocument(
+  db: D1Database,
+  files: R2Bucket,
+  extractor: ExternalDocExtractor,
+  actor: AuditActor,
+  input: ExternalDocExtractInput,
+): Promise<UploadResult> {
+  const sha256 = await sha256Hex(input.bytes);
+  const key = `external-documents/${sha256}.pdf`;
+  await files.put(key, input.bytes, { httpMetadata: { contentType: input.contentType } });
+
+  let extraction: ExtractedExternalDoc = EMPTY_EXTRACTION;
+  let extractionError: string | null = null;
+  try {
+    extraction = await extractor.extract(input);
+  } catch (err) {
+    extractionError = err instanceof Error ? err.message : String(err);
+  }
+
+  const { lastRowId: uploadId } = await run(
+    db,
+    `INSERT INTO external_document_uploads (r2_key, sha256, filename, content_type, extracted_json, extraction_error, uploaded_by)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    key,
+    sha256,
+    input.filename,
+    input.contentType,
+    JSON.stringify(extraction),
+    extractionError,
+    actor.userId,
+  );
+  return { uploadId, extraction, extractionError };
+}
+
+async function getUpload(db: D1Database, id: number): Promise<ExternalDocumentUploadRow> {
+  const row = await first<ExternalDocumentUploadRow>(db, 'SELECT * FROM external_document_uploads WHERE id = ?', id);
+  if (!row) throw new NotFoundError('Upload', id);
+  return row;
+}
+
+/** True when (source, originalNumber) is already filed: the task's duplicate check. */
+export async function findDuplicate(db: D1Database, source: string, originalNumber: string): Promise<ExternalDocumentRow | null> {
+  return first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE source = ? AND original_number = ?', source, originalNumber);
+}
+
+/**
+ * Confirms or corrects the review screen's fields, matches the document to `clientId` (already
+ * resolved by the caller, which matches or creates the client through the ordinary /clients API),
+ * and files it: from this point the row is immutable (migrations/1704's triggers).
+ */
+export async function fileExternalDocument(
+  db: D1Database,
+  fx: RateSource,
+  actor: AuditActor,
+  input: FileExternalDocInput,
+): Promise<ExternalDocumentRow> {
+  const upload = await getUpload(db, input.uploadId);
+  if (upload.filed_document_id !== null) conflict('already_filed', 'This upload was already filed.');
+
+  const existing = await findDuplicate(db, input.source, input.originalNumber);
+  if (existing) conflict('duplicate_external_document', `A ${input.source} document numbered ${input.originalNumber} is already filed.`);
+
+  const currency = assertCurrency(input.currency);
+  const amountBeforeVatMinor = parseMajor(input.amountBeforeVat, currency);
+  const vatAmountMinor = parseMajor(input.vatAmount, currency);
+  const totalMinor = parseMajor(input.total, currency);
+
+  let totalIlsMinor: number | null = null;
+  let fxRate: string | null = null;
+  let fxRateDate: string | null = null;
+  if (currency === HOME_CURRENCY) {
+    totalIlsMinor = totalMinor;
+  } else {
+    try {
+      const resolved = await fx.rateFor(currency, input.issueDate);
+      fxRate = resolved.rate;
+      fxRateDate = resolved.rateDate;
+      totalIlsMinor = toIlsMinor(totalMinor, resolved);
+    } catch {
+      // No rate could be resolved (docs/currency-and-fx.md style fallback); the row still files,
+      // just excluded from ILS totals (income reports, the ceiling meter) until corrected.
+    }
+  }
+
+  const results = await transaction(db, [
+    stmt(
+      db,
+      `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, client_tax_id,
+         currency, amount_before_vat_minor, vat_amount_minor, total_minor, total_ils_minor, fx_rate, fx_rate_date, paid_status,
+         r2_key, sha256, upload_id, filed_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      input.source,
+      input.originalNumber,
+      input.documentType,
+      input.issueDate,
+      input.clientId,
+      input.clientName,
+      input.clientTaxId,
+      currency,
+      amountBeforeVatMinor,
+      vatAmountMinor,
+      totalMinor,
+      totalIlsMinor,
+      fxRate,
+      fxRateDate,
+      input.paidStatus,
+      upload.r2_key,
+      upload.sha256,
+      upload.id,
+      actor.userId,
+    ),
+    auditStatement(db, actor, 'external_document.file', 'external_document', null, { source: input.source, originalNumber: input.originalNumber }),
+  ]);
+  const id = results[0]!.meta.last_row_id;
+  await run(db, 'UPDATE external_document_uploads SET filed_document_id = ? WHERE id = ?', id, upload.id);
+  const row = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ?', id);
+  if (!row) throw new NotFoundError('External document', id);
+  return row;
+}
+
+function conflict(code: string, message: string): never {
+  throw new ConflictError(code, message);
+}
+
+export interface ExternalDocFilter {
+  clientId?: number;
+  from?: string;
+  to?: string;
+}
+
+export async function listExternalDocuments(db: D1Database, filter: ExternalDocFilter = {}): Promise<ExternalDocumentRow[]> {
+  const where: string[] = [];
+  const params: (string | number)[] = [];
+  if (filter.clientId) {
+    where.push('client_id = ?');
+    params.push(filter.clientId);
+  }
+  if (filter.from) {
+    where.push('issue_date >= ?');
+    params.push(filter.from);
+  }
+  if (filter.to) {
+    where.push('issue_date <= ?');
+    params.push(filter.to);
+  }
+  return all<ExternalDocumentRow>(
+    db,
+    `SELECT * FROM external_documents ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY issue_date, id`,
+    ...params,
+  );
+}
+
+export async function getExternalDocument(db: D1Database, id: number): Promise<ExternalDocumentRow> {
+  const row = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ?', id);
+  if (!row) throw new NotFoundError('External document', id);
+  return row;
+}
+
+/** Turnover from uploaded external documents in a date range (R17 task 7: the ceiling meter and income reports). */
+export async function externalTurnoverIls(db: D1Database, from: string, to: string): Promise<number> {
+  const row = await first<{ total: number | null }>(
+    db,
+    'SELECT SUM(total_ils_minor) AS total FROM external_documents WHERE issue_date BETWEEN ? AND ?',
+    from,
+    to,
+  );
+  return row?.total ?? 0;
+}

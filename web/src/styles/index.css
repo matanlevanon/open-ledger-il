@@ -1,0 +1,39 @@
+@import './tokens.css';
+@import './fonts.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-canvas text-ink font-sans antialiased;
+}
+
+/* Every interactive element's focus ring is accent-2 blue (task 14): red stays for brand moments
+   and destructive actions only. */
+:focus-visible {
+  outline: 2px solid rgb(var(--color-accent-2));
+  outline-offset: 2px;
+}
+
+/* Amounts, currency codes, document numbers and dates stay left-to-right even inside Hebrew text
+   (task 16); components wrap them with this class rather than the raw dir attribute so the
+   tabular-nums rule below travels with it. */
+.ltr-nums {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Table cells and icons that must flip with layout direction use Tailwind's logical utilities
+   (text-start/text-end, ps-/pe-, border-s/border-e, start-/end-) elsewhere; this covers the one
+   generic case those utilities don't: an icon glyph that literally points left or right. */
+[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
+}

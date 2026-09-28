@@ -1,0 +1,2 @@
+# Keep SQL migrations LF on every OS. CRLF breaks wrangler d1 migrations apply (trigger bodies read as incomplete input).
+*.sql text eol=lf
