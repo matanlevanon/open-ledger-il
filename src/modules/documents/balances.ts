@@ -192,6 +192,7 @@ interface LedgerImportedRow {
   currency: string;
   total_minor: number;
   paid_status: string;
+  settled: number;
 }
 
 /**
@@ -238,8 +239,10 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
   const imported = includeImported
     ? await all<LedgerImportedRow>(
         db,
-        `SELECT id, source, doc_type, original_number, issue_date, currency, total_minor, paid_status
-         FROM external_documents WHERE client_id = ? AND (? IS NULL OR issue_date <= ?) ORDER BY issue_date, id`,
+        `SELECT x.id, x.source, x.doc_type, x.original_number, x.issue_date, x.currency, x.total_minor, x.paid_status,
+           EXISTS (SELECT 1 FROM external_document_receipts r JOIN documents d ON d.id = r.document_id
+                   WHERE r.external_id = x.id AND d.status = 'final') AS settled
+         FROM external_documents x WHERE x.client_id = ? AND (? IS NULL OR x.issue_date <= ?) ORDER BY x.issue_date, x.id`,
         clientId,
         to ?? null,
         to ?? null,
@@ -260,7 +263,7 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
       if (kind === 'quote') continue;
       const sign = kind === 'credit' ? -1 : 1;
       const debit = sign * x.total_minor;
-      const credit = kind === 'receipt' || kind === 'credit' || x.paid_status === 'paid' ? debit : 0;
+      const credit = kind === 'receipt' || kind === 'credit' || x.paid_status === 'paid' || x.settled === 1 ? debit : 0;
       running[x.currency] = (running[x.currency] ?? 0) + debit - credit;
       const inPeriod = !from || x.issue_date >= from;
       if (!inPeriod) {

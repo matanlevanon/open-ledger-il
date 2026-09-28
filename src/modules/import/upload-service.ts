@@ -6,7 +6,7 @@ import type { RateSource } from '../fx';
 import { toIlsMinor } from '../fx';
 import { sha256Hex } from '../pdf';
 import type { ExternalDocExtractInput, ExternalDocExtractor } from './upload-extractor';
-import { EMPTY_EXTRACTION, type ExternalDocumentRow, type ExternalDocumentUploadRow, type ExtractedExternalDoc, type FileExternalDocInput } from './upload-types';
+import { EMPTY_EXTRACTION, type ExternalDocumentRow, type ExternalDocumentUploadRow, type ExtractedExternalDoc, type FileExternalDocInput, type UpdateExternalDocInput } from './upload-types';
 
 export interface UploadDeps {
   extractor: ExternalDocExtractor;
@@ -178,7 +178,12 @@ export async function listExternalDocuments(db: D1Database, filter: ExternalDocF
   }
   return all<ExternalDocumentRow>(
     db,
-    `SELECT * FROM external_documents ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY issue_date, id`,
+    `SELECT x.*, (
+         SELECT json_object('id', d.id, 'type', d.type, 'number', d.number, 'status', d.status)
+         FROM external_document_receipts r JOIN documents d ON d.id = r.document_id
+         WHERE r.external_id = x.id AND d.status <> 'cancelled' ORDER BY (d.status = 'final') DESC, d.id DESC LIMIT 1
+       ) AS receipt_json
+     FROM external_documents x ${where.length ? `WHERE ${where.map((w) => `x.${w}`).join(' AND ')}` : ''} ORDER BY x.issue_date, x.id`,
     ...params,
   );
 }
@@ -198,4 +203,88 @@ export async function externalTurnoverIls(db: D1Database, from: string, to: stri
     to,
   );
   return row?.total ?? 0;
+}
+
+/** Converts a total to ILS at the Bank of Israel rate for the date, the way filing does. */
+async function ilsFor(fx: RateSource, currency: string, totalMinor: number, date: string) {
+  if (currency === HOME_CURRENCY) return { totalIlsMinor: totalMinor, fxRate: null as string | null, fxRateDate: null as string | null };
+  try {
+    const resolved = await fx.rateFor(currency as Parameters<RateSource['rateFor']>[0], date);
+    return { totalIlsMinor: toIlsMinor(totalMinor, resolved), fxRate: resolved.rate as string | null, fxRateDate: resolved.rateDate as string | null };
+  } catch {
+    return { totalIlsMinor: null, fxRate: null, fxRateDate: null };
+  }
+}
+
+/**
+ * Corrects the fields of a filed past document (read wrong from the PDF, or paid since). The PDF
+ * and its source stay as filed (migrations/2240). The ILS total follows a changed date, currency
+ * or total. Every change is audited with the old and new values.
+ */
+export async function updateExternalDocument(
+  db: D1Database,
+  fx: RateSource,
+  actor: AuditActor,
+  id: number,
+  patch: UpdateExternalDocInput,
+): Promise<ExternalDocumentRow> {
+  const before = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ?', id);
+  if (!before) throw new NotFoundError('External document', id);
+  const docType = patch.documentType ?? before.doc_type;
+  const originalNumber = patch.originalNumber ?? before.original_number;
+  const duplicate = await findDuplicate(db, before.source, docType, originalNumber);
+  if (duplicate && duplicate.id !== id) conflict('duplicate_external_document', `${docType} ${originalNumber} is already filed.`);
+
+  const currency = assertCurrency(patch.currency ?? before.currency);
+  const issueDate = patch.issueDate ?? before.issue_date;
+  const amountBeforeVatMinor = patch.amountBeforeVat !== undefined ? parseMajor(patch.amountBeforeVat, currency) : before.amount_before_vat_minor;
+  const vatAmountMinor = patch.vatAmount !== undefined ? parseMajor(patch.vatAmount, currency) : before.vat_amount_minor;
+  const totalMinor = patch.total !== undefined ? parseMajor(patch.total, currency) : before.total_minor;
+  const ils =
+    currency !== before.currency || issueDate !== before.issue_date || totalMinor !== before.total_minor
+      ? await ilsFor(fx, currency, totalMinor, issueDate)
+      : { totalIlsMinor: before.total_ils_minor, fxRate: before.fx_rate, fxRateDate: before.fx_rate_date };
+
+  const after = {
+    doc_type: docType,
+    original_number: originalNumber,
+    issue_date: issueDate,
+    client_id: patch.clientId !== undefined ? patch.clientId : before.client_id,
+    client_name_text: patch.clientName ?? before.client_name_text,
+    client_tax_id: patch.clientTaxId !== undefined ? patch.clientTaxId : before.client_tax_id,
+    currency,
+    amount_before_vat_minor: amountBeforeVatMinor,
+    vat_amount_minor: vatAmountMinor,
+    total_minor: totalMinor,
+    total_ils_minor: ils.totalIlsMinor,
+    fx_rate: ils.fxRate,
+    fx_rate_date: ils.fxRateDate,
+    paid_status: patch.paidStatus ?? before.paid_status,
+  };
+  const changed: Record<string, { from: unknown; to: unknown }> = {};
+  for (const [k, v] of Object.entries(after)) {
+    const old = (before as unknown as Record<string, unknown>)[k];
+    if (old !== v) changed[k] = { from: old, to: v };
+  }
+  if (Object.keys(changed).length > 0) {
+    const cols = Object.keys(after);
+    await transaction(db, [
+      stmt(db, `UPDATE external_documents SET ${cols.map((k) => `${k} = ?`).join(', ')} WHERE id = ?`, ...(Object.values(after) as (string | number | null)[]), id),
+      auditStatement(db, actor, 'external_document.update', 'external_document', id, changed),
+    ]);
+  }
+  const row = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ?', id);
+  return row!;
+}
+
+/** Records that a receipt in this ledger pays an imported past document (see migrations/2240). */
+export async function linkReceipt(db: D1Database, actor: AuditActor, externalId: number, documentId: number): Promise<void> {
+  const ext = await first<{ id: number }>(db, 'SELECT id FROM external_documents WHERE id = ?', externalId);
+  if (!ext) throw new NotFoundError('External document', externalId);
+  const doc = await first<{ id: number }>(db, 'SELECT id FROM documents WHERE id = ?', documentId);
+  if (!doc) throw new NotFoundError('Document', documentId);
+  await transaction(db, [
+    stmt(db, 'INSERT OR IGNORE INTO external_document_receipts (external_id, document_id) VALUES (?, ?)', externalId, documentId),
+    auditStatement(db, actor, 'external_document.link_receipt', 'external_document', externalId, { documentId }),
+  ]);
 }

@@ -3,22 +3,13 @@ import { usePreferences } from '../../app/preferences';
 import { useT } from '../../i18n';
 import { type Client, clientsApi } from '../documents/api';
 import { CURRENCIES, clientName } from '../documents/format';
+import { IMPORTED_DOC_TYPES } from '../documents/ImportedDocuments';
 import { type ExtractedExternalDoc, fileExternalDocument, uploadExternalDocument } from './api';
 
 /** Kept on the record for the server's schema. The screen no longer asks which system issued it. */
 const SOURCES = ['sumit', 'wave', 'other'] as const;
 const PAID_STATUSES = ['paid', 'unpaid', 'unknown'] as const;
 
-/** The types a past document can be filed as, stored by their English name. */
-const DOC_TYPES = [
-  { value: 'Quote', en: 'Quote', he: 'הצעת מחיר' },
-  { value: 'Payment Request', en: 'Payment request', he: 'דרישת תשלום' },
-  { value: 'Pro Forma Invoice', en: 'Pro forma invoice', he: 'חשבון עסקה' },
-  { value: 'Tax Invoice', en: 'Tax invoice', he: 'חשבונית מס' },
-  { value: 'Invoice/Receipt', en: 'Invoice/receipt', he: 'חשבונית מס/קבלה' },
-  { value: 'Receipt', en: 'Receipt', he: 'קבלה' },
-  { value: 'Credit', en: 'Credit', he: 'זיכוי' },
-] as const;
 
 /** Maps the type read from the PDF (English or Hebrew) to one of DOC_TYPES, or '' to pick by hand. */
 function docTypeFromExtraction(text: string | null): string {
@@ -232,7 +223,7 @@ export function UploadExistingDocumentsSection() {
                   <span className={label}>{t('import.uploads.field.documentType')}</span>
                   <select className={input} value={row.documentType} onChange={(e) => set(row.key, { documentType: e.target.value })}>
                     <option value="">{t('import.uploads.pickType')}</option>
-                    {DOC_TYPES.map((d) => (
+                    {IMPORTED_DOC_TYPES.map((d) => (
                       <option key={d.value} value={d.value}>
                         {locale === 'he' ? d.he : d.en}
                       </option>

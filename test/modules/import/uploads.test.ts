@@ -83,7 +83,7 @@ describe('import: upload existing documents (R17 task 7)', () => {
     expect(body.document.total_minor).toBe(30000);
     expect(body.document.total_ils_minor).not.toBeNull();
 
-    const updateError = await sqlError('UPDATE external_documents SET total_minor = 1 WHERE id = ?', body.document.id);
+    const updateError = await sqlError("UPDATE external_documents SET r2_key = 'other' WHERE id = ?", body.document.id);
     expect(updateError).toContain('append_only');
     const deleteError = await sqlError('DELETE FROM external_documents WHERE id = ?', body.document.id);
     expect(deleteError).toContain('append_only');
@@ -102,6 +102,22 @@ describe('import: upload existing documents (R17 task 7)', () => {
     expect(res.status).toBe(409);
     const body = (await res.json()) as { error: { code: string } };
     expect(body.error.code).toBe('duplicate_external_document');
+  });
+
+  it('corrects a filed document through the API, audits it, and keeps the file frozen', async () => {
+    const number = uniqueNumber();
+    const app = buildAppWithUpload({ 'fix.pdf': extracted(number) });
+    const uploaded = await call(app, '/uploads', { method: 'POST', body: uploadForm(pdfBytes(), 'fix.pdf', 'application/pdf') });
+    const { uploadId } = (await uploaded.json()) as UploadResult;
+    const filed = (await (await call(app, '/uploads/file', json(fileBody(uploadId, number)))).json()) as { document: { id: number } };
+    const res = await call(app, `/external-documents/${filed.document.id}`, { ...json({ issueDate: '2026-08-01', paidStatus: 'unpaid' }), method: 'PATCH' });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { document: { issue_date: string; paid_status: string } };
+    expect(body.document).toMatchObject({ issue_date: '2026-08-01', paid_status: 'unpaid' });
+    const audit = await env.DB.prepare("SELECT details FROM audit_log WHERE action = 'external_document.update' AND entity_id = ? ORDER BY id DESC")
+      .bind(String(filed.document.id))
+      .first<{ details: string }>();
+    expect(audit?.details).toContain('2026-08-01');
   });
 
   it('files a quote and a payment request with the same number as two documents', async () => {

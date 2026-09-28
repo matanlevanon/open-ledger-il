@@ -321,3 +321,22 @@ describe('client ledger with imported past documents', () => {
     expect(ledger.closing.ILS).toBe(50000);
   });
 });
+
+describe('imported pro forma paid by a receipt issued here', () => {
+  it('reads paid in the ledger once the linked receipt is final', async () => {
+    const client = await makeClient();
+    const ins = await env.DB.prepare(
+      `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, currency,
+         amount_before_vat_minor, vat_amount_minor, total_minor, paid_status, r2_key, sha256)
+       VALUES ('sumit', ?, 'Pro Forma Invoice', '2026-09-01', ?, 'Imported Co', 'ILS', 40000, 0, 40000, 'unpaid', 'k', 's')`,
+    )
+      .bind(`PF-${client}`, client)
+      .run();
+    const externalId = ins.meta.last_row_id;
+    expect((await ok('GET', `/clients/${client}/ledger`)).closing.ILS).toBe(40000);
+
+    const receipt = await issue('400', { clientId: client, lines: [line(40000)], payments: [pay(40000)] });
+    await env.DB.prepare('INSERT INTO external_document_receipts (external_id, document_id) VALUES (?, ?)').bind(externalId, receipt.document.id).run();
+    expect((await ok('GET', `/clients/${client}/ledger`)).closing.ILS).toBe(0);
+  });
+});

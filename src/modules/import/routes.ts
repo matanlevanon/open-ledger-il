@@ -6,8 +6,8 @@ import { NotFoundError, ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import * as service from './service';
 import { setSeriesStartSchema, waveCustomerMappingSchema, waveInvoiceMappingSchema } from './types';
-import { type UploadDeps, fileExternalDocument, listExternalDocuments, uploadExternalDocument } from './upload-service';
-import { FileExternalDocSchema } from './upload-types';
+import { type UploadDeps, fileExternalDocument, linkReceipt, listExternalDocuments, updateExternalDocument, uploadExternalDocument } from './upload-service';
+import { FileExternalDocSchema, LinkReceiptSchema, UpdateExternalDocSchema } from './upload-types';
 
 interface Upload {
   bytes: ArrayBuffer;
@@ -105,6 +105,21 @@ export function createImportRoutes(resolveUploadDeps: (env: AppEnv['Bindings']) 
     const deps = resolveUploadDeps(c.env);
     const document = await fileExternalDocument(c.env.DB, deps.fx, actorFrom(c), input);
     return c.json({ document }, 201);
+  });
+
+  /** Corrects a filed past document's fields. Its PDF and source stay as filed. */
+  app.patch('/external-documents/:id', async (c) => {
+    const input = UpdateExternalDocSchema.parse(await c.req.json());
+    const deps = resolveUploadDeps(c.env);
+    const document = await updateExternalDocument(c.env.DB, deps.fx, actorFrom(c), Number(c.req.param('id')), input);
+    return c.json({ document });
+  });
+
+  /** Links a receipt in this ledger to the imported document it pays. */
+  app.post('/external-documents/:id/receipts', async (c) => {
+    const { documentId } = LinkReceiptSchema.parse(await c.req.json());
+    await linkReceipt(c.env.DB, actorFrom(c), Number(c.req.param('id')), documentId);
+    return c.json({ ok: true }, 201);
   });
 
   /** The original PDF of a filed past document, shown inline. */

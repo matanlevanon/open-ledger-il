@@ -64,6 +64,12 @@ export const FileExternalDocSchema = z.object({
 });
 export type FileExternalDocInput = z.infer<typeof FileExternalDocSchema>;
 
+/** Corrections to a filed past document. The file itself and its source never change. */
+export const UpdateExternalDocSchema = FileExternalDocSchema.omit({ uploadId: true, source: true }).partial();
+export type UpdateExternalDocInput = z.infer<typeof UpdateExternalDocSchema>;
+
+export const LinkReceiptSchema = z.object({ documentId: z.number().int().positive() });
+
 export interface ExternalDocumentUploadRow {
   id: number;
   r2_key: string;
