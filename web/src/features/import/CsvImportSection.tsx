@@ -30,9 +30,21 @@ export function CsvImportSection({ title, hint, fields, preview, commit }: CsvIm
   const toast = useToast();
   const t = useT();
 
+  /** Drops the picked file and its preview, so an unreadable file can be fixed and picked again. */
+  function onCancel() {
+    setFile(null);
+    setData(null);
+    setMapping({});
+    setSummary(null);
+    setError(null);
+    if (fileInput.current) fileInput.current.value = '';
+  }
+
   async function onPick(files: FileList | null) {
     const picked = files?.[0];
     if (!picked) return;
+    // Clear the input so picking the same file name again (after editing it) still fires onChange.
+    if (fileInput.current) fileInput.current.value = '';
     setFile(picked);
     setSummary(null);
     setError(null);
@@ -78,10 +90,22 @@ export function CsvImportSection({ title, hint, fields, preview, commit }: CsvIm
       <h2 className="font-heading text-xl text-ink">{title}</h2>
       <p className="mt-1 text-sm text-muted">{hint}</p>
 
-      <label className="mt-4 inline-block cursor-pointer rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90">
-        {file ? file.name : t('import.csv.chooseFile')}
-        <input ref={fileInput} type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => onPick(e.target.files)} />
-      </label>
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <label className="inline-block cursor-pointer rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90">
+          {file ? file.name : t('import.csv.chooseFile')}
+          <input ref={fileInput} type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => onPick(e.target.files)} />
+        </label>
+        {file && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onCancel}
+            className="rounded-full border border-line px-4 py-2 text-sm hover:bg-canvas disabled:opacity-50"
+          >
+            {t('import.csv.cancelButton')}
+          </button>
+        )}
+      </div>
 
       {error && <p className="mt-3 text-sm text-danger">{error}</p>}
 

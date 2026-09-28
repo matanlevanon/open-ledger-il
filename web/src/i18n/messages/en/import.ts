@@ -50,6 +50,7 @@ export const importFeature = {
 
   // CsvImportSection.tsx
   'import.csv.chooseFile': 'Choose a CSV file',
+  'import.csv.cancelButton': 'Cancel',
   'import.csv.readError': 'Could not read this file. Check it is a CSV export.',
   'import.csv.rowsFound': '{count} rows found. Map each field to a column, then import.',
   'import.csv.noColumn': 'No column',

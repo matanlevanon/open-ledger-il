@@ -47,6 +47,7 @@ export const importFeature: Record<keyof typeof en, string> = {
 
   // CsvImportSection.tsx
   'import.csv.chooseFile': 'בחירת קובץ CSV',
+  'import.csv.cancelButton': 'ביטול',
   'import.csv.readError': 'קריאת הקובץ נכשלה. ודא שמדובר בייצוא CSV.',
   'import.csv.rowsFound': '{count} שורות נמצאו. התאם כל שדה לעמודה, ואז ייבא.',
   'import.csv.noColumn': 'ללא עמודה',

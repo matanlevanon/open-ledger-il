@@ -5,13 +5,14 @@ import { setStartNumber, type SeriesRow } from '../../core/numbering';
 import { CURRENCY_CODES, type Currency, assertCurrency, parseMajor } from '../../core/money';
 import { ValidationError } from '../../core/errors';
 import { parseCsv, toRecords } from './csv';
+import { decodeCsvText } from './encoding';
 import { guessCustomerMapping, guessInvoiceMapping } from './mapping';
 import { countByRecordType, DECODE_STUB_NOTE, HISTORY_RECORD_TYPES, recordHash, splitBkmvdataRecords } from './sumit';
 import type { CommitSummary, HistoryRow, ImportKind, WaveCustomerMapping, WaveInvoiceMapping } from './types';
 import { extractUnifiedFile } from './zip';
 
 function decodeText(bytes: ArrayBuffer): string {
-  return new TextDecoder('utf-8').decode(bytes);
+  return decodeCsvText(bytes);
 }
 
 async function createBatch(db: D1Database, kind: ImportKind, filename: string, mapping: unknown, actor: AuditActor): Promise<number> {
