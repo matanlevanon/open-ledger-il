@@ -38,6 +38,7 @@ export const LABELS: Record<Lang, Record<string, string>> = {
     digitallySigned: 'Digitally signed',
     createdFrom: 'Created from',
     createdAndSignedUsing: 'This document was created and digitally signed using Open Ledger IL',
+    createdUsing: 'This document was created using Open Ledger IL',
     to: 'To',
   },
   he: {
@@ -76,6 +77,7 @@ export const LABELS: Record<Lang, Record<string, string>> = {
     digitallySigned: 'נחתם דיגיטלית',
     createdFrom: 'נוצר מתוך',
     createdAndSignedUsing: 'מסמך זה נוצר ונחתם דיגיטלית באמצעות Open Ledger IL',
+    createdUsing: 'מסמך זה נוצר באמצעות Open Ledger IL',
     to: 'לכבוד',
   },
 };

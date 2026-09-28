@@ -49,6 +49,7 @@ export const referenceInvoiceReceipt: RenderDocument = {
   paymentInstructions: null,
   paymentMethods: [],
   isOriginal: false,
+  signed: true,
   source: { typeNameEn: 'Price quotation', typeNameHe: 'הצעת מחיר', number: 101 },
   subtotalMinor: 33000,
   totalMinor: 33000,

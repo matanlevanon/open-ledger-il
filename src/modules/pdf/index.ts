@@ -33,7 +33,9 @@ routes.get('/documents/:id', requireFeature('income_documents'), async (c) => {
   const id = parseDocumentId(c.req.param('id'));
   const variant = parseVariant(c.req.query('variant') ?? 'client');
   const doc = await loadRenderDocument(c.env.DB, id, variant, { ownerTaxId: c.env.OWNER_TAX_ID ?? null, files: c.env.FILES });
-  const html = renderDocument(doc, variant);
+  // The badge follows what the stored PDF gets: signed only when a signing identity is configured.
+  const signed = doc.status !== 'draft' && (await resolveSigningIdentity(c.env.DB, c.env)) !== null;
+  const html = renderDocument({ ...doc, signed }, variant);
   return c.html(html);
 });
 

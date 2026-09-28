@@ -91,6 +91,14 @@ export function TopBar({ me, error, onMenu }: TopBarProps) {
         ) : (
           <span className="text-muted">{error ?? t('topbar.signingIn')}</span>
         )}
+
+        {/* Cloudflare Access ends the session at its own logout path, then shows its sign-in page again. */}
+        <a
+          href="/cdn-cgi/access/logout"
+          className="rounded-md px-2 py-1 text-sm text-ink hover:bg-canvas focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-2"
+        >
+          {t('topbar.signOut')}
+        </a>
       </div>
     </header>
   );

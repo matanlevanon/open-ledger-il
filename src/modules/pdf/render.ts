@@ -86,15 +86,15 @@ function headerHtml(doc: RenderDocument): string {
 }
 
 /**
- * Title line: "<Document type> <number>" with a "Digitally signed" badge on a signed (final)
- * document, and at right "Original" or "Copy" (the legal מקור/העתק נאמן למקור stamp) plus the
+ * Title line: "<Document type> <number>" with a "Digitally signed" badge on a signed final
+ * document (`doc.signed`), and at right "Original" or "Copy" (the legal מקור/העתק נאמן למקור stamp) plus the
  * date. "Created from: <source> / <number>" follows when this document was converted from
  * another one, then a rule (R17 task 6).
  */
 function titleLineHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>): string {
   const typeName = lang === 'he' ? doc.typeNameHe : doc.typeNameEn;
   const numberLine = doc.number === null ? esc(t.draft) : `${typeName} ${doc.number}`;
-  const badge = doc.status !== 'draft' ? `<span class="badge">${ICONS.badge}${esc(t.digitallySigned)}</span>` : '';
+  const badge = doc.status !== 'draft' && doc.signed === true ? `<span class="badge">${ICONS.badge}${esc(t.digitallySigned)}</span>` : '';
   const dateLine = doc.number === null ? '' : `<span class="copy-word">${esc(copyLabel(lang, doc.isOriginal))}</span><span class="rule-sep">|</span>${formatDate(doc.date)}`;
   const createdFrom = doc.source
     ? `<div class="created-from">${esc(t.createdFrom)}: ${esc(lang === 'he' ? doc.source.typeNameHe : doc.source.typeNameEn)} / ${doc.source.number ?? ''}</div>`
@@ -272,7 +272,7 @@ function footerHtml(lang: Lang, doc: RenderDocument, page: { number: number; of:
   return `
 <div class="footer">
   <div>
-    <div>${esc(t.createdAndSignedUsing)}</div>
+    <div>${esc(doc.signed === true ? t.createdAndSignedUsing : t.createdUsing)}</div>
     <div class="muted">${esc(computerizedLabel(lang))}</div>
   </div>
   <div class="footer-right">${esc(typeName)} / ${esc(numberPart)} | ${esc(t.page)} ${page.number} ${esc(t.of)} ${page.of}</div>
@@ -287,7 +287,7 @@ function footerHtml(lang: Lang, doc: RenderDocument, page: { number: number; of:
  */
 function bilingualTitleLineHtml(doc: RenderDocument): string {
   const numberLine = doc.number === null ? bl('draft') : `${blText(doc.typeNameEn, doc.typeNameHe)} ${doc.number}`;
-  const badge = doc.status !== 'draft' ? `<span class="badge">${ICONS.badge}${bl('digitallySigned')}</span>` : '';
+  const badge = doc.status !== 'draft' && doc.signed === true ? `<span class="badge">${ICONS.badge}${bl('digitallySigned')}</span>` : '';
   const copyWord = doc.isOriginal ? blText('Original', 'מקור') : blText('Copy', 'העתק');
   const dateLine = doc.number === null ? '' : `<span class="copy-word">${copyWord}</span><span class="rule-sep">|</span>${formatDate(doc.date)}`;
   const createdFrom = doc.source
@@ -456,7 +456,7 @@ function bilingualFooterHtml(doc: RenderDocument, page: { number: number; of: nu
   return `
 <div class="footer">
   <div>
-    <div>${bl('createdAndSignedUsing')}</div>
+    <div>${bl(doc.signed === true ? 'createdAndSignedUsing' : 'createdUsing')}</div>
     <div class="muted">${esc(computerizedLabel('en'))}</div>
   </div>
   <div class="footer-right">${blText(doc.typeNameEn, doc.typeNameHe)} / ${numberPart} | ${bl('page')} ${page.number} ${bl('of')} ${page.of}</div>

@@ -397,18 +397,26 @@ describe('renderDocument: header', () => {
     expect(unlinked).not.toContain('Created from');
   });
 
-  it('shows the "Digitally signed" badge on a finalized document, never on a draft', () => {
-    const final = renderDocument(sampleRenderDocument({ status: 'final' }), 'client');
-    expect(final).toContain('Digitally signed');
-    const draft = renderDocument(sampleRenderDocument({ number: null, status: 'draft' }), 'client');
+  it('shows the "Digitally signed" badge only on a signed finalized document', () => {
+    const signed = renderDocument(sampleRenderDocument({ status: 'final', signed: true }), 'client');
+    expect(signed).toContain('Digitally signed');
+    const unsigned = renderDocument(sampleRenderDocument({ status: 'final' }), 'client');
+    expect(unsigned).not.toContain('Digitally signed');
+    const draft = renderDocument(sampleRenderDocument({ number: null, status: 'draft', signed: true }), 'client');
     expect(draft).not.toContain('Digitally signed');
   });
 });
 
 /** R17 task 6: the footer credits Open Ledger IL and prints the type, number and page. */
 describe('renderDocument: footer', () => {
-  it('shows the created-and-signed line, the computerized-document note, and the type/number/page', () => {
+  it('says "created using" on an unsigned document, never "digitally signed"', () => {
     const html = renderDocument(sampleRenderDocument(), 'client');
+    expect(html).toContain('This document was created using Open Ledger IL');
+    expect(html).not.toContain('digitally signed');
+  });
+
+  it('shows the created-and-signed line, the computerized-document note, and the type/number/page', () => {
+    const html = renderDocument(sampleRenderDocument({ signed: true }), 'client');
     expect(html).toContain('This document was created and digitally signed using Open Ledger IL');
     expect(html).toContain('Transaction invoice / 42');
     expect(html).toContain('Page 1 of 1');

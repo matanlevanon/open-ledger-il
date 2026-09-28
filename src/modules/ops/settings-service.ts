@@ -105,8 +105,18 @@ export async function assertBusinessReady(db: D1Database): Promise<void> {
 // Numbering
 // ---------------------------------------------------------------------------
 
+/**
+ * Series for Settings > Numbering. Hides series whose document type is disabled, so a retired type
+ * (PF, replaced by 300 as the pro forma) never shows as a second "Pro Forma Invoice" row.
+ */
 export async function listSeries(db: D1Database) {
-  return all(db, 'SELECT id, doc_type, name_en, name_he, legal_mode, start_number, next_number, started_at, closed_at FROM series ORDER BY doc_type');
+  return all(
+    db,
+    `SELECT s.id, s.doc_type, s.name_en, s.name_he, s.legal_mode, s.start_number, s.next_number, s.started_at, s.closed_at
+       FROM series s LEFT JOIN document_types dt ON dt.code = s.doc_type
+      WHERE dt.enabled IS NULL OR dt.enabled = 1
+      ORDER BY s.doc_type`,
+  );
 }
 
 // ---------------------------------------------------------------------------

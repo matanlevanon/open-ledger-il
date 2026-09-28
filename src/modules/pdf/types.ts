@@ -121,6 +121,12 @@ export interface RenderDocument {
   paymentMethods: RenderPaymentMethod[];
   /** True for the first PDF rendered of this variant ("מקור"), false for a later reprint. */
   isOriginal: boolean;
+  /**
+   * True only when this rendering is (or becomes) a PDF signed with the signing identity. Drives
+   * the "Digitally signed" badge and the footer wording, so an unsigned PDF or preview never
+   * claims a signature. Absent means unsigned.
+   */
+  signed?: boolean;
   /** The document this one converted from, when linked (R17 task 6). */
   source: RenderSource | null;
   lines: RenderLine[];

@@ -26,6 +26,21 @@ describe('ops routes: owner only (runs/R14-ops.md Settings screen; CLAUDE.md rul
     expect(updated.body.business.bank_details).toBe('Bank Hapoalim, 123');
   });
 
+  it('lists only series of enabled document types, so the retired PF pro forma is hidden', async () => {
+    const res = await api('GET', '/series');
+    expect(res.status).toBe(200);
+    const ids = (res.body.series as { id: string }[]).map((s) => s.id);
+    expect(ids).toContain('300');
+    expect(ids).not.toContain('PF');
+  });
+
+  it('saves the English and Hebrew taglines', async () => {
+    const res = await api('PUT', '/business', { taglineEn: 'Growth consulting', taglineHe: 'ייעוץ צמיחה' });
+    expect(res.status).toBe(200);
+    expect(res.body.business.tagline_en).toBe('Growth consulting');
+    expect(res.body.business.tagline_he).toBe('ייעוץ צמיחה');
+  });
+
   it('rejects an accountant, even one with every switch on', async () => {
     await env.DB.prepare("INSERT INTO users (email, role) VALUES ('accountant@example.com', 'accountant')").run();
     const res = await api('GET', '/business', undefined, 'accountant@example.com');

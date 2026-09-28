@@ -63,6 +63,8 @@ export const settings: Record<keyof typeof en, string> = {
   'settings.numbering.colNextNumber': 'המספר הבא',
   'settings.numbering.colStatus': 'סטטוס',
   'settings.numbering.legalModeBoth': 'שניהם',
+  'settings.numbering.legalModePatur': 'פטור',
+  'settings.numbering.legalModeMurshe': 'מורשה',
   'settings.numbering.statusClosed': 'סגור',
   'settings.numbering.statusInUse': 'בשימוש',
   'settings.numbering.statusNotStarted': 'טרם הופעל',

@@ -24,6 +24,11 @@ beforeEach(() => {
 });
 
 describe('TopBar', () => {
+  it('shows a Sign out link to the Cloudflare Access logout path', () => {
+    renderTopBar();
+    expect(screen.getByRole('link', { name: 'Sign out' })).toHaveAttribute('href', '/cdn-cgi/access/logout');
+  });
+
   it('shows the theme toggle offering to switch to dark by default', () => {
     renderTopBar();
     expect(screen.getByRole('button', { name: 'Switch to dark theme' })).toBeInTheDocument();

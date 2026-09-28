@@ -250,7 +250,7 @@ export function Sidebar({ role, features, email, onNavigate }: SidebarProps) {
               {section.children ? (
                 <>
                   <p className="px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted">{t(section.label)}</p>
-                  <ul className="flex flex-col gap-1">
+                  <ul className="ms-3 flex flex-col gap-1 border-s border-line ps-2">
                     {section.children
                       .filter((c) => canSee(c, role, features))
                       .map((child) => (

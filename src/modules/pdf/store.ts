@@ -349,7 +349,7 @@ export async function renderAndStore(
   }
   await assertClientCopyMayRelease(db, documentId, variant);
 
-  const html = renderDocument(doc, variant);
+  const html = renderDocument({ ...doc, signed: signing !== null }, variant);
   const rendered = await engine.renderPdf(html);
   const bytes = signing
     ? await signPdf(new Uint8Array(rendered), { ...signing, signerName: doc.business.nameEn || undefined })

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { usePreferences } from '../../app/preferences';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import { ApiError, fetchSeries, setSeriesStartNumber, type SeriesRow } from './api';
@@ -10,6 +11,14 @@ export function NumberingTab() {
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const toast = useToast();
   const t = useT();
+  const { locale } = usePreferences();
+  const seriesName = (row: SeriesRow) => (locale === 'he' ? (row.name_he ?? row.name_en) : row.name_en);
+  const legalMode = (mode: string | null) =>
+    mode === 'patur'
+      ? t('settings.numbering.legalModePatur')
+      : mode === 'murshe'
+        ? t('settings.numbering.legalModeMurshe')
+        : t('settings.numbering.legalModeBoth');
 
   const load = () =>
     fetchSeries()
@@ -37,7 +46,7 @@ export function NumberingTab() {
     try {
       const body = await setSeriesStartNumber(row.id, value);
       setSeries(body.series);
-      toast.push(t('settings.numbering.setSuccess', { name: row.name_en, value }));
+      toast.push(t('settings.numbering.setSuccess', { name: seriesName(row), value }));
     } catch (err) {
       toast.push(err instanceof Error ? err.message : t('settings.numbering.setErrorFallback'), 'danger');
     }
@@ -48,22 +57,22 @@ export function NumberingTab() {
       <caption className="sr-only">{t('settings.numbering.caption')}</caption>
       <thead>
         <tr className="text-xs uppercase tracking-wide text-muted">
-          <th className="py-2">{t('settings.numbering.colType')}</th>
-          <th>{t('settings.numbering.colLegalMode')}</th>
-          <th>{t('settings.numbering.colStartingNumber')}</th>
-          <th>{t('settings.numbering.colNextNumber')}</th>
-          <th>{t('settings.numbering.colStatus')}</th>
+          <th className="py-2 text-start">{t('settings.numbering.colType')}</th>
+          <th className="text-start">{t('settings.numbering.colLegalMode')}</th>
+          <th className="text-start">{t('settings.numbering.colStartingNumber')}</th>
+          <th className="text-start">{t('settings.numbering.colNextNumber')}</th>
+          <th className="text-start">{t('settings.numbering.colStatus')}</th>
           <th />
         </tr>
       </thead>
       <tbody>
         {series.map((row) => (
           <tr key={row.id} className="border-t border-line">
-            <td className="py-2">{row.name_en}</td>
-            <td>{row.legal_mode ?? t('settings.numbering.legalModeBoth')}</td>
-            <td className="ltr-nums">
+            <td className="py-2">{seriesName(row)}</td>
+            <td>{legalMode(row.legal_mode)}</td>
+            <td>
               {row.started_at ? (
-                row.start_number
+                <bdi className="ltr-nums">{row.start_number}</bdi>
               ) : (
                 <input
                   type="number"
@@ -75,7 +84,9 @@ export function NumberingTab() {
                 />
               )}
             </td>
-            <td className="ltr-nums">{row.next_number}</td>
+            <td>
+              <bdi className="ltr-nums">{row.next_number}</bdi>
+            </td>
             <td>
               {row.closed_at
                 ? t('settings.numbering.statusClosed')

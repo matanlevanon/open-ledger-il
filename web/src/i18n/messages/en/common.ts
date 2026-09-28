@@ -11,6 +11,7 @@ export const common = {
   'topbar.switchToDarkTheme': 'Switch to dark theme',
   'topbar.switchToEnglish': 'Switch to English',
   'topbar.switchToHebrew': 'Switch to Hebrew',
+  'topbar.signOut': 'Sign out',
 
   'sidebar.closeMenu': 'Close menu',
   'sidebar.clients.filterAriaLabel': 'Filter clients',

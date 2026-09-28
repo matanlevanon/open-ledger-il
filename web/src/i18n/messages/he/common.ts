@@ -9,6 +9,7 @@ export const common: Record<keyof typeof en, string> = {
   'topbar.switchToDarkTheme': 'עבור לערכת נושא כהה',
   'topbar.switchToEnglish': 'עבור לאנגלית',
   'topbar.switchToHebrew': 'עבור לעברית',
+  'topbar.signOut': 'התנתקות',
 
   'sidebar.closeMenu': 'סגור תפריט',
   'sidebar.clients.filterAriaLabel': 'סינון לקוחות',
