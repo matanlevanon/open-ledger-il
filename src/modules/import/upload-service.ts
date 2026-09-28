@@ -5,6 +5,7 @@ import { HOME_CURRENCY, assertCurrency, parseMajor } from '../../core/money';
 import type { RateSource } from '../fx';
 import { toIlsMinor } from '../fx';
 import { sha256Hex } from '../pdf';
+import { externalIsIncomeSql, externalSignSql } from './external-kind';
 import type { ExternalDocExtractInput, ExternalDocExtractor } from './upload-extractor';
 import { EMPTY_EXTRACTION, type ExternalDocumentRow, type ExternalDocumentUploadRow, type ExtractedExternalDoc, type FileExternalDocInput, type UpdateExternalDocInput } from './upload-types';
 
@@ -198,7 +199,9 @@ export async function getExternalDocument(db: D1Database, id: number): Promise<E
 export async function externalTurnoverIls(db: D1Database, from: string, to: string): Promise<number> {
   const row = await first<{ total: number | null }>(
     db,
-    'SELECT SUM(total_ils_minor) AS total FROM external_documents WHERE issue_date BETWEEN ? AND ?',
+    // Turnover is receipts and invoices. A quote, payment request or pro forma is paid by a receipt.
+    `SELECT SUM(${externalSignSql('doc_type')} * total_ils_minor) AS total FROM external_documents
+     WHERE issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('doc_type')}`,
     from,
     to,
   );

@@ -69,4 +69,18 @@ describe('incomeReport: income by month, client and currency (runs/R08-reports.m
     expect(row).toMatchObject({ typeNameEn: 'Issued in wave', externalSource: 'wave', amountMinor: 5000, amountIlsMinor: 5000 });
     expect(report.totalIlsMinor).toBeGreaterThanOrEqual(5000);
   });
+
+  it('leaves an imported pro forma or payment request out of income, its receipt is the income', async () => {
+    await run(
+      db(),
+      `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_name_text, currency,
+         amount_before_vat_minor, vat_amount_minor, total_minor, total_ils_minor, paid_status, r2_key, sha256)
+       VALUES ('sumit', 'income-pf-1', 'Pro Forma Invoice', '2026-11-15', 'Double Co', 'ILS', 7000, 0, 7000, 7000, 'paid', 'k', 'h'),
+              ('sumit', 'income-pr-1', 'דרישת תשלום', '2026-11-15', 'Double Co', 'ILS', 7000, 0, 7000, 7000, 'paid', 'k', 'h'),
+              ('sumit', 'income-ir-1', 'Invoice/Receipt', '2026-11-20', 'Double Co', 'ILS', 7000, 0, 7000, 7000, 'paid', 'k', 'h')`,
+    );
+    const report = await incomeReport(db(), '2026-11-01', '2026-11-30');
+    const rows = report.rows.filter((r) => r.clientName === 'Double Co');
+    expect(rows.map((r) => r.displayNumber)).toEqual(['income-ir-1']);
+  });
 });

@@ -16,3 +16,30 @@ export function externalKind(docType: string): ExternalKind {
   if (/invoice|חשבונית/.test(t)) return 'invoice';
   return 'receipt';
 }
+
+/**
+ * `externalKind` as a SQL expression over a doc_type column, for reports summed in SQL.
+ * LIKE ignores case for Latin letters, and Hebrew has no case.
+ */
+export function externalKindSql(col: string): string {
+  const any = (...words: string[]) => words.map((w) => `${col} LIKE '%${w}%'`).join(' OR ');
+  return `(CASE
+    WHEN ${any('pro forma', 'proforma', 'חשבון עסקה', 'payment request', 'דרישת תשלום')} THEN 'demand'
+    WHEN ${any('quot', 'הצעת מחיר')} THEN 'quote'
+    WHEN ${any('credit', 'זיכוי')} THEN 'credit'
+    WHEN ${any('receipt', 'קבלה')} THEN 'receipt'
+    WHEN ${any('invoice', 'חשבונית')} THEN 'invoice'
+    ELSE 'receipt' END)`;
+}
+
+/**
+ * Imported documents that are income: receipts, invoice/receipts, tax invoices and credits.
+ * A quote, payment request or pro forma is not income. The receipt that pays it is.
+ */
+export const externalIsIncomeSql = (col: string) => `${externalKindSql(col)} IN ('receipt', 'invoice', 'credit')`;
+
+/** Imported documents that are money received: receipts, invoice/receipts and credits (refunds). */
+export const externalIsCashSql = (col: string) => `${externalKindSql(col)} IN ('receipt', 'credit')`;
+
+/** -1 for an imported credit, which is stored with a positive total, else 1. */
+export const externalSignSql = (col: string) => `(CASE WHEN ${externalKindSql(col)} = 'credit' THEN -1 ELSE 1 END)`;

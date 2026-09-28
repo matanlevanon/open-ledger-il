@@ -3,6 +3,7 @@ import { HOME_CURRENCY, assertCurrency, convert } from '../../core/money';
 import { type OpenDemand, openDemands } from '../documents/balances';
 import { displayNumber } from '../documents/types';
 import { FxUnavailableError, rateOn } from '../fx';
+import { externalIsCashSql, externalIsIncomeSql, externalSignSql } from '../import/external-kind';
 
 /**
  * R21 aggregates for the dashboard cards and the reports list. Every figure is summed in SQL,
@@ -11,6 +12,8 @@ import { FxUnavailableError, rateOn } from '../fx';
  * Income is every final income document (receipts, invoices and their credits, which are stored
  * with negative totals, so a plain SUM nets them) plus every document uploaded from SUMIT or Wave
  * (`external_documents`), flagged `imported` so history before go-live shows and stays marked.
+ * Only imported receipts, invoices and credits count. An imported quote, payment request or pro
+ * forma is paid by a receipt, and counting both would count the same money twice.
  * Cancelled documents never count: only `status = 'final'` is read.
  * Expenses count when `new` or `filed`, the same rule as the expenses report.
  */
@@ -32,9 +35,9 @@ export const INCOME_ROWS_SQL = `
   WHERE d.status = 'final' AND dt.kind IN (${INCOME_KINDS}) AND d.date BETWEEN ? AND ?
   UNION ALL
   SELECT x.issue_date, x.client_id, c.name_en, c.name_he, x.client_name_text,
-    x.currency, x.total_minor, ${ILS('x.total_minor', 'x.currency', 'x.total_ils_minor')}, 1
+    x.currency, ${externalSignSql('x.doc_type')} * x.total_minor, ${externalSignSql('x.doc_type')} * ${ILS('x.total_minor', 'x.currency', 'x.total_ils_minor')}, 1
   FROM external_documents x LEFT JOIN clients c ON c.id = x.client_id
-  WHERE x.issue_date BETWEEN ? AND ?`;
+  WHERE x.issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('x.doc_type')}`;
 
 /** Counted expenses in a date range. Binds two parameters: from, to. */
 export const EXPENSE_ROWS_SQL = `
@@ -73,7 +76,7 @@ export interface CashFlowMonth {
   month: string;
   /** Payments received on Open Ledger IL receipts. Refunds on a credit are negative. */
   inflowIlsMinor: number;
-  /** Imported documents marked paid, counted on their issue date. */
+  /** Imported receipts (less imported credits), counted on their issue date. */
   importedInflowIlsMinor: number;
   /** Expenses, as a negative number so the bar sits below zero. */
   outflowIlsMinor: number;
@@ -89,8 +92,8 @@ export async function cashFlowByMonth(db: D1Database, from: string, to: string):
        FROM payments p JOIN documents d ON d.id = p.document_id
        WHERE d.status = 'final' AND p.paid_on BETWEEN ? AND ?
        UNION ALL
-       SELECT strftime('%Y-%m', x.issue_date), 'imported', ${ILS('x.total_minor', 'x.currency', 'x.total_ils_minor')}
-       FROM external_documents x WHERE x.paid_status = 'paid' AND x.issue_date BETWEEN ? AND ?
+       SELECT strftime('%Y-%m', x.issue_date), 'imported', ${externalSignSql('x.doc_type')} * ${ILS('x.total_minor', 'x.currency', 'x.total_ils_minor')}
+       FROM external_documents x WHERE ${externalIsCashSql('x.doc_type')} AND x.issue_date BETWEEN ? AND ?
        UNION ALL
        SELECT strftime('%Y-%m', e.document_date), 'out', ${ILS('e.amount_minor', 'e.currency', 'e.amount_ils_minor')}
        FROM expenses e WHERE e.status IN ('new', 'filed') AND e.document_date BETWEEN ? AND ?

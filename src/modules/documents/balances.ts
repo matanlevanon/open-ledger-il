@@ -197,10 +197,18 @@ interface LedgerImportedRow {
 
 /**
  * The client book. With `includeImported`, past documents filed under Import join the book in date
- * order: a receipt or invoice/receipt is charged and paid on the same line, a pro forma, payment
- * request or tax invoice is charged and, when marked paid, paid on the same line, so a paid
- * history nets to zero and an unpaid one stays open. Quotes stay out. The accountant report keeps
- * imported documents in their own list instead (reports/client-ledgers.ts), so it never passes it.
+ * order, the way a demand and its receipt book here:
+ * - A payment request, pro forma or tax invoice is charged (debit).
+ * - A receipt or invoice/receipt is paid (credit). It pays the open imported demands of the same
+ *   currency dated on or before it, oldest first, demands marked paid before those marked unpaid.
+ *   Whatever is left after that is a sale paid on the spot and is charged on the same line.
+ * - A receipt issued here for an imported demand (external_document_receipts) pays that demand, so
+ *   it is not charged again.
+ * - A demand marked paid that no imported receipt or receipt issued here paid (the receipt was
+ *   never imported, or was paid in another currency) is paid on its own line.
+ * - Quotes stay out.
+ * The accountant report keeps imported documents in their own list instead
+ * (reports/client-ledgers.ts), so it never passes `includeImported`.
  */
 export async function clientLedger(db: D1Database, clientId: number, from?: string, to?: string, includeImported = false): Promise<ClientLedger> {
   const docs = await all<LedgerDocRow>(
@@ -249,6 +257,43 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
       )
     : [];
 
+  // Receipts issued here for an imported demand. They pay it, so they are not a sale of their own.
+  const paysImported = new Map<number, string>();
+  if (includeImported) {
+    const links = await all<{ document_id: number; doc_type: string; original_number: string }>(
+      db,
+      `SELECT r.document_id, x.doc_type, x.original_number FROM external_document_receipts r
+       JOIN external_documents x ON x.id = r.external_id WHERE x.client_id = ?`,
+      clientId,
+    );
+    for (const l of links) paysImported.set(l.document_id, `${l.doc_type} ${l.original_number}`);
+  }
+
+  // Match imported receipts to the imported demands they pay, before booking in date order.
+  const importedLabel = (x: LedgerImportedRow) => `${x.doc_type} ${x.original_number}`;
+  const demandsOpen = imported
+    .filter((x) => ['demand', 'invoice'].includes(externalKind(x.doc_type)) && x.settled !== 1)
+    .map((x) => ({ x, left: x.total_minor }));
+  const receiptPays = new Map<number, { spot: number; paid: string[] }>();
+  const demandPaid = new Map<number, number>();
+  for (const r of imported) {
+    if (externalKind(r.doc_type) !== 'receipt') continue;
+    let left = r.total_minor;
+    const paid: string[] = [];
+    const candidates = demandsOpen
+      .filter((d) => d.left > 0 && d.x.currency === r.currency && d.x.issue_date <= r.issue_date)
+      .sort((a, b) => Number(b.x.paid_status === 'paid') - Number(a.x.paid_status === 'paid') || a.x.issue_date.localeCompare(b.x.issue_date) || a.x.id - b.x.id);
+    for (const d of candidates) {
+      if (left <= 0) break;
+      const amount = Math.min(left, d.left);
+      d.left -= amount;
+      left -= amount;
+      demandPaid.set(d.x.id, (demandPaid.get(d.x.id) ?? 0) + amount);
+      paid.push(importedLabel(d.x));
+    }
+    receiptPays.set(r.id, { spot: left, paid });
+  }
+
   const running: CurrencyTotals = {};
   const opening: CurrencyTotals = {};
   const entries: LedgerEntry[] = [];
@@ -261,9 +306,24 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
       next += 1;
       const kind = externalKind(x.doc_type);
       if (kind === 'quote') continue;
-      const sign = kind === 'credit' ? -1 : 1;
-      const debit = sign * x.total_minor;
-      const credit = kind === 'receipt' || kind === 'credit' || x.paid_status === 'paid' || x.settled === 1 ? debit : 0;
+      let debit: number;
+      let credit: number;
+      let description = 'Imported past document';
+      if (kind === 'receipt') {
+        const pays = receiptPays.get(x.id) ?? { spot: x.total_minor, paid: [] };
+        debit = pays.spot;
+        credit = x.total_minor;
+        if (pays.paid.length > 0) description = `${description}, pays ${pays.paid.join(', ')}`;
+      } else if (kind === 'credit') {
+        debit = -x.total_minor;
+        credit = -x.total_minor;
+      } else {
+        // A demand. Paid by a matched receipt later in the book, or by a receipt issued here.
+        debit = x.total_minor;
+        const unmatched = x.total_minor - (demandPaid.get(x.id) ?? 0);
+        credit = x.paid_status === 'paid' && x.settled !== 1 ? unmatched : 0;
+        if (credit > 0) description = `${description}, marked paid`;
+      }
       running[x.currency] = (running[x.currency] ?? 0) + debit - credit;
       const inPeriod = !from || x.issue_date >= from;
       if (!inPeriod) {
@@ -279,7 +339,7 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
         number: null,
         display_number: `${x.doc_type} / ${x.original_number}`,
         status: 'final',
-        description: `Imported from ${x.source === 'sumit' ? 'SUMIT' : x.source === 'wave' ? 'Wave' : 'another system'}`,
+        description,
         currency: x.currency,
         debit_minor: debit,
         credit_minor: credit,
@@ -304,8 +364,10 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
       }
     } else if (d.kind === 'receipt' || d.kind === 'credit' || d.kind === 'invoice_receipt' || d.kind === 'credit_invoice') {
       // A receipt paying a demand only credits. Any other receipt is a sale paid on the spot.
-      if (d.source_kind !== 'payment') debit = d.total_minor;
+      const paysLabel = paysImported.get(d.id);
+      if (d.source_kind !== 'payment' && !paysLabel) debit = d.total_minor;
       if (sourceLabel) description = `${d.name_en} for ${sourceLabel}`;
+      else if (paysLabel) description = `${d.name_en} for ${paysLabel}`;
     }
     if (!live) debit = 0;
 

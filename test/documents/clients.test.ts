@@ -320,6 +320,46 @@ describe('client ledger with imported past documents', () => {
     expect(imported.map((e: any) => e.display_number)).toEqual(['Pro Forma Invoice / 9001', 'Invoice/Receipt / 9002']);
     expect(ledger.closing.ILS).toBe(50000);
   });
+
+  it('pays an imported pro forma with the imported receipt instead of charging both', async () => {
+    const client = await makeClient();
+    for (const [n, type, date, paid] of [
+      ['9101', 'Payment Request', '2026-07-01', 'paid'],
+      ['9102', 'Invoice/Receipt', '2026-07-10', 'paid'],
+      ['9103', 'Pro Forma Invoice', '2026-08-01', 'unpaid'],
+    ] as const) {
+      await env.DB.prepare(
+        `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, currency,
+           amount_before_vat_minor, vat_amount_minor, total_minor, paid_status, r2_key, sha256)
+         VALUES ('sumit', ?, ?, ?, ?, 'Imported Co', 'ILS', 50000, 0, 50000, ?, 'k', 's')`,
+      )
+        .bind(n, type, date, client, paid)
+        .run();
+    }
+    const ledger = await ok('GET', `/clients/${client}/ledger`);
+    const rows = ledger.entries.filter((e: any) => e.kind === 'imported');
+    expect(rows.map((e: any) => [e.debit_minor, e.credit_minor])).toEqual([
+      [50000, 0],
+      [0, 50000],
+      [50000, 0],
+    ]);
+    expect(rows[1].description).toContain('pays Payment Request 9101');
+    expect(ledger.closing.ILS).toBe(50000);
+  });
+
+  it('pays off a demand marked paid on its own line when its receipt was never imported', async () => {
+    const client = await makeClient();
+    await env.DB.prepare(
+      `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, currency,
+         amount_before_vat_minor, vat_amount_minor, total_minor, paid_status, r2_key, sha256)
+       VALUES ('sumit', '9201', 'Pro Forma Invoice', '2026-07-01', ?, 'Imported Co', 'EUR', 50000, 0, 50000, 'paid', 'k', 's')`,
+    )
+      .bind(client)
+      .run();
+    const ledger = await ok('GET', `/clients/${client}/ledger`);
+    expect(ledger.entries.find((e: any) => e.kind === 'imported')).toMatchObject({ debit_minor: 50000, credit_minor: 50000 });
+    expect(ledger.closing.EUR).toBe(0);
+  });
 });
 
 describe('imported pro forma paid by a receipt issued here', () => {
@@ -337,6 +377,10 @@ describe('imported pro forma paid by a receipt issued here', () => {
 
     const receipt = await issue('400', { clientId: client, lines: [line(40000)], payments: [pay(40000)] });
     await env.DB.prepare('INSERT INTO external_document_receipts (external_id, document_id) VALUES (?, ?)').bind(externalId, receipt.document.id).run();
-    expect((await ok('GET', `/clients/${client}/ledger`)).closing.ILS).toBe(0);
+    const after = await ok('GET', `/clients/${client}/ledger`);
+    expect(after.closing.ILS).toBe(0);
+    // The receipt pays the pro forma. It is not charged again as a sale of its own.
+    const doc = after.entries.find((e: any) => e.kind === 'document' && e.document_id === receipt.document.id);
+    expect(doc.debit_minor).toBe(0);
   });
 });

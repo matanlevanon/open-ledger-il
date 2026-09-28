@@ -1,6 +1,7 @@
 import { all } from '../../core/db';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import { displayNumber } from '../documents/types';
+import { externalIsCashSql, externalKindSql, externalSignSql } from '../import/external-kind';
 import {
   AGING_BUCKETS,
   type AgingBucket,
@@ -218,7 +219,8 @@ export const REPORTS: Record<string, ReportDef> = {
           db,
           `SELECT x.client_id, c.name_en, c.name_he, x.client_name_text AS name_text, SUM(${ILS_SQL('x.total_minor', 'x.currency', 'x.total_ils_minor')}) AS ils
            FROM external_documents x LEFT JOIN clients c ON c.id = x.client_id
-           WHERE x.paid_status = 'unpaid' AND x.issue_date BETWEEN ? AND ?
+           WHERE x.paid_status = 'unpaid' AND ${externalKindSql('x.doc_type')} IN ('demand', 'invoice') AND x.issue_date BETWEEN ? AND ?
+             AND NOT EXISTS (SELECT 1 FROM external_document_receipts r JOIN documents d ON d.id = r.document_id WHERE r.external_id = x.id AND d.status = 'final')
            GROUP BY x.client_id, CASE WHEN x.client_id IS NULL THEN x.client_name_text END`,
           p.from,
           p.to,
@@ -347,7 +349,7 @@ export const REPORTS: Record<string, ReportDef> = {
           xWhere.push('x.client_id IS NULL AND x.client_name_text = ?');
           xArgs.push(f.clientName);
         }
-        if (f.method === 'imported') xWhere.push("x.paid_status = 'paid'");
+        if (f.method === 'imported') xWhere.push(externalIsCashSql('x.doc_type'));
         const ext = await all<{ id: number; issue_date: string; source: string; doc_type: string; original_number: string; name_en: string | null; name_he: string | null; name_text: string; currency: string; total_minor: number; ils: number | null }>(
           db,
           `SELECT x.id, x.issue_date, x.source, x.doc_type, x.original_number, c.name_en, c.name_he, x.client_name_text AS name_text, x.currency, x.total_minor,
@@ -410,8 +412,9 @@ export const REPORTS: Record<string, ReportDef> = {
          WHERE d.status = 'final' AND p.paid_on BETWEEN ? AND ?
          GROUP BY key, p.currency
          UNION ALL
-         SELECT 'imported', NULL, 'imported', x.currency, COUNT(*), SUM(x.total_minor), SUM(${ILS_SQL('x.total_minor', 'x.currency', 'x.total_ils_minor')})
-         FROM external_documents x WHERE x.paid_status = 'paid' AND x.issue_date BETWEEN ? AND ?
+         SELECT 'imported', NULL, 'imported', x.currency, COUNT(*), SUM(${externalSignSql('x.doc_type')} * x.total_minor),
+           SUM(${externalSignSql('x.doc_type')} * ${ILS_SQL('x.total_minor', 'x.currency', 'x.total_ils_minor')})
+         FROM external_documents x WHERE ${externalIsCashSql('x.doc_type')} AND x.issue_date BETWEEN ? AND ?
          GROUP BY x.currency`,
         p.from,
         p.to,

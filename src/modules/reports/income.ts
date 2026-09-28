@@ -1,6 +1,7 @@
 import { all } from '../../core/db';
 import { clientDisplayName } from '../clients/display';
 import { displayNumber } from '../documents/types';
+import { externalIsIncomeSql, externalSignSql } from '../import/external-kind';
 
 /**
  * Income by document date (runs/R08-reports.md: "income by month, client, currency").
@@ -53,12 +54,16 @@ interface ExternalIncomeSqlRow {
   total_ils_minor: number | null;
 }
 
-/** R17 task 7: uploaded documents count as income for their issue date, labeled by source. */
+/**
+ * R17 task 7: uploaded documents count as income for their issue date, labeled by source.
+ * Only receipts, invoices and credits. A quote, payment request or pro forma is paid by a receipt.
+ */
 async function externalIncomeDetail(db: D1Database, from: string, to: string): Promise<IncomeDetailRow[]> {
   const rows = await all<ExternalIncomeSqlRow>(
     db,
-    `SELECT id, issue_date, source, original_number, client_id, client_name_text, currency, total_minor, total_ils_minor
-     FROM external_documents WHERE issue_date BETWEEN ? AND ?
+    `SELECT id, issue_date, source, original_number, client_id, client_name_text, currency,
+       ${externalSignSql('doc_type')} * total_minor AS total_minor, ${externalSignSql('doc_type')} * total_ils_minor AS total_ils_minor
+     FROM external_documents WHERE issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('doc_type')}
      ORDER BY issue_date, id`,
     from,
     to,
