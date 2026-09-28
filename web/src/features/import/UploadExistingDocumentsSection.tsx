@@ -29,6 +29,7 @@ interface Row {
   filedId: number | null;
   error: string | null;
   busy: boolean;
+  selected: boolean;
 }
 
 function fromExtraction(filename: string, uploadId: number, extraction: ExtractedExternalDoc, extractionError: string | null): Row {
@@ -52,8 +53,12 @@ function fromExtraction(filename: string, uploadId: number, extraction: Extracte
     filedId: null,
     error: null,
     busy: false,
+    selected: false,
   };
 }
+
+/** The fields a document must have before it can be filed. */
+const canFile = (row: Row) => row.uploadId !== null && Boolean(row.originalNumber && row.issueDate && row.clientName && row.total);
 
 const input = 'w-full rounded-md border border-line bg-canvas px-2 py-1 text-sm';
 const label = 'block text-xs font-semibold text-muted';
@@ -95,6 +100,25 @@ export function UploadExistingDocumentsSection() {
     set(row.key, { clientId: created.client.id });
   }
 
+  const open = rows.filter((r) => r.filedId === null);
+  const selected = rows.filter((r) => r.selected);
+  const allSelected = open.length > 0 && open.every((r) => r.selected);
+  const toggleAll = () => setRows((rs) => rs.map((r) => (r.filedId === null ? { ...r, selected: !allSelected } : r)));
+  /** Removes rows from this list. Nothing is filed for them. */
+  const dismiss = (keys: string[]) => setRows((rs) => rs.filter((r) => !keys.includes(r.key)));
+
+  /** Files every selected row that has its required fields, one after another. The rest stay selected with a note. */
+  async function fileSelected() {
+    for (const row of selected) {
+      if (row.filedId !== null) continue;
+      if (!canFile(row)) {
+        set(row.key, { error: t('import.uploads.missingFields') });
+        continue;
+      }
+      await file(row);
+    }
+  }
+
   async function file(row: Row) {
     if (row.uploadId === null) return;
     set(row.key, { busy: true, error: null });
@@ -114,7 +138,7 @@ export function UploadExistingDocumentsSection() {
         total: row.total || '0',
         paidStatus: row.paidStatus,
       });
-      set(row.key, { filedId: document.id, busy: false });
+      set(row.key, { filedId: document.id, busy: false, selected: false });
     } catch (err) {
       set(row.key, { error: err instanceof Error ? err.message : String(err), busy: false });
     }
@@ -132,9 +156,47 @@ export function UploadExistingDocumentsSection() {
       </label>
       {uploading && <p className="text-sm text-muted">{t('import.uploads.uploading')}</p>}
 
+      {rows.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 rounded-card border border-line bg-surface p-3">
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={allSelected} disabled={open.length === 0} onChange={toggleAll} />
+            {t('import.uploads.selectAll')}
+          </label>
+          <span className="text-sm text-muted">{t('import.uploads.selectedCount', { count: selected.length })}</span>
+          <button
+            type="button"
+            className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90 disabled:opacity-60"
+            disabled={selected.length === 0 || rows.some((r) => r.busy)}
+            onClick={() => void fileSelected()}
+          >
+            {t('import.uploads.fileSelected')}
+          </button>
+          <button
+            type="button"
+            className="rounded-full border border-line px-4 py-2 text-sm hover:bg-canvas disabled:opacity-60"
+            disabled={selected.length === 0}
+            onClick={() => dismiss(selected.map((r) => r.key))}
+          >
+            {t('import.uploads.dismissSelected')}
+          </button>
+        </div>
+      )}
+
       {rows.map((row) => (
         <div key={row.key} className="rounded-card border border-line bg-canvas p-4 shadow-card">
-          <p className="text-sm font-semibold">{row.filename}</p>
+          <div className="flex items-center justify-between gap-3">
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              {row.filedId === null && (
+                <input type="checkbox" checked={row.selected} onChange={(e) => set(row.key, { selected: e.target.checked })} />
+              )}
+              {row.filename}
+            </label>
+            {row.filedId !== null && (
+              <button type="button" className="text-xs text-muted hover:underline" onClick={() => dismiss([row.key])}>
+                {t('import.uploads.dismiss')}
+              </button>
+            )}
+          </div>
           {row.extractionError && <p className="mt-1 text-xs text-danger">{t('import.uploads.extractionFailed', { message: row.extractionError })}</p>}
           {row.filedId !== null ? (
             <p className="mt-2 text-sm text-success">{t('import.uploads.filed', { id: String(row.filedId) })}</p>
@@ -213,14 +275,19 @@ export function UploadExistingDocumentsSection() {
                 </label>
               </div>
               {row.error && <p className="mt-2 text-sm text-danger">{row.error}</p>}
-              <button
-                type="button"
-                className="mt-3 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90 disabled:opacity-60"
-                disabled={row.busy || !row.originalNumber || !row.issueDate || !row.clientName || !row.total}
-                onClick={() => void file(row)}
-              >
-                {t('import.uploads.fileButton')}
-              </button>
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90 disabled:opacity-60"
+                  disabled={row.busy || !canFile(row)}
+                  onClick={() => void file(row)}
+                >
+                  {t('import.uploads.fileButton')}
+                </button>
+                <button type="button" className="rounded-full border border-line px-4 py-2 text-sm hover:bg-surface" disabled={row.busy} onClick={() => dismiss([row.key])}>
+                  {t('import.uploads.dismiss')}
+                </button>
+              </div>
             </>
           )}
         </div>
