@@ -4,7 +4,19 @@ import { usePreferences } from '../../app/preferences';
 import { type MessageKey, useT } from '../../i18n';
 import { type DocListItem, docsApi } from './api';
 import { clientName, money, totalsText } from './format';
+import { ImportedDocuments, type ImportedKind } from './ImportedDocuments';
 import { Card, ErrorNote, Loading, PageTitle, StatusChip, btnPrimary, useLoad } from './ui';
+
+/** Which imported past documents belong on a list, by the list's type codes. */
+function importedKindsFor(types: string): ImportedKind[] {
+  const codes = types.split(',');
+  const kinds: ImportedKind[] = [];
+  if (codes.some((c) => ['400', '405', '305', '320', '330'].includes(c))) kinds.push('receipt');
+  if (codes.some((c) => ['300', 'PF'].includes(c))) kinds.push('proforma');
+  if (codes.includes('QT')) kinds.push('quote');
+  if (codes.includes('PR')) kinds.push('request');
+  return kinds;
+}
 
 const TABS: { key: 'unpaid' | 'draft' | 'all'; label: MessageKey }[] = [
   { key: 'unpaid', label: 'documents.list.tabUnpaid' },
@@ -64,6 +76,11 @@ export function DocumentListPage({ title, types, newPath, newLabel, hasUnpaid = 
       </div>
       <ErrorNote error={error} />
       {!data ? !error && <Loading /> : <Rows items={data.items} />}
+      {tab === 'all' && importedKindsFor(types).length > 0 && (
+        <div className="mt-6">
+          <ImportedDocuments kinds={importedKindsFor(types)} />
+        </div>
+      )}
     </section>
   );
 }
@@ -82,10 +99,15 @@ export function DocumentTable({ clientId }: { clientId: number }) {
   const t = useT();
   const { data, error } = useLoad(() => docsApi.list({ tab: 'all', clientId }), [clientId]);
   return (
-    <Card title={t('documents.list.documentsTitle')}>
-      <ErrorNote error={error} />
-      {!data ? !error && <Loading /> : <Rows items={data.items} />}
-    </Card>
+    <>
+      <Card title={t('documents.list.documentsTitle')}>
+        <ErrorNote error={error} />
+        {!data ? !error && <Loading /> : <Rows items={data.items} />}
+      </Card>
+      <div className="mt-6">
+        <ImportedDocuments clientId={clientId} />
+      </div>
+    </>
   );
 }
 

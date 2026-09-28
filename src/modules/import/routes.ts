@@ -2,7 +2,7 @@ import type { Context } from 'hono';
 import { Hono } from 'hono';
 import { actorFrom } from '../../core/audit';
 import { requireRole } from '../../core/auth';
-import { ValidationError } from '../../core/errors';
+import { NotFoundError, ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import * as service from './service';
 import { setSeriesStartSchema, waveCustomerMappingSchema, waveInvoiceMappingSchema } from './types';
@@ -105,6 +105,18 @@ export function createImportRoutes(resolveUploadDeps: (env: AppEnv['Bindings']) 
     const deps = resolveUploadDeps(c.env);
     const document = await fileExternalDocument(c.env.DB, deps.fx, actorFrom(c), input);
     return c.json({ document }, 201);
+  });
+
+  /** The original PDF of a filed past document, shown inline. */
+  app.get('/external-documents/:id/file', async (c) => {
+    const id = Number(c.req.param('id'));
+    const row = await c.env.DB.prepare('SELECT r2_key, original_number FROM external_documents WHERE id = ?').bind(id).first<{ r2_key: string; original_number: string }>();
+    if (!row) throw new NotFoundError('Document', id);
+    const object = await c.env.FILES.get(row.r2_key);
+    if (!object) throw new NotFoundError('Document file', id);
+    return new Response(object.body, {
+      headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `inline; filename="${row.original_number.replace(/[^\w.-]/g, '_')}.pdf"` },
+    });
   });
 
   app.get('/external-documents', async (c) => {

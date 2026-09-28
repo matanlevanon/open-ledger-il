@@ -214,6 +214,7 @@ export function UploadExistingDocumentsSection() {
                 <label>
                   <span className={label}>{t('import.uploads.field.issueDate')}</span>
                   <input type="date" dir="ltr" className={input} value={row.issueDate} onChange={(e) => set(row.key, { issueDate: e.target.value })} />
+                  {row.issueDate && <span className="mt-1 block text-xs text-muted ltr-nums">{row.issueDate.split('-').reverse().join('/')}</span>}
                 </label>
                 <label className="col-span-2">
                   <span className={label}>{t('import.uploads.field.client')}</span>

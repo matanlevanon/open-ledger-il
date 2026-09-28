@@ -22,7 +22,11 @@ const INPUT_SCHEMA = {
     source: { type: ['string', 'null'], enum: ['sumit', 'wave', 'other', null], description: 'The system that issued this document, if identifiable from its layout or footer' },
     documentType: { type: ['string', 'null'], description: 'The document type printed on it, for example "Tax invoice" or "Receipt"' },
     originalNumber: { type: ['string', 'null'], description: 'The document number as printed in the source system' },
-    issueDate: { type: ['string', 'null'], description: 'The document date as YYYY-MM-DD' },
+    issueDate: {
+      type: ['string', 'null'],
+      description:
+        'The document date as YYYY-MM-DD. Israeli documents print dates day first (DD/MM/YYYY): 05/08/2026 is 5 August 2026, so return 2026-08-05.',
+    },
     clientName: { type: ['string', 'null'], description: "The client's name as printed on the document" },
     clientTaxId: { type: ['string', 'null'], description: "The client's company or VAT number, if printed" },
     currency: { type: ['string', 'null'], description: 'ISO currency code, for example ILS, USD, EUR, GBP' },
