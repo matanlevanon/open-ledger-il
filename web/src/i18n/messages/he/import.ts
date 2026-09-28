@@ -42,6 +42,8 @@ export const importFeature: Record<keyof typeof en, string> = {
   'import.waveCustomers.field.email': 'דוא"ל',
   'import.waveCustomers.field.phone': 'טלפון',
   'import.waveCustomers.field.addressEn': 'כתובת',
+  'import.waveCustomers.field.city': 'עיר',
+  'import.waveCustomers.field.postalCode': 'מיקוד',
   'import.waveCustomers.field.notes': 'הערות',
 
 

@@ -45,6 +45,8 @@ export const importFeature = {
   'import.waveCustomers.field.email': 'Email',
   'import.waveCustomers.field.phone': 'Phone',
   'import.waveCustomers.field.addressEn': 'Address',
+  'import.waveCustomers.field.city': 'City',
+  'import.waveCustomers.field.postalCode': 'Zip code',
   'import.waveCustomers.field.notes': 'Notes',
 
 

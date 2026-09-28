@@ -312,6 +312,16 @@ describe('renderDocument: payment instructions', () => {
   });
 });
 
+/** Client city and zip code print under the street address, the city in the document's language. */
+describe('renderDocument: client city and zip', () => {
+  it('prints the English city on an English copy and the Hebrew city on a Hebrew one', () => {
+    const doc = sampleRenderDocument({ status: 'final' });
+    const withCity = { ...doc, client: { ...doc.client!, cityEn: 'Tel Aviv', cityHe: 'תל אביב', postalCode: '6100000' } };
+    expect(renderDocument(withCity, 'client')).toContain('Tel Aviv 6100000');
+    expect(renderDocument({ ...withCity, langVariant: 'bilingual' }, 'client')).toContain('תל אביב 6100000');
+  });
+});
+
 /** R16 task 8: the visible signature image, above a signer line, on every finalized document. R22: only when uploaded. */
 describe('renderDocument: signature image', () => {
   const signed = (overrides: Parameters<typeof sampleRenderDocument>[0]) => {

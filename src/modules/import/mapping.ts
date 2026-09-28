@@ -10,7 +10,9 @@ const CUSTOMER_CANDIDATES: Record<WaveCustomerField, string[]> = {
   currency: ['currency', 'default currency'],
   email: ['email', 'email address'],
   phone: ['phone', 'phone number', 'mobile'],
-  addressEn: ['address', 'billing address', 'street address'],
+  addressEn: ['address', 'billing address', 'street address', 'כתובת'],
+  city: ['city', 'town', 'עיר', 'ישוב'],
+  postalCode: ['zip', 'zip code', 'postal code', 'postcode', 'מיקוד'],
   notes: ['notes', 'memo', 'comments'],
 };
 

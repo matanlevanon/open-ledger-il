@@ -23,6 +23,9 @@ const clientFields = z.object({
   phone: text(40),
   addressEn: text(500),
   addressHe: text(500),
+  cityEn: text(100),
+  cityHe: text(100),
+  postalCode: text(20),
   notes: text(5000),
   /** Prefills a new quote or payment request for this client (R16 task 7); falls back to the business default. */
   paymentInstructions: text(5000),

@@ -112,6 +112,9 @@ function clientHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>):
   if (!doc.client) return '';
   const name = localizedName(doc.client.nameEn, doc.client.nameHe, lang);
   const address = localizedAddress(doc.client.addressEn, doc.client.addressHe, lang);
+  // City and zip on their own line under the street address, the city in the document's language.
+  const city = localizedAddress(doc.client.cityEn ?? null, doc.client.cityHe ?? null, lang);
+  const cityLine = [city, doc.client.postalCode ? esc(doc.client.postalCode) : null].filter(Boolean).join(' ');
   const idLine = doc.client.vatNumber
     ? `${esc(t.businessId)}: ${esc(doc.client.vatNumber)}`
     : doc.client.companyId
@@ -122,6 +125,7 @@ function clientHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>):
   <div class="block-title">${esc(t.to)}:</div>
   <div class="client-name">${name}</div>
   ${address ? `<div class="muted">${address}</div>` : ''}
+  ${cityLine ? `<div class="muted">${cityLine}</div>` : ''}
   ${idLine ? `<div class="muted">${idLine}</div>` : ''}
 </div>`;
 }
@@ -318,6 +322,8 @@ function bilingualClientHtml(doc: RenderDocument): string {
   if (!doc.client) return '';
   const name = bilingualName(doc.client.nameEn, doc.client.nameHe);
   const address = doc.client.addressEn ? esc(doc.client.addressEn) : null;
+  const cityValue = doc.client.cityEn ?? doc.client.cityHe ?? null;
+  const cityLine = [cityValue ? esc(cityValue) : null, doc.client.postalCode ? esc(doc.client.postalCode) : null].filter(Boolean).join(' ');
   const idLine = doc.client.vatNumber
     ? `${bl('businessId')}: ${esc(doc.client.vatNumber)}`
     : doc.client.companyId
@@ -328,6 +334,7 @@ function bilingualClientHtml(doc: RenderDocument): string {
   <div class="block-title">${bl('to')}:</div>
   <div class="client-name">${name}</div>
   ${address ? `<div class="muted">${address}</div>` : ''}
+  ${cityLine ? `<div class="muted">${cityLine}</div>` : ''}
   ${idLine ? `<div class="muted">${idLine}</div>` : ''}
 </div>`;
 }

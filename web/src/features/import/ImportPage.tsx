@@ -51,6 +51,8 @@ export function ImportPage() {
               { key: 'email', label: t('import.waveCustomers.field.email') },
               { key: 'phone', label: t('import.waveCustomers.field.phone') },
               { key: 'addressEn', label: t('import.waveCustomers.field.addressEn') },
+              { key: 'city', label: t('import.waveCustomers.field.city') },
+              { key: 'postalCode', label: t('import.waveCustomers.field.postalCode') },
               { key: 'notes', label: t('import.waveCustomers.field.notes') },
             ]}
             preview={previewWaveCustomers}

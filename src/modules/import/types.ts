@@ -49,6 +49,8 @@ export const WAVE_CUSTOMER_FIELDS = [
   'email',
   'phone',
   'addressEn',
+  'city',
+  'postalCode',
   'notes',
 ] as const;
 export type WaveCustomerField = (typeof WAVE_CUSTOMER_FIELDS)[number];
