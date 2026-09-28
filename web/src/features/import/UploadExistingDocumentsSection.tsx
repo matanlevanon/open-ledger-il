@@ -9,6 +9,31 @@ import { type ExtractedExternalDoc, fileExternalDocument, uploadExternalDocument
 const SOURCES = ['sumit', 'wave', 'other'] as const;
 const PAID_STATUSES = ['paid', 'unpaid', 'unknown'] as const;
 
+/** The types a past document can be filed as, stored by their English name. */
+const DOC_TYPES = [
+  { value: 'Quote', en: 'Quote', he: 'הצעת מחיר' },
+  { value: 'Payment Request', en: 'Payment request', he: 'דרישת תשלום' },
+  { value: 'Pro Forma Invoice', en: 'Pro forma invoice', he: 'חשבון עסקה' },
+  { value: 'Tax Invoice', en: 'Tax invoice', he: 'חשבונית מס' },
+  { value: 'Invoice/Receipt', en: 'Invoice/receipt', he: 'חשבונית מס/קבלה' },
+  { value: 'Receipt', en: 'Receipt', he: 'קבלה' },
+  { value: 'Credit', en: 'Credit', he: 'זיכוי' },
+] as const;
+
+/** Maps the type read from the PDF (English or Hebrew) to one of DOC_TYPES, or '' to pick by hand. */
+function docTypeFromExtraction(text: string | null): string {
+  const t = (text ?? '').toLowerCase();
+  if (!t) return '';
+  if (/pro ?forma|חשבון עסקה/.test(t)) return 'Pro Forma Invoice';
+  if (/payment request|דרישת תשלום/.test(t)) return 'Payment Request';
+  if (/quot|הצעת מחיר/.test(t)) return 'Quote';
+  if (/credit|זיכוי/.test(t)) return 'Credit';
+  if (/(invoice|חשבון|חשבונית).*(receipt|קבלה)/.test(t)) return 'Invoice/Receipt';
+  if (/receipt|קבלה/.test(t)) return 'Receipt';
+  if (/invoice|חשבונית/.test(t)) return 'Tax Invoice';
+  return '';
+}
+
 interface Row {
   key: string;
   filename: string;
@@ -39,7 +64,7 @@ function fromExtraction(filename: string, uploadId: number, extraction: Extracte
     uploadId,
     extractionError,
     source: extraction.source ?? 'other',
-    documentType: extraction.documentType ?? '',
+    documentType: docTypeFromExtraction(extraction.documentType),
     originalNumber: extraction.originalNumber ?? '',
     issueDate: extraction.issueDate ?? '',
     clientId: null,
@@ -58,7 +83,7 @@ function fromExtraction(filename: string, uploadId: number, extraction: Extracte
 }
 
 /** The fields a document must have before it can be filed. */
-const canFile = (row: Row) => row.uploadId !== null && Boolean(row.originalNumber && row.issueDate && row.clientName && row.total);
+const canFile = (row: Row) => row.uploadId !== null && Boolean(row.documentType && row.originalNumber && row.issueDate && row.clientName && row.total);
 
 const input = 'w-full rounded-md border border-line bg-canvas px-2 py-1 text-sm';
 const label = 'block text-xs font-semibold text-muted';
@@ -205,7 +230,14 @@ export function UploadExistingDocumentsSection() {
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <label>
                   <span className={label}>{t('import.uploads.field.documentType')}</span>
-                  <input className={input} value={row.documentType} onChange={(e) => set(row.key, { documentType: e.target.value })} />
+                  <select className={input} value={row.documentType} onChange={(e) => set(row.key, { documentType: e.target.value })}>
+                    <option value="">{t('import.uploads.pickType')}</option>
+                    {DOC_TYPES.map((d) => (
+                      <option key={d.value} value={d.value}>
+                        {locale === 'he' ? d.he : d.en}
+                      </option>
+                    ))}
+                  </select>
                 </label>
                 <label>
                   <span className={label}>{t('import.uploads.field.originalNumber')}</span>

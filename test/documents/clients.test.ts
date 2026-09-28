@@ -298,3 +298,26 @@ describe('client city and zip code', () => {
     expect(edited.client.city).toBe('תל אביב');
   });
 });
+
+describe('client ledger with imported past documents', () => {
+  it('books an unpaid imported pro forma as open and a paid imported receipt as settled', async () => {
+    const client = await makeClient();
+    for (const [n, type, paid, total] of [
+      ['9001', 'Pro Forma Invoice', 'unpaid', 50000],
+      ['9002', 'Invoice/Receipt', 'paid', 30000],
+      ['9003', 'Quote', 'unknown', 99900],
+    ] as const) {
+      await env.DB.prepare(
+        `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, currency,
+           amount_before_vat_minor, vat_amount_minor, total_minor, paid_status, r2_key, sha256)
+         VALUES ('sumit', ?, ?, '2026-08-01', ?, 'Imported Co', 'ILS', ?, 0, ?, ?, 'k', 's')`,
+      )
+        .bind(n, type, client, total, total, paid)
+        .run();
+    }
+    const ledger = await ok('GET', `/clients/${client}/ledger`);
+    const imported = ledger.entries.filter((e: any) => e.kind === 'imported');
+    expect(imported.map((e: any) => e.display_number)).toEqual(['Pro Forma Invoice / 9001', 'Invoice/Receipt / 9002']);
+    expect(ledger.closing.ILS).toBe(50000);
+  });
+});

@@ -74,7 +74,7 @@ export interface ConsentFormInput {
 }
 
 export interface LedgerEntry {
-  kind: 'document' | 'payment';
+  kind: 'document' | 'payment' | 'imported';
   date: string;
   document_id: number;
   type: string;

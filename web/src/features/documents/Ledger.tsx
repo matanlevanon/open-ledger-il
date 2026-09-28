@@ -68,6 +68,10 @@ export function LedgerView({ clientId }: { clientId: number }) {
                         <Link to={`/income/documents/${e.document_id}`} className="text-brand hover:underline">
                           {e.display_number}
                         </Link>
+                      ) : e.kind === 'imported' ? (
+                        <a href={`/api/import/external-documents/${e.document_id}/file`} target="_blank" rel="noreferrer" className="text-brand hover:underline" dir="auto">
+                          {e.display_number}
+                        </a>
                       ) : null}
                     </td>
                     <td className="px-3 py-2">

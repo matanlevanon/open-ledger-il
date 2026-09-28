@@ -101,7 +101,7 @@ export function createClientsModule(options: ClientsModuleOptions = {}): ModuleD
     const client = await getClient(c.env.DB, id);
     const q = ledgerQuery.parse(c.req.query());
     if (q.from && q.to && q.from > q.to) throw new ValidationError('The start date is after the end date.');
-    const ledger = await clientLedger(c.env.DB, id, q.from, q.to);
+    const ledger = await clientLedger(c.env.DB, id, q.from, q.to, true);
     return c.json({ client: { id: client.id, name_en: client.name_en, name_he: client.name_he }, ...ledger });
   });
 

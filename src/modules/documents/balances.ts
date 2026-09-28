@@ -1,3 +1,4 @@
+import { externalKind } from '../import/external-kind';
 import { all } from '../../core/db';
 import { displayNumber } from './types';
 
@@ -117,7 +118,7 @@ export async function clientBalances(db: D1Database): Promise<Map<number, Curren
 // ---------------------------------------------------------------------------
 
 export interface LedgerEntry {
-  kind: 'document' | 'payment';
+  kind: 'document' | 'payment' | 'imported';
   date: string;
   document_id: number;
   type: string;
@@ -182,7 +183,25 @@ interface LedgerPaymentRow {
  * Debit is what the client was charged, credit is what the client paid.
  * Cancelled documents stay in the book with zero effect. Quotes are not bookkeeping and stay out.
  */
-export async function clientLedger(db: D1Database, clientId: number, from?: string, to?: string): Promise<ClientLedger> {
+interface LedgerImportedRow {
+  id: number;
+  source: string;
+  doc_type: string;
+  original_number: string;
+  issue_date: string;
+  currency: string;
+  total_minor: number;
+  paid_status: string;
+}
+
+/**
+ * The client book. With `includeImported`, past documents filed under Import join the book in date
+ * order: a receipt or invoice/receipt is charged and paid on the same line, a pro forma, payment
+ * request or tax invoice is charged and, when marked paid, paid on the same line, so a paid
+ * history nets to zero and an unpaid one stays open. Quotes stay out. The accountant report keeps
+ * imported documents in their own list instead (reports/client-ledgers.ts), so it never passes it.
+ */
+export async function clientLedger(db: D1Database, clientId: number, from?: string, to?: string, includeImported = false): Promise<ClientLedger> {
   const docs = await all<LedgerDocRow>(
     db,
     `SELECT d.id, d.type, d.number, d.status, d.date, d.currency, d.total_minor, dt.kind, dt.name_en, f.seq,
@@ -216,11 +235,58 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
     paymentsByDoc.set(p.document_id, list);
   }
 
+  const imported = includeImported
+    ? await all<LedgerImportedRow>(
+        db,
+        `SELECT id, source, doc_type, original_number, issue_date, currency, total_minor, paid_status
+         FROM external_documents WHERE client_id = ? AND (? IS NULL OR issue_date <= ?) ORDER BY issue_date, id`,
+        clientId,
+        to ?? null,
+        to ?? null,
+      )
+    : [];
+
   const running: CurrencyTotals = {};
   const opening: CurrencyTotals = {};
   const entries: LedgerEntry[] = [];
 
+  let next = 0;
+  /** Books every imported document dated on or before `date` (all of them when `date` is null). */
+  const bookImported = (date: string | null) => {
+    while (next < imported.length && (date === null || imported[next]!.issue_date <= date)) {
+      const x = imported[next]!;
+      next += 1;
+      const kind = externalKind(x.doc_type);
+      if (kind === 'quote') continue;
+      const sign = kind === 'credit' ? -1 : 1;
+      const debit = sign * x.total_minor;
+      const credit = kind === 'receipt' || kind === 'credit' || x.paid_status === 'paid' ? debit : 0;
+      running[x.currency] = (running[x.currency] ?? 0) + debit - credit;
+      const inPeriod = !from || x.issue_date >= from;
+      if (!inPeriod) {
+        opening[x.currency] = running[x.currency]!;
+        continue;
+      }
+      entries.push({
+        kind: 'imported',
+        date: x.issue_date,
+        document_id: x.id,
+        type: 'imported',
+        type_name_en: x.doc_type,
+        number: null,
+        display_number: `${x.doc_type} / ${x.original_number}`,
+        status: 'final',
+        description: `Imported from ${x.source === 'sumit' ? 'SUMIT' : x.source === 'wave' ? 'Wave' : 'another system'}`,
+        currency: x.currency,
+        debit_minor: debit,
+        credit_minor: credit,
+        balance_minor: running[x.currency] ?? 0,
+      });
+    }
+  };
+
   for (const d of docs) {
+    bookImported(d.date);
     const live = d.status !== 'cancelled';
     let debit = 0;
     let description = d.name_en;
@@ -292,6 +358,8 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
       }
     }
   }
+
+  bookImported(null);
 
   return { client_id: clientId, from: from ?? null, to: to ?? null, opening, closing: { ...running }, entries };
 }
