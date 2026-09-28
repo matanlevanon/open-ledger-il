@@ -5,6 +5,7 @@ import { type Client, clientsApi } from '../documents/api';
 import { CURRENCIES, clientName } from '../documents/format';
 import { type ExtractedExternalDoc, fileExternalDocument, uploadExternalDocument } from './api';
 
+/** Kept on the record for the server's schema. The screen no longer asks which system issued it. */
 const SOURCES = ['sumit', 'wave', 'other'] as const;
 const PAID_STATUSES = ['paid', 'unpaid', 'unknown'] as const;
 
@@ -140,16 +141,6 @@ export function UploadExistingDocumentsSection() {
           ) : (
             <>
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <label>
-                  <span className={label}>{t('import.uploads.field.source')}</span>
-                  <select className={input} value={row.source} onChange={(e) => set(row.key, { source: e.target.value as Row['source'] })}>
-                    {SOURCES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </label>
                 <label>
                   <span className={label}>{t('import.uploads.field.documentType')}</span>
                   <input className={input} value={row.documentType} onChange={(e) => set(row.key, { documentType: e.target.value })} />

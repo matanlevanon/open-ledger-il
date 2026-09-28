@@ -1,17 +1,13 @@
 import { useState } from 'react';
 import { type MessageKey, useT } from '../../i18n';
 import { CsvImportSection } from './CsvImportSection';
-import { SeriesStartSection } from './SeriesStartSection';
-import { SumitImportSection } from './SumitImportSection';
 import { UploadExistingDocumentsSection } from './UploadExistingDocumentsSection';
-import { commitWaveCustomers, commitWaveInvoices, previewWaveCustomers, previewWaveInvoices } from './api';
+import { commitWaveCustomers, previewWaveCustomers } from './api';
 
-const TABS: readonly { key: 'customers' | 'invoices' | 'sumit' | 'uploads' | 'numbering'; label: MessageKey }[] = [
+/** Two sources only: a customer CSV from any system, and PDFs of documents issued before the ledger. */
+const TABS: readonly { key: 'customers' | 'uploads'; label: MessageKey }[] = [
   { key: 'customers', label: 'import.tab.customers' },
-  { key: 'invoices', label: 'import.tab.invoices' },
-  { key: 'sumit', label: 'import.tab.sumit' },
   { key: 'uploads', label: 'import.tab.uploads' },
-  { key: 'numbering', label: 'import.tab.numbering' },
 ];
 
 export function ImportPage() {
@@ -61,25 +57,7 @@ export function ImportPage() {
             commit={commitWaveCustomers}
           />
         )}
-        {tab === 'invoices' && (
-          <CsvImportSection
-            title={t('import.waveInvoices.title')}
-            hint={t('import.waveInvoices.hint')}
-            fields={[
-              { key: 'externalId', label: t('import.waveInvoices.field.externalId'), required: true },
-              { key: 'clientName', label: t('import.waveInvoices.field.clientName') },
-              { key: 'docDate', label: t('import.waveInvoices.field.docDate') },
-              { key: 'currency', label: t('import.waveInvoices.field.currency') },
-              { key: 'amount', label: t('import.waveInvoices.field.amount') },
-              { key: 'status', label: t('import.waveInvoices.field.status') },
-            ]}
-            preview={previewWaveInvoices}
-            commit={commitWaveInvoices}
-          />
-        )}
-        {tab === 'sumit' && <SumitImportSection />}
         {tab === 'uploads' && <UploadExistingDocumentsSection />}
-        {tab === 'numbering' && <SeriesStartSection />}
       </div>
     </section>
   );

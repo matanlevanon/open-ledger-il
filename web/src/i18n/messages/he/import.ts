@@ -3,16 +3,13 @@ import type { importFeature as en } from '../en/import';
 export const importFeature: Record<keyof typeof en, string> = {
   // ImportPage.tsx
   'import.page.title': 'ייבוא',
-  'import.page.subtitle': 'העברה חד-פעמית מ-Wave ומ-SUMIT. ייבוא לקוחות והיסטוריה ניתן לבצע כל מספר פעמים בלי לשכפל שורות.',
+  'import.page.subtitle': 'ייבוא הלקוחות הקיימים והחשבוניות הקודמות שלך ל-Open Ledger IL. ייבוא חוזר לא יוצר כפילויות.',
   'import.page.tabsAriaLabel': 'מקור ייבוא',
-  'import.tab.customers': 'לקוחות Wave',
-  'import.tab.invoices': 'חשבוניות Wave',
-  'import.tab.sumit': 'קובץ אחיד SUMIT',
-  'import.tab.uploads': 'העלאת מסמכים קיימים',
-  'import.tab.numbering': 'מספרי סדרה',
+  'import.tab.customers': 'לקוחות קיימים',
+  'import.tab.uploads': 'חשבוניות קודמות',
 
-  'import.uploads.title': 'העלאת מסמכים קיימים',
-  'import.uploads.hint': 'מסמך שהונפק ב-SUMIT, Wave או מערכת אחרת לפני Open Ledger IL. הוא לעולם לא מקבל מספר בסדרה של Open Ledger IL עצמה.',
+  'import.uploads.title': 'חשבוניות קודמות',
+  'import.uploads.hint': 'מסמך שהנפקת במערכת אחרת לפני Open Ledger IL. הוא לעולם לא מקבל מספר בסדרה של Open Ledger IL.',
   'import.uploads.chooseFiles': 'בחר קובצי PDF',
   'import.uploads.uploading': 'מעלה',
   'import.uploads.extractionFailed': 'קריאה אוטומטית נכשלה ({message}). מלא את השדות ידנית.',
@@ -33,9 +30,9 @@ export const importFeature: Record<keyof typeof en, string> = {
   'import.uploads.createClient': 'צור לקוח חדש בשם זה',
   'import.uploads.fileButton': 'תייק מסמך זה',
 
-  // Wave customers tab (fields passed to CsvImportSection)
-  'import.waveCustomers.title': 'לקוחות Wave',
-  'import.waveCustomers.hint': 'ייצא את הלקוחות כקובץ CSV מ-Wave (לקוחות > ייבוא או ייצוא), ולאחר מכן התאם את העמודות למטה.',
+  // Existing customers tab (fields passed to CsvImportSection)
+  'import.waveCustomers.title': 'לקוחות קיימים',
+  'import.waveCustomers.hint': 'ייצא את הלקוחות שלך כקובץ CSV מכל מערכת, ולאחר מכן התאם את העמודות למטה.',
   'import.waveCustomers.field.nameEn': 'שם הלקוח',
   'import.waveCustomers.field.nameHe': 'שם בעברית',
   'import.waveCustomers.field.companyId': 'ח"פ / מספר עוסק',
@@ -47,16 +44,6 @@ export const importFeature: Record<keyof typeof en, string> = {
   'import.waveCustomers.field.addressEn': 'כתובת',
   'import.waveCustomers.field.notes': 'הערות',
 
-  // Wave invoices tab (fields passed to CsvImportSection)
-  'import.waveInvoices.title': 'חשבוניות Wave',
-  'import.waveInvoices.hint':
-    'ייצא את היסטוריית החשבוניות כקובץ CSV מ-Wave. אלה הופכות לשורות היסטוריה לקריאה בלבד, מחוץ לסדרות הממוספרות של Open Ledger IL.',
-  'import.waveInvoices.field.externalId': 'מספר חשבונית',
-  'import.waveInvoices.field.clientName': 'שם הלקוח',
-  'import.waveInvoices.field.docDate': 'תאריך החשבונית',
-  'import.waveInvoices.field.currency': 'מטבע',
-  'import.waveInvoices.field.amount': 'סכום',
-  'import.waveInvoices.field.status': 'סטטוס',
 
   // CsvImportSection.tsx
   'import.csv.chooseFile': 'בחירת קובץ CSV',
@@ -71,34 +58,5 @@ export const importFeature: Record<keyof typeof en, string> = {
   'import.csv.rowError': 'שורה {row}: {message}',
   'import.csv.andMore': 'ועוד {count}...',
 
-  // SumitImportSection.tsx
-  'import.sumit.title': 'ייצוא קובץ אחיד מ-SUMIT',
-  'import.sumit.hint':
-    'העלה את קובץ ה-ZIP עם INI.TXT ו-BKMVDATA.TXT. רשומות C100, D110 ו-D120 נשמרות כשורות היסטוריה. מבנה השדות בתוך כל רשומה עדיין לא פוענח (אין מפרט קובץ אחיד זמין), כך שהשורה הגולמית נשמרת להמשך.',
-  'import.sumit.chooseFile': 'בחירת קובץ ZIP',
-  'import.sumit.readError': 'קריאת ה-ZIP נכשלה. עליו להכיל את INI.TXT ואת BKMVDATA.TXT.',
-  'import.sumit.recordsFound': '{count} רשומות נמצאו:',
-  'import.sumit.recordCount': '{type}: {count}',
-  'import.sumit.importing': 'מייבא...',
-  'import.sumit.importButton': 'ייבוא',
-  'import.sumit.importFailed': 'הייבוא נכשל.',
-  'import.sumit.importedToast': 'יובאו {created} רשומות ({skipped} יובאו כבר בעבר).',
-  'import.sumit.summaryLine': '{created} רשומות יובאו, {skipped} יובאו כבר בעבר.',
 
-  // SeriesStartSection.tsx
-  'import.series.title': 'מספרי התחלה לסדרות',
-  'import.series.hint':
-    'המשך כל סדרה מהמקום שבו SUMIT הפסיק. אתר את המספר האחרון שהונפק ב-SUMIT לכל סוג מסמך, ואז אשר אותו כאן. סדרה שכבר הונפק בה מסמך לא ניתנת לשינוי.',
-  'import.series.colType': 'סוג',
-  'import.series.colNextNumberNow': 'המספר הבא כעת',
-  'import.series.colStatus': 'סטטוס',
-  'import.series.colSetNextNumberTo': 'הגדר את המספר הבא ל',
-  'import.series.statusLocked': 'בשימוש, נעול',
-  'import.series.statusNotStarted': 'טרם הופעל',
-  'import.series.confirm': 'אישור',
-  'import.series.invalidNumber': 'הזן מספר שלם 1 ומעלה.',
-  'import.series.confirmDialog': 'להגדיר את המספר הבא של {id} ל-{value}? לא ניתן לבטל זאת לאחר הנפקת מסמך.',
-  'import.series.setReason': 'הוגדר לפי המספר האחרון מ-SUMIT, {date}',
-  'import.series.setSuccess': '{id} יתחיל מהמספר {value}.',
-  'import.series.setError': 'הגדרת מספר ההתחלה עבור {id} נכשלה.',
 };
