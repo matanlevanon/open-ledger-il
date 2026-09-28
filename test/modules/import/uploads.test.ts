@@ -104,6 +104,20 @@ describe('import: upload existing documents (R17 task 7)', () => {
     expect(body.error.code).toBe('duplicate_external_document');
   });
 
+  it('files a quote and a payment request with the same number as two documents', async () => {
+    const number = uniqueNumber();
+    const app = buildAppWithUpload({ 'quote.pdf': extracted(number), 'request.pdf': extracted(number) });
+    const quote = await call(app, '/uploads', { method: 'POST', body: uploadForm(pdfBytes(), 'quote.pdf', 'application/pdf') });
+    const { uploadId: quoteId } = (await quote.json()) as UploadResult;
+    const filedQuote = await call(app, '/uploads/file', json({ ...fileBody(quoteId, number), documentType: 'Quote' }));
+    expect(filedQuote.status).toBe(201);
+
+    const request = await call(app, '/uploads', { method: 'POST', body: uploadForm(pdfBytes(), 'request.pdf', 'application/pdf') });
+    const { uploadId: requestId } = (await request.json()) as UploadResult;
+    const filedRequest = await call(app, '/uploads/file', json({ ...fileBody(requestId, number), documentType: 'Payment Request' }));
+    expect(filedRequest.status).toBe(201);
+  });
+
   it('lists filed documents, optionally filtered by client', async () => {
     const number = uniqueNumber();
     const app = buildAppWithUpload({ 'invoice.pdf': extracted(number) });

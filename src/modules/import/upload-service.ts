@@ -61,9 +61,19 @@ async function getUpload(db: D1Database, id: number): Promise<ExternalDocumentUp
   return row;
 }
 
-/** True when (source, originalNumber) is already filed: the task's duplicate check. */
-export async function findDuplicate(db: D1Database, source: string, originalNumber: string): Promise<ExternalDocumentRow | null> {
-  return first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE source = ? AND original_number = ?', source, originalNumber);
+/**
+ * The filed document with the same source, type and number, if any. Types are compared without
+ * case or surrounding spaces, so "Payment Request" and "payment request " are the same type, while
+ * quote 1000 and payment request 1000 are two different documents.
+ */
+export async function findDuplicate(db: D1Database, source: string, documentType: string, originalNumber: string): Promise<ExternalDocumentRow | null> {
+  return first<ExternalDocumentRow>(
+    db,
+    'SELECT * FROM external_documents WHERE source = ? AND lower(trim(doc_type)) = lower(trim(?)) AND original_number = ?',
+    source,
+    documentType,
+    originalNumber,
+  );
 }
 
 /**
@@ -80,8 +90,8 @@ export async function fileExternalDocument(
   const upload = await getUpload(db, input.uploadId);
   if (upload.filed_document_id !== null) conflict('already_filed', 'This upload was already filed.');
 
-  const existing = await findDuplicate(db, input.source, input.originalNumber);
-  if (existing) conflict('duplicate_external_document', `A ${input.source} document numbered ${input.originalNumber} is already filed.`);
+  const existing = await findDuplicate(db, input.source, input.documentType, input.originalNumber);
+  if (existing) conflict('duplicate_external_document', `${input.documentType} ${input.originalNumber} is already filed.`);
 
   const currency = assertCurrency(input.currency);
   const amountBeforeVatMinor = parseMajor(input.amountBeforeVat, currency);
