@@ -48,6 +48,8 @@ const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/drive.readonly https://ww
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const API_ROOT = 'https://www.googleapis.com/drive/v3';
 const SHEETS_ROOT = 'https://sheets.googleapis.com/v4/spreadsheets';
+/** Lets a list see a folder that sits in a shared drive, not only in My Drive. */
+const SHARED_DRIVES = '&supportsAllDrives=true&includeItemsFromAllDrives=true';
 
 interface ServiceAccountKey {
   client_email: string;
@@ -110,19 +112,30 @@ export class GoogleDriveSource implements DriveSource {
     return token;
   }
 
+  /**
+   * One Google API call. Google answers 500, 502, 503 and 429 now and then for no reason on the
+   * caller's side and asks clients to retry with backoff, so a call gets three tries.
+   */
   private async api<T>(path: string, root = API_ROOT): Promise<T> {
     const token = await this.token();
-    const res = await fetch(`${root}${path}`, { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) throw new Error(`Google API error: ${res.status} ${await res.text()}`);
-    return res.json() as Promise<T>;
+    const url = `${root}${path}`;
+    for (let attempt = 1; ; attempt += 1) {
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.ok) return res.json() as Promise<T>;
+      const retryable = res.status === 429 || res.status >= 500;
+      if (!retryable || attempt >= 3) throw new Error(`Google API error: ${res.status} ${await res.text()}`);
+      await res.body?.cancel();
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+    }
   }
 
   async findIndexSheet(rootFolderId: string, _yearMonth: string, title: string): Promise<string | null> {
     const q = encodeURIComponent(
       `'${escapeDriveQueryLiteral(rootFolderId)}' in parents and name = '${escapeDriveQueryLiteral(title)}' and mimeType = '${SHEET_MIME}' and trashed = false`,
     );
-    const body = await this.api<{ files: { id: string }[] }>(`/files?q=${q}&orderBy=modifiedTime desc&fields=files(id)`);
-    return body.files[0]?.id ?? null;
+    // Newest first, sorted here: Drive has answered 500 to this query with orderBy set.
+    const body = await this.api<{ files: { id: string; modifiedTime: string }[] }>(`/files?q=${q}&fields=files(id,modifiedTime)${SHARED_DRIVES}`);
+    return [...body.files].sort((a, b) => b.modifiedTime.localeCompare(a.modifiedTime))[0]?.id ?? null;
   }
 
   async readSheet(spreadsheetId: string): Promise<string[][]> {
@@ -140,7 +153,7 @@ export class GoogleDriveSource implements DriveSource {
     const q = encodeURIComponent(
       `'${escapeDriveQueryLiteral(rootFolderId)}' in parents and name = '${escapeDriveQueryLiteral(name)}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
     );
-    const body = await this.api<{ files: { id: string }[] }>(`/files?q=${q}&fields=files(id)`);
+    const body = await this.api<{ files: { id: string }[] }>(`/files?q=${q}&fields=files(id)${SHARED_DRIVES}`);
     return body.files[0]?.id ?? null;
   }
 
@@ -150,7 +163,7 @@ export class GoogleDriveSource implements DriveSource {
     let pageToken = '';
     do {
       const body = await this.api<{ files: DriveFile[]; nextPageToken?: string }>(
-        `/files?q=${q}&orderBy=modifiedTime desc&pageSize=200&fields=nextPageToken,files(id,name,mimeType,modifiedTime)${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`,
+        `/files?q=${q}&orderBy=modifiedTime desc&pageSize=200&fields=nextPageToken,files(id,name,mimeType,modifiedTime)${SHARED_DRIVES}${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`,
       );
       files.push(...body.files);
       pageToken = body.nextPageToken ?? '';
@@ -160,7 +173,7 @@ export class GoogleDriveSource implements DriveSource {
 
   async downloadFile(fileId: string): Promise<ArrayBuffer> {
     const token = await this.token();
-    const res = await fetch(`${API_ROOT}/files/${fileId}?alt=media`, { headers: { Authorization: `Bearer ${token}` } });
+    const res = await fetch(`${API_ROOT}/files/${fileId}?alt=media&supportsAllDrives=true`, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) throw new Error(`Google Drive download failed: ${res.status} ${await res.text()}`);
     return res.arrayBuffer();
   }
