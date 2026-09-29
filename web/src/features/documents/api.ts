@@ -284,13 +284,23 @@ const qs = (params: Record<string, string | number | undefined>) => {
   return entries.length ? `?${new URLSearchParams(entries.map(([k, v]) => [k, String(v)])).toString()}` : '';
 };
 
+/** Fired on window after a client is created, edited, activated or deactivated. The sidebar listens. */
+export const CLIENTS_CHANGED = 'mtn-ledger:clients-changed';
+
+function announceClients<T>(p: Promise<T>): Promise<T> {
+  return p.then((res) => {
+    window.dispatchEvent(new Event(CLIENTS_CHANGED));
+    return res;
+  });
+}
+
 export const clientsApi = {
   list: (params: { q?: string; active?: string } = {}) => apiGet<{ clients: Client[] }>(`/clients${qs(params)}`),
   get: (id: number) => apiGet<ClientDetail>(`/clients/${id}`),
-  create: (body: Record<string, unknown>) => apiSend<ClientDetail>('POST', '/clients', body),
-  update: (id: number, body: Record<string, unknown>) => apiSend<ClientDetail>('PATCH', `/clients/${id}`, body),
-  activate: (id: number) => apiSend<ClientDetail>('POST', `/clients/${id}/activate`),
-  deactivate: (id: number) => apiSend<ClientDetail>('POST', `/clients/${id}/deactivate`),
+  create: (body: Record<string, unknown>) => announceClients(apiSend<ClientDetail>('POST', '/clients', body)),
+  update: (id: number, body: Record<string, unknown>) => announceClients(apiSend<ClientDetail>('PATCH', `/clients/${id}`, body)),
+  activate: (id: number) => announceClients(apiSend<ClientDetail>('POST', `/clients/${id}/activate`)),
+  deactivate: (id: number) => announceClients(apiSend<ClientDetail>('POST', `/clients/${id}/deactivate`)),
   addContact: (id: number, body: Record<string, unknown>) => apiSend<ClientDetail>('POST', `/clients/${id}/contacts`, body),
   removeContact: (id: number, contactId: number) => apiSend<ClientDetail>('DELETE', `/clients/${id}/contacts/${contactId}`),
   ledger: (id: number, from?: string, to?: string) => apiGet<Ledger>(`/clients/${id}/ledger${qs({ from, to })}`),

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import type { Role } from '../api/client';
 import { type Locale, usePreferences } from '../app/preferences';
-import { type Client, type DocType, clientsApi, docsApi } from '../features/documents/api';
+import { CLIENTS_CHANGED, type Client, type DocType, clientsApi, docsApi } from '../features/documents/api';
 import { clientName, newDocumentPath, offeredDocumentTypes } from '../features/documents/format';
 import { useT } from '../i18n';
 import { CREATE_NEW_LABEL_KEYS, NAV, canSee } from './nav';
@@ -65,7 +65,7 @@ function ClientGroup({ title, clients, open, onToggle, locale, onNavigate }: Cli
         <span aria-hidden="true">{open ? '▾' : locale === 'he' ? '◂' : '▸'}</span>
       </button>
       {open && (
-        <ul className="flex max-h-48 flex-col gap-0.5 overflow-y-auto ps-2">
+        <ul className="flex flex-col gap-0.5 ps-2">
           {clients.length === 0 && <li className="px-3 py-1 text-xs text-muted">{t('sidebar.clients.noMatches')}</li>}
           {clients.map((c) => (
             <li key={c.id}>
@@ -107,6 +107,22 @@ function ClientsNavItem({ onNavigate, email }: ClientsNavItemProps) {
       live = false;
     };
   }, [expanded, clients]);
+
+  // A client saved, activated or deactivated anywhere moves to its group without a page refresh.
+  useEffect(() => {
+    let live = true;
+    const reload = () => {
+      clientsApi
+        .list({ active: 'all' })
+        .then((res) => live && setClients(res.clients))
+        .catch(() => undefined);
+    };
+    window.addEventListener(CLIENTS_CHANGED, reload);
+    return () => {
+      live = false;
+      window.removeEventListener(CLIENTS_CHANGED, reload);
+    };
+  }, []);
 
   const { active, notActive } = useMemo(() => {
     const all = clients ?? [];
