@@ -1,7 +1,7 @@
 # Deploy
 
 Click-by-click steps to take Open Ledger IL from this repo to a live Worker at
-`ledger.example.com`, on the Workers Free plan. Each step says where it runs: the
+`ledger.example.com`, on the Workers Paid plan ($5 a month minimum, see section 12). Each step says where it runs: the
 **Cloudflare dashboard**, **Cloudflare dashboard** or **your computer** (a terminal with `npx wrangler` and `git`).
 
 Do these once, in order, for the first deploy. `docs/secrets.md` is the reference for every
@@ -47,7 +47,7 @@ for `open-ledger-il-backups`. A backup restore test only ever reads its own expo
 bucket and recomputes hashes in memory; it never writes anywhere, so no lock is needed there. Do
 not lock a bucket you still expect to prune.
 
-## 3. Browser Rendering: no setup needed on Free
+## 3. Browser Rendering: no setup needed
 
 R02's PDF rendering uses Browser Rendering (the `BROWSER` binding in `wrangler.toml`). It needs no
 separate creation step. It activates the first time the Worker uses it. The Workers Free plan
@@ -260,8 +260,8 @@ them by hand instead (a fresh number series with no SUMIT import):
 
 ## 12. Worker plan and CPU time
 
-Start on the Workers Free plan, as this whole guide assumes. Its real limits, worth knowing before
-they surprise you:
+Run production on Workers Paid ($5 a month minimum per account). The Free plan is fine for a local
+look or a first test deploy, and these are the limits that stop it in daily use:
 
 - **CPU time**: 10 ms per HTTP request on Free, versus 30 seconds (up to 5 minutes) on Paid. CPU
   time only counts active JavaScript execution, not time spent waiting on D1, R2, Browser
@@ -275,11 +275,14 @@ they surprise you:
   for a qualifying tax invoice, one ITA call. That is not close to 50 in the normal flow, but keep
   it in mind if a future run adds more chained calls per request.
 
-Check **Workers & Pages** > the Worker > **Metrics** in the Cloudflare dashboard for the first
-week of real use. Look at p50/p99 CPU time per request, and whether any invocation actually hits
-the 10 ms ceiling (`Exceeded CPU Time Limits` under **Invocation Statuses**). Upgrade to Workers
-Paid ($5/month, 30 million included CPU milliseconds) only if that first week shows you actually
-need it, not before.
+- **Cron triggers**: 10 ms of CPU per cron run on Free. The daily Drive import, recurring
+  documents and the monthly accountant pack need more.
+- **Browser Rendering**: 10 minutes a day on Free, so PDF rendering fails with a 429 on a busy
+  day. Paid includes 10 hours a month.
+- **D1 time travel**: 7 days of point-in-time recovery on Free, 30 days on Paid.
+
+Upgrade in the Cloudflare dashboard: **Workers & Pages** > **Plans**. Paid includes 30 million CPU
+milliseconds a month and allows 30 seconds of CPU per request by default.
 
 ## D1 time-travel: test and restore procedure
 
@@ -296,7 +299,7 @@ Confirm it actually works on this database at least once, before you need it for
    ```
    npx wrangler d1 time-travel info DB --remote
    ```
-   or pick a timestamp instead (D1 keeps roughly 30 days of history on the free tier, longer on
+   or pick a timestamp instead (D1 keeps 7 days of history on Free and 30 days on
    Paid): `--timestamp="2026-10-01T00:00:00Z"`.
 2. **This step is destructive on the live database: only run it against a throwaway copy, never
    directly against the production `DB` binding, unless you are deliberately recovering from a

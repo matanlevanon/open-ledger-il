@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Ledger IL - חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, בענן Cloudflare שלך</title>
+<meta name="description" content="מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.">
+<meta property="og:title" content="Open Ledger IL">
+<meta property="og:description" content="מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="screenshots/dashboard.png">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="he" href="he.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="8" fill="#131e33" stroke="#22314b" stroke-width="1.5"/>
+        <rect x="8" y="7" width="16" height="19" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
+        <path d="M12 13h8M12 17h8M12 21h5" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Open Ledger IL
+    </a>
+    <nav class="nav-links">
+      <a href="#features">יכולות</a>
+      <a href="#how">איך זה עובד</a>
+      <a href="#screens">צילומי מסך</a>
+      <a href="#setup">הקמה</a>
+    </nav>
+    <a class="lang" href="index.html" hreflang="en">English</a>
+    <a class="btn btn-ghost btn-sm" href="#" data-gh="">לקוד ב-GitHub</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge"><b>חינם</b> · קוד פתוח (AGPL-3.0) · מאוחסן אצלך</div>
+      <h1>חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.</h1>
+      <p class="lead">הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#" data-gh="">לקוד</a>
+        <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
+      </div>
+      <div class="cmd">
+        <code id="cmd">git clone https://github.com/OWNER/open-ledger-il.git</code>
+        <button id="copy" type="button">העתקה</button>
+      </div>
+      <p class="cmd-note">נפרסת ל-Worker שלך ב-Cloudflare, בתוכנית Workers Paid, החל מ-5$ לחודש. ההקמה לוקחת אחר צהריים.</p>
+      <div class="shot">
+        <img src="screenshots/dashboard.png" alt="לוח הבקרה: מסמכים פתוחים ובאיחור, תזרים, הכנסות לפי חודש ולקוחות מובילים">
+      </div>
+      <p class="shot-cap">כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.</p>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">מה היא עושה</div>
+        <h2>כל מה שעסק ישראלי קטן מפיק ומתייק</h2>
+        <p>בנויה לעוסק פטור היום ולעוסק מורשה מחר, עם הכללים של שניהם בפנים.</p>
+      </div>
+      <div class="features">
+        <div class="feat">
+          <div class="ico" aria-hidden="true">▤</div>
+          <h3>כל סוגי המסמכים</h3>
+          <p>הצעות מחיר, דרישות תשלום, חשבונות עסקה, קבלות וקבלות זיכוי כעוסק פטור. חשבוניות מס, חשבוניות מס קבלה וחשבוניות זיכוי כעוסק מורשה. באנגלית או בעברית ואנגלית.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">#</div>
+          <h3>מספור שלא נשבר</h3>
+          <p>סדרה אחת לכל סוג מסמך, בלי חורים ובלי שימוש חוזר. מסמך סופי לא משתנה לעולם. שרשרת גיבוב וטריגרים במסד הנתונים אוכפים את שניהם.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">✎</div>
+          <h3>PDF חתום</h3>
+          <p>הלוגו והחתימה שלך על כל מסמך. Browser Rendering של Cloudflare מפיק את ה-PDF, וחתימת PAdES במפתח שלך חותמת אותו.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">✓</div>
+          <h3>מספרי הקצאה</h3>
+          <p>חיבור ל-API חשבוניות ישראל v2 של רשות המסים, סביבת ניסוי וייצור, עם תור ניסיונות חוזרים ותהליך ברור כשהרשות מסרבת.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">₪</div>
+          <h3>מטבע חוץ כמו שצריך</h3>
+          <p>שערי בנק ישראל, נשמרים מדי יום. אפשר להעביר את השער מדרישת התשלום לקבלה. היתרות נשארות במטבע של הלקוח.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">⇄</div>
+          <h3>כרטסת לקוח שמסתדרת</h3>
+          <p>דרישת תשלום נרשמת פעם אחת ונסגרת בקבלה שמשלמת אותה. יתרות פתוחות, גיול ורשימת איחורים בלוח הבקרה.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">↻</div>
+          <h3>מסמכים חוזרים ושכפול</h3>
+          <p>שכפול כל מסמך בלחיצה. ריטיינר חודשי שממתין לאישורך, או מופק ונשלח במייל לבד.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">✉</div>
+          <h3>שליחה בהסכמה</h3>
+          <p>שליחת מסמך במייל או בוואטסאפ. ההסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח, ותזכורות תשלום יוצאות לפני מועד התשלום ואחריו.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">◔</div>
+          <h3>מד תקרת עוסק פטור</h3>
+          <p>המחזור מול התקרה השנתית, התראות ב-70, 85, 95 ו-100 אחוז, ומעבר מודרך לעוסק מורשה.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">⤓</div>
+          <h3>הוצאות מ-Drive</h3>
+          <p>העלאת קבלה או ייבוא חודש שלם מ-Google Drive. Claude קורא כל מסמך, ואתה בודק ומתייק.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">∑</div>
+          <h3>דוחות וכניסה לרואה החשבון</h3>
+          <p>הכנסות, הוצאות, רווח והפסד, כרטסות לקוחות וחבילה חודשית לרואה החשבון. לרואה החשבון תפקיד נפרד עם תאריך סיום ויומן גישה.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">⇪</div>
+          <h3>ייצוא, ייבוא וגיבויים</h3>
+          <p>קובץ במבנה אחיד ו-PCN874. ייבוא לקוחות ומסמכי עבר ממערכת אחרת. גיבוי רבעוני ל-R2 ול-Google Drive.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">איך זה עובד</div>
+        <h2>שלושה שלבים, ואז המסמך הראשון</h2>
+        <p>אתה פורס עותק משלך. אף אחד אחר לא מריץ אותו, לא רואה אותו ולא מחזיק את המידע שלך.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h3>פריסת עותק משלך</h3>
+          <p>יוצרים מסד נתונים D1 אחד ושני דליי R2, מחברים את ה-Worker ל-fork שלך ב-GitHub ומוסיפים דומיין. כל push ל-main נפרס.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h3>נעילה</h3>
+          <p>Cloudflare Access מכניס אותך עם המייל שלך. מוסיפים סודות: מפתח החתימה, מפתח המייל ופרטי רשות המסים כשאתה עוסק מורשה.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h3>הגדרת העסק</h3>
+          <p>פרטי העסק, לוגו, חתימה ומספר ההתחלה של כל סדרה, כדי שהמספור ימשיך מהמערכת הקודמת.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">צילומי מסך</div>
+        <h2>מה מקבלים</h2>
+        <p>נתוני דמו בדויים בכל העמוד.</p>
+      </div>
+      <div class="gallery">
+        <div class="gcard">
+          <img src="screenshots/documents.png" alt="רשימת מסמכים עם סטטוס, מסמכים קשורים ויתרות" loading="lazy">
+          <div class="t">
+            <h3>מסמכים והקשרים ביניהם</h3>
+            <p>כל מסמך עם הסטטוס שלו, המסמכים שממנו נוצר או שנוצרו ממנו, ומה עוד פתוח.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/payment-requests.png" alt="רשימת דרישות תשלום עם סכומים פתוחים ובאיחור" loading="lazy">
+          <div class="t">
+            <h3>דרישות תשלום שנסגרות</h3>
+            <p>רושמים תשלום והקבלה מקושרת לדרישה. תשלום חלקי משאיר את היתרה פתוחה.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/clients.png" alt="עמוד לקוח עם פרטים, אנשי קשר וכרטסת" loading="lazy">
+          <div class="t">
+            <h3>לקוחות והכרטסת שלהם</h3>
+            <p>עמוד לכל לקוח עם אנשי קשר, סטטוס הסכמה, מסמכים וכרטסת רצה לפי מטבע.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/expenses.png" alt="רשימת הוצאות עם ספקים וקטגוריות" loading="lazy">
+          <div class="t">
+            <h3>הוצאות לבדיקה ותיוק</h3>
+            <p>מסמכים ש-Claude קרא נכנסים ל&quot;חדש&quot;. בודקים ספק, סכום וקטגוריה ומתייקים.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/reports.png" alt="קטלוג הדוחות" loading="lazy">
+          <div class="t">
+            <h3>דוחות לך ולרואה החשבון</h3>
+            <p>הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות. הורדה כ-PDF, XLSX או CSV.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/settings-business.png" alt="הגדרות העסק עם לוגו וחתימה" loading="lazy">
+          <div class="t">
+            <h3>העסק שלך, המיתוג שלך</h3>
+            <p>פרטי העסק, לוגו, חתימה, אמצעי תשלום ופרטי בנק שמודפסים על המסמכים.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">הכללים</div>
+        <h2>שישה כללים שהקוד אוכף</h2>
+        <p>כללי הנהלת החשבונות בישראל הם לא הגדרה כאן. מסד הנתונים מסרב לשבור אותם.</p>
+      </div>
+      <div class="honest">
+        <div class="hcard">
+          <h3>מסמך סופי לא משתנה</h3>
+          <p>טעות מתקנים במסמך זיכוי או בביטול, לעולם לא בעריכה. טריגרים במסד הנתונים חוסמים עדכון של שורה סופית.</p>
+        </div>
+        <div class="hcard">
+          <h3>מספר ניתן רק בהפקה</h3>
+          <p>לטיוטה אין מספר, כך שטיוטה שנמחקה לא משאירה חור בסדרה.</p>
+        </div>
+        <div class="hcard">
+          <h3>אין PDF לחשבונית מס בלי מספר הקצאה</h3>
+          <p>כשרשות המסים דורשת מספר הקצאה, ה-PDF ממתין לו.</p>
+        </div>
+        <div class="hcard">
+          <h3>דרישה והקבלה שלה נספרות פעם אחת</h3>
+          <p>דרישת תשלום או חשבון עסקה הם חיוב, הקבלה היא ההכנסה. הדוחות אף פעם לא מחברים את שתיהן.</p>
+        </div>
+        <div class="hcard">
+          <h3>שיעורים מתוארכים</h3>
+          <p>מע&quot;מ, תקרת עוסק פטור ושערי מטבע נשמרים עם התאריך שממנו הם חלים.</p>
+        </div>
+        <div class="hcard">
+          <h3>ניסוי וייצור לא מתערבבים</h3>
+          <p>פרטי הגישה, הטוקנים והמספרים של סביבת הניסוי והייצור ברשות המסים נשמרים בנפרד.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="setup">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">לפני שמתחילים</div>
+        <h2>מה צריך</h2>
+        <p>חשבון Cloudflare בתוכנית Workers Paid הוא העלות הקבועה היחידה. כל השאר חינמי או לפי שימוש.</p>
+      </div>
+      <table>
+        <thead><tr><th>דרישה</th><th>הערות</th></tr></thead>
+        <tbody>
+          <tr><td><b>חשבון Cloudflare בתוכנית Workers Paid</b><span class="tag req">חובה</span></td><td><span>החל מ-5$ לחודש לחשבון. מריץ את ה-Worker, D1, R2, Browser Rendering ומשימות התזמון.</span></td></tr>
+          <tr><td><b>דומיין ב-Cloudflare</b><span class="tag req">חובה</span></td><td><span>הכתובת של המערכת, למשל ledger.example.com, מאחורי Cloudflare Access. Zero Trust חינמי לצוותים קטנים.</span></td></tr>
+          <tr><td><b>מפתח ותעודה לחתימת PDF</b><span class="tag req">חובה</span></td><td><span>לחתימת PAdES על כל PDF. הקובץ docs/setup.md מסביר איך יוצרים.</span></td></tr>
+          <tr><td><b>Node.js ו-Wrangler</b><span class="tag req">חובה</span></td><td><span>במחשב שלך, להרצת מיגרציות למסד הנתונים ולהגדרת סודות.</span></td></tr>
+          <tr><td><b>חשבון Resend</b><span class="tag">רשות</span></td><td><span>לשליחת מסמכים, תזכורות וחבילת רואה החשבון במייל. התוכנית החינמית מספיקה לעסק קטן.</span></td></tr>
+          <tr><td><b>פרטי גישה ל-API של רשות המסים</b><span class="tag">רשות</span></td><td><span>רק לעוסק מורשה, למספרי הקצאה על חשבוניות מס.</span></td></tr>
+          <tr><td><b>מפתח API של Anthropic</b><span class="tag">רשות</span></td><td><span>כדי ש-Claude יקרא הוצאות ומסמכי עבר. תשלום לפי שימוש, כמה סנטים למסמך.</span></td></tr>
+          <tr><td><b>חשבון שירות ב-Google Cloud</b><span class="tag">רשות</span></td><td><span>לייבוא הוצאות מ-Drive ולעותקי גיבוי. חינם.</span></td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>למה Workers Paid.</b> התוכנית החינמית מספיקה להתרשמות, ולא לעבודה יומיומית:<ul><li>זמן המעבד מוגבל ל-10 מילישניות לבקשה ולהרצת תזמון בתוכנית החינמית. חתימת PDF, הכנת חבילת רואה החשבון או ייבוא הבוקר חורגים מזה. בתוכנית בתשלום מותרות 30 שניות כברירת מחדל.</li><li>Browser Rendering, שמפיק כל PDF, מוגבל ל-10 דקות ביום בתוכנית החינמית. התוכנית בתשלום כוללת 10 שעות בחודש.</li><li>שחזור לנקודת זמן ב-D1 שומר 7 ימים בתוכנית החינמית ו-30 ימים בתשלום. לספרים חוקיים, 30 ימים זה מה שצריך.</li></ul></div>
+
+      <div class="sec-head" style="margin-top:56px">
+        <div class="eyebrow">מגבלות ידועות</div>
+        <h2>מה היא לא עושה</h2>
+      </div>
+      <ul class="limits">
+        <li>זה לא ייעוץ מס או ייעוץ משפטי. בדוק את ההגדרות עם רואה החשבון שלך לפני שאתה מפיק מסמך אמיתי.</li>
+        <li>עסק אחד לכל התקנה.</li>
+        <li>ישראל בלבד: סוגי המסמכים, המע&quot;מ וכללי רשות המסים הם ישראליים.</li>
+        <li>המערכת רושמת תשלומים. היא לא סולקת כרטיסים ולא גובה כסף.</li>
+        <li>ייצוא PCN874 ממלא את עמודת מספר ההקצאה. שאר העמודות עדיין חלקיות.</li>
+        <li>אתה מריץ אותה: עדכונים, סודות וחשבון Cloudflare הם שלך.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <h2>קרא את הקוד לפני שאתה פורס</h2>
+      <p class="lead">המערכת מפיקה מסמכים חוקיים בשמך. הקוד פתוח כדי שתוכל לבדוק כל כלל.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#" data-gh="">לקוד</a>
+        <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div><a href="#" data-gh="">GitHub</a> <a href="#" data-gh="/blob/main/docs/deploy.md">מדריך פריסה</a> <a href="#" data-gh="/blob/main/docs/setup.md">מדריך הגדרה</a> <a href="#" data-gh="/blob/main/LICENSE">רישיון AGPL-3.0</a></div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד פתוח ברישיון AGPL-3.0 · לא קשור ל-Cloudflare או לרשות המסים</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status">הועתק</div>
+<script>
+  (function () {
+    var owner = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : null;
+    var repo = location.pathname.split('/').filter(Boolean)[0] || 'open-ledger-il';
+    var base = owner ? 'https://github.com/' + owner + '/' + repo : null;
+    document.querySelectorAll('[data-gh]').forEach(function (a) {
+      if (base) a.href = base + a.getAttribute('data-gh');
+    });
+    if (base) document.getElementById('cmd').textContent = 'git clone ' + base + '.git';
+  })();
+  document.getElementById('copy').addEventListener('click', function () {
+    var text = document.getElementById('cmd').textContent;
+    var done = function () {
+      var t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(function () { t.classList.remove('show'); }, 1400);
+    };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done); else done();
+  });
+</script>
+</body>
+</html>

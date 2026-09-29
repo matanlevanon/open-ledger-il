@@ -2,6 +2,8 @@
 
 Open-source invoicing, expenses and bookkeeping for Israeli businesses. Built for עוסק פטור and עוסק מורשה. Runs on your own Cloudflare account. Your data stays in your own database.
 
+Product page: [English](docs/index.html) · [עברית](docs/he.html). Turn on GitHub Pages from the `/docs` folder to publish it.
+
 > **Not tax or legal advice.** You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant before you issue a real document.
 
 ## Who it is for
@@ -13,6 +15,7 @@ Open-source invoicing, expenses and bookkeeping for Israeli businesses. Built fo
 ## Features
 
 - **Documents.** Quotes, payment requests, pro forma invoices, receipts and credit receipts in פטור mode. Tax invoices, invoice/receipts and credit invoices in מורשה mode. English or Hebrew documents, bilingual filed copies.
+- **Recurring and duplicate.** Copy any document in one click. Schedule a payment request, pro forma or tax invoice weekly, monthly, quarterly or yearly, held for your approval or issued and emailed automatically.
 - **Legal numbering.** One series per document type, no gaps, no reuse. A final document never changes. A hash chain and D1 triggers enforce both.
 - **Signed PDFs.** Cloudflare Browser Rendering draws the PDF. A PAdES signature with your own key secures the file.
 - **ITA allocation numbers.** The Israel Invoices API v2 client, sandbox and production, with a retry queue and a refusal decision flow.

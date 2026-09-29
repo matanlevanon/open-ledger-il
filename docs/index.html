@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Ledger IL - invoices and books for an Israeli business, on your own Cloudflare</title>
+<meta name="description" content="Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.">
+<meta property="og:title" content="Open Ledger IL">
+<meta property="og:description" content="Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="screenshots/dashboard.png">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="he" href="he.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="8" fill="#131e33" stroke="#22314b" stroke-width="1.5"/>
+        <rect x="8" y="7" width="16" height="19" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
+        <path d="M12 13h8M12 17h8M12 21h5" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Open Ledger IL
+    </a>
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#screens">Screenshots</a>
+      <a href="#setup">Setup</a>
+    </nav>
+    <a class="lang" href="he.html" hreflang="he">עברית</a>
+    <a class="btn btn-ghost btn-sm" href="#" data-gh="">View on GitHub</a>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge"><b>Free</b> · Open source (AGPL-3.0) · Self-hosted</div>
+      <h1>Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.</h1>
+      <p class="lead">Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#" data-gh="">Get the code</a>
+        <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">Read the deploy guide</a>
+      </div>
+      <div class="cmd">
+        <code id="cmd">git clone https://github.com/OWNER/open-ledger-il.git</code>
+        <button id="copy" type="button">Copy</button>
+      </div>
+      <p class="cmd-note">Deploys to your own Cloudflare Worker on the Workers Paid plan, from $5 a month. Setup takes an afternoon.</p>
+      <div class="shot">
+        <img src="screenshots/dashboard.png" alt="The dashboard: open and overdue documents, cash flow, income by month and top clients">
+      </div>
+      <p class="shot-cap">All screenshots on this page use an invented demo business.</p>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">What it does</div>
+        <h2>Everything a small Israeli business issues and files</h2>
+        <p>Built for a עוסק פטור today and a עוסק מורשה tomorrow, with the rules of both built in.</p>
+      </div>
+      <div class="features">
+        <div class="feat">
+          <div class="ico" aria-hidden="true">▤</div>
+          <h3>Every Israeli document type</h3>
+          <p>Quotes, payment requests, pro formas (חשבון עסקה), receipts and credit receipts as פטור. Tax invoices, invoice/receipts and credit invoices as מורשה. English or bilingual Hebrew and English.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">#</div>
+          <h3>Numbering that cannot break</h3>
+          <p>One series per document type, no gaps and no reuse. A final document never changes. A hash chain and database triggers enforce both.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">✎</div>
+          <h3>Signed PDFs</h3>
+          <p>Your logo and signature on every document. Cloudflare Browser Rendering draws the PDF and a PAdES signature with your own key seals it.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">✓</div>
+          <h3>ITA allocation numbers</h3>
+          <p>The Israel Invoices API v2 client for מספר הקצאה, sandbox and production, with a retry queue and a clear flow when the ITA refuses.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">₪</div>
+          <h3>Foreign currency done right</h3>
+          <p>Bank of Israel rates, cached daily. Carry the rate from a payment request to its receipt. Balances stay in the client’s currency.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">⇄</div>
+          <h3>Client ledgers that add up</h3>
+          <p>A payment request is charged once and closed by the receipt that pays it. Open balances, aging and an overdue list on the dashboard.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">↻</div>
+          <h3>Recurring and duplicate</h3>
+          <p>Copy any document in one click. Schedule a monthly retainer that waits for your approval or issues and emails itself.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">✉</div>
+          <h3>Send with consent</h3>
+          <p>Email or WhatsApp a document. Digital-document consent is recorded per client, and payment reminders go out before and after the due date.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">◔</div>
+          <h3>פטור ceiling meter</h3>
+          <p>Turnover against the annual ceiling, alerts at 70, 85, 95 and 100 percent, and a guided switch to עוסק מורשה.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">⤓</div>
+          <h3>Expenses from Drive</h3>
+          <p>Upload a receipt or import a month from Google Drive. Claude reads each document, you review and file it.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">∑</div>
+          <h3>Reports and an accountant login</h3>
+          <p>Income, expenses, profit and loss, per-client ledgers and a monthly accountant pack. Your accountant gets a separate role with an end date and an access log.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">⇪</div>
+          <h3>Exports, import and backups</h3>
+          <p>The unified file (מבנה אחיד) and PCN874. Import customers and past documents from another system. Quarterly backups to R2 and Google Drive.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">How it works</div>
+        <h2>Three steps, then you issue your first document</h2>
+        <p>You deploy your own copy. Nobody else runs it, sees it or holds your data.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h3>Deploy your copy</h3>
+          <p>Create one D1 database and two R2 buckets, connect the Worker to your fork on GitHub, and add your domain. Every push to main deploys.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h3>Lock it down</h3>
+          <p>Cloudflare Access signs you in with your own email. Add the secrets: the PDF signing key, the mail key, and ITA credentials when you are מורשה.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h3>Set up the business</h3>
+          <p>Business profile, logo, signature and the starting number of each series, so numbering continues from your previous system.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Screenshots</div>
+        <h2>What you get</h2>
+        <p>Invented demo data throughout.</p>
+      </div>
+      <div class="gallery">
+        <div class="gcard">
+          <img src="screenshots/documents.png" alt="Documents list with status, related documents and open amounts" loading="lazy">
+          <div class="t">
+            <h3>Documents and their relations</h3>
+            <p>Every document with its status, the documents it came from or led to, and what is still open.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/payment-requests.png" alt="Payment requests list with overdue and open totals" loading="lazy">
+          <div class="t">
+            <h3>Payment requests that close</h3>
+            <p>Record a payment and the receipt links back to the request. Partial payments keep the rest open.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/clients.png" alt="Client page with details, contacts and ledger" loading="lazy">
+          <div class="t">
+            <h3>Clients and their ledger</h3>
+            <p>One page per client with contacts, consent status, documents and a running ledger per currency.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/expenses.png" alt="Expenses list with suppliers and categories" loading="lazy">
+          <div class="t">
+            <h3>Expenses to review and file</h3>
+            <p>Documents read by Claude land in New. Check the supplier, amount and category, then file.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/reports.png" alt="Reports catalog" loading="lazy">
+          <div class="t">
+            <h3>Reports for you and your accountant</h3>
+            <p>Income, expenses, profit and loss, open items and ledgers. Download as PDF, XLSX or CSV.</p>
+          </div>
+        </div>
+        <div class="gcard">
+          <img src="screenshots/settings-business.png" alt="Business settings with logo and signature" loading="lazy">
+          <div class="t">
+            <h3>Your business, your brand</h3>
+            <p>Business details, logo, signature, payment methods and bank details printed on your documents.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">The rules</div>
+        <h2>Six rules the code enforces</h2>
+        <p>Israeli bookkeeping rules are not settings here. The database refuses to break them.</p>
+      </div>
+      <div class="honest">
+        <div class="hcard">
+          <h3>A final document never changes</h3>
+          <p>A mistake is fixed with a credit document or a cancellation, never an edit. Database triggers block updates to a final row.</p>
+        </div>
+        <div class="hcard">
+          <h3>Numbers come only from finalize</h3>
+          <p>Drafts carry no number, so a deleted draft never leaves a gap in the series.</p>
+        </div>
+        <div class="hcard">
+          <h3>No tax invoice PDF without its allocation number</h3>
+          <p>When the ITA requires a מספר הקצאה, the PDF waits for it.</p>
+        </div>
+        <div class="hcard">
+          <h3>A demand and its receipt count once</h3>
+          <p>A payment request or pro forma is a charge, the receipt is the income. Reports never add both.</p>
+        </div>
+        <div class="hcard">
+          <h3>Rates are dated</h3>
+          <p>VAT, the פטור ceiling and exchange rates are stored with the date they apply from.</p>
+        </div>
+        <div class="hcard">
+          <h3>Sandbox and production never mix</h3>
+          <p>ITA sandbox and production credentials, tokens and numbers are kept apart.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="setup">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Before you start</div>
+        <h2>What you need</h2>
+        <p>A Cloudflare account on Workers Paid is the one fixed cost. The rest is free or pay per use.</p>
+      </div>
+      <table>
+        <thead><tr><th>Requirement</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><b>Cloudflare account on Workers Paid</b><span class="tag req">Required</span></td><td><span>From $5 a month per account. Runs the Worker, D1, R2, Browser Rendering and the cron jobs.</span></td></tr>
+          <tr><td><b>A domain on Cloudflare</b><span class="tag req">Required</span></td><td><span>Your ledger address, for example ledger.example.com, behind Cloudflare Access. Zero Trust is free for small teams.</span></td></tr>
+          <tr><td><b>PDF signing key and certificate</b><span class="tag req">Required</span></td><td><span>For the PAdES signature on every PDF. docs/setup.md shows how to make one.</span></td></tr>
+          <tr><td><b>Node.js and Wrangler</b><span class="tag req">Required</span></td><td><span>On your computer, to apply database migrations and set secrets.</span></td></tr>
+          <tr><td><b>Resend account</b><span class="tag">Optional</span></td><td><span>To email documents, reminders and the accountant pack. The free tier covers a small business.</span></td></tr>
+          <tr><td><b>ITA API credentials</b><span class="tag">Optional</span></td><td><span>Only as עוסק מורשה, for allocation numbers on tax invoices.</span></td></tr>
+          <tr><td><b>Anthropic API key</b><span class="tag">Optional</span></td><td><span>For Claude to read expenses and past documents. Pay per use, a few cents per document.</span></td></tr>
+          <tr><td><b>Google Cloud service account</b><span class="tag">Optional</span></td><td><span>For the Drive expense import and backup copies. Free.</span></td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>Why Workers Paid.</b> The Free plan works for a first look, and stops short in daily use:<ul><li>CPU time is capped at 10 ms per request and per cron run on Free. Signing a PDF, building the accountant pack or running the morning imports goes past that. Paid allows 30 seconds by default.</li><li>Browser Rendering, which draws every PDF, is limited to 10 minutes a day on Free. Paid includes 10 hours a month.</li><li>D1 point-in-time recovery keeps 7 days on Free and 30 days on Paid. For a legal ledger, 30 days is the one to have.</li></ul></div>
+
+      <div class="sec-head" style="margin-top:56px">
+        <div class="eyebrow">Known limits</div>
+        <h2>What it will not do</h2>
+      </div>
+      <ul class="limits">
+        <li>It is not tax or legal advice. Check your setup with your accountant before you issue a real document.</li>
+        <li>One business per deployment.</li>
+        <li>Israel only: the document types, VAT and ITA rules are Israeli.</li>
+        <li>It records payments. It does not charge cards or collect money.</li>
+        <li>The PCN874 export fills the allocation-number column. The other columns are a stub.</li>
+        <li>You run it: updates, secrets and the Cloudflare bill are yours.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <h2>Read the code before you deploy it</h2>
+      <p class="lead">It issues legal documents under your name. The code is open so you can check every rule.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#" data-gh="">Get the code</a>
+        <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">Read the deploy guide</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div><a href="#" data-gh="">GitHub</a> <a href="#" data-gh="/blob/main/docs/deploy.md">Deploy guide</a> <a href="#" data-gh="/blob/main/docs/setup.md">Setup guide</a> <a href="#" data-gh="/blob/main/LICENSE">AGPL-3.0 licence</a></div>
+    <div>Self-hosted on Cloudflare Workers · Open source under AGPL-3.0 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status">Copied</div>
+<script>
+  (function () {
+    var owner = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : null;
+    var repo = location.pathname.split('/').filter(Boolean)[0] || 'open-ledger-il';
+    var base = owner ? 'https://github.com/' + owner + '/' + repo : null;
+    document.querySelectorAll('[data-gh]').forEach(function (a) {
+      if (base) a.href = base + a.getAttribute('data-gh');
+    });
+    if (base) document.getElementById('cmd').textContent = 'git clone ' + base + '.git';
+  })();
+  document.getElementById('copy').addEventListener('click', function () {
+    var text = document.getElementById('cmd').textContent;
+    var done = function () {
+      var t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(function () { t.classList.remove('show'); }, 1400);
+    };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done); else done();
+  });
+</script>
+</body>
+</html>
