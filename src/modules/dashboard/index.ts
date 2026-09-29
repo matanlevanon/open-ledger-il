@@ -8,6 +8,7 @@ import { ValidationError } from '../../core/errors';
 import type { ModuleDef } from '../../core/module';
 import type { AppEnv } from '../../env';
 import { type OpenDemand, openDemands } from '../documents/balances';
+import { ACTIVITY_DEFAULT_LIMIT, recentActivity } from './activity';
 import { uploadService } from '../import';
 import {
   type AgingRow,
@@ -344,6 +345,11 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
     const layout = await getDashboardLayout(c.env.DB);
     const cards = layout.filter((e) => e.visible).map((e) => e.id);
     return c.json({ ...(await buildDashboard(c.env.DB, today(), { ...request, cards })), layout });
+  });
+  // Phone Quick page: the latest documents and expenses, newest first.
+  routes.get('/activity', requireFeature('reports'), async (c) => {
+    const limit = Number(c.req.query('limit') ?? ACTIVITY_DEFAULT_LIMIT);
+    return c.json({ items: await recentActivity(c.env.DB, limit) });
   });
   routes.get('/layout', requireFeature('reports'), async (c) => {
     return c.json({ cards: await getDashboardLayout(c.env.DB) });

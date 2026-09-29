@@ -15,6 +15,7 @@ export interface FeatureRoute {
 import { documentsRoutes } from './documents';
 
 import { DashboardPage } from './dashboard';
+import { QuickPage } from './quick';
 
 import { ExpensesRoutes } from './expenses';
 
@@ -37,6 +38,7 @@ export const featureRoutes: FeatureRoute[] = [
   ...documentsRoutes,
 
   { path: '/', component: DashboardPage },
+  { path: '/quick', component: QuickPage },
 
   { path: '/expenses/*', component: ExpensesRoutes },
 

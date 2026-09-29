@@ -5,7 +5,7 @@ import { type MessageKey, useT } from '../i18n';
 
 /**
  * Phone-only tab bar at the bottom of the screen: the four places used most, a New button in the
- * middle, and More, which opens the full sidebar. Hidden from md up, where the sidebar shows.
+ * middle that opens the Quick page (add an expense, issue a document), and More, which opens the full sidebar. Hidden from md up, where the sidebar shows.
  */
 interface BottomNavProps {
   role?: Role;
@@ -98,7 +98,7 @@ export function BottomNav({ role, features, onMore }: BottomNavProps) {
         {first && link(first)}
         {second && link(second)}
         {showNew && (
-          <NavLink to="/income/documents/new" aria-label={t('nav.createNew')} className="flex min-h-[3.5rem] flex-col items-center justify-center px-1">
+          <NavLink to="/quick" aria-label={t('nav.quick')} className="flex min-h-[3.5rem] flex-col items-center justify-center px-1">
             <span className="grid h-12 w-12 place-items-center rounded-full bg-brand text-brand-ink shadow-card">
               <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden {...stroke} strokeWidth={2.5}>
                 <path d="M12 5v14M5 12h14" />

@@ -1,0 +1,1 @@
+export { QuickPage } from './QuickPage';

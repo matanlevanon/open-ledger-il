@@ -21,6 +21,7 @@ export interface NavSection {
 
 export const NAV: NavSection[] = [
   { label: 'nav.dashboard', path: '/', run: 'R05' },
+  { label: 'nav.quick', path: '/quick', run: 'R25' },
   { label: 'nav.clients', path: '/clients', run: 'R01', feature: 'clients' },
   {
     label: 'nav.income',
