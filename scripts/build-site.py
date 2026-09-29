@@ -252,7 +252,14 @@ h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02
 .sec-head p { color: var(--text-dim); margin: 0; }
 .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 @media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 620px) { .features { grid-template-columns: 1fr; } }
+@media (max-width: 620px) {
+  /* Phones: two compact columns, so 6 to 8 features fit on one screen. */
+  .features { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .features .feat { padding: 12px; border-radius: 12px; }
+  .features .feat .ico { width: 28px; height: 28px; border-radius: 8px; font-size: 14px; margin-bottom: 8px; }
+  .features .feat h3 { font-size: 13.5px; line-height: 1.3; margin-bottom: 4px; }
+  .features .feat p { font-size: 12px; line-height: 1.45; }
+}
 .feat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
 .feat .ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px; background: var(--surface-2); border: 1px solid var(--border); font-size: 18px; color: var(--blue); }
 .feat h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 650; letter-spacing: -.01em; }
