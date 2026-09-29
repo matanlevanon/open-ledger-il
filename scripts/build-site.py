@@ -253,6 +253,19 @@ HE = dict(
 
 IDS = ['features', 'mobile', 'how', 'screens', 'setup']
 
+# Set in __main__ to the output folder. The Hebrew page uses a screenshot's -he variant
+# (dashboard-he.png next to dashboard.png) when one exists, and the English one otherwise.
+OUT = 'docs'
+
+
+def shot_src(c, name):
+    if c['lang'] != 'en':
+        base, ext = os.path.splitext(name)
+        localized = f"{base}-{c['lang']}{ext}"
+        if os.path.exists(os.path.join(OUT, 'screenshots', localized)):
+            return localized
+    return name
+
 CSS = '''
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
   --text: #0f172a; --text-dim: #475569; --text-mute: #64748b; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
@@ -399,7 +412,7 @@ def page(c):
         </div>''' for n, (h, p) in enumerate(c['steps'], 1))
     shots = '\n'.join(
         f'''        <div class="gcard">
-          <img src="screenshots/{img}" alt="{e(alt)}" loading="lazy">
+          <img src="screenshots/{shot_src(c, img)}" alt="{e(alt)}" loading="lazy">
           <div class="t">
             <h3>{e(h)}</h3>
             <p>{e(p)}</p>
@@ -407,7 +420,7 @@ def page(c):
         </div>''' for img, alt, h, p in c['shots'])
     phones = '\n'.join(
         f'''        <figure class="phone">
-          <div class="frame"><img src="screenshots/{img}" alt="{e(alt)}" loading="lazy" width="585" height="1266"></div>
+          <div class="frame"><img src="screenshots/{shot_src(c, img)}" alt="{e(alt)}" loading="lazy" width="585" height="1266"></div>
           <figcaption>
             <h3>{e(h)}</h3>
             <p>{e(p)}</p>
@@ -443,7 +456,7 @@ def page(c):
 <meta property="og:title" content="Open Ledger IL">
 <meta property="og:description" content="{e(c['desc'])}">
 <meta property="og:type" content="website">
-<meta property="og:image" content="screenshots/dashboard.png">
+<meta property="og:image" content="screenshots/{shot_src(c, 'dashboard.png')}">
 <link rel="alternate" hreflang="en" href="index.html">
 <link rel="alternate" hreflang="he" href="he.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -487,7 +500,7 @@ def page(c):
       <p class="cmd-note">{e(c['cmd_note'])}</p>
 
       <div class="shot">
-        <img src="screenshots/dashboard.png" alt="{e(c['shot_alt'])}">
+        <img src="screenshots/{shot_src(c, 'dashboard.png')}" alt="{e(c['shot_alt'])}">
       </div>
       <p class="shot-cap">{e(c['shot_cap'])}</p>
     </div>
@@ -650,6 +663,7 @@ FAVICON = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 
 if __name__ == '__main__':
     out = sys.argv[1] if len(sys.argv) > 1 else 'docs'
+    OUT = out
     os.makedirs(out, exist_ok=True)
     for c in (EN, HE):
         open(os.path.join(out, c['file']), 'w', encoding='utf-8', newline='\n').write(page(c))
