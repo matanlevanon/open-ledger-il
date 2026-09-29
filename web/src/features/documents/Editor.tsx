@@ -7,6 +7,7 @@ import { useToast } from '../../components/Toast';
 import { fetchBusiness } from '../settings/api';
 import { type Client, type DocView, type DraftInput, type PaymentMethod, type Service, clientsApi, docsApi, paymentMethodsApi, servicesApi } from './api';
 import { Dialog } from '../../components/Dialog';
+import { ChequeBankFields } from './ChequeBankFields';
 import { DocTypeExplainer } from './DocTypeExplainer';
 import { CeilingCrossingDialog, type CeilingCrossingDetails } from './CeilingCrossingDialog';
 import { CURRENCIES, METHOD_LABEL_KEYS, clientName, formatMilli, formatMinor, lineTotal, money, parseMilli, parseMinor, todayLocal } from './format';
@@ -45,6 +46,9 @@ interface PaymentText {
   reference: string;
   amount: string;
   chequeCrossed: boolean;
+  bankNumber: string;
+  branchNumber: string;
+  accountNumber: string;
 }
 
 interface EditorState {
@@ -71,6 +75,9 @@ const emptyPayment = (date: string, methodId: number | null = null): PaymentText
   reference: '',
   amount: '',
   chequeCrossed: false,
+  bankNumber: '',
+  branchNumber: '',
+  accountNumber: '',
 });
 
 /** Whether a payment's chosen method is a cheque, from the catalog entry when one is picked, else the legacy bucket. */
@@ -106,6 +113,9 @@ function fromView(v: DocView): EditorState {
       reference: p.reference ?? '',
       amount: formatMinor(p.amount_minor).replace(/,/g, ''),
       chequeCrossed: p.cheque_crossed === 1,
+      bankNumber: p.bank_number ?? '',
+      branchNumber: p.branch_number ?? '',
+      accountNumber: p.account_number ?? '',
     })),
     showIls: v.meta?.show_ils === 1,
     overrideRate: d.fx_source === 'agreed' ? (d.fx_rate ?? '') : '',
@@ -136,7 +146,18 @@ function toBody(s: EditorState, isReceipt: boolean, t: ReturnType<typeof useT>):
     ? s.payments.map((p, i) => {
         const amountMinor = parseMinor(p.amount);
         if (amountMinor === null) throw new Error(t('documents.editor.paymentAmountError', { index: i + 1 }));
-        return { method: p.method, methodId: p.methodId, paidOn: p.paidOn, reference: p.reference || null, amountMinor, chequeCrossed: p.chequeCrossed };
+        const digits = (v: string) => v.replace(/\D/g, '') || null;
+        return {
+          method: p.method,
+          methodId: p.methodId,
+          paidOn: p.paidOn,
+          reference: p.reference || null,
+          amountMinor,
+          chequeCrossed: p.chequeCrossed,
+          bankNumber: digits(p.bankNumber),
+          branchNumber: digits(p.branchNumber),
+          accountNumber: digits(p.accountNumber),
+        };
       })
     : [];
   return {
@@ -612,6 +633,13 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
                   <button type="button" className="text-sm text-danger" onClick={() => set({ payments: state.payments.filter((_, j) => j !== i) })}>
                     {t('documents.editor.remove')}
                   </button>
+                  {isChequeMethod(p, paymentMethods.data?.paymentMethods ?? []) && (
+                    <ChequeBankFields
+                      index={i + 1}
+                      value={p}
+                      onChange={(patch) => set({ payments: state.payments.map((x, j) => (j === i ? { ...x, ...patch } : x)) })}
+                    />
+                  )}
                 </div>
               ))}
               <button

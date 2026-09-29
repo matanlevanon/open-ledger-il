@@ -34,6 +34,7 @@ export const RECORD_LENGTH = {
   A000: 466,
   SUMMARY: 19,
   A100: 95,
+  B110: 376,
   C100: 444,
   D110: 339,
   D120: 222,
@@ -86,6 +87,36 @@ export const SUMMARY_FIELDS: FieldSpec[] = [f(1050, 'X', 4), f(1051, '9', 15)];
 
 /** Opening record, section 4.1. */
 export const A100_FIELDS: FieldSpec[] = [f(1100, 'X', 4), f(1101, '9', 9), f(1102, '9', 9), f(1103, '9', 15), f(1104, 'X', 8), f(1105, 'X', 50)];
+
+/**
+ * Bookkeeping account, section 4.7. One per customer the file's documents name. Fields 1418 and
+ * 1420 are cancelled (width 0).
+ */
+export const B110_FIELDS: FieldSpec[] = [
+  f(1400, 'X', 4),
+  f(1401, '9', 9),
+  f(1402, '9', 9),
+  f(1403, 'X', 15),
+  f(1404, 'X', 50),
+  f(1405, 'X', 15),
+  f(1406, 'X', 30),
+  f(1407, 'X', 50),
+  f(1408, 'X', 10),
+  f(1409, 'X', 30),
+  f(1410, 'X', 8),
+  f(1411, 'X', 30),
+  f(1412, 'X', 2),
+  f(1413, 'X', 15),
+  f(1414, 'S', 15),
+  f(1415, 'S', 15),
+  f(1416, 'S', 15),
+  f(1417, '9', 4),
+  f(1419, '9', 9),
+  f(1421, 'X', 7),
+  f(1422, 'S', 15),
+  f(1423, 'X', 3),
+  f(1424, 'X', 16),
+];
 
 /** Closing record, section 4.2. */
 export const Z900_FIELDS: FieldSpec[] = [

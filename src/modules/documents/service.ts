@@ -322,7 +322,14 @@ function childStatements(db: D1Database, docId: number, s: DraftState, c: Comput
         p.fxSource,
         p.amountIls,
       ),
-      stmt(db, 'INSERT INTO payment_details (payment_id, cheque_crossed) VALUES (last_insert_rowid(), ?)', p.chequeCrossed),
+      stmt(
+        db,
+        'INSERT INTO payment_details (payment_id, cheque_crossed, bank_number, branch_number, account_number) VALUES (last_insert_rowid(), ?, ?, ?, ?)',
+        p.chequeCrossed,
+        p.bankNumber || null,
+        p.branchNumber || null,
+        p.accountNumber || null,
+      ),
     );
   }
   out.push(
@@ -510,6 +517,9 @@ function paymentsFromRows(payments: PaymentRow[], keepRates: boolean): PaymentSt
     reference: p.reference,
     amountMinor: p.amount_minor,
     chequeCrossed: p.cheque_crossed === 1,
+    bankNumber: p.bank_number,
+    branchNumber: p.branch_number,
+    accountNumber: p.account_number,
     ...(keepRates
       ? { preset: { fxRate: p.fx_rate, fxRateDate: p.fx_rate_date, fxSource: p.fx_source, amountIls: p.amount_ils_minor ?? 0 } }
       : {}),

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   A000_FIELDS,
   A100_FIELDS,
+  B110_FIELDS,
   C100_FIELDS,
   D110_FIELDS,
   D120_FIELDS,
@@ -17,6 +18,7 @@ describe('unified file record layouts (instructions 1.31, sections 2.5, 3 and 4)
     expect(layoutLength(A000_FIELDS)).toBe(466);
     expect(layoutLength(SUMMARY_FIELDS)).toBe(19);
     expect(layoutLength(A100_FIELDS)).toBe(95);
+    expect(layoutLength(B110_FIELDS)).toBe(376);
     expect(layoutLength(C100_FIELDS)).toBe(444);
     expect(layoutLength(D110_FIELDS)).toBe(339);
     expect(layoutLength(D120_FIELDS)).toBe(222);

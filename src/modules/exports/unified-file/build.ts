@@ -9,6 +9,7 @@ import { pendingAllocationCount, seriesSummaryForPeriod } from '../validation';
 import {
   A000_FIELDS,
   A100_FIELDS,
+  B110_FIELDS,
   C100_FIELDS,
   D110_FIELDS,
   D120_FIELDS,
@@ -25,8 +26,15 @@ import {
  * per-document-type report.
  *
  * Scope. This is document-issuing software, not a general ledger or an inventory system, so
- * INI field 1013 (bookkeeping type) is 0 and the file carries A100, C100, D110, D120 and Z900.
- * B100, B110 and M100 are never written.
+ * INI field 1013 (bookkeeping type) is 0 and the file carries A100, B110, C100, D110, D120 and
+ * Z900. B110 holds one customer account per client the documents name, keyed by the client id
+ * that C100 field 1225 carries. B100 and M100 are never written.
+ *
+ * Document numbers. Field 1204 must be unique per document type. Several Ledger series share one
+ * appendix 1 code (a pro forma and a transaction invoice are both 300, the receipts before and
+ * after the switch to עוסק מורשה and the credit receipts are all 400), and each series counts
+ * from 1. So a document from a secondary series carries its series letters before the number,
+ * as section 2.4 ד allows (up to 5 letters, for example CR12).
  *
  * Which documents. Every numbered document of a type in appendix 1, final or cancelled (a
  * cancelled one carries 1 in field 1228), cut by document date (section 2.1). Quotes and payment
@@ -45,6 +53,35 @@ export const SPEC_CODE: Record<string, number> = {
   '400': 400,
   '405': 400,
 };
+
+/**
+ * Series letters for field 1204, per Ledger series (section 2.4 ד). The main series of each code
+ * (300 and 400) has none. A series missing here that shares a code gets its id's letters.
+ */
+export const SERIES_PREFIX: Record<string, string> = {
+  PF: 'PF',
+  '332': 'AP',
+  '400-M': 'M',
+  '405': 'CR',
+};
+
+/** The number written in fields 1204, 1257 and 1304 for a document of this series. */
+export function fileDocNumber(seriesId: string, specCode: number, number: number): string {
+  if (seriesId === String(specCode)) return String(number);
+  const prefix = SERIES_PREFIX[seriesId] ?? seriesId.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 5);
+  return `${prefix || 'S'}${number}`;
+}
+
+/** Israeli ID and company number check digit (9 digits, weights 1 and 2). */
+export function validIsraeliId(digits: string): boolean {
+  if (!/^\d{9}$/.test(digits) || /^0+$/.test(digits)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    const n = Number(digits[i]) * (i % 2 === 0 ? 1 : 2);
+    sum += n > 9 ? n - 9 : n;
+  }
+  return sum % 10 === 0;
+}
 
 /** Appendix 1, section 5.1, plus 406 as in the Tax Authority's section 2.6 sample. Every row shows in the 2.6 report. */
 export const APPENDIX_1: { code: number; nameHe: string; nameEn: string }[] = [
@@ -105,6 +142,7 @@ const PAYMENT_TYPES = new Set([320, 400]);
 interface DocRow {
   id: number;
   type: string;
+  series_id: string;
   number: number;
   status: string;
   date: string;
@@ -154,11 +192,15 @@ interface PaymentRow {
   currency: string;
   fx_rate: string | null;
   amount_ils_minor: number | null;
+  bank_number: string | null;
+  branch_number: string | null;
+  account_number: string | null;
 }
 
 interface BaseRow {
   target_id: number;
   source_type: string;
+  source_series_id: string;
   source_number: number | null;
 }
 
@@ -245,13 +287,21 @@ export function paymentMethodCode(method: string, methodType: string | null): nu
   return 9;
 }
 
-function customerVat(country: string | null, vat: string | null, companyId: string | null): string {
-  if (country && country !== 'IL') return '';
+/**
+ * Field 1215: an Israeli customer's VAT or company number, 9 digits with a valid check digit.
+ * `invalid` is set when the client has a number that fails the check, so the export can say so.
+ */
+function customerVat(country: string | null, vat: string | null, companyId: string | null): { value: string; invalid: string | null } {
+  if (country && country !== 'IL') return { value: '', invalid: null };
+  let invalid: string | null = null;
   for (const v of [vat, companyId]) {
     const digits = (v ?? '').replace(/\D/g, '');
-    if (digits.length >= 8 && digits.length <= 9) return digits.padStart(9, '0');
+    if (digits.length < 8 || digits.length > 9) continue;
+    const padded = digits.padStart(9, '0');
+    if (validIsraeliId(padded)) return { value: padded, invalid: null };
+    invalid ??= padded;
   }
-  return '';
+  return { value: '', invalid };
 }
 
 function countryName(code: string | null): string {
@@ -301,7 +351,7 @@ async function loadDocs(db: D1Database, from: string, to: string): Promise<DocRo
   const types = Object.keys(SPEC_CODE);
   return all<DocRow>(
     db,
-    `SELECT d.id, d.type, d.number, d.status, d.date, d.finalized_at, d.issuance_date, d.currency, d.fx_rate,
+    `SELECT d.id, d.type, d.series_id, d.number, d.status, d.date, d.finalized_at, d.issuance_date, d.currency, d.fx_rate,
             d.subtotal_minor, d.vat_rate_bp, d.vat_amount_minor, d.total_minor, d.total_ils_minor, d.client_id,
             c.name_en AS client_name_en, c.name_he AS client_name_he, c.vat_number AS client_vat_number,
             c.company_id AS client_company_id, c.country AS client_country, c.phone AS client_phone,
@@ -335,7 +385,7 @@ async function loadBases(db: D1Database, ids: number[]): Promise<Map<number, Bas
     const chunk = ids.slice(i, i + 80);
     const rows = await all<BaseRow>(
       db,
-      `SELECT l.target_id, s.type AS source_type, s.number AS source_number
+      `SELECT l.target_id, s.type AS source_type, s.series_id AS source_series_id, s.number AS source_number
        FROM document_links l JOIN documents s ON s.id = l.source_id
        WHERE l.kind IN ('converted', 'credit') AND l.target_id IN (${chunk.map(() => '?').join(',')})
        ORDER BY l.id`,
@@ -374,8 +424,9 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
   );
   const payments = await byDocument<PaymentRow>(
     db,
-    `SELECT p.id, p.document_id, p.method, pm.type AS method_type, p.paid_on, p.reference, p.amount_minor, p.currency, p.fx_rate, p.amount_ils_minor
-     FROM payments p LEFT JOIN payment_methods pm ON pm.id = p.method_id
+    `SELECT p.id, p.document_id, p.method, pm.type AS method_type, p.paid_on, p.reference, p.amount_minor, p.currency, p.fx_rate, p.amount_ils_minor,
+            pd.bank_number, pd.branch_number, pd.account_number
+     FROM payments p LEFT JOIN payment_methods pm ON pm.id = p.method_id LEFT JOIN payment_details pd ON pd.payment_id = p.id
      WHERE p.document_id IN (?) ORDER BY p.document_id, p.id`,
     ids,
   );
@@ -391,22 +442,83 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
 
   push('A100', renderRecord(A100_FIELDS, { 1100: 'A100', 1101: seq(), 1102: biz.vat, 1103: mainId, 1104: SYSTEM_CONSTANT }, RECORD_LENGTH.A100));
 
+  // A credit tax invoice (330) is a reduction by its type, so it is written positive
+  // (section 2.4 יב). A Ledger credit receipt (405) has no code of its own and goes out as a
+  // receipt with negative amounts (appendix 1: a negative document has the opposite effect).
+  const flipOf = (d: DocRow) => (d.type === '330' ? -1 : 1);
+  const totalOf = (d: DocRow) => flipOf(d) * (d.total_ils_minor ?? toIls(d.total_minor, d.currency, d.fx_rate));
+
+  // B110: one customer account per client, with the period's charges (debit) and payments and
+  // credits (credit). No opening balance: the software keeps no ledger before the period.
+  const accounts = new Map<number, { doc: DocRow; debit: number; credit: number }>();
+  for (const d of docs) {
+    if (!d.client_id || d.status === 'cancelled') {
+      if (d.client_id && !accounts.has(d.client_id)) accounts.set(d.client_id, { doc: d, debit: 0, credit: 0 });
+      continue;
+    }
+    const a = accounts.get(d.client_id) ?? { doc: d, debit: 0, credit: 0 };
+    const code = SPEC_CODE[d.type]!;
+    const total = totalOf(d);
+    // A pro forma is no charge. Transaction invoices, tax invoices and invoice receipts are.
+    if (d.type !== 'PF' && (code === 300 || code === 305 || code === 320)) a.debit += total;
+    if (code === 320 || code === 400 || code === 330) a.credit += total;
+    accounts.set(d.client_id, a);
+  }
+  const invalidVat = new Set<string>();
+  for (const [clientId, a] of [...accounts].sort((x, y) => x[0] - y[0])) {
+    const d = a.doc;
+    const vat = customerVat(d.client_country, d.client_vat_number, d.client_company_id);
+    push(
+      'B110',
+      renderRecord(
+        B110_FIELDS,
+        {
+          1400: 'B110',
+          1401: seq(),
+          1402: biz.vat,
+          1403: String(clientId),
+          1404: d.client_name_he || d.client_name_en || '',
+          1405: 'לקוחות',
+          1406: 'לקוחות',
+          1407: (d.client_address_he || d.client_address_en || '').replace(/\s*\n\s*/g, ', '),
+          1409: d.client_city ?? '',
+          1410: d.client_postal_code ?? '',
+          1411: countryName(d.client_country),
+          1412: d.client_country ?? '',
+          1414: 0,
+          1415: a.debit,
+          1416: a.credit,
+          1417: 0,
+          1419: vat.value,
+          1422: 0,
+        },
+        RECORD_LENGTH.B110,
+      ),
+    );
+  }
+
   const perType = new Map<number, { count: number; totalIlsMinor: number }>();
   let totalIlsMinor = 0;
+  const seen = new Set<string>();
 
   for (const d of docs) {
     const code = SPEC_CODE[d.type]!;
-    // A credit tax invoice (330) is a reduction by its type, so it is written positive
-    // (section 2.4 יב). A Ledger credit receipt (405) has no code of its own and goes out as a
-    // receipt with negative amounts (appendix 1: a negative document has the opposite effect).
-    const flip = d.type === '330' ? -1 : 1;
+    const flip = flipOf(d);
     const receiptOnly = code === 400;
-    const total = flip * (d.total_ils_minor ?? toIls(d.total_minor, d.currency, d.fx_rate));
+    const total = totalOf(d);
     const subtotal = receiptOnly ? total : flip * toIls(d.subtotal_minor, d.currency, d.fx_rate);
     const vat = receiptOnly ? 0 : flip * toIls(d.vat_amount_minor, d.currency, d.fx_rate);
     const issued = d.finalized_at ? israelParts(new Date(d.finalized_at)) : null;
     const foreign = d.currency !== 'ILS';
-    const docNumber = String(d.number);
+    const docNumber = fileDocNumber(d.series_id, code, d.number);
+    const key = `${code}/${docNumber}`;
+    if (seen.has(key)) warnings.push(`Two documents of type ${code} carry number ${docNumber}. Field 1204 must be unique per type.`);
+    seen.add(key);
+    const customer = customerVat(d.client_country, d.client_vat_number, d.client_company_id);
+    if (customer.invalid && !invalidVat.has(customer.invalid)) {
+      invalidVat.add(customer.invalid);
+      warnings.push(`Client "${d.client_name_he || d.client_name_en}" has VAT number ${customer.invalid}, which fails the check digit. It is left out of the file. Fix it in Clients.`);
+    }
     const link = d.id % 10_000_000;
 
     push(
@@ -428,7 +540,7 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
           1212: countryName(d.client_country),
           1213: d.client_country ?? '',
           1214: d.client_phone ?? '',
-          1215: customerVat(d.client_country, d.client_vat_number, d.client_company_id),
+          1215: customer.value,
           1216: ymd(d.date),
           1217: foreign ? flip * d.total_minor : 0,
           1218: foreign ? d.currency : '',
@@ -470,7 +582,7 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
               1254: docNumber,
               1255: l.position,
               1256: base ? SPEC_CODE[base.source_type] : 0,
-              1257: base ? String(base.source_number) : '',
+              1257: base ? fileDocNumber(base.source_series_id, SPEC_CODE[base.source_type]!, base.source_number!) : '',
               1258: 1,
               1259: l.item_id ? String(l.item_id) : '',
               1260: l.description_he || l.description_en,
@@ -497,12 +609,19 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
               method: paymentMethodCode(p.method, p.method_type),
               date: p.paid_on,
               reference: p.reference,
+              bank: p.bank_number,
+              branch: p.branch_number,
+              account: p.account_number,
               // A payment follows its document's sign, so a credit receipt's lines are negative too.
               amount: (total < 0 ? -1 : 1) * Math.abs(p.amount_ils_minor ?? toIls(p.amount_minor, p.currency, p.fx_rate)),
             }))
-          : [{ method: 9, date: d.date, reference: null as string | null, amount: total }];
+          : [{ method: 9, date: d.date, reference: null as string | null, bank: null as string | null, branch: null as string | null, account: null as string | null, amount: total }];
       paymentLines.forEach((p, i) => {
-        const chequeNo = p.method === 2 && p.reference && /^\d{1,10}$/.test(p.reference.trim()) ? p.reference.trim() : '';
+        const cheque = p.method === 2;
+        const chequeNo = cheque && p.reference && /^\d{1,10}$/.test(p.reference.trim()) ? p.reference.trim() : '';
+        if (cheque && (!p.bank || !p.branch || !p.account)) {
+          warnings.push(`A cheque on document ${code} ${docNumber} has no bank, branch or account number. The unified file requires all three.`);
+        }
         push(
           'D120',
           renderRecord(
@@ -515,6 +634,9 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
               1304: docNumber,
               1305: i + 1,
               1306: p.method,
+              1307: cheque ? (p.bank ?? '') : '',
+              1308: cheque ? (p.branch ?? '') : '',
+              1309: cheque ? (p.account ?? '') : '',
               1310: chequeNo,
               1311: p.method === 2 || p.method === 3 ? ymd(p.date) : '',
               1312: p.amount,

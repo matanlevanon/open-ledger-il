@@ -71,6 +71,9 @@ export interface PaymentRow {
   fx_source: string | null;
   amount_ils_minor: number | null;
   cheque_crossed: number;
+  bank_number: string | null;
+  branch_number: string | null;
+  account_number: string | null;
 }
 
 export interface MetaRow {
@@ -123,7 +126,7 @@ export async function loadFull(db: D1Database, id: number): Promise<LoadedDraft>
     all<LineRow>(db, 'SELECT * FROM document_lines WHERE document_id = ? ORDER BY position', id),
     all<PaymentRow>(
       db,
-      `SELECT p.*, COALESCE(pd.cheque_crossed, 0) AS cheque_crossed
+      `SELECT p.*, COALESCE(pd.cheque_crossed, 0) AS cheque_crossed, pd.bank_number, pd.branch_number, pd.account_number
        FROM payments p LEFT JOIN payment_details pd ON pd.payment_id = p.id
        WHERE p.document_id = ? ORDER BY p.id`,
       id,

@@ -204,6 +204,9 @@ export interface DocPayment {
   fx_source: string | null;
   amount_ils_minor: number | null;
   cheque_crossed: number;
+  bank_number: string | null;
+  branch_number: string | null;
+  account_number: string | null;
 }
 
 export interface DocLink {
@@ -260,6 +263,9 @@ export interface PaymentInput {
   reference?: string | null;
   amountMinor: number;
   chequeCrossed?: boolean;
+  bankNumber?: string | null;
+  branchNumber?: string | null;
+  accountNumber?: string | null;
 }
 
 export interface DraftInput {

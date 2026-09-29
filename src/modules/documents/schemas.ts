@@ -47,6 +47,10 @@ export const paymentInput = z.object({
   reference: z.string().trim().max(200).nullish(),
   amountMinor: minor,
   chequeCrossed: z.boolean().default(false),
+  /** Cheque bank details (unified file D120 fields 1307 to 1309). Digits only. */
+  bankNumber: z.string().trim().regex(/^\d{1,10}$/).nullish(),
+  branchNumber: z.string().trim().regex(/^\d{1,10}$/).nullish(),
+  accountNumber: z.string().trim().regex(/^\d{1,15}$/).nullish(),
 });
 
 export const draftInput = z.object({

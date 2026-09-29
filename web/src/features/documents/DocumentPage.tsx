@@ -6,6 +6,7 @@ import { usePreferences } from '../../app/preferences';
 import { type MessageKey, useT } from '../../i18n';
 import { type DocEvent, type DocView, type PaymentMethod, docsApi, paymentMethodsApi, pdfApi, sendingApi } from './api';
 import { METHOD_LABEL_KEYS, clientName, formatMilli, formatMinor, money, parseMinor, todayLocal, currencyTag } from './format';
+import { ChequeBankFields } from './ChequeBankFields';
 import { DocTypeExplainer } from './DocTypeExplainer';
 import { Card, ErrorNote, Loading, PageTitle, StatusChip, btnDanger, btnPrimary, btnSecondary, errorText, input, label, useLoad } from './ui';
 
@@ -490,6 +491,11 @@ function PaymentsTable({ view }: { view: DocView }) {
               <td className="px-2 py-1">
                 {p.method_detail?.display_name ?? (methodKey ? t(methodKey) : p.method)}
                 {p.cheque_crossed === 1 && t('documents.page.crossedSuffix')}
+                {p.bank_number && (
+                  <span className="ltr-nums block text-xs text-muted">
+                    {t('documents.cheque.summary', { bank: p.bank_number, branch: p.branch_number ?? '', account: p.account_number ?? '' })}
+                  </span>
+                )}
               </td>
               <td className="ltr-nums px-2 py-1 tabular-nums">{p.paid_on}</td>
               <td className="px-2 py-1">{p.reference}</td>
@@ -517,7 +523,17 @@ function RecordPayment({
   currency: string;
   busy: boolean;
   methods: PaymentMethod[];
-  onSubmit: (p: { method: string; methodId: number | null; paidOn: string; amountMinor: number; reference: string | null; chequeCrossed: boolean }) => void;
+  onSubmit: (p: {
+    method: string;
+    methodId: number | null;
+    paidOn: string;
+    amountMinor: number;
+    reference: string | null;
+    chequeCrossed: boolean;
+    bankNumber: string | null;
+    branchNumber: string | null;
+    accountNumber: string | null;
+  }) => void;
 }) {
   const t = useT();
   const [method, setMethod] = useState('bank_transfer');
@@ -526,6 +542,7 @@ function RecordPayment({
   const [amount, setAmount] = useState(formatMinor(remaining).replace(/,/g, ''));
   const [reference, setReference] = useState('');
   const [crossed, setCrossed] = useState(false);
+  const [bank, setBank] = useState({ bankNumber: '', branchNumber: '', accountNumber: '' });
   const [error, setError] = useState<string | null>(null);
   const isCheque = methodId !== null ? methods.find((m) => m.id === methodId)?.type === 'cheque' : method === 'cheque';
   return (
@@ -536,7 +553,17 @@ function RecordPayment({
         const amountMinor = parseMinor(amount);
         if (amountMinor === null || amountMinor <= 0) return setError(t('documents.page.checkAmountError'));
         setError(null);
-        onSubmit({ method, methodId, paidOn, amountMinor, reference: reference || null, chequeCrossed: crossed });
+        onSubmit({
+          method,
+          methodId,
+          paidOn,
+          amountMinor,
+          reference: reference || null,
+          chequeCrossed: crossed,
+          bankNumber: isCheque ? bank.bankNumber || null : null,
+          branchNumber: isCheque ? bank.branchNumber || null : null,
+          accountNumber: isCheque ? bank.accountNumber || null : null,
+        });
       }}
     >
       {methods.length > 0 ? (
@@ -587,6 +614,7 @@ function RecordPayment({
           <input type="checkbox" checked={crossed} onChange={(e) => setCrossed(e.target.checked)} /> {t('documents.page.crossedCheque')}
         </label>
       )}
+      {isCheque && <ChequeBankFields index={1} value={bank} onChange={(patch) => setBank({ ...bank, ...patch })} />}
       <p className="text-xs text-muted md:col-span-5">{t('documents.page.recordPaymentHint')}</p>
       <ErrorNote error={error} />
     </form>

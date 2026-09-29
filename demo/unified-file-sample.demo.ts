@@ -82,11 +82,11 @@ const SERVICES = [
 
 const CLIENTS = [
   ['Harbor Studio Ltd', 'הרבור סטודיו בע"מ', '514713288'],
-  ['Northwind Labs', 'נורתווינד לאבס', '515234567'],
-  ['Cedar Foods', 'ארזים מזון', '514998877'],
-  ['Blue Pier Travel', 'המזח הכחול', '516112233'],
-  ['Olive Tech', 'זית טכנולוגיות', '515667788'],
-  ['Galil Wines', 'יקבי גליל', '514334455'],
+  ['Northwind Labs', 'נורתווינד לאבס', '515234565'],
+  ['Cedar Foods', 'ארזים מזון', '514998871'],
+  ['Blue Pier Travel', 'המזח הכחול', '516112232'],
+  ['Olive Tech', 'זית טכנולוגיות', '515667780'],
+  ['Galil Wines', 'יקבי גליל', '514334457'],
 ] as const;
 
 function lines(min: number, max: number) {
@@ -109,7 +109,15 @@ function payments(total: number, max: number) {
       method,
       paidOn: clock.today,
       amountMinor: amount,
-      ...(method === 'cheque' ? { chequeCrossed: true, reference: String(int(100000, 999999)) } : {}),
+      ...(method === 'cheque'
+        ? {
+            chequeCrossed: true,
+            reference: String(int(100000, 999999)),
+            bankNumber: String(pick([10, 11, 12, 20, 31])),
+            branchNumber: String(int(100, 999)),
+            accountNumber: String(int(100000, 9999999)),
+          }
+        : {}),
     });
   }
   return out;

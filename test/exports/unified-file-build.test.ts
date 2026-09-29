@@ -4,7 +4,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { run } from '../../src/core/db';
 import { finalizeDocument } from '../../src/core/numbering';
 import { decodeIso88598 } from '../../src/modules/exports/encoding';
-import { buildUnifiedFile } from '../../src/modules/exports/unified-file/build';
+import { buildUnifiedFile, fileDocNumber, validIsraeliId } from '../../src/modules/exports/unified-file/build';
 import type { Env } from '../../src/env';
 import { OWNER_ACTOR, db, makeDraft } from '../helpers';
 
@@ -57,20 +57,20 @@ describe('unified file build (instructions 1.31)', () => {
     const data = lines(result.bkmvdata);
     expect(data[0]!.startsWith('A100')).toBe(true);
     expect(data.at(-1)!.startsWith('Z900')).toBe(true);
-    expect(data.map((l) => l.slice(0, 4))).toEqual(['A100', 'C100', 'D120', 'Z900']);
+    expect(data.map((l) => l.slice(0, 4))).toEqual(['A100', 'B110', 'C100', 'D120', 'Z900']);
     data.forEach((l, i) => expect(l.slice(4, 13)).toBe(String(i + 1).padStart(9, '0')));
 
     const z900 = data.at(-1)!;
-    expect(z900.slice(45, 60)).toBe('000000000000004');
+    expect(z900.slice(45, 60)).toBe('000000000000005');
     const ini = lines(result.iniText);
     expect(ini[0]).toHaveLength(466);
-    expect(ini[0]!.slice(9, 24)).toBe('000000000000004');
+    expect(ini[0]!.slice(9, 24)).toBe('000000000000005');
     expect(ini[0]!.slice(24, 33)).toBe(VAT);
     expect(ini[0]!.slice(33, 48)).toBe('123456789012345');
     expect(ini[0]!.slice(48, 56)).toBe('&OF1.31&');
     expect(ini[0]!.slice(56, 64)).toBe('12345678');
     // One summary row per record type in BKMVDATA.TXT, none for absent types.
-    expect(ini.slice(1).map((l) => l.slice(0, 4))).toEqual(['A100', 'C100', 'D120', 'Z900']);
+    expect(ini.slice(1).map((l) => l.slice(0, 4))).toEqual(['A100', 'B110', 'C100', 'D120', 'Z900']);
     expect(ini.find((l) => l.startsWith('C100'))).toBe('C100000000000000001');
     expect(ini.find((l) => l.startsWith('Z900'))).toBe('Z900000000000000001');
   });
@@ -98,11 +98,14 @@ describe('unified file build (instructions 1.31)', () => {
 
   it('writes a credit receipt as a receipt with negative amounts', async () => {
     const client = await makeClient('Gamma');
-    await issue('405', '2027-01-15', { clientId: client, totalMinor: -30000, payments: [{ amountMinor: 30000, method: 'cash' }] });
+    const id = await issue('405', '2027-01-15', { clientId: client, totalMinor: -30000, payments: [{ amountMinor: 30000, method: 'cash' }] });
+    const { number } = (await db().prepare('SELECT number FROM documents WHERE id = ?').bind(id).first<{ number: number }>())!;
 
     const result = await buildUnifiedFile(testEnv(), '2027-01-15', '2027-01-15', { now: NOW });
     const c100 = lines(result.bkmvdata).find((l) => l.startsWith('C100'))!;
     expect(c100.slice(22, 25)).toBe('400');
+    // The credit receipt series counts from 1 like the receipt series, so it carries its letters (section 2.4 ד).
+    expect(c100.slice(25, 45).trim()).toBe(`CR${number}`);
     expect(c100.slice(347, 362)).toBe('-00000000030000');
     const d120 = lines(result.bkmvdata).find((l) => l.startsWith('D120'))!;
     expect(d120[49]).toBe('1');
@@ -160,6 +163,62 @@ describe('unified file build (instructions 1.31)', () => {
     const sum = result.summary.documentTypes.reduce((s, t) => s + t.count, 0);
     expect(sum).toBe(result.report.recordCounts.C100);
     expect(result.summary.documentTypes.map((t) => t.code)).toContain(406);
+  });
+
+  it('writes one B110 customer account per client, keyed by the id in C100 field 1225', async () => {
+    const client = await makeClient('Zeta', { nameHe: 'זטא', vat: '514713288' });
+    await issue('400', '2027-02-05', { clientId: client, totalMinor: 50000, payments: [{ amountMinor: 50000, method: 'bank_transfer' }] });
+    await issue('400', '2027-02-05', { clientId: client, totalMinor: 20000, payments: [{ amountMinor: 20000, method: 'cash' }] });
+
+    const result = await buildUnifiedFile(testEnv(), '2027-02-05', '2027-02-05', { now: NOW });
+    const b110 = lines(result.bkmvdata).filter((l) => l.startsWith('B110'));
+    expect(b110).toHaveLength(1);
+    expect(b110[0]).toHaveLength(376);
+    expect(b110[0]!.slice(22, 37).trim()).toBe(String(client));
+    expect(b110[0]!.slice(37, 87).trim()).toBe('זטא');
+    expect(b110[0]!.slice(307, 322)).toBe('+00000000070000');
+    const c100 = lines(result.bkmvdata).find((l) => l.startsWith('C100'))!;
+    expect(c100.slice(374, 389).trim()).toBe(String(client));
+  });
+
+  it('writes the bank, branch and account of a cheque', async () => {
+    const client = await makeClient('Eta');
+    const id = await makeDraft({ seriesId: '400', totalMinor: 40000, payments: [{ amountMinor: 40000, method: 'cheque' }] });
+    await run(db(), 'UPDATE documents SET client_id = ?, date = ? WHERE id = ?', client, '2027-02-10', id);
+    await run(
+      db(),
+      "INSERT INTO payment_details (payment_id, cheque_crossed, bank_number, branch_number, account_number) SELECT id, 1, '12', '345', '678901' FROM payments WHERE document_id = ?",
+      id,
+    );
+    await finalizeDocument(db(), id, { actor: OWNER_ACTOR });
+
+    const result = await buildUnifiedFile(testEnv(), '2027-02-10', '2027-02-10', { now: NOW });
+    const d120 = lines(result.bkmvdata).find((l) => l.startsWith('D120'))!;
+    expect(d120[49]).toBe('2');
+    expect(d120.slice(50, 60)).toBe('0000000012');
+    expect(d120.slice(60, 70)).toBe('0000000345');
+    expect(d120.slice(70, 85)).toBe('000000000678901');
+    expect(result.report.warnings.some((w) => w.includes('cheque'))).toBe(false);
+  });
+
+  it('leaves out a customer VAT number with a wrong check digit, and says so', async () => {
+    const client = await makeClient('Theta', { vat: '515667788' });
+    await issue('400', '2027-02-15', { clientId: client, totalMinor: 10000, payments: [{ amountMinor: 10000, method: 'cash' }] });
+
+    const result = await buildUnifiedFile(testEnv(), '2027-02-15', '2027-02-15', { now: NOW });
+    const c100 = lines(result.bkmvdata).find((l) => l.startsWith('C100'))!;
+    expect(c100.slice(252, 261)).toBe('000000000');
+    expect(result.report.warnings.some((w) => w.includes('515667788'))).toBe(true);
+  });
+
+  it('checks Israeli ID check digits and prefixes secondary series', () => {
+    expect(validIsraeliId('514713288')).toBe(true);
+    expect(validIsraeliId('515667788')).toBe(false);
+    expect(validIsraeliId('000000000')).toBe(false);
+    expect(fileDocNumber('400', 400, 7)).toBe('7');
+    expect(fileDocNumber('400-M', 400, 7)).toBe('M7');
+    expect(fileDocNumber('405', 400, 7)).toBe('CR7');
+    expect(fileDocNumber('PF', 300, 3)).toBe('PF3');
   });
 
   it('warns while the software has no registration number', async () => {
