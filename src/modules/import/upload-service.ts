@@ -238,6 +238,10 @@ export async function updateExternalDocument(
   const duplicate = await findDuplicate(db, before.source, docType, originalNumber);
   if (duplicate && duplicate.id !== id) conflict('duplicate_external_document', `${docType} ${originalNumber} is already filed.`);
 
+  if (patch.itemId) {
+    const item = await first<{ id: number }>(db, 'SELECT id FROM items WHERE id = ?', patch.itemId);
+    if (!item) throw new NotFoundError('Service', patch.itemId);
+  }
   const currency = assertCurrency(patch.currency ?? before.currency);
   const issueDate = patch.issueDate ?? before.issue_date;
   const amountBeforeVatMinor = patch.amountBeforeVat !== undefined ? parseMajor(patch.amountBeforeVat, currency) : before.amount_before_vat_minor;
@@ -263,6 +267,7 @@ export async function updateExternalDocument(
     fx_rate: ils.fxRate,
     fx_rate_date: ils.fxRateDate,
     paid_status: patch.paidStatus ?? before.paid_status,
+    item_id: patch.itemId !== undefined ? patch.itemId : before.item_id,
   };
   const changed: Record<string, { from: unknown; to: unknown }> = {};
   for (const [k, v] of Object.entries(after)) {

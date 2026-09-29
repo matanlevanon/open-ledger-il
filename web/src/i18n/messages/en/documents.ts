@@ -255,6 +255,8 @@ export const documents = {
   'documents.imported.title': 'Imported past documents',
   'documents.imported.hint': 'Issued in another system before this ledger. They keep their original numbers.',
   'documents.imported.colPaid': 'Paid',
+  'documents.imported.service': 'Service',
+  'documents.imported.noService': 'No service',
   'documents.imported.paid.paid': 'Paid',
   'documents.imported.paid.unpaid': 'Unpaid',
   'documents.imported.paid.unknown': 'Unknown',

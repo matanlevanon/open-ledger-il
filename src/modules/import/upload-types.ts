@@ -65,7 +65,12 @@ export const FileExternalDocSchema = z.object({
 export type FileExternalDocInput = z.infer<typeof FileExternalDocSchema>;
 
 /** Corrections to a filed past document. The file itself and its source never change. */
-export const UpdateExternalDocSchema = FileExternalDocSchema.omit({ uploadId: true, source: true }).partial();
+export const UpdateExternalDocSchema = FileExternalDocSchema.omit({ uploadId: true, source: true })
+  .partial()
+  .extend({
+    /** The service from the catalog (items). Null clears it. */
+    itemId: z.number().int().positive().nullable().optional(),
+  });
 export type UpdateExternalDocInput = z.infer<typeof UpdateExternalDocSchema>;
 
 export const LinkReceiptSchema = z.object({ documentId: z.number().int().positive() });
@@ -100,6 +105,7 @@ export interface ExternalDocumentRow {
   fx_rate: string | null;
   fx_rate_date: string | null;
   paid_status: PaidStatus;
+  item_id: number | null;
   r2_key: string;
   sha256: string;
   upload_id: number | null;

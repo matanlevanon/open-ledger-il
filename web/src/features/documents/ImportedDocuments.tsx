@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiGet } from '../../api/client';
 import { usePreferences } from '../../app/preferences';
 import { useT } from '../../i18n';
-import { type Client, apiSend, clientsApi, docsApi } from './api';
+import { type Client, apiSend, clientsApi, docsApi, type Service, servicesApi } from './api';
 import { CURRENCIES, clientName, money } from './format';
 import { Card, ErrorNote, Loading, useLoad } from './ui';
 
@@ -20,6 +20,7 @@ export interface ImportedDocument {
   vat_amount_minor: number;
   total_minor: number;
   paid_status: string;
+  item_id: number | null;
   receipt_json: string | null;
 }
 
@@ -71,9 +72,10 @@ interface EditForm {
   vatAmount: string;
   total: string;
   paidStatus: string;
+  itemId: number | null;
 }
 
-function EditRow({ doc, clients, onDone }: { doc: ImportedDocument; clients: Client[]; onDone: (saved: boolean) => void }) {
+function EditRow({ doc, clients, services, onDone }: { doc: ImportedDocument; clients: Client[]; services: Service[]; onDone: (saved: boolean) => void }) {
   const t = useT();
   const { locale } = usePreferences();
   const [form, setForm] = useState<EditForm>({
@@ -87,6 +89,7 @@ function EditRow({ doc, clients, onDone }: { doc: ImportedDocument; clients: Cli
     vatAmount: major(doc.vat_amount_minor),
     total: major(doc.total_minor),
     paidStatus: doc.paid_status,
+    itemId: doc.item_id,
   });
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -169,6 +172,17 @@ function EditRow({ doc, clients, onDone }: { doc: ImportedDocument; clients: Cli
               <option value="unknown">{t('documents.imported.paid.unknown')}</option>
             </select>
           </label>
+          <label>
+            <span className={label}>{t('documents.imported.service')}</span>
+            <select className={input} value={form.itemId ?? ''} onChange={(e) => set({ itemId: e.target.value ? Number(e.target.value) : null })}>
+              <option value="">{t('documents.imported.noService')}</option>
+              {services.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {locale === 'he' ? s.name_he || s.name_en : s.name_en}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         {error && <p className="mt-2 text-sm text-danger">{error}</p>}
         <div className="mt-3 flex gap-2">
@@ -196,6 +210,7 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
   const [reload, setReload] = useState(0);
   const [editing, setEditing] = useState<number | null>(null);
   const [clients, setClients] = useState<Client[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [actionError, setActionError] = useState<string | null>(null);
   const { data, error } = useLoad(
     () => apiGet<{ documents: ImportedDocument[] }>(`/import/external-documents${clientId ? `?clientId=${clientId}` : ''}`),
@@ -208,6 +223,13 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
       .then((b) => setClients(b.clients))
       .catch(() => undefined);
   }, [editing, clients.length]);
+  useEffect(() => {
+    if (editing === null || services.length > 0) return;
+    servicesApi
+      .list()
+      .then((b) => setServices(b.services))
+      .catch(() => undefined);
+  }, [editing, services.length]);
 
   const rows = (data?.documents ?? [])
     .filter((d) => !kinds || kinds.includes(importedKind(d.doc_type) as ImportedKind))
@@ -262,6 +284,7 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
                       key={d.id}
                       doc={d}
                       clients={clients}
+                      services={services}
                       onDone={(saved) => {
                         setEditing(null);
                         if (saved) setReload((n) => n + 1);

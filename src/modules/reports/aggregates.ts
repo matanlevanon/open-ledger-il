@@ -323,6 +323,37 @@ export async function incomeByService(db: D1Database, from: string, to: string, 
     row.quantityMilli = (row.quantityMilli ?? 0) + r.qty;
     delete row.imported;
   }
+
+  // Imported receipts, invoices and credits count under the service set on them with Edit.
+  const imported = await all<{ item_id: number | null; name_en: string | null; name_he: string | null; currency: string; amount: number; ils: number | null; n: number }>(
+    db,
+    `SELECT x.item_id, i.name_en, i.name_he, x.currency,
+       SUM(${externalSignSql('x.doc_type')} * x.total_minor) AS amount,
+       SUM(${externalSignSql('x.doc_type')} * ${ILS('x.total_minor', 'x.currency', 'x.total_ils_minor')}) AS ils,
+       COUNT(*) AS n
+     FROM external_documents x LEFT JOIN items i ON i.id = x.item_id
+     WHERE x.issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('x.doc_type')}
+     GROUP BY x.item_id, x.currency`,
+    from,
+    to,
+  );
+  for (const r of imported) {
+    const key = r.item_id !== null ? `item:${r.item_id}` : 'imported:none';
+    const nameEn = r.name_en ?? 'Imported, no service';
+    mergeShareRow(
+      map,
+      key,
+      () => ({ key, nameEn, nameHe: r.name_he ?? (r.item_id !== null ? nameEn : 'מיובא, ללא שירות'), ilsMinor: 0, byCurrency: {}, count: 0, quantityMilli: 0 }),
+      r.currency,
+      r.amount,
+      r.ils,
+      r.n,
+      false,
+    );
+    const row = map.get(key)!;
+    row.quantityMilli = (row.quantityMilli ?? 0) + r.n * 1000;
+    delete row.imported;
+  }
   return foldBreakdown([...map.values()], limit);
 }
 

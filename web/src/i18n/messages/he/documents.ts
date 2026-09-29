@@ -251,6 +251,8 @@ export const documents: Record<keyof typeof en, string> = {
   'documents.imported.title': 'מסמכי עבר שיובאו',
   'documents.imported.hint': 'הונפקו במערכת אחרת לפני המערכת הזו. הם שומרים על המספרים המקוריים שלהם.',
   'documents.imported.colPaid': 'שולם',
+  'documents.imported.service': 'שירות',
+  'documents.imported.noService': 'ללא שירות',
   'documents.imported.paid.paid': 'שולם',
   'documents.imported.paid.unpaid': 'לא שולם',
   'documents.imported.paid.unknown': 'לא ידוע',
