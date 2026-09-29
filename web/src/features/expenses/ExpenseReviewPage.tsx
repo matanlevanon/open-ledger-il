@@ -134,7 +134,7 @@ export function ExpenseReviewPage() {
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="rounded-card border border-line bg-surface p-2 shadow-card">
           {expense.file_id ? (
-            <iframe title={t('expenses.review.fileIframeTitle')} src={fileDownloadUrl(expense.file_id)} className="h-[600px] w-full rounded" />
+            <iframe title={t('expenses.review.fileIframeTitle')} src={fileDownloadUrl(expense.file_id)} className="h-[340px] w-full rounded md:h-[600px]" />
           ) : (
             <p className="p-10 text-center text-sm text-muted">{t('expenses.review.noFile')}</p>
           )}
