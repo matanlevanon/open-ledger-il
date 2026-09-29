@@ -213,9 +213,9 @@ or remove the `.gitattributes` rule to work around it.
 ## 10. Confirm the cron triggers
 
 **Cloudflare dashboard.** Open the Worker > **Settings** > **Trigger Events** > **Cron Triggers**.
-The nine schedules from `wrangler.toml`'s `[triggers]` block should already be listed. Workers
+The five schedules from `wrangler.toml`'s `[triggers]` block should already be listed. Workers
 Builds reads them from the file on every deploy, so there is nothing to add here. Just check the
-count (9) and a couple of the times match `wrangler.toml`, in case a future edit to that file
+count (5) and a couple of the times match `wrangler.toml`, in case a future edit to that file
 missed one.
 
 ## 11. First sign-in and smoke test
@@ -260,11 +260,11 @@ them by hand instead (a fresh number series with no SUMIT import):
 
 ## 12. Worker plan and CPU time
 
-Run production on Workers Paid ($5 a month minimum per account). The reason is cron triggers:
-Workers Free allows 5 per account, and `wrangler.toml` declares 9 (section 10 lists them). A deploy
-with more crons than the plan allows is refused. Paid allows 250.
-
-Paid also lifts these Free limits, worth knowing if you test on Free first:
+The Worker declares 5 cron triggers, the most Workers Free allows per account (Paid allows 250).
+Jobs that need a day of the month share a daily trigger and check the date themselves. Workers
+Free runs the ledger. These Free limits are the ones to watch, and Workers Paid ($5 a month
+minimum per account) lifts all of them. The accountant pack and the quarterly backup are the jobs
+most likely to hit the cron CPU limit:
 
 - **CPU time**: 10 ms per HTTP request on Free, versus 30 seconds (up to 5 minutes) on Paid. CPU
   time only counts active JavaScript execution, not time spent waiting on D1, R2, Browser

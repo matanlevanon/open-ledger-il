@@ -764,7 +764,7 @@ export function dailyMonths(today: string): string[] {
 }
 
 /** Reuses the existing 08:00 UTC daily slot (the R09 access check) rather than a new cron trigger. */
-export const DRIVE_DAILY_CRON = '0 8 * * *';
+export const DRIVE_DAILY_CRON = '0 7 * * *';
 
 /** The daily job. Does nothing while the switch is off. Each month is logged as its own run. */
 export async function runDailyDriveImport(env: Env, deps: Deps, today: string, actor: AuditActor): Promise<ImportSummary[]> {

@@ -71,16 +71,15 @@ run_worker_first = ["/api/*", "/mcp", "/mcp/*"]
 # receives every fire and dispatches it to each module that lists the cron in its `crons`.
 # test/scheduled.test.ts fails when this list and the modules disagree.
 [triggers]
+# Five triggers, the Workers Free limit. Jobs that need a day of the month share a daily cron and
+# check the date themselves.
 crons = [
-  "0 6 * * *",     # R04: Bank of Israel rates, daily, plus a 7-day healing backfill
   "*/15 * * * *",  # R12: allocation retry queue
+  "0 2 * * *",     # R14: nightly gap and hash-chain check. Quarterly backup on 1 Jan, Apr, Jul, Oct
   "30 5 * * *",    # R12: ITA token refresh check and day-75 reminder
-  "0 8 * * *",     # R09: accountant access expiry reminder and auto-disable. R20: Drive expenses daily sync (when on)
-  "0 7 * * *",     # R06: payment reminders, before and after due date
-  "0 2 * * *",     # R14: nightly gap and hash-chain check
-  "0 3 1 1,4,7,10 *", # R14: quarterly backup
-  "0 7 5 * *",     # R08: monthly accountant pack, 5th of the month
-  "0 9 * * *",     # R08: ceiling alert sweep (70/85/95/100 percent)
+  "0 6 * * *",     # R04: Bank of Israel rates, daily, plus a 7-day healing backfill
+  "0 7 * * *",     # Reminders, recurring documents, accountant access expiry, Drive expense sync,
+                   # ceiling alerts, and the monthly accountant pack on the 5th
 ]
 
 # R02: bundles embedded font files as raw bytes, so PDF rendering needs no network.

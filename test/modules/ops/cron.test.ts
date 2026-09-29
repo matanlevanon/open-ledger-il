@@ -64,3 +64,21 @@ describe('opsGapScheduled (runs/R14-ops.md: Slack alert on any gap or hash-chain
     expect(notifier.sent[0]).toMatch(/chain/i);
   });
 });
+
+describe('quarterly backup on the nightly cron', () => {
+  it('runs only on the first day of a quarter', async () => {
+    const { isQuarterStart } = await import('../../../src/modules/ops');
+    expect(isQuarterStart(Date.parse('2026-10-01T02:00:00Z'))).toBe(true);
+    expect(isQuarterStart(Date.parse('2027-01-01T02:00:00Z'))).toBe(true);
+    expect(isQuarterStart(Date.parse('2026-10-02T02:00:00Z'))).toBe(false);
+    expect(isQuarterStart(Date.parse('2026-11-01T02:00:00Z'))).toBe(false);
+  });
+});
+
+describe('monthly accountant pack on the daily cron', () => {
+  it('runs only on the 5th', async () => {
+    const { isPackDay } = await import('../../../src/modules/reports/cron');
+    expect(isPackDay(Date.parse('2026-11-05T07:00:00Z'))).toBe(true);
+    expect(isPackDay(Date.parse('2026-11-06T07:00:00Z'))).toBe(false);
+  });
+});

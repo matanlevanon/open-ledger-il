@@ -6,7 +6,17 @@ import { type Notifier, slackNotifier } from '../ita/notify';
 import { type DriveBackupUploader, GoogleDriveBackupUploader, quarterLabel } from './drive-backup';
 
 /** Must match the R14 entry in wrangler.toml's `[triggers] crons`. First week of the quarter, per instruction 25(ו). */
-export const BACKUP_CRON = '0 3 1 1,4,7,10 *';
+/**
+ * The quarterly backup rides on the nightly 02:00 UTC cron, so the Worker needs only 5 cron
+ * triggers (Workers Free allows 5). It runs when that night is the 1st of Jan, Apr, Jul or Oct.
+ */
+export const BACKUP_CRON = '0 2 * * *';
+
+/** True on the first day of a quarter, in UTC, the date the cron fires on. */
+export function isQuarterStart(scheduledTime: number): boolean {
+  const d = new Date(scheduledTime);
+  return d.getUTCDate() === 1 && d.getUTCMonth() % 3 === 0;
+}
 
 /**
  * Bookkeeping tables backed up every quarter (docs/legal-requirements.md, instruction 25(ו)).
@@ -206,6 +216,6 @@ export interface BackupDeps {
 }
 
 export async function backupScheduled(controller: ScheduledController, env: Env, _ctx?: ExecutionContext, deps: BackupDeps = {}): Promise<void> {
-  if (controller.cron !== BACKUP_CRON) return;
+  if (controller.cron !== BACKUP_CRON || !isQuarterStart(controller.scheduledTime)) return;
   await runBackup(env, 'quarterly', nowIso(), deps.notifier, deps.restore, deps.driveUploader);
 }

@@ -8,7 +8,7 @@ import { evaluateCeilingAlerts } from './alerts';
  * wrangler.toml's `[triggers] crons`. Catches the case the crossing block cannot: open payment
  * requests alone (no new receipt) already project turnover past a threshold.
  */
-export const CEILING_ALERT_CRON = '0 9 * * *';
+export const CEILING_ALERT_CRON = '0 7 * * *';
 
 export async function ceilingScheduled(controller: ScheduledController, env: Env, _ctx?: ExecutionContext): Promise<void> {
   if (controller.cron !== CEILING_ALERT_CRON) return;

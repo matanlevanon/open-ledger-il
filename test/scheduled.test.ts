@@ -31,14 +31,14 @@ describe('one scheduled handler for every cron', () => {
     expect(declaredCrons(modules)).toEqual([
       '*/15 * * * *',
       '0 2 * * *',
-      '0 3 1 1,4,7,10 *',
       '0 6 * * *',
       '0 7 * * *',
-      '0 7 5 * *',
-      '0 8 * * *',
-      '0 9 * * *',
       '30 5 * * *',
     ]);
+  });
+
+  it('stays within the 5 cron triggers Workers Free allows', () => {
+    expect(declaredCrons(modules).length).toBeLessThanOrEqual(5);
   });
 
   it('every module with a scheduled handler declares its crons, and every declared cron has a handler', () => {

@@ -14,7 +14,7 @@ import { usersRoutes } from './users';
 export { signDownloadUrl } from './downloads';
 
 /** Daily cron. Enabled in wrangler.toml's [triggers] block. */
-export const ACCESS_EXPIRY_CRON = '0 8 * * *';
+export const ACCESS_EXPIRY_CRON = '0 7 * * *';
 
 const routes = new Hono<AppEnv>();
 
