@@ -69,9 +69,10 @@ describe('unified file build (instructions 1.31)', () => {
     expect(ini[0]!.slice(33, 48)).toBe('123456789012345');
     expect(ini[0]!.slice(48, 56)).toBe('&OF1.31&');
     expect(ini[0]!.slice(56, 64)).toBe('12345678');
-    expect(ini.slice(1).map((l) => l.slice(0, 4))).toEqual(['B100', 'B110', 'C100', 'D110', 'D120', 'M100']);
+    // One summary row per record type in BKMVDATA.TXT, none for absent types.
+    expect(ini.slice(1).map((l) => l.slice(0, 4))).toEqual(['A100', 'C100', 'D120', 'Z900']);
     expect(ini.find((l) => l.startsWith('C100'))).toBe('C100000000000000001');
-    expect(ini.find((l) => l.startsWith('B100'))).toBe('B100000000000000000');
+    expect(ini.find((l) => l.startsWith('Z900'))).toBe('Z900000000000000001');
   });
 
   it('writes a receipt header with the customer, amounts in shekels and a bank transfer payment line', async () => {

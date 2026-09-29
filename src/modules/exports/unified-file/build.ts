@@ -26,7 +26,7 @@ import {
  *
  * Scope. This is document-issuing software, not a general ledger or an inventory system, so
  * INI field 1013 (bookkeeping type) is 0 and the file carries A100, C100, D110, D120 and Z900.
- * B100, B110 and M100 are never written, and their INI summary rows read 0.
+ * B100, B110 and M100 are never written.
  *
  * Which documents. Every numbered document of a type in appendix 1, final or cancelled (a
  * cancelled one carries 1 in field 1228), cut by document date (section 2.1). Quotes and payment
@@ -78,8 +78,12 @@ export const APPENDIX_1: { code: number; nameHe: string; nameEn: string }[] = [
   { code: 910, nameHe: 'דוח ייצור-יציאה', nameEn: 'Production out' },
 ];
 
-/** Data record types, in the order of section 2.5. INI.TXT carries one summary row for each. */
-export const DATA_RECORD_TYPES = ['B100', 'B110', 'C100', 'D110', 'D120', 'M100'] as const;
+/**
+ * Record types in BKMVDATA.TXT, in file order. INI.TXT carries one summary row (section 3.2) for
+ * each type the file holds, A100 and Z900 included, and none for a type with no records: the Tax
+ * Authority's checker reported "no summary records" for zero-count rows of absent types.
+ */
+export const SUMMARY_RECORD_TYPES = ['A100', 'B100', 'B110', 'C100', 'D110', 'D120', 'M100', 'Z900'] as const;
 
 /** Record types in BKMVDATA.TXT, with the Hebrew descriptions of appendix 4, for the 5.4 screen. */
 export const RECORD_DESCRIPTIONS: { code: string; nameHe: string; nameEn: string }[] = [
@@ -564,7 +568,9 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
       },
       RECORD_LENGTH.A000,
     ),
-    ...DATA_RECORD_TYPES.map((code) => renderRecord(SUMMARY_FIELDS, { 1050: code, 1051: counts[code] ?? 0 }, RECORD_LENGTH.SUMMARY)),
+    ...SUMMARY_RECORD_TYPES.filter((code) => (counts[code] ?? 0) > 0).map((code) =>
+      renderRecord(SUMMARY_FIELDS, { 1050: code, 1051: counts[code] }, RECORD_LENGTH.SUMMARY),
+    ),
   ];
 
   const iniText = iniLines.join('\r\n') + '\r\n';
