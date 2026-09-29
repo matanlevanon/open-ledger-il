@@ -2,7 +2,7 @@
 
 Open-source invoicing, expenses and bookkeeping for Israeli businesses. Built for עוסק פטור and עוסק מורשה. Runs on your own Cloudflare account. Your data stays in your own database.
 
-Product page: [English](docs/index.html) · [עברית](docs/he.html). Turn on GitHub Pages from the `/docs` folder to publish it.
+The product page, in English and Hebrew, is published with GitHub Pages from the `/docs` folder. The link is in this repository's **About** box.
 
 > **Not tax or legal advice.** You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant before you issue a real document.
 

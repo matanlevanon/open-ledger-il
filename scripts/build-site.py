@@ -1,4 +1,8 @@
-"""Builds docs/index.html (English) and docs/he.html (Hebrew) for the GitHub Pages landing page."""
+"""
+Builds the product site: docs/index.html (English) and docs/he.html (Hebrew), next to the
+screenshots in docs/screenshots/. Run: python3 scripts/build-site.py docs
+GitHub Pages serves it: Settings > Pages > Deploy from a branch > main, /docs.
+"""
 import html, os, sys
 
 # The page names no account. GitHub links are built in the browser from the Pages address
@@ -10,9 +14,10 @@ LICENSE = '#" data-gh="/blob/main/LICENSE'
 CLONE = 'git clone https://github.com/OWNER/open-ledger-il.git'
 
 LOGO = '''<svg viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="1" y="1" width="30" height="30" rx="8" fill="#131e33" stroke="#22314b" stroke-width="1.5"/>
-        <rect x="8" y="7" width="16" height="19" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
-        <path d="M12 13h8M12 17h8M12 21h5" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+        <rect x="1" y="1" width="30" height="30" rx="8" fill="#141d2e" stroke="#26344b" stroke-width="1.5"/>
+        <rect x="8" y="6" width="16" height="20" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
+        <path d="M12 12h8M12 16h8" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 20h5" stroke="#9b6dff" stroke-width="2" stroke-linecap="round"/>
       </svg>'''
 
 EN = dict(
@@ -24,7 +29,7 @@ EN = dict(
     h1='Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.',
     lead='Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.',
     cta=['Get the code', 'Read the deploy guide'], copy='Copy', copied='Copied',
-    cmd_note='Deploys to your own Cloudflare Worker on the Workers Paid plan, from $5 a month, for its 9 scheduled jobs. Setup takes an afternoon.',
+    cmd_note='Deploys to your own Cloudflare Worker. Starts on the Workers Free plan. Setup takes an afternoon.',
     shot_alt='The dashboard: open and overdue documents, cash flow, income by month and top clients',
     shot_cap='All screenshots on this page use an invented demo business.',
     feat_eyebrow='What it does', feat_h='Everything a small Israeli business issues and files',
@@ -70,10 +75,10 @@ EN = dict(
         ('Sandbox and production never mix', 'ITA sandbox and production credentials, tokens and numbers are kept apart.'),
     ],
     need_eyebrow='Before you start', need_h='What you need',
-    need_p='A Cloudflare account on Workers Paid is the one fixed cost. The rest is free or pay per use.',
+    need_p='It starts on free tiers. Workers Paid, from $5 a month, is the one upgrade worth planning for.',
     need_cols=['Requirement', 'Notes'], required='Required', optional='Optional',
     needs=[
-        ('Cloudflare account on Workers Paid', True, 'From $5 a month per account. Needed for the 9 scheduled jobs. Runs the Worker, D1, R2 and Browser Rendering.'),
+        ('Cloudflare account', True, 'Workers Free runs it: the Worker, D1, R2, Browser Rendering and 5 scheduled jobs. Workers Paid, from $5 a month, lifts the limits below.'),
         ('A domain on Cloudflare', True, 'Your ledger address, for example ledger.example.com, behind Cloudflare Access. Zero Trust is free for small teams.'),
         ('PDF signing key and certificate', True, 'For the PAdES signature on every PDF. docs/setup.md shows how to make one.'),
         ('Node.js and Wrangler', True, 'On your computer, to apply database migrations and set secrets.'),
@@ -82,12 +87,12 @@ EN = dict(
         ('Anthropic API key', False, 'For Claude to read expenses and past documents. Pay per use, a few cents per document.'),
         ('Google Cloud service account', False, 'For the Drive expense import and backup copies. Free.'),
     ],
-    paid_title='Why Workers Paid.',
-    paid_intro='The ledger runs 9 scheduled jobs, and the Free plan allows 5:',
+    paid_title='When to move to Workers Paid.',
+    paid_intro='The ledger uses 5 scheduled jobs, the most Workers Free allows. Free has three other limits worth knowing:',
     paid=[
-        'Free allows 5 cron triggers per account. The ledger uses 9: exchange rates, the ITA allocation retry queue, the ITA token check, payment reminders and recurring documents, accountant access expiry and the Drive expense sync, the nightly numbering and hash-chain check, the quarterly backup, the monthly accountant pack, and the ceiling alerts. Paid allows 250.',
-        'Also on Paid: Browser Rendering, which draws every PDF, gets 10 hours a month instead of 10 minutes a day.',
-        'Also on Paid: D1 point-in-time recovery keeps 30 days instead of 7.',
+        'Cron CPU: 10 ms per scheduled run on Free. Most jobs fit. The monthly accountant pack and the quarterly backup build files and are the ones likely to need Paid.',
+        'Browser Rendering, which draws every PDF: 10 minutes a day on Free, 10 hours a month on Paid.',
+        'D1 point-in-time recovery: 7 days on Free, 30 days on Paid. For legal books, 30 days is the one to have.',
     ],
     limits_eyebrow='Known limits', limits_h='What it will not do',
     limits=[
@@ -113,7 +118,7 @@ HE = dict(
     h1='חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.',
     lead='הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.',
     cta=['לקוד', 'למדריך ההתקנה'], copy='העתקה', copied='הועתק',
-    cmd_note='נפרסת ל-Worker שלך ב-Cloudflare, בתוכנית Workers Paid, החל מ-5$ לחודש, בשביל 9 המשימות המתוזמנות. ההקמה לוקחת אחר צהריים.',
+    cmd_note='נפרסת ל-Worker שלך ב-Cloudflare. מתחילה בתוכנית Workers Free. ההקמה לוקחת אחר צהריים.',
     shot_alt='לוח הבקרה: מסמכים פתוחים ובאיחור, תזרים, הכנסות לפי חודש ולקוחות מובילים',
     shot_cap='כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.',
     feat_eyebrow='מה היא עושה', feat_h='כל מה שעסק ישראלי קטן מפיק ומתייק',
@@ -159,10 +164,10 @@ HE = dict(
         ('ניסוי וייצור לא מתערבבים', 'פרטי הגישה, הטוקנים והמספרים של סביבת הניסוי והייצור ברשות המסים נשמרים בנפרד.'),
     ],
     need_eyebrow='לפני שמתחילים', need_h='מה צריך',
-    need_p='חשבון Cloudflare בתוכנית Workers Paid הוא העלות הקבועה היחידה. כל השאר חינמי או לפי שימוש.',
+    need_p='מתחילים בתוכניות חינמיות. Workers Paid, החל מ-5$ לחודש, הוא השדרוג היחיד ששווה לתכנן.',
     need_cols=['דרישה', 'הערות'], required='חובה', optional='רשות',
     needs=[
-        ('חשבון Cloudflare בתוכנית Workers Paid', True, 'החל מ-5$ לחודש לחשבון. נדרש בשביל 9 המשימות המתוזמנות. מריץ את ה-Worker, D1, R2 ו-Browser Rendering.'),
+        ('חשבון Cloudflare', True, 'Workers Free מריץ אותה: ה-Worker, D1, R2, Browser Rendering ו-5 משימות מתוזמנות. Workers Paid, החל מ-5$ לחודש, מסיר את המגבלות שלמטה.'),
         ('דומיין ב-Cloudflare', True, 'הכתובת של המערכת, למשל ledger.example.com, מאחורי Cloudflare Access. Zero Trust חינמי לצוותים קטנים.'),
         ('מפתח ותעודה לחתימת PDF', True, 'לחתימת PAdES על כל PDF. הקובץ docs/setup.md מסביר איך יוצרים.'),
         ('Node.js ו-Wrangler', True, 'במחשב שלך, להרצת מיגרציות למסד הנתונים ולהגדרת סודות.'),
@@ -171,12 +176,12 @@ HE = dict(
         ('מפתח API של Anthropic', False, 'כדי ש-Claude יקרא הוצאות ומסמכי עבר. תשלום לפי שימוש, כמה סנטים למסמך.'),
         ('חשבון שירות ב-Google Cloud', False, 'לייבוא הוצאות מ-Drive ולעותקי גיבוי. חינם.'),
     ],
-    paid_title='למה Workers Paid.',
-    paid_intro='המערכת מריצה 9 משימות מתוזמנות, והתוכנית החינמית מאפשרת 5:',
+    paid_title='מתי לעבור ל-Workers Paid.',
+    paid_intro='המערכת משתמשת ב-5 משימות מתוזמנות, המקסימום ב-Workers Free. לתוכנית החינמית יש עוד שלוש מגבלות שכדאי להכיר:',
     paid=[
-        'בתוכנית החינמית מותרים 5 טריגרים מתוזמנים (cron) לחשבון. המערכת משתמשת ב-9: שערי מטבע, תור הניסיונות החוזרים למספרי הקצאה, בדיקת הטוקן מול רשות המסים, תזכורות תשלום ומסמכים חוזרים, תפוגת גישת רואה החשבון וסנכרון ההוצאות מ-Drive, בדיקת המספור ושרשרת הגיבוב הלילית, הגיבוי הרבעוני, חבילת רואה החשבון החודשית והתראות התקרה. בתוכנית בתשלום מותרים 250.',
-        'בנוסף בתוכנית בתשלום: Browser Rendering, שמפיק כל PDF, מקבל 10 שעות בחודש במקום 10 דקות ביום.',
-        'בנוסף בתוכנית בתשלום: שחזור לנקודת זמן ב-D1 שומר 30 ימים במקום 7.',
+        'זמן מעבד למשימה מתוזמנת: 10 מילישניות בתוכנית החינמית. רוב המשימות נכנסות. חבילת רואה החשבון החודשית והגיבוי הרבעוני בונים קבצים, והן אלה שכנראה ידרשו Paid.',
+        'Browser Rendering, שמפיק כל PDF: 10 דקות ביום בחינם, 10 שעות בחודש ב-Paid.',
+        'שחזור לנקודת זמן ב-D1: 7 ימים בחינם, 30 ימים ב-Paid. לספרים חוקיים, 30 ימים זה מה שצריך.',
     ],
     limits_eyebrow='מגבלות ידועות', limits_h='מה היא לא עושה',
     limits=[
@@ -193,7 +198,108 @@ HE = dict(
     foot_note='מאוחסן ב-Cloudflare Workers · קוד פתוח ברישיון AGPL-3.0 · לא קשור ל-Cloudflare או לרשות המסים',
 )
 
+
 IDS = ['features', 'how', 'screens', 'setup']
+
+CSS = '''
+:root { --bg: #0b111c; --bg-2: #0f172a; --surface: #141d2e; --surface-2: #1b263b; --border: #26344b; --border-soft: #1e2a3e;
+  --text: #eef3f9; --text-dim: #9db0c6; --text-mute: #6f839c; --blue: #4f93ff; --blue-soft: #2a6bd6; --green: #35c46a; --green-2: #2bab5b;
+  --orange: #ffb020; --purple: #9b6dff; --radius: 16px; --maxw: 1120px; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+header { position: sticky; top: 0; z-index: 40; background: rgba(11,17,28,.82); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; white-space: nowrap; }
+.brand svg { width: 26px; height: 26px; flex: 0 0 auto; }
+.nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--text-dim); }
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--text); }
+.nav-end { display: flex; align-items: center; gap: 10px; }
+.lang { font-size: 14px; color: var(--text-dim); text-decoration: none; padding: 8px 10px; }
+.lang:hover { color: var(--text); }
+@media (max-width: 760px) { .nav-links { display: none; } }
+@media (max-width: 480px) { .nav-end .btn-sm { display: none; } }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s, background .15s; }
+.btn-primary { background: linear-gradient(180deg, var(--green), var(--green-2)); color: #06210f; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(53,196,106,.9); }
+.btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
+.btn-ghost:hover { border-color: var(--text-mute); }
+.btn-sm { padding: 9px 16px; font-size: 14px; border-radius: 10px; }
+.hero { padding: 76px 0 44px; text-align: center; }
+.badge { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; margin-bottom: 22px; }
+.badge b { color: var(--green); font-weight: 600; }
+h1 { font-size: clamp(32px, 5.2vw, 54px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 16px; font-weight: 800; }
+.lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-dim); max-width: 680px; margin: 0 auto 28px; }
+.cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
+.cmd { display: flex; align-items: center; gap: 12px; max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 12px 12px 16px; direction: ltr; }
+.cmd code { font-size: 13px; color: var(--text-dim); overflow-x: auto; white-space: nowrap; flex: 1; text-align: left; background: none; border: 0; padding: 0; }
+.cmd button { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
+.cmd button:hover { color: var(--text); border-color: var(--text-mute); }
+.cmd-note { font-size: 12.5px; color: var(--text-mute); margin-top: 10px; }
+.shot { margin: 44px auto 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--surface); }
+.shot img { width: 100%; }
+.shot-cap { font-size: 13px; color: var(--text-mute); text-align: center; margin-top: 12px; }
+section { padding: 72px 0; border-top: 1px solid var(--border-soft); }
+.sec-head { text-align: center; max-width: 660px; margin: 0 auto 44px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+[dir=rtl] .eyebrow, [dir=rtl] th { letter-spacing: 0; }
+h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02em; margin: 0 0 12px; font-weight: 700; }
+.sec-head p { color: var(--text-dim); margin: 0; }
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .features { grid-template-columns: 1fr; } }
+.feat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.feat .ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px; background: var(--surface-2); border: 1px solid var(--border); font-size: 18px; color: var(--blue); }
+.feat h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 650; letter-spacing: -.01em; }
+.feat p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+.step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.step .n { width: 30px; height: 30px; border-radius: 9px; background: var(--blue-soft); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 14px; }
+.step h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 650; }
+.step p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+@media (max-width: 820px) { .gallery { grid-template-columns: 1fr; } }
+.gcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.gcard img { width: 100%; border-bottom: 1px solid var(--border-soft); }
+.gcard .t { padding: 14px 18px 18px; }
+.gcard h3 { margin: 0 0 6px; font-size: 15.5px; font-weight: 650; }
+.gcard p { margin: 0; color: var(--text-dim); font-size: 14px; }
+.honest { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 820px) { .honest { grid-template-columns: 1fr; } }
+.hcard { background: var(--surface); border-inline-start: 3px solid var(--orange); border-radius: 12px; padding: 20px; }
+.hcard h3 { margin: 0 0 8px; font-size: 15.5px; font-weight: 650; }
+.hcard p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
+table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; font-size: 14.5px; }
+th, td { text-align: start; padding: 13px 18px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+th { color: var(--text-mute); font-weight: 600; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; }
+tr:last-child td { border-bottom: 0; }
+td b { font-weight: 600; }
+td span { color: var(--text-dim); }
+.tag { display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-inline-start: 8px; border: 1px solid var(--border); color: var(--text-mute); vertical-align: 1px; }
+.tag.req { color: var(--green); border-color: rgba(53,196,106,.4); }
+@media (max-width: 620px) { th, td { padding: 11px 12px; } td { display: block; border-bottom: 0; } tr { display: block; border-bottom: 1px solid var(--border-soft); padding: 6px 0; } thead { display: none; } }
+.note { background: var(--surface); border-inline-start: 3px solid var(--blue); border-radius: 12px; padding: 18px 20px; color: var(--text-dim); font-size: 14.5px; margin-top: 22px; }
+.note b { color: var(--text); }
+.note ul { margin: 10px 0 0; padding-inline-start: 20px; }
+.note li { margin: 4px 0; }
+.limits { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; list-style: none; padding: 0; margin: 0; }
+@media (max-width: 760px) { .limits { grid-template-columns: 1fr; } }
+.limits li { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; color: var(--text-dim); font-size: 14.5px; }
+.final { text-align: center; }
+.final .cta { margin-top: 26px; margin-bottom: 0; }
+footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: var(--text-mute); font-size: 14px; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+.foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; }
+.foot a:hover { color: var(--text); }
+.toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+'''
 
 
 def page(c):
@@ -230,7 +336,8 @@ def page(c):
     paid = ''.join(f'<li>{e(x)}</li>' for x in c['paid'])
     limits = '\n'.join(f'        <li>{e(x)}</li>' for x in c['limits'])
     links = [REPO, DEPLOY, SETUP, LICENSE]
-    foot = ' '.join(f'<a href="{u}">{e(t)}</a>' for u, t in zip(links, c['foot_links']))
+    foot = '\n      '.join(f'<a href="{u}">{e(t)}</a>' for u, t in zip(links, c['foot_links']))
+    other_lang = 'he' if c['lang'] == 'en' else 'en'
     return f'''<!doctype html>
 <html lang="{c['lang']}" dir="{c['dir']}">
 <head>
@@ -247,8 +354,8 @@ def page(c):
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>{CSS}</style>
 </head>
 <body>
 
@@ -261,8 +368,10 @@ def page(c):
     <nav class="nav-links">
       {nav}
     </nav>
-    <a class="lang" href="{c['other']}" hreflang="{'he' if c['lang'] == 'en' else 'en'}">{c['other_label']}</a>
-    <a class="btn btn-ghost btn-sm" href="{REPO}">{e(c['github'])}</a>
+    <div class="nav-end">
+      <a class="lang" href="{c['other']}" hreflang="{other_lang}" lang="{other_lang}">{c['other_label']}</a>
+      <a class="btn btn-ghost btn-sm" href="{REPO}">{e(c['github'])}</a>
+    </div>
   </div>
 </header>
 
@@ -281,6 +390,7 @@ def page(c):
         <button id="copy" type="button">{e(c['copy'])}</button>
       </div>
       <p class="cmd-note">{e(c['cmd_note'])}</p>
+
       <div class="shot">
         <img src="screenshots/dashboard.png" alt="{e(c['shot_alt'])}">
       </div>
@@ -379,31 +489,37 @@ def page(c):
 
 <footer>
   <div class="wrap foot">
-    <div>{foot}</div>
+    <div>
+      {foot}
+    </div>
     <div>{e(c['foot_note'])}</div>
   </div>
 </footer>
 
 <div class="toast" id="toast" role="status">{e(c['copied'])}</div>
+
 <script>
-  (function () {{
-    var owner = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : null;
-    var repo = location.pathname.split('/').filter(Boolean)[0] || 'open-ledger-il';
-    var base = owner ? 'https://github.com/' + owner + '/' + repo : null;
-    document.querySelectorAll('[data-gh]').forEach(function (a) {{
-      if (base) a.href = base + a.getAttribute('data-gh');
-    }});
-    if (base) document.getElementById('cmd').textContent = 'git clone ' + base + '.git';
-  }})();
-  document.getElementById('copy').addEventListener('click', function () {{
-    var text = document.getElementById('cmd').textContent;
-    var done = function () {{
-      var t = document.getElementById('toast');
-      t.classList.add('show');
-      setTimeout(function () {{ t.classList.remove('show'); }}, 1400);
-    }};
-    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, done); else done();
+(function () {{
+  var owner = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : null;
+  var repo = location.pathname.split('/').filter(Boolean)[0] || 'open-ledger-il';
+  var base = owner ? 'https://github.com/' + owner + '/' + repo : null;
+  document.querySelectorAll('[data-gh]').forEach(function (a) {{
+    if (base) a.href = base + a.getAttribute('data-gh');
   }});
+  if (base) document.getElementById('cmd').textContent = 'git clone ' + base + '.git';
+}})();
+document.getElementById('copy').addEventListener('click', async function () {{
+  var text = document.getElementById('cmd').textContent;
+  try {{ await navigator.clipboard.writeText(text); }}
+  catch (err) {{
+    var t = document.createElement('textarea');
+    t.value = text; document.body.appendChild(t); t.select();
+    document.execCommand('copy'); t.remove();
+  }}
+  var toast = document.getElementById('toast');
+  toast.classList.add('on');
+  setTimeout(function () {{ toast.classList.remove('on'); }}, 1600);
+}});
 </script>
 </body>
 </html>
@@ -411,16 +527,19 @@ def page(c):
 
 
 FAVICON = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect x="1" y="1" width="30" height="30" rx="8" fill="#131e33" stroke="#22314b" stroke-width="1.5"/>
-  <rect x="8" y="7" width="16" height="19" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
-  <path d="M12 13h8M12 17h8M12 21h5" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+  <rect x="1" y="1" width="30" height="30" rx="8" fill="#141d2e" stroke="#26344b" stroke-width="1.5"/>
+  <rect x="8" y="6" width="16" height="20" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
+  <path d="M12 12h8M12 16h8" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M12 20h5" stroke="#9b6dff" stroke-width="2" stroke-linecap="round"/>
 </svg>
 '''
 
 if __name__ == '__main__':
-    out = sys.argv[1]
+    out = sys.argv[1] if len(sys.argv) > 1 else 'docs'
+    os.makedirs(out, exist_ok=True)
     for c in (EN, HE):
         open(os.path.join(out, c['file']), 'w', encoding='utf-8', newline='\n').write(page(c))
     open(os.path.join(out, 'favicon.svg'), 'w', encoding='utf-8', newline='\n').write(FAVICON)
+    # Serve the files as they are. Without this, Pages runs Jekyll over the Markdown docs.
     open(os.path.join(out, '.nojekyll'), 'w').write('')
     print('built', out)
