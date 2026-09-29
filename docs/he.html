@@ -16,9 +16,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root { --bg: #0b111c; --bg-2: #0f172a; --surface: #141d2e; --surface-2: #1b263b; --border: #26344b; --border-soft: #1e2a3e;
-  --text: #eef3f9; --text-dim: #9db0c6; --text-mute: #6f839c; --blue: #4f93ff; --blue-soft: #2a6bd6; --green: #35c46a; --green-2: #2bab5b;
-  --orange: #ffb020; --purple: #9b6dff; --radius: 16px; --maxw: 1120px; --shadow: 0 30px 80px -30px rgba(0,0,0,.8); }
+:root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
+  --text: #0f172a; --text-dim: #475569; --text-mute: #64748b; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
+  --orange: #d97706; --purple: #7c3aed; --radius: 16px; --maxw: 1120px; --shadow: 0 24px 60px -28px rgba(15,23,42,.35); color-scheme: light; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
@@ -26,7 +26,7 @@ a { color: inherit; }
 img { max-width: 100%; display: block; }
 code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
-header { position: sticky; top: 0; z-index: 40; background: rgba(11,17,28,.82); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
+header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; white-space: nowrap; }
 .brand svg { width: 26px; height: 26px; flex: 0 0 auto; }
@@ -39,8 +39,8 @@ header { position: sticky; top: 0; z-index: 40; background: rgba(11,17,28,.82); 
 @media (max-width: 760px) { .nav-links { display: none; } }
 @media (max-width: 480px) { .nav-end .btn-sm { display: none; } }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s, background .15s; }
-.btn-primary { background: linear-gradient(180deg, var(--green), var(--green-2)); color: #06210f; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(53,196,106,.9); }
+.btn-primary { background: linear-gradient(180deg, var(--green), var(--green-2)); color: #ffffff; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(22,163,74,.7); }
 .btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
 .btn-ghost:hover { border-color: var(--text-mute); }
 .btn-sm { padding: 9px 16px; font-size: 14px; border-radius: 10px; }
@@ -55,6 +55,7 @@ h1 { font-size: clamp(32px, 5.2vw, 54px); line-height: 1.1; letter-spacing: -.03
 .cmd button { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
 .cmd button:hover { color: var(--text); border-color: var(--text-mute); }
 .cmd-note { font-size: 12.5px; color: var(--text-mute); margin-top: 10px; }
+.feat, .step, .gcard, .limits li, table { box-shadow: 0 1px 2px rgba(15,23,42,.04); }
 .shot { margin: 44px auto 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--surface); }
 .shot img { width: 100%; }
 .shot-cap { font-size: 13px; color: var(--text-mute); text-align: center; margin-top: 12px; }
@@ -91,6 +92,19 @@ h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02
 .gcard .t { padding: 14px 18px 18px; }
 .gcard h3 { margin: 0 0 6px; font-size: 15.5px; font-weight: 650; }
 .gcard p { margin: 0; color: var(--text-dim); font-size: 14px; }
+.phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+.phone { margin: 0; }
+.phone .frame { background: #0a0f18; border: 1px solid var(--border); border-radius: 30px; padding: 8px; box-shadow: var(--shadow); }
+.phone img { width: 100%; height: auto; border-radius: 23px; }
+.phone figcaption { padding: 12px 4px 0; }
+.phone h3 { margin: 0 0 4px; font-size: 15px; font-weight: 650; }
+.phone p { margin: 0; color: var(--text-dim); font-size: 13.5px; line-height: 1.5; }
+@media (max-width: 620px) { .phone .frame { border-radius: 22px; padding: 5px; } .phone img { border-radius: 18px; } .phone h3 { font-size: 13.5px; } .phone p { font-size: 12px; } }
+.reg { background: var(--surface); border-inline-start: 3px solid var(--green); border-radius: 12px; padding: 20px 22px; margin-top: 22px; }
+.reg h3 { margin: 0 0 10px; font-size: 16.5px; font-weight: 650; }
+.reg p { margin: 0 0 10px; color: var(--text-dim); font-size: 14.5px; }
+.reg a { color: var(--blue); }
 .honest { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 820px) { .honest { grid-template-columns: 1fr; } }
 .hcard { background: var(--surface); border-inline-start: 3px solid var(--orange); border-radius: 12px; padding: 20px; }
@@ -103,7 +117,7 @@ tr:last-child td { border-bottom: 0; }
 td b { font-weight: 600; }
 td span { color: var(--text-dim); }
 .tag { display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-inline-start: 8px; border: 1px solid var(--border); color: var(--text-mute); vertical-align: 1px; }
-.tag.req { color: var(--green); border-color: rgba(53,196,106,.4); }
+.tag.req { color: var(--green); border-color: rgba(22,163,74,.4); }
 @media (max-width: 620px) { th, td { padding: 11px 12px; } td { display: block; border-bottom: 0; } tr { display: block; border-bottom: 1px solid var(--border-soft); padding: 6px 0; } thead { display: none; } }
 .note { background: var(--surface); border-inline-start: 3px solid var(--blue); border-radius: 12px; padding: 18px 20px; color: var(--text-dim); font-size: 14.5px; margin-top: 22px; }
 .note b { color: var(--text); }
@@ -137,6 +151,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
     </a>
     <nav class="nav-links">
       <a href="#features">יכולות</a>
+      <a href="#mobile">בטלפון</a>
       <a href="#how">איך זה עובד</a>
       <a href="#screens">צילומי מסך</a>
       <a href="#setup">הקמה</a>
@@ -239,6 +254,61 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
           <h3>ייצוא, ייבוא וגיבויים</h3>
           <p>קובץ במבנה אחיד ו-PCN874. ייבוא לקוחות ומסמכי עבר ממערכת אחרת. גיבוי רבעוני ל-R2 ול-Google Drive.</p>
         </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">▯</div>
+          <h3>בנויה לטלפון</h3>
+          <p>סרגל ניווט תחתון, טקסט וכפתורים גדולים יותר, וטבלאות שהופכות לכרטיסים. כל מסך עובד ברוחב של טלפון.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">◉</div>
+          <h3>צילום קבלה</h3>
+          <p>מצלמים או בוחרים תמונה מהגלריה. Claude קורא ספק, תאריך וסכום. אין קליטה? התמונה נשמרת בטלפון ועולה אחר כך.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">⌂</div>
+          <h3>מותקנת כמו אפליקציה</h3>
+          <p>מוסיפים למסך הבית. היא נפתחת במסך &quot;מהיר&quot;: הוספת הוצאה, הפקת מסמך ופעילות אחרונה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mobile">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">בטלפון</div>
+        <h2>הנהלת החשבונות בכיס</h2>
+        <p>מתקינים על מסך הבית. היא נפתחת במסך &quot;מהיר&quot;, מוכנה לקבלה הבאה.</p>
+      </div>
+      <div class="phones">
+        <figure class="phone">
+          <div class="frame"><img src="screenshots/phone-quick.png" alt="מסך מהיר עם כפתורי מצלמה וגלריה וקיצורי מסמכים" loading="lazy" width="585" height="1266"></div>
+          <figcaption>
+            <h3>מהיר</h3>
+            <p>מצלמים, בוחרים מהגלריה או פותחים מסמך חדש.</p>
+          </figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="screenshots/phone-expense.png" alt="בדיקת הוצאה עם צילום הקבלה והשדות ש-Claude מילא" loading="lazy" width="585" height="1266"></div>
+          <figcaption>
+            <h3>בדיקה ותיוק</h3>
+            <p>Claude ממלא את השדות. אתה בודק ומתייק.</p>
+          </figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="screenshots/phone-activity.png" alt="רשימת פעילות אחרונה עם מסמכים והוצאות" loading="lazy" width="585" height="1266"></div>
+          <figcaption>
+            <h3>פעילות אחרונה</h3>
+            <p>המסמכים וההוצאות האחרונים, עם סכום וסטטוס.</p>
+          </figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="screenshots/phone-dashboard.png" alt="לוח הבקרה בטלפון עם פעולות מהירות ופריטים באיחור" loading="lazy" width="585" height="1266"></div>
+          <figcaption>
+            <h3>לוח בקרה</h3>
+            <p>פריטים פתוחים ובאיחור, תזרים ותקרת עוסק פטור.</p>
+          </figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -381,6 +451,11 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
         </tbody>
       </table>
       <div class="note"><b>מתי לעבור ל-Workers Paid.</b> המערכת משתמשת ב-5 משימות מתוזמנות, המקסימום ב-Workers Free. לתוכנית החינמית יש עוד שלוש מגבלות שכדאי להכיר:<ul><li>זמן מעבד למשימה מתוזמנת: 10 מילישניות בתוכנית החינמית. רוב המשימות נכנסות. חבילת רואה החשבון החודשית והגיבוי הרבעוני בונים קבצים, והן אלה שכנראה ידרשו Paid.</li><li>Browser Rendering, שמפיק כל PDF: 10 דקות ביום בחינם, 10 שעות בחודש ב-Paid.</li><li>שחזור לנקודת זמן ב-D1: 7 ימים בחינם, 30 ימים ב-Paid. לספרים חוקיים, 30 ימים זה מה שצריך.</li></ul></div>
+      <div class="reg" id="registration">
+        <h3>צריך לרשום את התוכנה ברשות המסים?</h3>
+        <p>רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם.</p><p>אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.</p><p>כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.</p>
+        <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">עמוד רישום התוכנה ברשות המסים</a></p>
+      </div>
 
       <div class="sec-head" style="margin-top:56px">
         <div class="eyebrow">מגבלות ידועות</div>
