@@ -347,6 +347,27 @@ describe('client ledger with imported past documents', () => {
     expect(ledger.closing.ILS).toBe(50000);
   });
 
+  it('pays a euro pro forma with a shekel receipt of the same shekel value', async () => {
+    const client = await makeClient();
+    for (const [n, type, date, currency, total, ils] of [
+      ['9301', 'Pro Forma Invoice', '2026-07-01', 'EUR', 50000, 175000],
+      ['9302', 'Invoice/Receipt', '2026-07-05', 'ILS', 175000, 175000],
+    ] as const) {
+      await env.DB.prepare(
+        `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, currency,
+           amount_before_vat_minor, vat_amount_minor, total_minor, total_ils_minor, paid_status, r2_key, sha256)
+         VALUES ('sumit', ?, ?, ?, ?, 'Imported Co', ?, ?, 0, ?, ?, 'unpaid', 'k', 's')`,
+      )
+        .bind(n, type, date, client, currency, total, total, ils)
+        .run();
+    }
+    const ledger = await ok('GET', `/clients/${client}/ledger`);
+    const receipt = ledger.entries.find((e: any) => e.display_number === 'Invoice/Receipt / 9302');
+    expect(receipt).toMatchObject({ currency: 'EUR', debit_minor: 0, credit_minor: 50000 });
+    expect(ledger.closing.EUR).toBe(0);
+    expect(ledger.closing.ILS ?? 0).toBe(0);
+  });
+
   it('pays off a demand marked paid on its own line when its receipt was never imported', async () => {
     const client = await makeClient();
     await env.DB.prepare(

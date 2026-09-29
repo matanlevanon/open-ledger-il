@@ -1,3 +1,4 @@
+import { HOME_CURRENCY } from '../../core/money';
 import { externalKind } from '../import/external-kind';
 import { all } from '../../core/db';
 import { displayNumber } from './types';
@@ -191,9 +192,17 @@ interface LedgerImportedRow {
   issue_date: string;
   currency: string;
   total_minor: number;
+  total_ils_minor: number | null;
   paid_status: string;
   settled: number;
 }
+
+/**
+ * How far the shekels on an imported receipt may sit from the shekel value of the foreign demand
+ * it pays. With the rate carried from the demand they match to the agora. A receipt converted at
+ * the payment-date rate lands within a few percent. Anything further is not a match.
+ */
+const CROSS_CURRENCY_TOLERANCE = 0.03;
 
 /**
  * The client book. With `includeImported`, past documents filed under Import join the book in date
@@ -202,6 +211,8 @@ interface LedgerImportedRow {
  * - A receipt or invoice/receipt is paid (credit). It pays the open imported demands of the same
  *   currency dated on or before it, oldest first, demands marked paid before those marked unpaid.
  *   Whatever is left after that is a sale paid on the spot and is charged on the same line.
+ * - A receipt in shekels pays a demand in another currency when its shekels match the demand's
+ *   shekel value, within CROSS_CURRENCY_TOLERANCE. It closes the demand in the demand's currency.
  * - A receipt issued here for an imported demand (external_document_receipts) pays that demand, so
  *   it is not charged again.
  * - A demand marked paid that no imported receipt or receipt issued here paid (the receipt was
@@ -247,7 +258,7 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
   const imported = includeImported
     ? await all<LedgerImportedRow>(
         db,
-        `SELECT x.id, x.source, x.doc_type, x.original_number, x.issue_date, x.currency, x.total_minor, x.paid_status,
+        `SELECT x.id, x.source, x.doc_type, x.original_number, x.issue_date, x.currency, x.total_minor, x.total_ils_minor, x.paid_status,
            EXISTS (SELECT 1 FROM external_document_receipts r JOIN documents d ON d.id = r.document_id
                    WHERE r.external_id = x.id AND d.status = 'final') AS settled
          FROM external_documents x WHERE x.client_id = ? AND (? IS NULL OR x.issue_date <= ?) ORDER BY x.issue_date, x.id`,
@@ -274,7 +285,7 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
   const demandsOpen = imported
     .filter((x) => ['demand', 'invoice'].includes(externalKind(x.doc_type)) && x.settled !== 1)
     .map((x) => ({ x, left: x.total_minor }));
-  const receiptPays = new Map<number, { spot: number; paid: string[] }>();
+  const receiptPays = new Map<number, { spot: number; paid: string[]; cross?: { currency: string; amount: number } }>();
   const demandPaid = new Map<number, number>();
   for (const r of imported) {
     if (externalKind(r.doc_type) !== 'receipt') continue;
@@ -290,6 +301,26 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
       left -= amount;
       demandPaid.set(d.x.id, (demandPaid.get(d.x.id) ?? 0) + amount);
       paid.push(importedLabel(d.x));
+    }
+    // A receipt in shekels for a demand in another currency pays it when the shekels match the
+    // demand's shekel value (docs/currency-and-fx.md, carried rate). It closes the demand in the
+    // demand's currency, so the receipt books in that currency too.
+    if (left === r.total_minor && r.currency === HOME_CURRENCY) {
+      const foreign = demandsOpen
+        .filter((d) => d.left > 0 && d.x.currency !== HOME_CURRENCY && d.x.total_ils_minor && d.x.issue_date <= r.issue_date)
+        .filter((d) => {
+          const ils = Math.round((d.left * d.x.total_ils_minor!) / d.x.total_minor);
+          return Math.abs(ils - r.total_minor) <= ils * CROSS_CURRENCY_TOLERANCE;
+        })
+        .sort((a, b) => Number(b.x.paid_status === 'paid') - Number(a.x.paid_status === 'paid') || a.x.issue_date.localeCompare(b.x.issue_date) || a.x.id - b.x.id);
+      const d = foreign[0];
+      if (d) {
+        const amount = d.left;
+        d.left = 0;
+        demandPaid.set(d.x.id, (demandPaid.get(d.x.id) ?? 0) + amount);
+        receiptPays.set(r.id, { spot: 0, paid: [importedLabel(d.x)], cross: { currency: d.x.currency, amount } });
+        continue;
+      }
     }
     receiptPays.set(r.id, { spot: left, paid });
   }
@@ -308,12 +339,18 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
       if (kind === 'quote') continue;
       let debit: number;
       let credit: number;
+      let currency = x.currency;
       let description = 'Imported past document';
       if (kind === 'receipt') {
         const pays = receiptPays.get(x.id) ?? { spot: x.total_minor, paid: [] };
         debit = pays.spot;
         credit = x.total_minor;
         if (pays.paid.length > 0) description = `${description}, pays ${pays.paid.join(', ')}`;
+        if (pays.cross) {
+          currency = pays.cross.currency;
+          credit = pays.cross.amount;
+          description = `${description}, paid ${(x.total_minor / 100).toFixed(2)} ${x.currency}`;
+        }
       } else if (kind === 'credit') {
         debit = -x.total_minor;
         credit = -x.total_minor;
@@ -324,10 +361,10 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
         credit = x.paid_status === 'paid' && x.settled !== 1 ? unmatched : 0;
         if (credit > 0) description = `${description}, marked paid`;
       }
-      running[x.currency] = (running[x.currency] ?? 0) + debit - credit;
+      running[currency] = (running[currency] ?? 0) + debit - credit;
       const inPeriod = !from || x.issue_date >= from;
       if (!inPeriod) {
-        opening[x.currency] = running[x.currency]!;
+        opening[currency] = running[currency]!;
         continue;
       }
       entries.push({
@@ -340,10 +377,10 @@ export async function clientLedger(db: D1Database, clientId: number, from?: stri
         display_number: `${x.doc_type} / ${x.original_number}`,
         status: 'final',
         description,
-        currency: x.currency,
+        currency,
         debit_minor: debit,
         credit_minor: credit,
-        balance_minor: running[x.currency] ?? 0,
+        balance_minor: running[currency] ?? 0,
       });
     }
   };
