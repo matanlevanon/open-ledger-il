@@ -126,6 +126,9 @@ export function encodeIso88598(text: string): EncodeResult {
     if (cp <= 0x7f) bytes[i] = cp;
     else if (cp >= 0x05d0 && cp <= 0x05ea) bytes[i] = 0xe0 + (cp - 0x05d0);
     else if (cp === 0x00a0) bytes[i] = 0x20;
+    else if (cp === 0x05f3 || cp === 0x2018 || cp === 0x2019) bytes[i] = 0x27; // geresh and curly quotes to '
+    else if (cp === 0x05f4 || cp === 0x201c || cp === 0x201d) bytes[i] = 0x22; // gershayim and curly quotes to "
+    else if (cp === 0x2013 || cp === 0x2014) bytes[i] = 0x2d; // dashes to -
     else if (cp === 0x200e) bytes[i] = 0xfd;
     else if (cp === 0x200f) bytes[i] = 0xfe;
     else if (cp === 0x00d7) bytes[i] = 0xaa;

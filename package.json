@@ -18,6 +18,7 @@
     "test": "npm run test:worker && npm run test:web",
     "test:worker": "vitest run --config vitest.config.ts",
     "test:web": "vitest run --config web/vitest.config.ts",
+    "demo:unified-file": "node scripts/demo-unified-file.mjs",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "seed:demo": "node scripts/seed-demo.mjs",
     "leak-check": "node scripts/leak-check.mjs"
