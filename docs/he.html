@@ -105,6 +105,13 @@ h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02
 .reg h3 { margin: 0 0 10px; font-size: 16.5px; font-weight: 650; }
 .reg p { margin: 0 0 10px; color: var(--text-dim); font-size: 14.5px; }
 .reg a { color: var(--blue); }
+.refs { border-top: 1px solid var(--border-soft); margin-top: 14px; padding-top: 12px; font-size: 13px; color: var(--text-mute); }
+.refs b { color: var(--text-dim); font-weight: 600; }
+.refs ol { margin: 6px 0 0; padding-inline-start: 20px; }
+.refs li { margin: 4px 0; }
+.refs q { color: var(--text-dim); unicode-bidi: isolate; }
+.reg sup a { text-decoration: none; font-size: 11px; }
+.refs li:target { background: var(--surface-2); border-radius: 6px; }
 .honest { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 820px) { .honest { grid-template-columns: 1fr; } }
 .hcard { background: var(--surface); border-inline-start: 3px solid var(--orange); border-radius: 12px; padding: 20px; }
@@ -453,8 +460,9 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
       <div class="note"><b>מתי לעבור ל-Workers Paid.</b> המערכת משתמשת ב-5 משימות מתוזמנות, המקסימום ב-Workers Free. לתוכנית החינמית יש עוד שלוש מגבלות שכדאי להכיר:<ul><li>זמן מעבד למשימה מתוזמנת: 10 מילישניות בתוכנית החינמית. רוב המשימות נכנסות. חבילת רואה החשבון החודשית והגיבוי הרבעוני בונים קבצים, והן אלה שכנראה ידרשו Paid.</li><li>Browser Rendering, שמפיק כל PDF: 10 דקות ביום בחינם, 10 שעות בחודש ב-Paid.</li><li>שחזור לנקודת זמן ב-D1: 7 ימים בחינם, 30 ימים ב-Paid. לספרים חוקיים, 30 ימים זה מה שצריך.</li></ul></div>
       <div class="reg" id="registration">
         <h3>צריך לרשום את התוכנה ברשות המסים?</h3>
-        <p>רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם.</p><p>אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.</p><p>כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.</p>
+        <p>רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. <sup><a href="#ref-1">[1]</a></sup></p><p>אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.</p><p>כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.</p>
         <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">עמוד רישום התוכנה ברשות המסים</a></p>
+        <div class="refs"><b>מקורות</b><ol><li id="ref-1">רשות המסים, &quot;בקשה לרישום תוכנה המיועדת לניהול מערכת חשבונות ממוחשבת&quot;, עמוד השירות, עודכן 29.05.2025. מי חייב ברישום: <q lang="he" dir="rtl">יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)</q> <a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">gov.il</a></li><li id="ref-2">רשות המסים, מאגר התוכנות הרשומות לניהול מערכת חשבונות ממוחשבת. <a href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">gov.il</a></li><li id="ref-3">המסגרת החוקית: הוראות מס הכנסה (ניהול פנקסי חשבונות), התשל&quot;ג-1973, הכללים למערכת ממוחשבת לפי הוראה 36.</li></ol></div>
       </div>
 
       <div class="sec-head" style="margin-top:56px">

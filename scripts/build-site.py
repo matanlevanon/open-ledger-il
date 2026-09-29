@@ -11,6 +11,7 @@ REPO = '#" data-gh="'
 DEPLOY = '#" data-gh="/blob/main/docs/deploy.md'
 SETUP = '#" data-gh="/blob/main/docs/setup.md'
 LICENSE = '#" data-gh="/blob/main/LICENSE'
+ITA_REGISTRY = 'https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems'
 ITA_REG = 'https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system'
 CLONE = 'git clone https://github.com/OWNER/open-ledger-il.git'
 
@@ -113,6 +114,13 @@ EN = dict(
         'To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.',
     ],
     reg_link='The ITA software registration page (Hebrew)',
+    reg_refs_h='References',
+    reg_refs=[
+        ('Israel Tax Authority, "Application to register software for a computerized accounting system", service page, updated 29.05.2025. Who must register:', ITA_REG, 'gov.il'),
+        ('Israel Tax Authority, registry of registered accounting software.', ITA_REGISTRY, 'gov.il'),
+        ('Legal framework: Income Tax (Bookkeeping) Instructions, 1973, the computerized-system rules under instruction 36.', None, None),
+    ],
+    reg_quote='יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)',
     limits_eyebrow='Known limits', limits_h='What it will not do',
     limits=[
         'It is not tax or legal advice. Check your setup with your accountant before you issue a real document.',
@@ -220,6 +228,13 @@ HE = dict(
         'כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.',
     ],
     reg_link='עמוד רישום התוכנה ברשות המסים',
+    reg_refs_h='מקורות',
+    reg_refs=[
+        ('רשות המסים, "בקשה לרישום תוכנה המיועדת לניהול מערכת חשבונות ממוחשבת", עמוד השירות, עודכן 29.05.2025. מי חייב ברישום:', ITA_REG, 'gov.il'),
+        ('רשות המסים, מאגר התוכנות הרשומות לניהול מערכת חשבונות ממוחשבת.', ITA_REGISTRY, 'gov.il'),
+        ('המסגרת החוקית: הוראות מס הכנסה (ניהול פנקסי חשבונות), התשל"ג-1973, הכללים למערכת ממוחשבת לפי הוראה 36.', None, None),
+    ],
+    reg_quote='יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)',
     limits_eyebrow='מגבלות ידועות', limits_h='מה היא לא עושה',
     limits=[
         'זה לא ייעוץ מס או ייעוץ משפטי. בדוק את ההגדרות עם רואה החשבון שלך לפני שאתה מפיק מסמך אמיתי.',
@@ -328,6 +343,13 @@ h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02
 .reg h3 { margin: 0 0 10px; font-size: 16.5px; font-weight: 650; }
 .reg p { margin: 0 0 10px; color: var(--text-dim); font-size: 14.5px; }
 .reg a { color: var(--blue); }
+.refs { border-top: 1px solid var(--border-soft); margin-top: 14px; padding-top: 12px; font-size: 13px; color: var(--text-mute); }
+.refs b { color: var(--text-dim); font-weight: 600; }
+.refs ol { margin: 6px 0 0; padding-inline-start: 20px; }
+.refs li { margin: 4px 0; }
+.refs q { color: var(--text-dim); unicode-bidi: isolate; }
+.reg sup a { text-decoration: none; font-size: 11px; }
+.refs li:target { background: var(--surface-2); border-radius: 6px; }
 .honest { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 820px) { .honest { grid-template-columns: 1fr; } }
 .hcard { background: var(--surface); border-inline-start: 3px solid var(--orange); border-radius: 12px; padding: 20px; }
@@ -391,7 +413,13 @@ def page(c):
             <p>{e(p)}</p>
           </figcaption>
         </figure>''' for img, alt, h, p in c['phones'])
-    reg = ''.join(f'<p>{e(x)}</p>' for x in c['reg_p'])
+    # The first paragraph states the ITA rule, so it points at reference 1, the service page it quotes.
+    reg = ''.join(f'<p>{e(x)}' + (' <sup><a href="#ref-1">[1]</a></sup>' if i == 0 else '') + '</p>' for i, x in enumerate(c['reg_p']))
+    def ref(i, t, url, label):
+        q = f' <q lang="he" dir="rtl">{e(c["reg_quote"])}</q>' if i == 0 else ''
+        a = f' <a href="{url}" rel="noopener">{label}</a>' if url else ''
+        return f'<li id="ref-{i + 1}">{e(t)}{q}{a}</li>'
+    reg_refs = ''.join(ref(i, *r) for i, r in enumerate(c['reg_refs']))
     rules = '\n'.join(
         f'''        <div class="hcard">
           <h3>{e(h)}</h3>
@@ -548,6 +576,7 @@ def page(c):
         <h3>{e(c['reg_title'])}</h3>
         {reg}
         <p><a href="{ITA_REG}" rel="noopener">{e(c['reg_link'])}</a></p>
+        <div class="refs"><b>{e(c['reg_refs_h'])}</b><ol>{reg_refs}</ol></div>
       </div>
 
       <div class="sec-head" style="margin-top:56px">

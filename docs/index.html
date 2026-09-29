@@ -105,6 +105,13 @@ h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02
 .reg h3 { margin: 0 0 10px; font-size: 16.5px; font-weight: 650; }
 .reg p { margin: 0 0 10px; color: var(--text-dim); font-size: 14.5px; }
 .reg a { color: var(--blue); }
+.refs { border-top: 1px solid var(--border-soft); margin-top: 14px; padding-top: 12px; font-size: 13px; color: var(--text-mute); }
+.refs b { color: var(--text-dim); font-weight: 600; }
+.refs ol { margin: 6px 0 0; padding-inline-start: 20px; }
+.refs li { margin: 4px 0; }
+.refs q { color: var(--text-dim); unicode-bidi: isolate; }
+.reg sup a { text-decoration: none; font-size: 11px; }
+.refs li:target { background: var(--surface-2); border-radius: 6px; }
 .honest { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 @media (max-width: 820px) { .honest { grid-template-columns: 1fr; } }
 .hcard { background: var(--surface); border-inline-start: 3px solid var(--orange); border-radius: 12px; padding: 20px; }
@@ -453,8 +460,9 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
       <div class="note"><b>When to move to Workers Paid.</b> The ledger uses 5 scheduled jobs, the most Workers Free allows. Free has three other limits worth knowing:<ul><li>Cron CPU: 10 ms per scheduled run on Free. Most jobs fit. The monthly accountant pack and the quarterly backup build files and are the ones likely to need Paid.</li><li>Browser Rendering, which draws every PDF: 10 minutes a day on Free, 10 hours a month on Paid.</li><li>D1 point-in-time recovery: 7 days on Free, 30 days on Paid. For legal books, 30 days is the one to have.</li></ul></div>
       <div class="reg" id="registration">
         <h3>Do you need to register the software with the Tax Authority?</h3>
-        <p>The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included.</p><p>You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.</p><p>To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.</p>
+        <p>The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. <sup><a href="#ref-1">[1]</a></sup></p><p>You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.</p><p>To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.</p>
         <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">The ITA software registration page (Hebrew)</a></p>
+        <div class="refs"><b>References</b><ol><li id="ref-1">Israel Tax Authority, &quot;Application to register software for a computerized accounting system&quot;, service page, updated 29.05.2025. Who must register: <q lang="he" dir="rtl">יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)</q> <a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">gov.il</a></li><li id="ref-2">Israel Tax Authority, registry of registered accounting software. <a href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">gov.il</a></li><li id="ref-3">Legal framework: Income Tax (Bookkeeping) Instructions, 1973, the computerized-system rules under instruction 36.</li></ol></div>
       </div>
 
       <div class="sec-head" style="margin-top:56px">
