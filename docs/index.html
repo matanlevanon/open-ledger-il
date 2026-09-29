@@ -54,7 +54,7 @@
         <code id="cmd">git clone https://github.com/OWNER/open-ledger-il.git</code>
         <button id="copy" type="button">Copy</button>
       </div>
-      <p class="cmd-note">Deploys to your own Cloudflare Worker on the Workers Paid plan, from $5 a month. Setup takes an afternoon.</p>
+      <p class="cmd-note">Deploys to your own Cloudflare Worker on the Workers Paid plan, from $5 a month, for its 9 scheduled jobs. Setup takes an afternoon.</p>
       <div class="shot">
         <img src="screenshots/dashboard.png" alt="The dashboard: open and overdue documents, cash flow, income by month and top clients">
       </div>
@@ -261,7 +261,7 @@
       <table>
         <thead><tr><th>Requirement</th><th>Notes</th></tr></thead>
         <tbody>
-          <tr><td><b>Cloudflare account on Workers Paid</b><span class="tag req">Required</span></td><td><span>From $5 a month per account. Runs the Worker, D1, R2, Browser Rendering and the cron jobs.</span></td></tr>
+          <tr><td><b>Cloudflare account on Workers Paid</b><span class="tag req">Required</span></td><td><span>From $5 a month per account. Needed for the 9 scheduled jobs. Runs the Worker, D1, R2 and Browser Rendering.</span></td></tr>
           <tr><td><b>A domain on Cloudflare</b><span class="tag req">Required</span></td><td><span>Your ledger address, for example ledger.example.com, behind Cloudflare Access. Zero Trust is free for small teams.</span></td></tr>
           <tr><td><b>PDF signing key and certificate</b><span class="tag req">Required</span></td><td><span>For the PAdES signature on every PDF. docs/setup.md shows how to make one.</span></td></tr>
           <tr><td><b>Node.js and Wrangler</b><span class="tag req">Required</span></td><td><span>On your computer, to apply database migrations and set secrets.</span></td></tr>
@@ -271,7 +271,7 @@
           <tr><td><b>Google Cloud service account</b><span class="tag">Optional</span></td><td><span>For the Drive expense import and backup copies. Free.</span></td></tr>
         </tbody>
       </table>
-      <div class="note"><b>Why Workers Paid.</b> The Free plan works for a first look, and stops short in daily use:<ul><li>CPU time is capped at 10 ms per request and per cron run on Free. Signing a PDF, building the accountant pack or running the morning imports goes past that. Paid allows 30 seconds by default.</li><li>Browser Rendering, which draws every PDF, is limited to 10 minutes a day on Free. Paid includes 10 hours a month.</li><li>D1 point-in-time recovery keeps 7 days on Free and 30 days on Paid. For a legal ledger, 30 days is the one to have.</li></ul></div>
+      <div class="note"><b>Why Workers Paid.</b> The ledger runs 9 scheduled jobs, and the Free plan allows 5:<ul><li>Free allows 5 cron triggers per account. The ledger uses 9: exchange rates, the ITA allocation retry queue, the ITA token check, payment reminders and recurring documents, accountant access expiry and the Drive expense sync, the nightly numbering and hash-chain check, the quarterly backup, the monthly accountant pack, and the ceiling alerts. Paid allows 250.</li><li>Also on Paid: Browser Rendering, which draws every PDF, gets 10 hours a month instead of 10 minutes a day.</li><li>Also on Paid: D1 point-in-time recovery keeps 30 days instead of 7.</li></ul></div>
 
       <div class="sec-head" style="margin-top:56px">
         <div class="eyebrow">Known limits</div>

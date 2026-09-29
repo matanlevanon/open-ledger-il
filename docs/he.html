@@ -54,7 +54,7 @@
         <code id="cmd">git clone https://github.com/OWNER/open-ledger-il.git</code>
         <button id="copy" type="button">העתקה</button>
       </div>
-      <p class="cmd-note">נפרסת ל-Worker שלך ב-Cloudflare, בתוכנית Workers Paid, החל מ-5$ לחודש. ההקמה לוקחת אחר צהריים.</p>
+      <p class="cmd-note">נפרסת ל-Worker שלך ב-Cloudflare, בתוכנית Workers Paid, החל מ-5$ לחודש, בשביל 9 המשימות המתוזמנות. ההקמה לוקחת אחר צהריים.</p>
       <div class="shot">
         <img src="screenshots/dashboard.png" alt="לוח הבקרה: מסמכים פתוחים ובאיחור, תזרים, הכנסות לפי חודש ולקוחות מובילים">
       </div>
@@ -261,7 +261,7 @@
       <table>
         <thead><tr><th>דרישה</th><th>הערות</th></tr></thead>
         <tbody>
-          <tr><td><b>חשבון Cloudflare בתוכנית Workers Paid</b><span class="tag req">חובה</span></td><td><span>החל מ-5$ לחודש לחשבון. מריץ את ה-Worker, D1, R2, Browser Rendering ומשימות התזמון.</span></td></tr>
+          <tr><td><b>חשבון Cloudflare בתוכנית Workers Paid</b><span class="tag req">חובה</span></td><td><span>החל מ-5$ לחודש לחשבון. נדרש בשביל 9 המשימות המתוזמנות. מריץ את ה-Worker, D1, R2 ו-Browser Rendering.</span></td></tr>
           <tr><td><b>דומיין ב-Cloudflare</b><span class="tag req">חובה</span></td><td><span>הכתובת של המערכת, למשל ledger.example.com, מאחורי Cloudflare Access. Zero Trust חינמי לצוותים קטנים.</span></td></tr>
           <tr><td><b>מפתח ותעודה לחתימת PDF</b><span class="tag req">חובה</span></td><td><span>לחתימת PAdES על כל PDF. הקובץ docs/setup.md מסביר איך יוצרים.</span></td></tr>
           <tr><td><b>Node.js ו-Wrangler</b><span class="tag req">חובה</span></td><td><span>במחשב שלך, להרצת מיגרציות למסד הנתונים ולהגדרת סודות.</span></td></tr>
@@ -271,7 +271,7 @@
           <tr><td><b>חשבון שירות ב-Google Cloud</b><span class="tag">רשות</span></td><td><span>לייבוא הוצאות מ-Drive ולעותקי גיבוי. חינם.</span></td></tr>
         </tbody>
       </table>
-      <div class="note"><b>למה Workers Paid.</b> התוכנית החינמית מספיקה להתרשמות, ולא לעבודה יומיומית:<ul><li>זמן המעבד מוגבל ל-10 מילישניות לבקשה ולהרצת תזמון בתוכנית החינמית. חתימת PDF, הכנת חבילת רואה החשבון או ייבוא הבוקר חורגים מזה. בתוכנית בתשלום מותרות 30 שניות כברירת מחדל.</li><li>Browser Rendering, שמפיק כל PDF, מוגבל ל-10 דקות ביום בתוכנית החינמית. התוכנית בתשלום כוללת 10 שעות בחודש.</li><li>שחזור לנקודת זמן ב-D1 שומר 7 ימים בתוכנית החינמית ו-30 ימים בתשלום. לספרים חוקיים, 30 ימים זה מה שצריך.</li></ul></div>
+      <div class="note"><b>למה Workers Paid.</b> המערכת מריצה 9 משימות מתוזמנות, והתוכנית החינמית מאפשרת 5:<ul><li>בתוכנית החינמית מותרים 5 טריגרים מתוזמנים (cron) לחשבון. המערכת משתמשת ב-9: שערי מטבע, תור הניסיונות החוזרים למספרי הקצאה, בדיקת הטוקן מול רשות המסים, תזכורות תשלום ומסמכים חוזרים, תפוגת גישת רואה החשבון וסנכרון ההוצאות מ-Drive, בדיקת המספור ושרשרת הגיבוב הלילית, הגיבוי הרבעוני, חבילת רואה החשבון החודשית והתראות התקרה. בתוכנית בתשלום מותרים 250.</li><li>בנוסף בתוכנית בתשלום: Browser Rendering, שמפיק כל PDF, מקבל 10 שעות בחודש במקום 10 דקות ביום.</li><li>בנוסף בתוכנית בתשלום: שחזור לנקודת זמן ב-D1 שומר 30 ימים במקום 7.</li></ul></div>
 
       <div class="sec-head" style="margin-top:56px">
         <div class="eyebrow">מגבלות ידועות</div>

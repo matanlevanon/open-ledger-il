@@ -260,8 +260,11 @@ them by hand instead (a fresh number series with no SUMIT import):
 
 ## 12. Worker plan and CPU time
 
-Run production on Workers Paid ($5 a month minimum per account). The Free plan is fine for a local
-look or a first test deploy, and these are the limits that stop it in daily use:
+Run production on Workers Paid ($5 a month minimum per account). The reason is cron triggers:
+Workers Free allows 5 per account, and `wrangler.toml` declares 9 (section 10 lists them). A deploy
+with more crons than the plan allows is refused. Paid allows 250.
+
+Paid also lifts these Free limits, worth knowing if you test on Free first:
 
 - **CPU time**: 10 ms per HTTP request on Free, versus 30 seconds (up to 5 minutes) on Paid. CPU
   time only counts active JavaScript execution, not time spent waiting on D1, R2, Browser
