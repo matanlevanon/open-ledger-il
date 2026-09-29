@@ -1,6 +1,6 @@
 import { all, first } from '../../core/db';
 import { HOME_CURRENCY, assertCurrency, convert } from '../../core/money';
-import { type OpenDemand, openDemands } from '../documents/balances';
+import { type OpenDemand, openDemands, openImportedDemands } from '../documents/balances';
 import { displayNumber } from '../documents/types';
 import { FxUnavailableError, rateOn } from '../fx';
 import { externalIsCashSql, externalIsIncomeSql, externalSignSql } from '../import/external-kind';
@@ -427,7 +427,10 @@ export type AgingBucket = 'current' | '1-30' | '31-60' | '61-90' | '90+';
 export const AGING_BUCKETS: AgingBucket[] = ['current', '1-30', '31-60', '61-90', '90+'];
 
 export interface OpenItem {
+  /** The document id, or the imported document id when `imported` is set. */
   documentId: number;
+  /** A pro forma, payment request or tax invoice imported from another system. */
+  imported?: boolean;
   type: string;
   typeNameEn: string;
   typeNameHe: string;
@@ -483,11 +486,22 @@ export function demandIlsResolver(db: D1Database, today: string) {
   };
 }
 
-/** Every open payment request and pro forma, with client, age and bucket. Pass `demands` to reuse a load. */
+/** The type code an imported demand reports under: PR, 300 (pro forma) or 305 (tax invoice). */
+function importedTypeCode(docType: string): string {
+  if (/payment request|דרישת תשלום/i.test(docType)) return 'PR';
+  if (/pro ?forma|חשבון עסקה/i.test(docType)) return '300';
+  return '305';
+}
+
+/**
+ * Every open payment request and pro forma, with client, age and bucket. Pass `demands` to reuse a load.
+ * Open imported demands join the list, flagged `imported`. They carry no due date, so they are due
+ * on their issue date.
+ */
 export async function openItems(db: D1Database, today: string, demands?: OpenDemand[]): Promise<OpenItem[]> {
   const list = demands ?? (await openDemands(db));
-  if (list.length === 0) return [];
-  const meta = await all<{
+  const imported = await openImportedDemands(db);
+  const meta = list.length === 0 ? [] : await all<{
     id: number;
     type: string;
     number: number | null;
@@ -523,6 +537,34 @@ export async function openItems(db: D1Database, today: string, demands?: OpenDem
       currency: d.currency,
       remainingMinor: d.remaining_minor,
       ilsMinor: await toIls(d),
+      daysOverdue: days,
+      bucket: agingBucket(days),
+    });
+  }
+  for (const x of imported) {
+    const days = daysBetween(x.issue_date, today);
+    const en = (x.client_name_en ?? '').trim() || (x.client_name_he ?? '').trim() || x.client_name_text;
+    const he = (x.client_name_he ?? '').trim() || (x.client_name_en ?? '').trim() || x.client_name_text;
+    items.push({
+      documentId: x.id,
+      imported: true,
+      type: importedTypeCode(x.doc_type),
+      typeNameEn: x.doc_type,
+      typeNameHe: x.doc_type,
+      displayNumber: x.original_number,
+      clientId: x.client_id,
+      clientNameEn: en,
+      clientNameHe: he,
+      date: x.issue_date,
+      dueDate: x.issue_date,
+      currency: x.currency,
+      remainingMinor: x.remaining_minor,
+      ilsMinor:
+        x.currency === HOME_CURRENCY
+          ? x.remaining_minor
+          : x.total_ils_minor
+            ? Math.round((x.remaining_minor * x.total_ils_minor) / x.total_minor)
+            : await toIls({ currency: x.currency, remaining_minor: x.remaining_minor, fx_rate: null }),
       daysOverdue: days,
       bucket: agingBucket(days),
     });

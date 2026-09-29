@@ -15,6 +15,8 @@ export interface Range {
 
 export interface OpenItem {
   documentId: number;
+  /** Imported from another system. `documentId` is then the imported document id. */
+  imported?: boolean;
   type: string;
   typeNameEn: string;
   typeNameHe: string;

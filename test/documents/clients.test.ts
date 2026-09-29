@@ -368,6 +368,26 @@ describe('client ledger with imported past documents', () => {
     expect(ledger.closing.ILS ?? 0).toBe(0);
   });
 
+  it('lists an unpaid imported pro forma as an open item, and drops it once a receipt pays it', async () => {
+    const { openItems } = await import('../../src/modules/reports/aggregates');
+    const client = await makeClient();
+    const insert = (n: string, type: string, date: string) =>
+      env.DB.prepare(
+        `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, currency,
+           amount_before_vat_minor, vat_amount_minor, total_minor, total_ils_minor, paid_status, r2_key, sha256)
+         VALUES ('sumit', ?, ?, ?, ?, 'Imported Co', 'ILS', 30000, 0, 30000, 30000, 'unpaid', 'k', 's')`,
+      )
+        .bind(n, type, date, client)
+        .run();
+    await insert('9401', 'Pro Forma Invoice', '2026-09-01');
+    const open = (await openItems(env.DB, '2026-09-29')).filter((i) => i.imported && i.clientId === client);
+    expect(open).toHaveLength(1);
+    expect(open[0]).toMatchObject({ type: '300', displayNumber: '9401', remainingMinor: 30000, ilsMinor: 30000, daysOverdue: 28 });
+
+    await insert('9402', 'Invoice/Receipt', '2026-09-10');
+    expect((await openItems(env.DB, '2026-09-29')).filter((i) => i.imported && i.clientId === client)).toHaveLength(0);
+  });
+
   it('pays off a demand marked paid on its own line when its receipt was never imported', async () => {
     const client = await makeClient();
     await env.DB.prepare(

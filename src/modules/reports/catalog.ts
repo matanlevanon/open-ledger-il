@@ -138,7 +138,7 @@ function openItemRows(items: OpenItem[], p: ReportParams, types?: string[]): Rep
     .filter((i) => clientId === undefined || (clientId === 'none' ? i.clientId === null : i.clientId === clientId))
     .filter((i) => !bucket || i.bucket === bucket)
     .map((i) => ({
-      key: String(i.documentId),
+      key: i.imported ? `x${i.documentId}` : String(i.documentId),
       cells: {
         document: `${i.typeNameEn}${i.displayNumber ? ` ${i.displayNumber}` : ''}`,
         client: i.clientNameEn,
@@ -149,7 +149,9 @@ function openItemRows(items: OpenItem[], p: ReportParams, types?: string[]): Rep
         open: { minor: i.remainingMinor, currency: i.currency },
         openIls: i.ilsMinor,
       },
-      link: { kind: 'document', id: i.documentId },
+      // An imported document has no page of its own. Its client page lists it with the PDF.
+      link: i.imported ? (i.clientId !== null ? { kind: 'client' as const, id: i.clientId } : undefined) : { kind: 'document' as const, id: i.documentId },
+      imported: i.imported || undefined,
     }));
 }
 

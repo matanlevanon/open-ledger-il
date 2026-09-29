@@ -182,16 +182,24 @@ function OverdueCard({ data }: { data: NonNullable<DashboardData['cards']['overd
       <ChartTable
         caption={t('dash.card.overdue')}
         rows={shown}
-        rowKey={(i) => String(i.documentId)}
+        rowKey={(i) => (i.imported ? `x${i.documentId}` : String(i.documentId))}
         columns={[
           {
             key: 'doc',
             header: t('dash.col.document'),
-            render: (i) => (
-              <Link to={`/income/documents/${i.documentId}`} className="text-accent-2 hover:underline">
-                {(locale === 'he' ? i.typeNameHe : i.typeNameEn) + (i.displayNumber ? ` ${i.displayNumber}` : '')}
-              </Link>
-            ),
+            render: (i) => {
+              const label = (locale === 'he' ? i.typeNameHe : i.typeNameEn) + (i.displayNumber ? ` ${i.displayNumber}` : '');
+              // An imported document opens its original PDF.
+              return i.imported ? (
+                <a href={`/api/import/external-documents/${i.documentId}/file`} target="_blank" rel="noreferrer" className="text-accent-2 hover:underline" dir="auto">
+                  {label}
+                </a>
+              ) : (
+                <Link to={`/income/documents/${i.documentId}`} className="text-accent-2 hover:underline">
+                  {label}
+                </Link>
+              );
+            },
           },
           { key: 'client', header: t('dash.col.client'), render: (i) => (locale === 'he' ? i.clientNameHe : i.clientNameEn) || t('dash.noClient') },
           {
