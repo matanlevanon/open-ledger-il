@@ -70,9 +70,9 @@ run_worker_first = ["/api/*", "/mcp", "/mcp/*"]
 # Cron triggers. One block for the whole Worker. The single scheduled handler in src/scheduled.ts
 # receives every fire and dispatches it to each module that lists the cron in its `crons`.
 # test/scheduled.test.ts fails when this list and the modules disagree.
-[triggers]
 # Five triggers, the Workers Free limit. Jobs that need a day of the month share a daily cron and
 # check the date themselves.
+[triggers]
 crons = [
   "*/15 * * * *",  # R12: allocation retry queue
   "0 2 * * *",     # R14: nightly gap and hash-chain check. Quarterly backup on 1 Jan, Apr, Jul, Oct
