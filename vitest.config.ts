@@ -31,6 +31,10 @@ export default defineConfig(async () => {
     test: {
       include: ['test/**/*.test.ts'],
       setupFiles: ['./test/apply-migrations.ts'],
+      // Signing-key generation and PDF building are CPU heavy. On a busy machine the defaults
+      // (5 s per test, 10 s per hook) time out on work that is correct, so both get more room.
+      testTimeout: 30_000,
+      hookTimeout: 60_000,
     },
   };
 });
