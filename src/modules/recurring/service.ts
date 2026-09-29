@@ -1,6 +1,7 @@
 import { type AuditActor, auditAs } from '../../core/audit';
 import { all, first, run } from '../../core/db';
 import { NotFoundError, ValidationError } from '../../core/errors';
+import { issuingEnabled } from '../../core/issuing';
 import { type Ctx, deleteDraft, duplicateDocument, finalize, updateDraft } from '../documents/service';
 
 /**
@@ -247,6 +248,8 @@ async function runOne(ctx: Ctx, s: ScheduleRow, runDate: string, send: SendFn): 
 export interface RunDueResult {
   schedules: number;
   runs: number;
+  /** True when issuing is turned off, so nothing ran. */
+  issuingOff?: boolean;
 }
 
 /**
@@ -255,6 +258,7 @@ export interface RunDueResult {
  */
 export async function runDue(ctx: Ctx, send: SendFn): Promise<RunDueResult> {
   const { db } = ctx;
+  if (!(await issuingEnabled(db))) return { schedules: 0, runs: 0, issuingOff: true };
   const today = ctx.services.today();
   const due = await all<ScheduleRow>(db, 'SELECT * FROM recurring_schedules WHERE active = 1 AND next_run_date <= ? ORDER BY next_run_date, id', today);
   let runs = 0;
@@ -307,4 +311,19 @@ export async function skipRun(ctx: Ctx, runId: number): Promise<void> {
   const doc = await first<{ status: string }>(ctx.db, 'SELECT status FROM documents WHERE id = ?', r.document_id);
   if (doc?.status === 'draft') await deleteDraft(ctx, r.document_id);
   await auditAs(ctx.db, ctx.actor, 'recurring.skip', 'recurring_run', runId, { documentId: r.document_id });
+}
+
+/**
+ * Moves every active schedule that fell behind to its next run date on or after `today`, so
+ * turning issuing back on never issues a backlog of documents for the months it was off.
+ * Answers how many schedules moved.
+ */
+export async function skipMissedRuns(db: D1Database, today: string): Promise<number> {
+  const behind = await all<ScheduleRow>(db, 'SELECT * FROM recurring_schedules WHERE active = 1 AND next_run_date < ?', today);
+  for (const s of behind) {
+    let next = s.next_run_date;
+    for (let i = 0; i < 1000 && next < today; i += 1) next = nextRunDate(next, s.frequency, s.anchor_day);
+    await run(db, `UPDATE recurring_schedules SET next_run_date = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`, next, s.id);
+  }
+  return behind.length;
 }

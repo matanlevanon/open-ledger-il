@@ -12,6 +12,8 @@ interface SidebarProps {
   features: string[];
   /** Scopes the remembered Active/Not active expand state to this user (R18 task 5). */
   email?: string;
+  /** False when issuing is off: the Create new menu is hidden. */
+  issuing?: boolean;
   onNavigate?: () => void;
 }
 
@@ -181,7 +183,7 @@ function ClientsNavItem({ onNavigate, email }: ClientsNavItemProps) {
   );
 }
 
-export function Sidebar({ role, features, email, onNavigate }: SidebarProps) {
+export function Sidebar({ role, features, email, onNavigate, issuing = true }: SidebarProps) {
   const t = useT();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -224,7 +226,7 @@ export function Sidebar({ role, features, email, onNavigate }: SidebarProps) {
         {t('app.name')}
       </Link>
 
-      {role !== 'accountant' && (
+      {role !== 'accountant' && issuing && (
         <div className="relative" ref={menuRef}>
           <button
             type="button"

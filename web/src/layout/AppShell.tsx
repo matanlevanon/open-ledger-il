@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { IssuingProvider } from '../app/issuing';
 import { useLocation } from 'react-router-dom';
 import { MOCK_MODE, type Me, fetchMe } from '../api/client';
 import { SetupScreen } from '../features/settings/SetupScreen';
@@ -20,6 +21,7 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
   const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [issuing, setIssuing] = useState(true);
   const { syncFromServer } = usePreferences();
   const mainRef = useRef<HTMLElement>(null);
   useStackTables(mainRef);
@@ -38,6 +40,7 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
   // once it loads, over whatever local storage or the system preference guessed (R16 tasks 15/16).
   useEffect(() => {
     if (me) syncFromServer(me.theme, me.locale);
+    if (me) setIssuing(me.issuing !== false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [me]);
 
@@ -56,9 +59,10 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
   useEffect(checkSetup, [me]);
   const showSetup = missing.length > 0 && !/^\/(settings|about)(\/|$)/.test(location.pathname);
 
-  const sidebar = <Sidebar role={me?.role} features={me?.features ?? []} email={me?.email} onNavigate={() => setDrawerOpen(false)} />;
+  const sidebar = <Sidebar role={me?.role} features={me?.features ?? []} email={me?.email} issuing={issuing} onNavigate={() => setDrawerOpen(false)} />;
 
   return (
+    <IssuingProvider value={{ issuing, setIssuing }}>
     <div className="flex h-full min-w-0">
       <aside className="hidden w-[var(--sidebar-width)] shrink-0 md:block">{sidebar}</aside>
       {drawerOpen && (
@@ -76,5 +80,6 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
       </div>
       <BottomNav role={me?.role} features={me?.features ?? []} onMore={() => setDrawerOpen(true)} />
     </div>
+    </IssuingProvider>
   );
 }

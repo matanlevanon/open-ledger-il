@@ -1,6 +1,7 @@
 import type { AuditActor } from '../../core/audit';
 import { auditStatement } from '../../core/audit';
 import { all, first, nowIso, stmt, transaction } from '../../core/db';
+import { ISSUING_KEY } from '../../core/issuing';
 import { ConflictError, DomainError, NotFoundError } from '../../core/errors';
 import type { CeilingInput, VatRateInput } from './schemas';
 
@@ -178,5 +179,23 @@ export async function setSignatureMode(db: D1Database, actor: AuditActor, mode: 
       nowIso(),
     ),
     auditStatement(db, actor, 'ops.signature_mode_set', 'settings', 'signature_mode', { mode }),
+  ]);
+}
+
+/**
+ * Turns issuing on or off (src/core/issuing.ts). Turning it on first moves recurring schedules
+ * that fell behind past today, so no backlog is issued. Owner only, audited.
+ */
+export async function setIssuing(db: D1Database, actor: AuditActor, enabled: boolean, skippedSchedules: number): Promise<void> {
+  await transaction(db, [
+    stmt(
+      db,
+      `INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?)
+       ON CONFLICT (key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
+      ISSUING_KEY,
+      enabled ? 'on' : 'off',
+      nowIso(),
+    ),
+    auditStatement(db, actor, enabled ? 'ops.issuing_on' : 'ops.issuing_off', 'settings', ISSUING_KEY, { enabled, skippedSchedules }),
   ]);
 }

@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode, useEffect, useRef, useState } from 'react';
+import { useIssuing } from '../../app/issuing';
 import { Link } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, ComposedChart, LabelList, Legend, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import {
@@ -53,6 +54,12 @@ const TILES: Tile[] = [
   { label: 'dashboard.tileNewPaymentRequest', to: '/income/payment-requests/new', tone: 'green' },
   { label: 'dashboard.tileRecordPayment', to: '/income/documents/new?type=400', tone: 'peach' },
   { label: 'dashboard.tileUploadExpense', to: '/expenses', tone: 'lilac' },
+];
+
+/** With issuing off, the tiles that start a document give way to import. */
+const TILES_NO_ISSUING: Tile[] = [
+  { label: 'dashboard.tileUploadExpense', to: '/expenses', tone: 'lilac' },
+  { label: 'dashboard.tileImportDocuments', to: '/import', tone: 'blue' },
 ];
 
 const TILE_CLASS: Record<Tile['tone'], string> = {
@@ -435,6 +442,7 @@ function usePeriodCard(card: PeriodCard, today: string) {
 
 export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsrael() }: DashboardPageProps) {
   const t = useT();
+  const issuing = useIssuing();
   const [data, setData] = useState<DashboardData | null>(null);
   const [layout, setLayout] = useState<LayoutEntry[]>(DEFAULT_LAYOUT);
   const [error, setError] = useState<string | null>(null);
@@ -492,7 +500,7 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
       return (
         <Card {...common} reportTo={undefined}>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {TILES.map((tile) => (
+            {(issuing ? TILES : TILES_NO_ISSUING).map((tile) => (
               <Link key={tile.label} to={tile.to} className={`rounded-card p-4 text-sm font-semibold text-ink shadow-card hover:opacity-90 ${TILE_CLASS[tile.tone]}`}>
                 {t(tile.label)}
               </Link>

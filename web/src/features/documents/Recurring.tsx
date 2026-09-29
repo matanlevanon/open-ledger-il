@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useIssuing } from '../../app/issuing';
 import { Link, useSearchParams } from 'react-router-dom';
 import { apiGet } from '../../api/client';
 import { usePreferences } from '../../app/preferences';
@@ -164,6 +165,7 @@ function NewSchedule({ onCreated }: { onCreated: (s: RecurringState) => void }) 
 
 export function RecurringPage() {
   const t = useT();
+  const issuing = useIssuing();
   const { locale } = usePreferences();
   const { data, error } = useLoad(() => apiGet<RecurringState>('/recurring'), []);
   const [state, setState] = useState<RecurringState | null>(null);
@@ -201,6 +203,7 @@ export function RecurringPage() {
       >
         {t('nav.incomeRecurring')}
       </PageTitle>
+      {!issuing && <p className="mb-4 rounded-md bg-surface px-3 py-2 text-sm text-muted">{t('issuing.recurringPaused')}</p>}
       <ErrorNote error={error ?? actionError} />
       {!state ? (
         !error && <Loading />

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useIssuing } from '../../app/issuing';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePreferences } from '../../app/preferences';
 import { useT } from '../../i18n';
@@ -28,6 +29,7 @@ const bigBtn =
 
 export function QuickPage() {
   const t = useT();
+  const issuing = useIssuing();
   const navigate = useNavigate();
   const camera = useRef<HTMLInputElement>(null);
   const gallery = useRef<HTMLInputElement>(null);
@@ -164,7 +166,7 @@ export function QuickPage() {
         </Link>
       </Card>
 
-      {issue.length > 0 && (
+      {issuing && issue.length > 0 && (
         <Card title={t('quick.issue.title')}>
           <div className="grid grid-cols-2 gap-2">
             {issue.map((ty) => (

@@ -96,6 +96,9 @@ export const fetchVatRates = () => apiGet<{ vatRates: VatRateRow[] }>('/ops/vat-
 export const addVatRate = (input: { rateBp: number; effectiveFrom: string; note?: string | null }) =>
   send<{ vatRates: VatRateRow[] }>('/vat-rates', 'POST', input);
 
+export const fetchIssuing = () => apiGet<{ enabled: boolean }>('/ops/issuing');
+export const setIssuing = (enabled: boolean) => send<{ enabled: boolean }>('/issuing', 'PUT', { enabled });
+
 export const fetchSignatureMode = () => apiGet<{ mode: 'secured' | 'none' }>('/ops/signature-mode');
 export const setSignatureMode = (mode: 'secured' | 'none') => send<{ mode: string }>('/signature-mode', 'PUT', { mode });
 

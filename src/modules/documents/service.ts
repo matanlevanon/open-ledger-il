@@ -4,6 +4,7 @@ import { type AuthUser, hasFeature } from '../../core/auth';
 import { legalModeOn, thresholdOn, vatRateOn } from '../../core/config';
 import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
 import { ConflictError, ForbiddenError, NotFoundError } from '../../core/errors';
+import { assertIssuing } from '../../core/issuing';
 import { finalizeDocument } from '../../core/numbering';
 import { type Currency, HOME_CURRENCY, assertCurrency, convert, divRound, normalizeRate, percentOf } from '../../core/money';
 import { assertMethodIdsExist, getPaymentMethod, legacyMethodBucket, parseMethodIds } from '../payment-methods';
@@ -554,6 +555,7 @@ function assertCanSeeType(user: AuthUser, type: string) {
 
 export async function createDraft(ctx: Ctx, input: DraftInput): Promise<number> {
   const { db } = ctx;
+  await assertIssuing(db);
   assertCanSeeType(ctx.user, input.type);
   const type = await getType(db, input.type);
   if (type.enabled !== 1) conflict('type_disabled', `${type.name_en} is not available yet.`);
@@ -600,6 +602,7 @@ export async function createDraft(ctx: Ctx, input: DraftInput): Promise<number> 
 
 export async function updateDraft(ctx: Ctx, id: number, patch: DraftPatch): Promise<void> {
   const { db } = ctx;
+  await assertIssuing(db);
   const loaded = await loadFull(db, id);
   assertCanSeeType(ctx.user, loaded.doc.type);
   if (loaded.doc.status !== 'draft') throw new ConflictError('not_draft', 'Only a draft can be edited. Cancel or credit instead.');
@@ -736,6 +739,7 @@ async function validateForFinalize(ctx: Ctx, s: DraftState, doc: DocRow, backdat
 /** Freezes a draft: number, hash chain, links, timeline. Calling it again on a final document returns the same number. */
 export async function finalize(ctx: Ctx, id: number, opts: { backdateReason?: string | null } = {}): Promise<FinalizeOutcome> {
   const { db } = ctx;
+  await assertIssuing(db);
   const loaded = await loadFull(db, id);
   assertCanSeeType(ctx.user, loaded.doc.type);
   if (loaded.doc.status !== 'draft') {
@@ -896,6 +900,7 @@ export async function convertDocument(
   sourceId: number,
   input: { type: string; date?: string; payments?: PaymentInput[]; notes?: string | null },
 ): Promise<number> {
+  await assertIssuing(ctx.db);
   const { db } = ctx;
   const loaded = await loadFull(db, sourceId);
   const src = loaded.doc;
@@ -959,6 +964,7 @@ export async function recordPayment(
   sourceId: number,
   input: { date?: string; payments: PaymentInput[]; notes?: string | null; finalize: boolean; backdateReason?: string | null },
 ): Promise<{ receiptId: number; finalized: FinalizeOutcome | null }> {
+  await assertIssuing(ctx.db);
   const src = await getDoc(ctx.db, sourceId);
   const srcType = await getType(ctx.db, src.type);
   if (srcType.kind !== 'demand' && srcType.kind !== 'invoice') {
@@ -997,6 +1003,7 @@ async function assertRevisable(db: D1Database, id: number): Promise<DocRow> {
 /** Opens a new draft that replaces a final quote or payment request. Finalizing it cancels the original. */
 export async function reviseDocument(ctx: Ctx, id: number): Promise<number> {
   const { db } = ctx;
+  await assertIssuing(db);
   const loaded = await loadFull(db, id);
   assertCanSeeType(ctx.user, loaded.doc.type);
   await assertRevisable(db, id);
@@ -1023,6 +1030,7 @@ function daysFrom(from: string, to: string): number {
  */
 export async function duplicateDocument(ctx: Ctx, id: number, opts: { date?: string } = {}): Promise<number> {
   const { db } = ctx;
+  await assertIssuing(db);
   const loaded = await loadFull(db, id);
   assertCanSeeType(ctx.user, loaded.doc.type);
   const s = await stateFromDb(db, loaded);
@@ -1048,6 +1056,7 @@ export async function duplicateDocument(ctx: Ctx, id: number, opts: { date?: str
 
 export async function cancelDocument(ctx: Ctx, id: number, reason: string): Promise<void> {
   const { db, actor } = ctx;
+  await assertIssuing(db);
   const doc = await getDoc(db, id);
   assertCanSeeType(ctx.user, doc.type);
   if (doc.status === 'draft') conflict('not_final', 'Delete a draft instead of cancelling it.');
@@ -1091,6 +1100,7 @@ export async function creditDocument(
     backdateReason?: string | null;
   },
 ): Promise<{ creditId: number; finalized: FinalizeOutcome | null }> {
+  await assertIssuing(ctx.db);
   const { db } = ctx;
   const loaded = await loadFull(db, id);
   const orig = loaded.doc;

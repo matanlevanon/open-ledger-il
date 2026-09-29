@@ -16,6 +16,8 @@ export interface Me {
   /** R16 tasks 15/16: null until the person picks one. */
   theme: 'light' | 'dark' | null;
   locale: 'en' | 'he' | null;
+  /** Whether this deployment issues documents. Missing reads as on. */
+  issuing?: boolean;
 }
 
 export interface ApiErrorBody {

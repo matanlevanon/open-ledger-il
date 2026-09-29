@@ -1,4 +1,5 @@
 import { type ReactNode, useState } from 'react';
+import { useIssuing } from '../../app/issuing';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ApiError } from '../../api/client';
 import { usePreferences } from '../../app/preferences';
@@ -62,6 +63,7 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
 
 export function DocumentPage() {
   const t = useT();
+  const issuing = useIssuing();
   const { locale } = usePreferences();
   const id = Number(useParams().id);
   const navigate = useNavigate();
@@ -190,7 +192,7 @@ export function DocumentPage() {
   // Steps render conditionally (a quote has no Payments step, for example), so number them
   // in sequence as they actually appear rather than with a fixed 1/2/3/4.
   const showPayments = !isDraft && (d.kind === 'demand' || d.kind === 'receipt' || d.kind === 'credit');
-  const showCancel = isFinal || d.status === 'cancelled';
+  const showCancel = (issuing && isFinal) || d.status === 'cancelled';
   let stepNo = 1;
   const stepCreate = stepNo++;
   const stepSend = !isDraft ? stepNo++ : null;
@@ -207,30 +209,33 @@ export function DocumentPage() {
                 <button type="button" className={btnSecondary} onClick={showDraft}>
                   {t('documents.page.showDocument')}
                 </button>
-                <Link to={`/income/documents/${id}/edit`} className={btnSecondary}>
-                  {t('documents.page.editDraft')}
-                </Link>
+                {issuing && (
+                  <Link to={`/income/documents/${id}/edit`} className={btnSecondary}>
+                    {t('documents.page.editDraft')}
+                  </Link>
+                )}
                 <button type="button" className={btnDanger} disabled={busy} onClick={() => void docsApi.remove(id).then(() => navigate('/income/documents'))}>
                   {t('documents.page.deleteDraft')}
                 </button>
               </>
             )}
-            {['quote', 'demand', 'invoice', 'receipt', 'invoice_receipt'].includes(d.kind) && d.status !== 'cancelled' && (
+            {issuing && ['quote', 'demand', 'invoice', 'receipt', 'invoice_receipt'].includes(d.kind) && d.status !== 'cancelled' && (
               <button type="button" className={btnSecondary} disabled={busy} onClick={() => act(() => docsApi.duplicate(id), true)}>
                 {t('documents.page.duplicate')}
               </button>
             )}
-            {isFinal && ['demand', 'invoice'].includes(d.kind) && (
+            {issuing && isFinal && ['demand', 'invoice'].includes(d.kind) && (
               <Link to={`/income/recurring?template=${id}`} className={btnSecondary}>
                 {t('documents.page.makeRecurring')}
               </Link>
             )}
-            {isFinal && ['QT', 'PR'].includes(d.type) && d.state !== 'converted' && (
+            {issuing && isFinal && ['QT', 'PR'].includes(d.type) && d.state !== 'converted' && (
               <button type="button" className={btnSecondary} disabled={busy} onClick={() => act(() => docsApi.revise(id))}>
                 {t('documents.page.revise')}
               </button>
             )}
-            {isFinal &&
+            {issuing &&
+              isFinal &&
               d.state !== 'converted' &&
               (CONVERT_TO[d.type] ?? []).map((c) => (
                 <button key={c.type} type="button" className={btnSecondary} disabled={busy} onClick={() => act(() => docsApi.convert(id, c.type))}>
@@ -260,12 +265,13 @@ export function DocumentPage() {
         )}
       </div>
       <DocTypeExplainer type={d.type} issued={!isDraft} />
+      {!issuing && <p className="mb-4 rounded-md bg-surface px-3 py-2 text-sm text-muted">{t('issuing.offNote')}</p>}
       <ErrorNote error={actionError} />
 
       <ol className="space-y-4" aria-label={t('documents.page.timelineLabel')}>
         <Step n={stepCreate} title={t('documents.page.stepCreate')}>
           <Summary view={data} />
-          {isDraft && (
+          {issuing && isDraft && (
             <button type="button" className={`${btnPrimary} mt-4`} disabled={busy} onClick={() => act(() => docsApi.finalize(id))}>
               {t('documents.page.finalize')}
             </button>
@@ -343,7 +349,7 @@ export function DocumentPage() {
                 ))}
               </ul>
             )}
-            {isFinal && (d.remaining_minor ?? 0) > 0 && (
+            {issuing && isFinal && (d.remaining_minor ?? 0) > 0 && (
               <RecordPayment
                 remaining={d.remaining_minor!}
                 currency={d.currency}
@@ -371,11 +377,11 @@ export function DocumentPage() {
                 ))}
               </ul>
             )}
-            {isFinal && d.kind === 'receipt' && d.state !== 'credited' && <CreditForm busy={busy} currency={d.currency} onSubmit={(body) => act(() => docsApi.credit(id, body), true)} />}
+            {issuing && isFinal && d.kind === 'receipt' && d.state !== 'credited' && <CreditForm busy={busy} currency={d.currency} onSubmit={(body) => act(() => docsApi.credit(id, body), true)} />}
           </Step>
         )}
 
-        {isFinal && (
+        {issuing && isFinal && (
           <Step n={stepCancel!} title={t('documents.page.stepCancel')}>
             <CancelForm busy={busy} onSubmit={(reason) => act(() => docsApi.cancel(id, reason))} />
           </Step>

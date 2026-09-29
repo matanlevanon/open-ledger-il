@@ -39,6 +39,10 @@ export const vatRateInput = z.object({
   note: z.string().trim().max(500).nullish(),
 });
 
+export const issuingInput = z.object({
+  enabled: z.boolean(),
+});
+
 export const signatureModeInput = z.object({
   mode: z.enum(['secured', 'none']),
 });

@@ -1,17 +1,20 @@
 import { type Context, Hono } from 'hono';
 import { actorFrom } from '../../core/audit';
 import { requireFeature } from '../../core/auth';
-import { all, nowIso } from '../../core/db';
+import { all, nowIso, todayIsrael } from '../../core/db';
+import { issuingEnabled } from '../../core/issuing';
+import { skipMissedRuns } from '../recurring/service';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import { setStartNumber } from '../../core/numbering';
 import type { AppEnv } from '../../env';
 import { runGapCheck } from './checks';
 import { runBackup } from './backup';
-import { businessPatch, ceilingInput, signatureModeInput, startNumberInput, vatRateInput } from './schemas';
+import { businessPatch, ceilingInput, issuingInput, signatureModeInput, startNumberInput, vatRateInput } from './schemas';
 import {
   addVatRate,
   getBusinessProfile,
   getSignatureMode,
+  setIssuing,
   missingBusinessFields,
   listCeilings,
   listSeries,
@@ -137,6 +140,15 @@ export function opsRoutes(): Hono<AppEnv> {
     const input = vatRateInput.parse(await jsonBody(c));
     await addVatRate(c.env.DB, actorFrom(c), input);
     return c.json({ vatRates: await listVatRates(c.env.DB) }, 201);
+  });
+
+  r.get('/issuing', async (c) => c.json({ enabled: await issuingEnabled(c.env.DB) }));
+
+  r.put('/issuing', async (c) => {
+    const input = issuingInput.parse(await jsonBody(c));
+    const skipped = input.enabled ? await skipMissedRuns(c.env.DB, todayIsrael()) : 0;
+    await setIssuing(c.env.DB, actorFrom(c), input.enabled, skipped);
+    return c.json({ enabled: input.enabled });
   });
 
   r.get('/signature-mode', async (c) => c.json({ mode: await getSignatureMode(c.env.DB) }));

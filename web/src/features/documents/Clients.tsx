@@ -1,4 +1,5 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react';
+import { useIssuing } from '../../app/issuing';
 import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { type MessageKey, useT } from '../../i18n';
 import { type Client, type ClientConsent, type ConsentFormInput, clientsApi, docsApi } from './api';
@@ -337,6 +338,7 @@ const TABS: { key: 'overview' | 'ledger' | 'documents'; label: MessageKey }[] = 
 
 export function ClientPage() {
   const t = useT();
+  const issuing = useIssuing();
   const id = Number(useParams().id);
   const [tab, setTab] = useState<(typeof TABS)[number]['key']>('overview');
   const { data, error, setData } = useLoad(() => clientsApi.get(id), [id]);
@@ -373,6 +375,7 @@ export function ClientPage() {
         subtitle={c.name_en && c.name_he ? <bdi dir="rtl">{c.name_he}</bdi> : undefined}
         actions={
           <>
+            {issuing && (
             <div className="relative" ref={newDocRef}>
               <button
                 type="button"
@@ -403,6 +406,7 @@ export function ClientPage() {
                 </ul>
               )}
             </div>
+            )}
             <Link to={`/clients/${c.id}/edit`} className={btnSecondary}>
               {t('clients.page.edit')}
             </Link>

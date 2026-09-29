@@ -5,6 +5,7 @@ import { BackupsTab } from './BackupsTab';
 import { BusinessTab } from './BusinessTab';
 import { DashboardTab } from './DashboardTab';
 import { ExpensesTab } from './ExpensesTab';
+import { IssuingTab } from './IssuingTab';
 import { NumberingTab } from './NumberingTab';
 import { PaymentMethodsTab } from './PaymentMethodsTab';
 import { RatesTab } from './RatesTab';
@@ -12,10 +13,11 @@ import { ServicesTab } from './ServicesTab';
 import { SignatureTab } from './SignatureTab';
 import { TaxTab } from './TaxTab';
 
-type Tab = 'business' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups';
+type Tab = 'business' | 'issuing' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups';
 
 const TABS: [Tab, MessageKey][] = [
   ['business', 'settings.tabs.business'],
+  ['issuing', 'settings.tabs.issuing'],
   ['numbering', 'settings.tabs.numbering'],
   ['tax', 'settings.tabs.tax'],
   ['rates', 'settings.tabs.rates'],
@@ -65,6 +67,7 @@ export function SettingsPage() {
 
       <div className="mt-6 rounded-card border border-line bg-canvas p-4 shadow-card">
         {tab === 'business' && <BusinessTab />}
+        {tab === 'issuing' && <IssuingTab />}
         {tab === 'numbering' && <NumberingTab />}
         {tab === 'tax' && <TaxTab />}
         {tab === 'rates' && <RatesTab />}

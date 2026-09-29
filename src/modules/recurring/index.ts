@@ -129,4 +129,4 @@ export function createRecurringModule(options: RecurringModuleOptions = {}): Mod
   };
 }
 
-export { nextRunDate, runDue } from './service';
+export { nextRunDate, runDue, skipMissedRuns } from './service';

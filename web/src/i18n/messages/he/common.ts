@@ -1,6 +1,8 @@
 import type { common as en } from '../en/common';
 
 export const common: Record<keyof typeof en, string> = {
+  'issuing.offNote': 'הפקת המסמכים כבויה. המסמכים מגיעים מהמערכת האחרת דרך ייבוא. הבעלים מפעיל את ההפקה בהגדרות > הפקת מסמכים.',
+  'issuing.recurringPaused': 'הפקת המסמכים כבויה, ולכן המסמכים החוזרים מושהים.',
   'app.name': 'Open Ledger IL',
 
   'topbar.openMenu': 'פתח תפריט',

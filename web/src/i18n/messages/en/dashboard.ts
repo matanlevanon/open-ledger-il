@@ -1,4 +1,5 @@
 export const dashboard = {
+  'dashboard.tileImportDocuments': 'Import documents',
   'dashboard.title': 'Dashboard',
   'dashboard.loading': 'Loading the dashboard.',
   'dashboard.loadError': 'Could not load the dashboard. Try again.',

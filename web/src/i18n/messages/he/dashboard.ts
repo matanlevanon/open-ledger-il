@@ -1,6 +1,7 @@
 import type { dashboard as en } from '../en/dashboard';
 
 export const dashboard: Record<keyof typeof en, string> = {
+  'dashboard.tileImportDocuments': 'ייבוא מסמכים',
   'dashboard.title': 'לוח בקרה',
   'dashboard.loading': 'טוען את לוח הבקרה.',
   'dashboard.loadError': 'טעינת לוח הבקרה נכשלה. נסה שוב.',

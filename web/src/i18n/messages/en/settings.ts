@@ -3,6 +3,19 @@
  * Exchange rates, Signature and Backups tabs. runs/R14-ops.md is the feature spec.
  */
 export const settings = {
+  'settings.tabs.issuing': 'Issuing',
+  'settings.issuing.title': 'Issue documents in the Ledger',
+  'settings.issuing.stateOn': 'On. You create, issue and send documents here.',
+  'settings.issuing.stateOff': 'Off. Documents come from the system you issue them in.',
+  'settings.issuing.explainOff': 'Turn this off if you issue invoices and receipts in another system. The Ledger then creates no documents: no drafts, finalize, payments, credits, cancellations, duplicates or recurring runs.',
+  'settings.issuing.explainKeeps': 'Everything else keeps working: import your documents from the other system, clients and their ledgers, expenses, reports, the accountant login and backups.',
+  'settings.issuing.explainRecurring': 'Recurring schedules pause while issuing is off. When you turn it back on, they continue from their next date. Missed runs are skipped.',
+  'settings.issuing.explainWho': 'Only an owner changes this. Every change is in the access log.',
+  'settings.issuing.confirmOff': 'Turn off issuing? Nobody can create or change documents in the Ledger until an owner turns it back on.',
+  'settings.issuing.turnedOn': 'Issuing is on.',
+  'settings.issuing.turnedOff': 'Issuing is off.',
+  'settings.issuing.loadError': 'Could not load the issuing setting.',
+  'settings.issuing.saveError': 'Could not save the issuing setting.',
   'settings.title': 'Settings',
 
   'settings.tabs.business': 'Business',

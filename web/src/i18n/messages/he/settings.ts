@@ -1,6 +1,19 @@
 import type { settings as en } from '../en/settings';
 
 export const settings: Record<keyof typeof en, string> = {
+  'settings.tabs.issuing': 'הפקת מסמכים',
+  'settings.issuing.title': 'הפקת מסמכים במערכת',
+  'settings.issuing.stateOn': 'פעיל. יוצרים, מפיקים ושולחים מסמכים כאן.',
+  'settings.issuing.stateOff': 'כבוי. המסמכים מגיעים מהמערכת שבה אתה מפיק אותם.',
+  'settings.issuing.explainOff': 'כבה את האפשרות אם אתה מפיק חשבוניות וקבלות במערכת אחרת. המערכת לא תיצור מסמכים: אין טיוטות, הפקה, תשלומים, זיכויים, ביטולים, שכפולים או מסמכים חוזרים.',
+  'settings.issuing.explainKeeps': 'כל השאר ממשיך לעבוד: ייבוא המסמכים מהמערכת האחרת, לקוחות וכרטסות, הוצאות, דוחות, כניסת רואה החשבון וגיבויים.',
+  'settings.issuing.explainRecurring': 'מסמכים חוזרים מושהים כשההפקה כבויה. כשמפעילים שוב, הם ממשיכים מהתאריך הבא. הפעמים שהוחמצו מדולגות.',
+  'settings.issuing.explainWho': 'רק בעלים יכול לשנות את ההגדרה. כל שינוי נרשם ביומן הגישה.',
+  'settings.issuing.confirmOff': 'לכבות את הפקת המסמכים? אף אחד לא יוכל ליצור או לשנות מסמכים במערכת עד שבעלים יפעיל אותה שוב.',
+  'settings.issuing.turnedOn': 'הפקת המסמכים פעילה.',
+  'settings.issuing.turnedOff': 'הפקת המסמכים כבויה.',
+  'settings.issuing.loadError': 'לא ניתן לטעון את הגדרת ההפקה.',
+  'settings.issuing.saveError': 'לא ניתן לשמור את הגדרת ההפקה.',
   'settings.title': 'הגדרות',
 
   'settings.tabs.business': 'עסק',

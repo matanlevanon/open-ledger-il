@@ -4,6 +4,7 @@ import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import { z, ZodError } from 'zod';
 import { type AuthOptions, authenticate } from './core/auth';
 import { nowIso, run } from './core/db';
+import { issuingEnabled } from './core/issuing';
 import { DomainError, mapDbError } from './core/errors';
 import type { ModuleDef } from './core/module';
 import type { AppEnv, Env } from './env';
@@ -36,10 +37,18 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
     return authenticate(options.auth)(c, next);
   });
 
-  api.get('/me', (c) => {
+  api.get('/me', async (c) => {
     const user = c.get('user');
     return c.json({
-      user: { email: user.email, name: user.name, role: user.role, features: user.features, theme: user.theme, locale: user.locale },
+      user: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        features: user.features,
+        theme: user.theme,
+        locale: user.locale,
+        issuing: await issuingEnabled(c.env.DB),
+      },
     });
   });
 

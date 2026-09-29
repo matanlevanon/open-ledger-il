@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useIssuing } from '../../app/issuing';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePreferences } from '../../app/preferences';
 import { type MessageKey, useT } from '../../i18n';
@@ -38,6 +39,7 @@ interface ListPageProps {
 
 export function DocumentListPage({ title, types, newPath, newLabel, hasUnpaid = true }: ListPageProps) {
   const t = useT();
+  const issuing = useIssuing();
   const tabs = hasUnpaid ? TABS : TABS.filter((t) => t.key !== 'unpaid');
   const [tab, setTab] = useState<Tab>(hasUnpaid ? 'unpaid' : 'all');
   const { data, error } = useLoad(() => docsApi.list({ tab, type: types }), [tab, types]);
@@ -46,13 +48,16 @@ export function DocumentListPage({ title, types, newPath, newLabel, hasUnpaid = 
     <section aria-labelledby="page-title" className="mx-auto max-w-6xl">
       <PageTitle
         actions={
-          <Link to={newPath} className={btnPrimary}>
-            {newLabel}
-          </Link>
+          issuing ? (
+            <Link to={newPath} className={btnPrimary}>
+              {newLabel}
+            </Link>
+          ) : undefined
         }
       >
         {title}
       </PageTitle>
+      {!issuing && <p className="-mt-3 mb-4 rounded-md bg-surface px-3 py-2 text-sm text-muted">{t('issuing.offNote')}</p>}
       {hasUnpaid && data && (
         <div className="mb-4 grid gap-3 sm:grid-cols-3">
           <SummaryTile label={t('documents.list.overdueTile')} value={totalsText(data.summary.overdue)} tone="text-danger" />
@@ -174,6 +179,7 @@ export const DUPLICABLE_KINDS = ['quote', 'demand', 'invoice', 'receipt', 'invoi
 
 function RowAction({ doc }: { doc: DocListItem }) {
   const t = useT();
+  const issuing = useIssuing();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const to = `/income/documents/${doc.id}`;
@@ -190,7 +196,7 @@ function RowAction({ doc }: { doc: DocListItem }) {
   };
   return (
     <span className="flex justify-end gap-3 whitespace-nowrap">
-      {DUPLICABLE_KINDS.includes(doc.kind) && doc.status !== 'cancelled' && (
+      {issuing && DUPLICABLE_KINDS.includes(doc.kind) && doc.status !== 'cancelled' && (
         <button type="button" disabled={busy} onClick={duplicate} className="text-sm text-muted hover:text-brand hover:underline disabled:opacity-50">
           {t('documents.list.actionDuplicate')}
         </button>
