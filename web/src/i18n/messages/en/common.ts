@@ -12,6 +12,9 @@ export const common = {
   'topbar.switchToEnglish': 'Switch to English',
   'topbar.switchToHebrew': 'Switch to Hebrew',
   'topbar.signOut': 'Sign out',
+  'bottomNav.label': 'Quick navigation',
+  'bottomNav.documents': 'Documents',
+  'bottomNav.more': 'More',
 
   'sidebar.closeMenu': 'Close menu',
   'sidebar.clients.filterAriaLabel': 'Filter clients',

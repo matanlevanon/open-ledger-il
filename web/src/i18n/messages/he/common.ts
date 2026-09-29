@@ -10,6 +10,9 @@ export const common: Record<keyof typeof en, string> = {
   'topbar.switchToEnglish': 'עבור לאנגלית',
   'topbar.switchToHebrew': 'עבור לעברית',
   'topbar.signOut': 'התנתקות',
+  'bottomNav.label': 'ניווט מהיר',
+  'bottomNav.documents': 'מסמכים',
+  'bottomNav.more': 'עוד',
 
   'sidebar.closeMenu': 'סגור תפריט',
   'sidebar.clients.filterAriaLabel': 'סינון לקוחות',

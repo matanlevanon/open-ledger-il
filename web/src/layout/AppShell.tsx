@@ -1,10 +1,12 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MOCK_MODE, type Me, fetchMe } from '../api/client';
 import { SetupScreen } from '../features/settings/SetupScreen';
 import { usePreferences } from '../app/preferences';
 import { useT } from '../i18n';
+import { BottomNav } from './BottomNav';
 import { Sidebar } from './Sidebar';
+import { useStackTables } from './stackTables';
 import { TopBar } from './TopBar';
 
 interface AppShellProps {
@@ -19,6 +21,8 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
   const [error, setError] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { syncFromServer } = usePreferences();
+  const mainRef = useRef<HTMLElement>(null);
+  useStackTables(mainRef);
 
   useEffect(() => {
     let live = true;
@@ -65,8 +69,12 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
       )}
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar me={me} error={error} onMenu={() => setDrawerOpen(true)} />
-        <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8">{showSetup ? <SetupScreen missing={missing} onSaved={checkSetup} /> : children}</main>
+        {/* Bottom padding on phones keeps the last row clear of the tab bar. */}
+        <main ref={mainRef} className="flex-1 overflow-y-auto px-4 pb-28 pt-5 md:px-8 md:py-6">
+          {showSetup ? <SetupScreen missing={missing} onSaved={checkSetup} /> : children}
+        </main>
       </div>
+      <BottomNav role={me?.role} features={me?.features ?? []} onMore={() => setDrawerOpen(true)} />
     </div>
   );
 }

@@ -2,11 +2,11 @@ import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { useT } from '../../i18n';
 import { STATE_LABEL_KEYS } from './format';
 
-export const btn = 'rounded-full px-4 py-2 text-sm font-semibold disabled:opacity-50';
+export const btn = 'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold disabled:opacity-50 md:min-h-0 md:px-4 md:py-2';
 export const btnPrimary = `${btn} bg-brand text-brand-ink hover:opacity-90`;
 export const btnSecondary = `${btn} border border-line bg-canvas text-ink hover:bg-surface`;
 export const btnDanger = `${btn} border border-danger text-danger hover:bg-surface`;
-export const input = 'w-full rounded-md border border-line bg-canvas px-3 py-2 text-sm text-ink';
+export const input = 'w-full rounded-md border border-line bg-canvas px-3 py-2.5 text-sm text-ink md:py-2';
 export const label = 'block text-xs font-semibold uppercase tracking-wide text-muted';
 
 const CHIP: Record<string, string> = {
@@ -50,13 +50,13 @@ export function Card({ title, children, actions }: { title?: string; children: R
 export function PageTitle({ children, actions, subtitle }: { children: ReactNode; actions?: ReactNode; subtitle?: ReactNode }) {
   return (
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-      <div>
-        <h1 id="page-title" className="font-heading text-3xl text-ink">
+      <div className="min-w-0">
+        <h1 id="page-title" className="break-words font-heading text-2xl text-ink md:text-3xl">
           {children}
         </h1>
-        {subtitle && <p className="mt-1 text-lg text-muted">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-base text-muted md:text-lg">{subtitle}</p>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="flex w-full flex-wrap gap-2 sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-none">{actions}</div>}
     </div>
   );
 }

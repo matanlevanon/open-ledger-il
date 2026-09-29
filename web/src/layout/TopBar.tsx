@@ -41,14 +41,14 @@ export function TopBar({ me, error, onMenu }: TopBarProps) {
   const [uploaded, setUploaded] = useState(true);
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-line bg-band px-4 py-3 md:px-8">
+    <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line bg-band px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:static md:gap-4 md:px-8 md:py-3">
       <button
         type="button"
-        className="rounded-md px-2 py-1 text-sm text-ink hover:bg-canvas md:hidden"
+        className="grid h-11 w-11 place-items-center rounded-md text-sm text-ink hover:bg-canvas md:hidden"
         aria-label={t('topbar.openMenu')}
         onClick={onMenu}
       >
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
           <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
@@ -62,10 +62,10 @@ export function TopBar({ me, error, onMenu }: TopBarProps) {
         />
       </Link>
 
-      <div className="ms-auto flex items-center gap-3 text-sm">
+      <div className="ms-auto flex items-center gap-1 text-sm md:gap-3">
         <button
           type="button"
-          className="rounded-md p-1.5 text-ink hover:bg-canvas focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-2"
+          className="grid h-11 w-11 place-items-center rounded-md text-ink hover:bg-canvas focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-2 md:h-auto md:w-auto md:p-1.5"
           aria-label={theme === 'dark' ? t('topbar.switchToLightTheme') : t('topbar.switchToDarkTheme')}
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         >
@@ -74,7 +74,7 @@ export function TopBar({ me, error, onMenu }: TopBarProps) {
 
         <button
           type="button"
-          className="rounded-md px-2 py-1 text-xs font-semibold text-ink hover:bg-canvas focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-2"
+          className="grid h-11 min-w-[2.75rem] place-items-center rounded-md px-2 text-sm font-semibold text-ink hover:bg-canvas focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-2 md:h-auto md:min-w-0 md:py-1 md:text-xs"
           aria-label={locale === 'he' ? t('topbar.switchToEnglish') : t('topbar.switchToHebrew')}
           onClick={() => setLocale(locale === 'he' ? 'en' : 'he')}
         >
@@ -83,8 +83,8 @@ export function TopBar({ me, error, onMenu }: TopBarProps) {
 
         {me ? (
           <>
-            <span className="text-ink">{me.name ?? me.email}</span>
-            <span className="rounded-full bg-canvas px-2 py-0.5 text-xs font-semibold capitalize text-brand" data-testid="role-chip">
+            <span className="hidden text-ink sm:inline">{me.name ?? me.email}</span>
+            <span className="hidden rounded-full bg-canvas px-2 py-0.5 text-xs font-semibold capitalize text-brand sm:inline" data-testid="role-chip">
               {me.role}
             </span>
           </>

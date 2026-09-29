@@ -37,3 +37,127 @@ body {
 [dir='rtl'] .flip-rtl {
   transform: scaleX(-1);
 }
+
+/* ---------------------------------------------------------------------------------------------
+   Phones (below Tailwind's md breakpoint). Everything sized in rem grows with the root size, so
+   text, spacing and buttons get bigger together. Tap targets reach 44px, form fields use 16px text
+   so iOS does not zoom on focus, tab strips scroll sideways instead of wrapping, and tables show
+   each row as a card (src/layout/stackTables.ts labels the cells).
+   --------------------------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  html {
+    font-size: 17px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='file']),
+  select,
+  textarea {
+    font-size: 16px !important;
+    min-height: 2.75rem;
+  }
+
+  input[type='checkbox'],
+  input[type='radio'] {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  main button,
+  main a[class*='rounded-full'] {
+    min-height: 2.75rem;
+  }
+
+  [role='tablist'] {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  [role='tablist']::-webkit-scrollbar {
+    display: none;
+  }
+  [role='tablist'] > * {
+    flex: 0 0 auto;
+  }
+
+  .stack-wrap {
+    border: 0 !important;
+    overflow: visible !important;
+    border-radius: 0 !important;
+  }
+
+  table.stack-table,
+  table.stack-table tbody,
+  table.stack-table tfoot {
+    display: block;
+    width: 100%;
+    min-width: 0 !important;
+  }
+
+  table.stack-table thead {
+    display: none;
+  }
+
+  table.stack-table tr {
+    display: block;
+    margin-bottom: 0.625rem;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid rgb(var(--color-line));
+    border-radius: var(--radius-card);
+    background: rgb(var(--color-canvas));
+  }
+
+  table.stack-table tfoot tr {
+    background: rgb(var(--color-surface));
+    font-weight: 600;
+  }
+
+  table.stack-table td,
+  table.stack-table th {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.4rem 0 !important;
+    border: 0 !important;
+    text-align: end !important;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  table.stack-table td + td,
+  table.stack-table th + td {
+    border-top: 1px solid rgb(var(--color-line) / 0.5) !important;
+  }
+
+  table.stack-table td::before,
+  table.stack-table th::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    max-width: 45%;
+    color: rgb(var(--color-muted));
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: start;
+  }
+
+  table.stack-table td[data-label='']::before,
+  table.stack-table th[data-label='']::before {
+    content: none;
+  }
+
+  table.stack-table td[data-label=''] {
+    justify-content: flex-end;
+  }
+
+  /* An edit row or a note that spans the whole table keeps its own layout. */
+  table.stack-table td[colspan] {
+    display: block;
+    text-align: start !important;
+  }
+
+  table.stack-table td:empty {
+    display: none;
+  }
+}

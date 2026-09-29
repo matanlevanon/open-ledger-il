@@ -79,7 +79,7 @@ export interface TableColumn<R> {
 export function ChartTable<R>({ columns, rows, rowKey, footer, caption }: { columns: TableColumn<R>[]; rows: R[]; rowKey: (r: R) => string; footer?: ReactNode; caption: string }) {
   return (
     <div className="mt-3 overflow-x-auto">
-      <table className="w-full text-xs">
+      <table className="w-full text-xs" data-no-stack>
         <caption className="sr-only">{caption}</caption>
         <thead>
           <tr className="text-muted">
