@@ -3,6 +3,7 @@
  * empty states, data tables and the placeholder/not-found pages. Shared by every screen.
  */
 export const common = {
+  'nav.unifiedFile': 'Unified file',
   'issuing.offNote': 'Issuing is off. Documents come from your other system through Import. The owner turns issuing on in Settings > Issuing.',
   'issuing.recurringPaused': 'Issuing is off, so recurring schedules are paused.',
   'app.name': 'Open Ledger IL',

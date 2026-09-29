@@ -112,3 +112,42 @@ export function decodeWindows1255(bytes: Uint8Array): string {
   }
   return out;
 }
+
+/**
+ * ISO-8859-8 (logical Hebrew), the character set the unified file instructions require on
+ * Windows (section 2.4 ח, INI field 1029 = 1). ASCII and the Hebrew letters share their bytes
+ * with Windows-1255. Anything else is written as '?' and reported.
+ */
+export function encodeIso88598(text: string): EncodeResult {
+  const bytes = new Uint8Array(text.length);
+  let lossy = false;
+  for (let i = 0; i < text.length; i++) {
+    const cp = text.charCodeAt(i);
+    if (cp <= 0x7f) bytes[i] = cp;
+    else if (cp >= 0x05d0 && cp <= 0x05ea) bytes[i] = 0xe0 + (cp - 0x05d0);
+    else if (cp === 0x00a0) bytes[i] = 0x20;
+    else if (cp === 0x200e) bytes[i] = 0xfd;
+    else if (cp === 0x200f) bytes[i] = 0xfe;
+    else if (cp === 0x00d7) bytes[i] = 0xaa;
+    else if (cp === 0x00f7) bytes[i] = 0xba;
+    else {
+      bytes[i] = REPLACEMENT_BYTE;
+      lossy = true;
+    }
+  }
+  return { bytes, lossy };
+}
+
+export function decodeIso88598(bytes: Uint8Array): string {
+  let out = '';
+  for (const b of bytes) {
+    if (b <= 0x7f) out += String.fromCharCode(b);
+    else if (b >= 0xe0 && b <= 0xfa) out += String.fromCharCode(0x05d0 + (b - 0xe0));
+    else if (b === 0xfd) out += '‎';
+    else if (b === 0xfe) out += '‏';
+    else if (b === 0xaa) out += '×';
+    else if (b === 0xba) out += '÷';
+    else out += '?';
+  }
+  return out;
+}

@@ -3,6 +3,21 @@
  * ceiling meter, and the monthly accountant pack — everything under web/src/features/reports/.
  */
 export const reports = {
+  'unified.business': 'Business',
+  'unified.title': 'Unified file',
+  'unified.subtitle': 'Open format (מבנה אחיד), version 1.31, for the Tax Authority',
+  'unified.dialogTitle': 'Create the files',
+  'unified.drive': 'Drive',
+  'unified.from': 'From date',
+  'unified.to': 'To date',
+  'unified.help': 'Covers documents dated in the range. The zip holds OPENFRMT with INI.TXT and BKMVDATA. Extract it to the root of the drive you chose.',
+  'unified.create': 'Create files',
+  'unified.working': 'Creating...',
+  'unified.downloadAgain': 'Download again',
+  'unified.summaryTitle': 'Export summary (appendix 4, section 5.4)',
+  'unified.typesTitle': 'Documents by type (section 2.6)',
+  'unified.print': 'Print',
+  'unified.error': 'Could not create the unified file.',
   'reports.title': 'Reports',
 
   // Tabs

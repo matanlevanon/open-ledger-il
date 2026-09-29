@@ -33,7 +33,7 @@ describe('exports routes (CLAUDE.md rule 6: every accountant request passes the 
     const res = await api('GET', '/unified-file/report?from=2026-01-01&to=2026-12-31');
     expect(res.status).toBe(200);
     const body = await res.json<{ warnings: string[]; layoutStatus: string }>();
-    expect(body.layoutStatus).toBe('stub');
+    expect(body.layoutStatus).toBe('verified');
     expect(Array.isArray(body.warnings)).toBe(true);
   });
 

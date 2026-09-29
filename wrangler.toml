@@ -22,6 +22,12 @@ ACCESS_AUD = "REPLACE_WITH_YOUR_ACCESS_AUD"      # Audience (AUD) tag of the Clo
 OWNER_EMAIL = "REPLACE_WITH_OWNER_EMAIL"         # Bootstrap: this email becomes the owner on first sign-in when no owner exists.
 PUBLIC_APP_URL = ""                             # e.g. "https://ledger.example.com". Empty falls back to the request origin (R06).
 MAIL_FROM = ""                                  # e.g. "Sample Business Ltd <billing@example.com>", a sender on a domain verified in Resend. Empty disables email.
+# Unified file (מבנה אחיד) INI.TXT software fields, section 3.1: the software as registered with the Tax Authority.
+SOFTWARE_NAME = "Open Ledger IL"
+SOFTWARE_VERSION = "1.0.0"
+SOFTWARE_REGISTRATION_NUMBER = ""   # 8 digits, from the Tax Authority's registration certificate
+SOFTWARE_PRODUCER_VAT = ""          # tax ID of the software producer; empty means the business itself
+SOFTWARE_PRODUCER_NAME = ""
 
 # Secrets. Set with `wrangler secret put <NAME>` or in the dashboard. Never commit a value.
 # Full list with owners in docs/secrets.md.

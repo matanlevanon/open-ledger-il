@@ -20,6 +20,7 @@ import { QuickPage } from './quick';
 import { ExpensesRoutes } from './expenses';
 
 import { ReportsPage } from './reports';
+import { UnifiedFilePage } from './exports/UnifiedFilePage';
 
 import { AccessPage } from './access';
 
@@ -43,6 +44,7 @@ export const featureRoutes: FeatureRoute[] = [
   { path: '/expenses/*', component: ExpensesRoutes },
 
   { path: '/reports', component: ReportsPage },
+  { path: '/unified-file', component: UnifiedFilePage },
 
   { path: '/accountant', component: AccessPage },
 

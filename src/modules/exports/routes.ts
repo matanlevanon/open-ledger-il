@@ -6,7 +6,7 @@ import { ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import { buildPcn874 } from './pcn874/build';
 import type { ValidationReport } from './types';
-import { buildUnifiedFile } from './unified-file/build';
+import { type UnifiedFileResult, buildUnifiedFile, businessIdentity } from './unified-file/build';
 
 function dateRange(c: Context<AppEnv>): { from: string; to: string } {
   const today = todayIsrael();
@@ -18,13 +18,31 @@ function dateRange(c: Context<AppEnv>): { from: string; to: string } {
   return { from, to };
 }
 
+/** Drive letter for field 1012 and the 5.4 screen (section 2.2). */
+function drive(c: Context<AppEnv>): string {
+  const d = (c.req.query('drive') ?? 'C').toUpperCase();
+  if (!/^[A-Z]$/.test(d)) throw new ValidationError('"drive" must be one letter, A to Z.');
+  return d;
+}
+
 function download(body: string | Uint8Array, filename: string, contentType: string): Response {
   return new Response(body, {
     headers: { 'content-type': contentType, 'content-disposition': `attachment; filename="${filename}"` },
   });
 }
 
-async function logRun(c: Context<AppEnv>, kind: 'unified_file' | 'pcn874', report: ValidationReport): Promise<void> {
+function zipName(result: UnifiedFileResult): string {
+  const parts = result.summary.path.split('\\');
+  return `OPENFRMT-${parts.at(-2)}-${parts.at(-1)}.zip`;
+}
+
+function base64(bytes: Uint8Array): string {
+  let s = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+
+async function logRun(c: Context<AppEnv>, kind: 'unified_file' | 'pcn874', report: ValidationReport, extra: Record<string, unknown> = {}): Promise<void> {
   await run(
     c.env.DB,
     `INSERT INTO export_runs (kind, period_from, period_to, record_count, total_ils_minor, series_summary, warnings, layout_status, generated_by)
@@ -42,6 +60,7 @@ async function logRun(c: Context<AppEnv>, kind: 'unified_file' | 'pcn874', repor
   await audit(c, `exports.${kind}.generate`, 'export_run', `${report.from}:${report.to}`, {
     recordCount: report.totalRecords,
     warnings: report.warnings,
+    ...extra,
   });
 }
 
@@ -49,17 +68,33 @@ async function logRun(c: Context<AppEnv>, kind: 'unified_file' | 'pcn874', repor
 export function exportsRoutes(): Hono<AppEnv> {
   const r = new Hono<AppEnv>();
 
+  /** The unified file as a zip download: OPENFRMT/<vat>.<yy>/<MMDDhhmm>/INI.TXT and BKMVDATA.zip. */
   r.get('/unified-file', requireFeature('unified_file'), async (c) => {
     const { from, to } = dateRange(c);
-    const result = await buildUnifiedFile(c.env, from, to, todayIsrael());
-    await logRun(c, 'unified_file', result.report);
-    return download(result.zip, `unified-file-${from}-to-${to}.zip`, 'application/zip');
+    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c) });
+    await logRun(c, 'unified_file', result.report, { mainId: result.summary.mainId, path: result.summary.path });
+    return download(result.zip, zipName(result), 'application/zip');
   });
 
+  /**
+   * One export for the Unified file screen: the zip (base64) plus the section 5.4 summary and
+   * the section 2.6 report of the same run, so the screen shows exactly what went into the file.
+   */
+  r.post('/unified-file/run', requireFeature('unified_file'), async (c) => {
+    const { from, to } = dateRange(c);
+    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c) });
+    await logRun(c, 'unified_file', result.report, { mainId: result.summary.mainId, path: result.summary.path });
+    return c.json({ filename: zipName(result), zipBase64: base64(result.zip), summary: result.summary, report: result.report });
+  });
+
+  /** The business the export dialog shows before a run. */
+  r.get('/unified-file/business', requireFeature('unified_file'), async (c) => c.json(await businessIdentity(c.env)));
+
+  /** The section 2.6 report and the counts for a period, without logging an export. */
   r.get('/unified-file/report', requireFeature('unified_file'), async (c) => {
     const { from, to } = dateRange(c);
-    const result = await buildUnifiedFile(c.env, from, to, todayIsrael());
-    return c.json(result.report);
+    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c) });
+    return c.json({ ...result.report, summary: result.summary });
   });
 
   r.get('/pcn874', requireFeature('pcn874'), async (c) => {

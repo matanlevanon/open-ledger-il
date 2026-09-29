@@ -17,5 +17,5 @@ export { buildPcn874, buildPcn874Row, type Pcn874Result } from './pcn874/build';
 export { loadDocTypeCodes, resolveDocTypeCode, type DocTypeCodeRow, type ResolvedDocTypeCode } from './codes';
 export { seriesSummaryForPeriod } from './validation';
 export type { SeriesSummary, ValidationReport } from './types';
-export { encodeWindows1255, decodeWindows1255 } from './encoding';
+export { encodeWindows1255, decodeWindows1255, encodeIso88598, decodeIso88598 } from './encoding';
 export { padAlpha, padNumeric, padSignedMinor, padDate, blank, renderLine } from './fixed-width';

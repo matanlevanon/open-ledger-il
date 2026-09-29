@@ -1,6 +1,6 @@
 import { unzipSync } from 'fflate';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { decodeWindows1255 } from '../../src/modules/exports';
+import { decodeIso88598 } from '../../src/modules/exports';
 import { CLIENT_VAT } from '../ita/helpers';
 import { buildE2eApp, connectIta, makeClient, ok } from './helpers';
 
@@ -60,11 +60,16 @@ describe('the unified file and PCN874 downloads, over real HTTP, after a real do
 
     const bytes = new Uint8Array(await res.arrayBuffer());
     const entries = unzipSync(bytes);
-    expect(Object.keys(entries).sort()).toEqual(['OPENFRMT/BKMVDATA.TXT', 'OPENFRMT/INI.TXT']);
-    const bkmvdata = decodeWindows1255(entries['OPENFRMT/BKMVDATA.TXT']!);
-    expect(bkmvdata).toContain(String(receiptNumber));
-    expect(bkmvdata).toContain(String(invoiceNumber));
-    expect(bkmvdata).toContain(allocationNumber);
+    const names = Object.keys(entries).sort();
+    expect(names).toHaveLength(2);
+    expect(names[0]).toMatch(/^OPENFRMT\/\d{8}\.\d{2}\/\d{8}\/BKMVDATA\.zip$/);
+    expect(names[1]).toMatch(/^OPENFRMT\/\d{8}\.\d{2}\/\d{8}\/INI\.TXT$/);
+    const bkmvdata = decodeIso88598(unzipSync(entries[names[0]!]!)['BKMVDATA.TXT']!);
+    const headers = bkmvdata.split('\r\n').filter((l) => l.startsWith('C100'));
+    // Field 1204, the document number, sits in columns 26-45. Version 1.31 has no allocation-number field.
+    const numbers = headers.map((l) => l.slice(25, 45).trim());
+    expect(numbers).toContain(String(receiptNumber));
+    expect(numbers).toContain(String(invoiceNumber));
   });
 
   it('GET /exports/pcn874 lists only the real מורשה tax invoice, with its real allocation number, not the פטור receipt', async () => {

@@ -84,7 +84,7 @@ describe("exports against R11's real עוסק מורשה flow", () => {
     expect(after.report.totalRecords).toBe(before.report.totalRecords + 1);
     expect(after.report.totalIlsMinor - before.report.totalIlsMinor).toBe(118000);
 
-    const unified = await buildUnifiedFile(testEnv(), TODAY, TODAY, TODAY);
+    const unified = await buildUnifiedFile(testEnv(), TODAY, TODAY);
     expect(unified.report.recordCounts.C100 ?? 0).toBeGreaterThanOrEqual(1);
   });
 
@@ -115,8 +115,9 @@ describe("exports against R11's real עוסק מורשה flow", () => {
     );
     await new D1AllocationDocuments(env.DB).setStatus(documentId, 'final', 'SANDBOX-0000-987654321');
 
-    const afterGrant = await buildUnifiedFile(testEnv(), TODAY, TODAY, TODAY);
-    expect(afterGrant.bkmvdata).toContain('987654321');
+    const afterGrant = await buildUnifiedFile(testEnv(), TODAY, TODAY);
+    // Version 1.31 has no allocation-number field. The granted invoice is in the file as a 305.
+    expect(afterGrant.bkmvdata.split('\r\n').some((l) => l.startsWith('C100') && l.slice(22, 25) === '305')).toBe(true);
     const afterGrantPcn = await buildPcn874(testEnv(), TODAY, TODAY);
     expect(afterGrantPcn.text).toContain('987654321');
     expect(afterGrantPcn.report.totalRecords).toBe(before.report.totalRecords + 1);

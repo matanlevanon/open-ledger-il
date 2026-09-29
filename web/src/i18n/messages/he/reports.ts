@@ -1,6 +1,21 @@
 import type { reports as en } from '../en/reports';
 
 export const reports: Record<keyof typeof en, string> = {
+  'unified.business': 'העסק',
+  'unified.title': 'מבנה אחיד',
+  'unified.subtitle': 'הפקת קבצים במבנה אחיד, גרסה 1.31, לרשות המסים',
+  'unified.dialogTitle': 'הפקת הקבצים',
+  'unified.drive': 'כונן',
+  'unified.from': 'מתאריך',
+  'unified.to': 'עד תאריך',
+  'unified.help': 'כולל מסמכים שתאריכם בטווח. קובץ ה-ZIP מכיל את OPENFRMT עם INI.TXT ו-BKMVDATA. חלץ אותו לשורש הכונן שבחרת.',
+  'unified.create': 'הפקת קבצים',
+  'unified.working': 'מפיק...',
+  'unified.downloadAgain': 'הורדה חוזרת',
+  'unified.summaryTitle': 'סיכום ההפקה (נספח 4, סעיף 5.4)',
+  'unified.typesTitle': 'פירוט לפי סוג מסמך (סעיף 2.6)',
+  'unified.print': 'הדפסה',
+  'unified.error': 'לא ניתן להפיק את הקובץ במבנה אחיד.',
   'reports.title': 'דוחות',
 
   // Tabs

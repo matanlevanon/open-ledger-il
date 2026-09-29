@@ -1,136 +1,168 @@
 import { env } from 'cloudflare:workers';
 import { unzipSync } from 'fflate';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { run } from '../../src/core/db';
 import { finalizeDocument } from '../../src/core/numbering';
-import { decodeWindows1255 } from '../../src/modules/exports/encoding';
+import { decodeIso88598 } from '../../src/modules/exports/encoding';
 import { buildUnifiedFile } from '../../src/modules/exports/unified-file/build';
 import type { Env } from '../../src/env';
 import { OWNER_ACTOR, db, makeDraft } from '../helpers';
 
-const CLIENT_VAT = '514713288';
+// Documents share series across the tests in this file, and a series refuses a final document
+// dated before its last one, so every test uses a later date than the one before it.
+
+const VAT = '123456782';
+const NOW = new Date('2026-12-15T08:30:00Z'); // 10:30 in Israel
 
 function testEnv(overrides: Partial<Env> = {}): Env {
-  return { ...env, ...overrides } as Env;
+  return { ...env, SOFTWARE_REGISTRATION_NUMBER: '12345678', SOFTWARE_PRODUCER_VAT: '987654321', ...overrides } as Env;
 }
 
-async function makeClient(nameEn: string, vatNumber: string | null = null): Promise<number> {
-  const { lastRowId } = await run(db(), 'INSERT INTO clients (name_en, vat_number) VALUES (?, ?)', nameEn, vatNumber);
+async function makeClient(nameEn: string, opts: { nameHe?: string; vat?: string; country?: string } = {}): Promise<number> {
+  const { lastRowId } = await run(
+    db(),
+    'INSERT INTO clients (name_en, name_he, vat_number, country) VALUES (?, ?, ?, ?)',
+    nameEn,
+    opts.nameHe ?? null,
+    opts.vat ?? null,
+    opts.country ?? 'IL',
+  );
   return lastRowId;
 }
 
-async function finalizeSale(seriesId: string, totalMinor: number, opts: { clientId?: number; date?: string } = {}): Promise<number> {
-  const id = await makeDraft({ seriesId, totalMinor });
-  await run(db(), 'UPDATE documents SET client_id = ?, date = ? WHERE id = ?', opts.clientId ?? null, opts.date ?? '2026-10-01', id);
+async function issue(
+  seriesId: string,
+  date: string,
+  opts: { clientId?: number; totalMinor?: number; payments?: { method?: string; amountMinor: number; paidOn?: string }[]; lines?: { description: string; unitPriceMinor: number; quantityMilli?: number }[] } = {},
+): Promise<number> {
+  const id = await makeDraft({ seriesId, totalMinor: opts.totalMinor, payments: opts.payments, lines: opts.lines });
+  await run(db(), 'UPDATE documents SET client_id = ?, date = ? WHERE id = ?', opts.clientId ?? null, date, id);
   await finalizeDocument(db(), id, { actor: OWNER_ACTOR });
   return id;
 }
 
-/** A fresh bookkeeping type and series, so a test can finalize any date without tripping the
- * "no final document dated before the last final in its series" rule against another test's data. */
-async function makeFreshBookkeepingSeries(): Promise<string> {
-  const code = `TX${crypto.randomUUID().slice(0, 6)}`;
-  await run(
-    db(),
-    `INSERT INTO document_types (code, name_en, name_he, kind, modes, bookkeeping, sort_order, enabled)
-     VALUES (?, 'Test receipt', 'בדיקה', 'receipt', 'both', 1, 999, 1)`,
-    code,
-  );
-  await run(db(), `INSERT INTO series (id, doc_type, name_en) VALUES (?, ?, 'Test receipt series')`, code, code);
-  return code;
-}
+const lines = (text: string) => text.split('\r\n').filter(Boolean);
 
-describe('buildUnifiedFile (runs/R13-exports.md: unified file for any period, tests: "record counts match data")', () => {
-  it('emits one A000, one A100, one C100+D110 per bookkeeping document and one Z900 footer', async () => {
-    const client = await makeClient('Acme Ltd', CLIENT_VAT);
-    await finalizeSale('400', 100000, { clientId: client, date: '2026-11-05' });
-    // R18 task 10 merged 300 into the (non-bookkeeping) proforma, so a second bookkeeping type
-    // needs its own fresh one here instead.
-    const secondBookkeepingType = await makeFreshBookkeepingSeries();
-    await finalizeSale(secondBookkeepingType, 50000, { clientId: client, date: '2026-11-06' });
+beforeAll(async () => {
+  await run(db(), 'INSERT OR IGNORE INTO business_profile (id) VALUES (1)');
+  await run(db(), "UPDATE business_profile SET tax_id = ?, name_he = 'עסק לדוגמה', address_he = 'הרצל 1 תל אביב' WHERE id = 1", VAT);
+});
 
-    const result = await buildUnifiedFile(testEnv(), '2026-11-01', '2026-11-30', '2026-12-01');
+describe('unified file build (instructions 1.31)', () => {
+  it('writes A100 first, Z900 last, and counts every record in Z900 and INI', async () => {
+    const client = await makeClient('Acme Ltd', { nameHe: 'אקמה בע"מ', vat: '514713288' });
+    await issue('400', '2027-01-05', { clientId: client, totalMinor: 100000, payments: [{ amountMinor: 100000, method: 'bank_transfer' }] });
 
-    expect(result.report.recordCounts).toMatchObject({ A000: 1, A100: 1, C100: 2, D110: 2, Z900: 1 });
-    expect(result.report.totalRecords).toBe(7);
-    const nonEmptyLines = result.bkmvdata.split('\r\n').filter(Boolean);
-    expect(nonEmptyLines).toHaveLength(7);
-    expect(nonEmptyLines[0]!.startsWith('A000')).toBe(true);
-    expect(nonEmptyLines.at(-1)!.startsWith('Z900')).toBe(true);
+    const result = await buildUnifiedFile(testEnv(), '2027-01-05', '2027-01-05', { now: NOW, mainId: '123456789012345' });
+    const data = lines(result.bkmvdata);
+    expect(data[0]!.startsWith('A100')).toBe(true);
+    expect(data.at(-1)!.startsWith('Z900')).toBe(true);
+    expect(data.map((l) => l.slice(0, 4))).toEqual(['A100', 'C100', 'D120', 'Z900']);
+    data.forEach((l, i) => expect(l.slice(4, 13)).toBe(String(i + 1).padStart(9, '0')));
+
+    const z900 = data.at(-1)!;
+    expect(z900.slice(45, 60)).toBe('000000000000004');
+    const ini = lines(result.iniText);
+    expect(ini[0]).toHaveLength(466);
+    expect(ini[0]!.slice(9, 24)).toBe('000000000000004');
+    expect(ini[0]!.slice(24, 33)).toBe(VAT);
+    expect(ini[0]!.slice(33, 48)).toBe('123456789012345');
+    expect(ini[0]!.slice(48, 56)).toBe('&OF1.31&');
+    expect(ini[0]!.slice(56, 64)).toBe('12345678');
+    expect(ini.slice(1).map((l) => l.slice(0, 4))).toEqual(['B100', 'B110', 'C100', 'D110', 'D120', 'M100']);
+    expect(ini.find((l) => l.startsWith('C100'))).toBe('C100000000000000001');
+    expect(ini.find((l) => l.startsWith('B100'))).toBe('B100000000000000000');
   });
 
-  it('excludes quotes and payment requests: not bookkeeping records', async () => {
-    const client = await makeClient('Gamma Inc');
-    await finalizeSale('QT', 100000, { clientId: client, date: '2026-11-07' });
-    await finalizeSale('PR', 100000, { clientId: client, date: '2026-11-07' });
+  it('writes a receipt header with the customer, amounts in shekels and a bank transfer payment line', async () => {
+    const client = await makeClient('Beta Co', { nameHe: 'בטא', vat: '514713288' });
+    await issue('400', '2027-01-10', { clientId: client, totalMinor: 250000, payments: [{ amountMinor: 250000, method: 'bank_transfer', paidOn: '2027-01-10' }] });
 
-    const result = await buildUnifiedFile(testEnv(), '2026-11-07', '2026-11-07', '2026-12-01');
+    const result = await buildUnifiedFile(testEnv(), '2027-01-10', '2027-01-10', { now: NOW });
+    const c100 = lines(result.bkmvdata).find((l) => l.startsWith('C100'))!;
+    expect(c100).toHaveLength(444);
+    expect(c100.slice(22, 25)).toBe('400');
+    expect(c100.slice(57, 107).trim()).toBe('בטא');
+    expect(c100.slice(252, 261)).toBe('514713288');
+    expect(c100.slice(347, 362)).toBe('+00000000250000');
+    expect(c100.slice(400, 408)).toBe('20270110');
+
+    const d120 = lines(result.bkmvdata).find((l) => l.startsWith('D120'))!;
+    expect(d120).toHaveLength(222);
+    expect(d120.slice(25, 45).trim()).toBe(c100.slice(25, 45).trim());
+    expect(d120[49]).toBe('4');
+    expect(d120.slice(103, 118)).toBe('+00000000250000');
+    expect(result.summary.documentTypes.find((t) => t.code === 400)).toMatchObject({ count: 1, totalIlsMinor: 250000 });
+  });
+
+  it('writes a credit receipt as a receipt with negative amounts', async () => {
+    const client = await makeClient('Gamma');
+    await issue('405', '2027-01-15', { clientId: client, totalMinor: -30000, payments: [{ amountMinor: 30000, method: 'cash' }] });
+
+    const result = await buildUnifiedFile(testEnv(), '2027-01-15', '2027-01-15', { now: NOW });
+    const c100 = lines(result.bkmvdata).find((l) => l.startsWith('C100'))!;
+    expect(c100.slice(22, 25)).toBe('400');
+    expect(c100.slice(347, 362)).toBe('-00000000030000');
+    const d120 = lines(result.bkmvdata).find((l) => l.startsWith('D120'))!;
+    expect(d120[49]).toBe('1');
+    expect(d120.slice(103, 118)).toBe('-00000000030000');
+  });
+
+  it('leaves quotes and payment requests out: they have no code in appendix 1', async () => {
+    const client = await makeClient('Delta');
+    await issue('QT', '2027-01-20', { clientId: client, totalMinor: 100000 });
+    await issue('PR', '2027-01-20', { clientId: client, totalMinor: 100000 });
+
+    const result = await buildUnifiedFile(testEnv(), '2027-01-20', '2027-01-20', { now: NOW });
+    expect(result.report.recordCounts.C100 ?? 0).toBe(0);
+    expect(lines(result.bkmvdata).map((l) => l.slice(0, 4))).toEqual(['A100', 'Z900']);
+  });
+
+  it('writes the pro forma (300) with its lines as D110', async () => {
+    const client = await makeClient('Epsilon');
+    await issue('300', '2027-01-25', {
+      clientId: client,
+      lines: [
+        { description: 'Strategy', unitPriceMinor: 200000, quantityMilli: 1500 },
+        { description: 'Ads', unitPriceMinor: 50000 },
+      ],
+    });
+
+    const result = await buildUnifiedFile(testEnv(), '2027-01-25', '2027-01-25', { now: NOW });
+    const d110 = lines(result.bkmvdata).filter((l) => l.startsWith('D110'));
+    expect(d110).toHaveLength(2);
+    expect(d110[0]).toHaveLength(339);
+    expect(d110[0]!.slice(22, 25)).toBe('300');
+    expect(d110[0]!.slice(45, 49)).toBe('0001');
+    expect(d110[0]!.slice(223, 240)).toBe('+0000000000015000');
+    expect(d110[0]!.slice(270, 285)).toBe('+00000000300000');
+  });
+
+  it('leaves out documents dated outside the period', async () => {
+    const result = await buildUnifiedFile(testEnv(), '2030-01-01', '2030-01-31', { now: NOW });
     expect(result.report.recordCounts.C100 ?? 0).toBe(0);
   });
 
-  it('excludes a document outside the requested period', async () => {
-    const series = await makeFreshBookkeepingSeries();
-    const client = await makeClient('Delta LLC');
-    await finalizeSale(series, 70000, { clientId: client, date: '2020-01-15' });
-
-    // A window that does not overlap any other test's November dates in this file.
-    const result = await buildUnifiedFile(testEnv(), '2026-12-01', '2026-12-31', '2027-01-01');
-    expect(result.report.recordCounts.C100 ?? 0).toBe(0);
-  });
-
-  it('carries the 9-digit allocation number in C100 once the ITA has approved one', async () => {
-    const client = await makeClient('Beta Co', CLIENT_VAT);
-    const docId = await finalizeSale('400', 200000, { clientId: client, date: '2026-11-10' });
-    await run(
-      db(),
-      `INSERT INTO ita_allocations (document_id, invoice_id, environment, status, confirmation_number, short_number)
-       VALUES (?, ?, 'sandbox', 'approved', ?, ?)`,
-      docId,
-      crypto.randomUUID(),
-      'SANDBOX-0000-123456789',
-      '123456789',
-    );
-
-    const result = await buildUnifiedFile(testEnv(), '2026-11-10', '2026-11-10', '2026-12-01');
-    expect(result.bkmvdata).toContain('123456789');
-  });
-
-  it('flags every document type whose spec code is not confirmed, since the spec PDF is missing', async () => {
-    const client = await makeClient('Zeta Co');
-    await finalizeSale('400', 40000, { clientId: client, date: '2026-11-12' });
-
-    const result = await buildUnifiedFile(testEnv(), '2026-11-12', '2026-11-12', '2026-12-01');
-    expect(result.report.warnings.some((w) => w.includes('not confirmed') && w.includes('400'))).toBe(true);
-    expect(result.report.layoutStatus).toBe('stub');
-  });
-
-  it('reports the first and last number finalized per series in the period', async () => {
-    const client = await makeClient('Eta Co');
-    await finalizeSale('405', 10000, { clientId: client, date: '2026-11-15' });
-    await finalizeSale('405', 20000, { clientId: client, date: '2026-11-16' });
-
-    const result = await buildUnifiedFile(testEnv(), '2026-11-15', '2026-11-16', '2026-12-01');
-    const series = result.report.series.find((s) => s.seriesId === '405');
-    expect(series).toBeDefined();
-    expect(series!.count).toBe(2);
-    expect(series!.lastNumber).toBe(series!.firstNumber + 1);
-  });
-
-  it('zips OPENFRMT/INI.TXT and OPENFRMT/BKMVDATA.TXT, Windows-1255 encoded, round-tripping to the source text', async () => {
-    const client = await makeClient('Theta Co');
-    await finalizeSale('400', 30000, { clientId: client, date: '2026-11-20' });
-
-    const result = await buildUnifiedFile(testEnv(), '2026-11-20', '2026-11-20', '2026-12-01');
+  it('zips OPENFRMT/<vat>.<yy>/<MMDDhhmm>/INI.TXT and BKMVDATA.zip, in ISO-8859-8', async () => {
+    const result = await buildUnifiedFile(testEnv(), '2027-01-01', '2027-01-31', { now: NOW });
     const entries = unzipSync(result.zip);
-    expect(Object.keys(entries).sort()).toEqual(['OPENFRMT/BKMVDATA.TXT', 'OPENFRMT/INI.TXT']);
-    expect(decodeWindows1255(entries['OPENFRMT/BKMVDATA.TXT']!)).toBe(result.bkmvdata);
-    expect(decodeWindows1255(entries['OPENFRMT/INI.TXT']!)).toBe(result.iniText);
+    const dir = 'OPENFRMT/12345678.26/12151030';
+    expect(Object.keys(entries).sort()).toEqual([`${dir}/BKMVDATA.zip`, `${dir}/INI.TXT`]);
+    expect(decodeIso88598(entries[`${dir}/INI.TXT`]!)).toBe(result.iniText);
+    const inner = unzipSync(entries[`${dir}/BKMVDATA.zip`]!);
+    expect(decodeIso88598(inner['BKMVDATA.TXT']!)).toBe(result.bkmvdata);
+    expect(result.summary.path).toBe('C:\\OPENFRMT\\12345678.26\\12151030');
   });
 
-  it('warns when no ITA business VAT number is configured and uses a placeholder', async () => {
-    // The test worker binds no OWNER_TAX_ID / ITA_VAT_NUMBER secret (vitest.config.ts), so this
-    // is the default path, not an override.
-    const result = await buildUnifiedFile(testEnv(), '2026-11-01', '2026-11-01', '2026-12-01');
-    expect(result.report.warnings.some((w) => w.includes('ITA business VAT number'))).toBe(true);
+  it('sums the 2.6 report to the C100 count', async () => {
+    const result = await buildUnifiedFile(testEnv(), '2027-01-01', '2027-01-31', { now: NOW });
+    const sum = result.summary.documentTypes.reduce((s, t) => s + t.count, 0);
+    expect(sum).toBe(result.report.recordCounts.C100);
+    expect(result.summary.documentTypes.map((t) => t.code)).toContain(406);
+  });
+
+  it('warns while the software has no registration number', async () => {
+    const result = await buildUnifiedFile(testEnv({ SOFTWARE_REGISTRATION_NUMBER: '' }), '2027-01-01', '2027-01-01', { now: NOW });
+    expect(result.report.warnings.some((w) => w.includes('registration number'))).toBe(true);
   });
 });

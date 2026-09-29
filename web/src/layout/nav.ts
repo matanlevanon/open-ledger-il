@@ -21,7 +21,6 @@ export interface NavSection {
 
 export const NAV: NavSection[] = [
   { label: 'nav.dashboard', path: '/', run: 'R05' },
-  { label: 'nav.quick', path: '/quick', run: 'R25' },
   { label: 'nav.clients', path: '/clients', run: 'R01', feature: 'clients' },
   {
     label: 'nav.income',
@@ -39,8 +38,10 @@ export const NAV: NavSection[] = [
   },
   { label: 'nav.services', path: '/services', run: 'R17', feature: 'income_documents' },
   { label: 'nav.expenses', path: '/expenses', run: 'R07', feature: 'expenses' },
+  { label: 'nav.quick', path: '/quick', run: 'R25' },
   { label: 'nav.ita', path: '/ita', run: 'R12' },
   { label: 'nav.reports', path: '/reports', run: 'R08', feature: 'reports' },
+  { label: 'nav.unifiedFile', path: '/unified-file', run: 'R25', feature: 'unified_file' },
   { label: 'nav.accountant', path: '/accountant', run: 'R09', feature: 'monthly_pack' },
   { label: 'nav.import', path: '/import', run: 'R10' },
   { label: 'nav.settings', path: '/settings', run: 'R14' },
