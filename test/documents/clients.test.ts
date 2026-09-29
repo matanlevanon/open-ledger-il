@@ -300,7 +300,7 @@ describe('client city and zip code', () => {
 });
 
 describe('client ledger with imported past documents', () => {
-  it('books an unpaid imported pro forma as open and a paid imported receipt as settled', async () => {
+  it('books an imported pro forma as open less the imported receipt that pays part of it, and leaves quotes out', async () => {
     const client = await makeClient();
     for (const [n, type, paid, total] of [
       ['9001', 'Pro Forma Invoice', 'unpaid', 50000],
@@ -318,7 +318,12 @@ describe('client ledger with imported past documents', () => {
     const ledger = await ok('GET', `/clients/${client}/ledger`);
     const imported = ledger.entries.filter((e: any) => e.kind === 'imported');
     expect(imported.map((e: any) => e.display_number)).toEqual(['Pro Forma Invoice / 9001', 'Invoice/Receipt / 9002']);
-    expect(ledger.closing.ILS).toBe(50000);
+    // The receipt pays 300.00 of the 500.00 pro forma dated the same day, so 200.00 stays open.
+    expect(imported.map((e: any) => [e.debit_minor, e.credit_minor])).toEqual([
+      [50000, 0],
+      [0, 30000],
+    ]);
+    expect(ledger.closing.ILS).toBe(20000);
   });
 
   it('pays an imported pro forma with the imported receipt instead of charging both', async () => {
@@ -405,6 +410,8 @@ describe('client ledger with imported past documents', () => {
 
 describe('imported pro forma paid by a receipt issued here', () => {
   it('reads paid in the ledger once the linked receipt is final', async () => {
+    // An earlier test in this file issued a receipt dated 2026-10-20, and the series only moves forward.
+    clock.today = '2026-10-20';
     const client = await makeClient();
     const ins = await env.DB.prepare(
       `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, currency,

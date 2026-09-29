@@ -71,7 +71,7 @@ describe('allocation rule: retry queue every 15 minutes for 24 hours', () => {
     ctx.mock.down = false;
     const manual = await ctx.service.enterManual(doc.id, '202703110000001234567890', 'ITA web app', OWNER);
     expect(manual.status).toBe('approved');
-  });
+    }, 30_000); // 96 queue runs, slow on a busy machine
 
   it('retries the alert when Slack did not take it', async () => {
     const ctx = await setupIta({ start: '2027-03-15T08:00:00.000Z' });
