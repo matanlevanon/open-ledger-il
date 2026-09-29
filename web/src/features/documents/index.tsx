@@ -6,6 +6,7 @@ import { DocumentListPage } from './DocumentList';
 import { DocumentPage } from './DocumentPage';
 import { DocumentEditor } from './Editor';
 import { StatementsPage } from './Ledger';
+import { RecurringPage } from './Recurring';
 import { Card, PageTitle } from './ui';
 
 function DocumentsArea() {
@@ -72,4 +73,5 @@ export const documentsRoutes: FeatureRoute[] = [
   { path: '/income/documents/*', component: DocumentsArea },
   { path: '/income/documents/new', component: NewDocument },
   { path: '/income/statements', component: StatementsPage },
+  { path: '/income/recurring', component: RecurringPage },
 ];

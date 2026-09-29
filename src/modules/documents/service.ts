@@ -1007,6 +1007,41 @@ export async function reviseDocument(ctx: Ctx, id: number): Promise<number> {
   return insertDraft(ctx, s, { kind: 'created', details: { revises: displayNumber(loaded.doc.type, loaded.doc.number) } });
 }
 
+/** Kinds a copy can be made of. A credit is made from the document it credits. */
+const DUPLICABLE_KINDS = new Set(['quote', 'demand', 'invoice', 'receipt', 'invoice_receipt']);
+
+function daysFrom(from: string, to: string): number {
+  return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
+}
+
+/**
+ * Opens a new draft that copies a document: type, client, lines and services, currency, rate
+ * options, payment methods and instructions, notes and language. Only the dates change: the date
+ * moves to `date` (today by default) and the due date keeps its distance from it. The number
+ * comes on finalize, like any draft. Payments on a receipt are copied to the new date, and their
+ * exchange rate is looked up again for that date. Used by Duplicate and by recurring documents.
+ */
+export async function duplicateDocument(ctx: Ctx, id: number, opts: { date?: string } = {}): Promise<number> {
+  const { db } = ctx;
+  const loaded = await loadFull(db, id);
+  assertCanSeeType(ctx.user, loaded.doc.type);
+  const s = await stateFromDb(db, loaded);
+  if (!DUPLICABLE_KINDS.has(s.type.kind)) conflict('not_duplicable', 'A credit is made from the document it credits. It cannot be duplicated.');
+  if (s.type.enabled !== 1) conflict('type_disabled', `${s.type.name_en} is not available in the current legal mode.`);
+  const date = opts.date ?? ctx.services.today();
+  const shift = daysFrom(s.date, date);
+  s.dueDate = s.dueDate ? addDays(s.dueDate, shift) : null;
+  s.date = date;
+  s.payments = s.payments.map(({ preset: _preset, ...p }) => ({ ...p, paidOn: date }));
+  s.sourceId = null;
+  s.sourceKind = null;
+  s.revisesId = null;
+  s.backdateReason = null;
+  s.creditReason = null;
+  s.vatRateBpOverride = undefined;
+  return insertDraft(ctx, s, { kind: 'created', details: { duplicateOf: displayNumber(loaded.doc.type, loaded.doc.number) } });
+}
+
 // ---------------------------------------------------------------------------
 // Cancel, credit, sent
 // ---------------------------------------------------------------------------

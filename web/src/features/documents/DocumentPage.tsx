@@ -215,6 +215,16 @@ export function DocumentPage() {
                 </button>
               </>
             )}
+            {['quote', 'demand', 'invoice', 'receipt', 'invoice_receipt'].includes(d.kind) && d.status !== 'cancelled' && (
+              <button type="button" className={btnSecondary} disabled={busy} onClick={() => act(() => docsApi.duplicate(id), true)}>
+                {t('documents.page.duplicate')}
+              </button>
+            )}
+            {isFinal && ['demand', 'invoice'].includes(d.kind) && (
+              <Link to={`/income/recurring?template=${id}`} className={btnSecondary}>
+                {t('documents.page.makeRecurring')}
+              </Link>
+            )}
             {isFinal && ['QT', 'PR'].includes(d.type) && d.state !== 'converted' && (
               <button type="button" className={btnSecondary} disabled={busy} onClick={() => act(() => docsApi.revise(id))}>
                 {t('documents.page.revise')}

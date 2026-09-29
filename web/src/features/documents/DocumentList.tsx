@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { usePreferences } from '../../app/preferences';
 import { type MessageKey, useT } from '../../i18n';
 import { type DocListItem, docsApi } from './api';
@@ -169,15 +169,35 @@ function Rows({ items }: { items: DocListItem[] }) {
   );
 }
 
+/** Kinds a copy can be made of. A credit is made from the document it credits. */
+export const DUPLICABLE_KINDS = ['quote', 'demand', 'invoice', 'receipt', 'invoice_receipt'];
+
 function RowAction({ doc }: { doc: DocListItem }) {
   const t = useT();
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
   const to = `/income/documents/${doc.id}`;
   let text = t('documents.list.actionView');
   if (doc.state === 'draft') text = t('documents.list.actionFinishDraft');
   else if (doc.kind === 'demand' && (doc.remaining_minor ?? 0) > 0) text = t('documents.list.actionRecordPayment');
+  // Duplicate opens the new draft in the editor, so only the dates are left to check.
+  const duplicate = () => {
+    setBusy(true);
+    docsApi
+      .duplicate(doc.id)
+      .then((v) => navigate(`/income/documents/${v.document.id}/edit`))
+      .catch(() => setBusy(false));
+  };
   return (
-    <Link to={to} className="text-sm font-semibold text-brand hover:underline">
-      {text}
-    </Link>
+    <span className="flex justify-end gap-3 whitespace-nowrap">
+      {DUPLICABLE_KINDS.includes(doc.kind) && doc.status !== 'cancelled' && (
+        <button type="button" disabled={busy} onClick={duplicate} className="text-sm text-muted hover:text-brand hover:underline disabled:opacity-50">
+          {t('documents.list.actionDuplicate')}
+        </button>
+      )}
+      <Link to={to} className="text-sm font-semibold text-brand hover:underline">
+        {text}
+      </Link>
+    </span>
   );
 }

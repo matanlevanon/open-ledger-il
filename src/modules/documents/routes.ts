@@ -23,6 +23,7 @@ import {
   createDraft,
   creditDocument,
   deleteDraft,
+  duplicateDocument,
   finalize,
   markSent,
   recordPayment,
@@ -102,6 +103,12 @@ export function documentRoutes(services: ServiceFactory): Hono<AppEnv> {
     const input = recordPaymentInput.parse(await body(c));
     const { receiptId } = await recordPayment(ctx(c), idParam(c), input);
     return c.json(await view(c, receiptId), 201);
+  });
+
+  /** A new draft copying the document, dated today. Only the number and the dates change. */
+  r.post('/:id/duplicate', requireFeature('issue_documents'), async (c) => {
+    const newId = await duplicateDocument(ctx(c), idParam(c));
+    return c.json(await view(c, newId), 201);
   });
 
   r.post('/:id/revise', requireFeature('issue_documents'), async (c) => {

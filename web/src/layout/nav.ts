@@ -32,7 +32,7 @@ export const NAV: NavSection[] = [
       { label: 'nav.incomePaymentRequests', path: '/income/payment-requests', run: 'R01', feature: 'income_documents' },
       { label: 'nav.incomeProformas', path: '/income/proformas', run: 'R17', feature: 'income_documents' },
       { label: 'nav.incomeDocuments', path: '/income/documents', run: 'R01', feature: 'income_documents' },
-      { label: 'nav.incomeRecurring', path: '/income/recurring', run: 'a later run' },
+      { label: 'nav.incomeRecurring', path: '/income/recurring', run: 'R24' },
       { label: 'nav.incomeStatements', path: '/income/statements', run: 'R01', feature: 'clients' },
     ],
   },

@@ -318,6 +318,7 @@ export const docsApi = {
   recordPayment: (id: number, body: { payments: PaymentInput[]; date?: string; backdateReason?: string }) =>
     apiSend<DocView>('POST', `/documents/${id}/record-payment`, body),
   revise: (id: number) => apiSend<DocView>('POST', `/documents/${id}/revise`),
+  duplicate: (id: number) => apiSend<DocView>('POST', `/documents/${id}/duplicate`),
   cancel: (id: number, reason: string) => apiSend<DocView>('POST', `/documents/${id}/cancel`, { reason }),
   credit: (id: number, body: { mode: 'full' | 'partial'; amountMinor?: number; reason?: string }) =>
     apiSend<DocView>('POST', `/documents/${id}/credit`, body),
