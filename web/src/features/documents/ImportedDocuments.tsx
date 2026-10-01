@@ -20,6 +20,8 @@ export interface ImportedDocument {
   amount_before_vat_minor: number;
   vat_amount_minor: number;
   total_minor: number;
+  /** Bank of Israel rate of the issue date, resolved when the document was filed. Null for shekels. */
+  fx_rate: string | null;
   paid_status: string;
   item_id: number | null;
   receipt_json: string | null;
@@ -257,13 +259,15 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
       const { types } = await docsApi.types();
       const type = types.find((ty) => ty.code === '320' && ty.enabled) ? '320' : '400';
       // A receipt's amount is the sum of its payments, so the draft starts with one payment of the
-      // imported document's full total, dated today. Edit the method, date or amount before issuing.
+      // imported document's full total, dated today. A foreign-currency receipt also starts with the
+      // imported document's own rate, so the shekel amount matches it. Edit any of these before issuing.
       const draft = await docsApi.create({
         type,
         clientId: d.client_id,
         currency: d.currency,
         lines: [{ description: `${d.doc_type} ${d.original_number}`, unitPriceMinor: d.total_minor, quantityMilli: 1000 }],
         payments: [{ method: 'bank_transfer', paidOn: todayLocal(), amountMinor: d.total_minor }],
+        ...(d.currency !== 'ILS' && d.fx_rate ? { overrideRate: d.fx_rate } : {}),
       } as never);
       await apiSend('POST', `/import/external-documents/${d.id}/receipts`, { documentId: draft.document.id });
       navigate(`/income/documents/${draft.document.id}`);
