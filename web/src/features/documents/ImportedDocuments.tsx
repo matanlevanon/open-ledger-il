@@ -4,7 +4,7 @@ import { apiGet } from '../../api/client';
 import { usePreferences } from '../../app/preferences';
 import { type MessageKey, useT } from '../../i18n';
 import { type Client, apiSend, clientsApi, docsApi, type Service, servicesApi } from './api';
-import { CURRENCIES, clientName, money } from './format';
+import { CURRENCIES, clientName, money, todayLocal } from './format';
 import { SortHeader, useSort } from './sort';
 import { Card, ErrorNote, Loading, useLoad } from './ui';
 
@@ -256,11 +256,14 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
     try {
       const { types } = await docsApi.types();
       const type = types.find((ty) => ty.code === '320' && ty.enabled) ? '320' : '400';
+      // A receipt's amount is the sum of its payments, so the draft starts with one payment of the
+      // imported document's full total, dated today. Edit the method, date or amount before issuing.
       const draft = await docsApi.create({
         type,
         clientId: d.client_id,
         currency: d.currency,
         lines: [{ description: `${d.doc_type} ${d.original_number}`, unitPriceMinor: d.total_minor, quantityMilli: 1000 }],
+        payments: [{ method: 'bank_transfer', paidOn: todayLocal(), amountMinor: d.total_minor }],
       } as never);
       await apiSend('POST', `/import/external-documents/${d.id}/receipts`, { documentId: draft.document.id });
       navigate(`/income/documents/${draft.document.id}`);
