@@ -83,6 +83,7 @@ export interface MetaRow {
   revises_id: number | null;
   show_ils: number;
   carry_rate: number;
+  latest_rate: number;
   backdate_reason: string | null;
   credit_reason: string | null;
 }

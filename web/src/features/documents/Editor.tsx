@@ -66,6 +66,8 @@ interface EditorState {
   overrideRate: string;
   /** The day the rate belongs to, kept from the document it came from. Cleared when the rate is typed over. */
   overrideRateDate: string;
+  /** Receipt: each payment at the Bank of Israel rate of its day, not the source document's rate. */
+  latestRate: boolean;
   carryRate: boolean;
 }
 
@@ -123,6 +125,7 @@ function fromView(v: DocView): EditorState {
     overrideRate: d.fx_source === 'agreed' ? (d.fx_rate ?? '') : '',
     overrideRateDate: d.fx_source === 'agreed' ? (d.fx_rate_date ?? '') : '',
     carryRate: v.meta?.carry_rate === 1,
+    latestRate: v.meta?.latest_rate === 1,
   };
 }
 
@@ -178,6 +181,7 @@ function toBody(s: EditorState, isReceipt: boolean, t: ReturnType<typeof useT>):
     overrideRate: s.overrideRate || null,
     overrideRateDate: s.overrideRate && s.overrideRateDate ? s.overrideRateDate : null,
     carryRate: s.carryRate,
+    latestRate: isReceipt && s.latestRate,
   };
 }
 
@@ -234,6 +238,7 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
       showIls: false,
       overrideRate: '',
       overrideRateDate: '',
+      latestRate: false,
       carryRate: false,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -674,6 +679,7 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
                   placeholder={t('documents.editor.agreedRatePlaceholder')}
                   className={input}
                   value={state.overrideRate}
+                  disabled={isReceipt && state.latestRate}
                   onChange={(e) => set({ overrideRate: e.target.value, overrideRateDate: '' })}
                 />
               </label>
@@ -683,6 +689,12 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
                 </label>
               )}
             </div>
+            {isReceipt && (
+              <label className="mt-3 flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={state.latestRate} onChange={(e) => set({ latestRate: e.target.checked })} />
+                {t('documents.editor.latestRateLabel')}
+              </label>
+            )}
             {isReceipt && <p className="mt-2 text-xs text-muted">{t('documents.editor.receiptRateHint')}</p>}
           </Card>
         )}

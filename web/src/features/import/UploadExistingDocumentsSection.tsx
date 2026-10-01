@@ -41,6 +41,8 @@ interface Row {
   amountBeforeVat: string;
   vatAmount: string;
   total: string;
+  exchangeRate: string;
+  totalIls: string;
   paidStatus: (typeof PAID_STATUSES)[number];
   filedId: number | null;
   error: string | null;
@@ -65,6 +67,8 @@ function fromExtraction(filename: string, uploadId: number, extraction: Extracte
     amountBeforeVat: extraction.amountBeforeVat ?? '',
     vatAmount: extraction.vatAmount ?? '0',
     total: extraction.total ?? '',
+    exchangeRate: extraction.exchangeRate ?? '',
+    totalIls: extraction.totalIls ?? '',
     paidStatus: extraction.paidStatus ?? 'unknown',
     filedId: null,
     error: null,
@@ -152,6 +156,8 @@ export function UploadExistingDocumentsSection() {
         amountBeforeVat: row.amountBeforeVat || '0',
         vatAmount: row.vatAmount || '0',
         total: row.total || '0',
+        exchangeRate: row.currency !== 'ILS' ? row.exchangeRate.trim() || null : null,
+        totalIls: row.currency !== 'ILS' ? row.totalIls.trim() || null : null,
         paidStatus: row.paidStatus,
       });
       set(row.key, { filedId: document.id, busy: false, selected: false });
@@ -287,6 +293,18 @@ export function UploadExistingDocumentsSection() {
                   <span className={label}>{t('import.uploads.field.total')}</span>
                   <input inputMode="decimal" className={input} value={row.total} onChange={(e) => set(row.key, { total: e.target.value })} />
                 </label>
+                {row.currency !== 'ILS' && (
+                  <>
+                    <label>
+                      <span className={label}>{t('import.uploads.field.exchangeRate')}</span>
+                      <input inputMode="decimal" dir="ltr" className={input} value={row.exchangeRate} onChange={(e) => set(row.key, { exchangeRate: e.target.value })} />
+                    </label>
+                    <label>
+                      <span className={label}>{t('import.uploads.field.totalIls')}</span>
+                      <input inputMode="decimal" dir="ltr" className={input} value={row.totalIls} onChange={(e) => set(row.key, { totalIls: e.target.value })} />
+                    </label>
+                  </>
+                )}
                 <label>
                   <span className={label}>{t('import.uploads.field.paidStatus')}</span>
                   <select className={input} value={row.paidStatus} onChange={(e) => set(row.key, { paidStatus: e.target.value as Row['paidStatus'] })}>

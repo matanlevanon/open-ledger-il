@@ -33,6 +33,8 @@ export const importFeature: Record<keyof typeof en, string> = {
   'import.uploads.field.amountBeforeVat': 'סכום לפני מע"מ',
   'import.uploads.field.vatAmount': 'מע"מ',
   'import.uploads.field.total': 'סה"כ',
+  'import.uploads.field.exchangeRate': 'שער החליפין במסמך',
+  'import.uploads.field.totalIls': 'סה"כ ב-₪ במסמך',
   'import.uploads.field.paidStatus': 'סטטוס תשלום',
   'import.uploads.createClient': 'צור לקוח חדש בשם זה',
   'import.uploads.fileButton': 'תייק מסמך זה',

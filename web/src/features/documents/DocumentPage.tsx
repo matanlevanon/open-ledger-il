@@ -234,7 +234,10 @@ export function DocumentPage() {
                     {t('documents.page.editDraft')}
                   </Link>
                 )}
-                <button type="button" className={btnDanger} disabled={busy} onClick={() => void docsApi.remove(id).then(() => navigate('/income/documents'))}>
+                <button type="button" className={btnDanger} disabled={busy} onClick={() => {
+                    if (!window.confirm(t('documents.page.deleteDraftConfirm'))) return;
+                    void docsApi.remove(id).then(() => navigate('/income/documents'));
+                  }}>
                   {t('documents.page.deleteDraft')}
                 </button>
               </>
@@ -406,7 +409,7 @@ export function DocumentPage() {
                 currency={d.currency}
                 busy={busy}
                 methods={paymentMethods.data?.paymentMethods ?? []}
-                onSubmit={({ overrideRate, ...payment }) => act(() => docsApi.recordPayment(id, { payments: [payment], overrideRate }), true)}
+                onSubmit={({ overrideRate, latestRate, ...payment }) => act(() => docsApi.recordPayment(id, { payments: [payment], overrideRate, latestRate }), true)}
               />
             )}
           </Step>
@@ -584,6 +587,7 @@ function RecordPayment({
     branchNumber: string | null;
     accountNumber: string | null;
     overrideRate: string | null;
+    latestRate: boolean;
   }) => void;
 }) {
   const t = useT();
@@ -595,6 +599,7 @@ function RecordPayment({
   const [crossed, setCrossed] = useState(false);
   const [bank, setBank] = useState({ bankNumber: '', branchNumber: '', accountNumber: '' });
   const [rate, setRate] = useState('');
+  const [latest, setLatest] = useState(false);
   const foreign = currency !== 'ILS';
   const [error, setError] = useState<string | null>(null);
   const isCheque = methodId !== null ? methods.find((m) => m.id === methodId)?.type === 'cheque' : method === 'cheque';
@@ -616,7 +621,8 @@ function RecordPayment({
           bankNumber: isCheque ? bank.bankNumber || null : null,
           branchNumber: isCheque ? bank.branchNumber || null : null,
           accountNumber: isCheque ? bank.accountNumber || null : null,
-          overrideRate: foreign && rate.trim() ? rate.trim() : null,
+          overrideRate: foreign && !latest && rate.trim() ? rate.trim() : null,
+          latestRate: foreign && latest,
         });
       }}
     >
@@ -678,9 +684,15 @@ function RecordPayment({
             dir="ltr"
             className={input}
             value={rate}
+            disabled={latest}
             placeholder={t('documents.page.receiptRatePlaceholder')}
             onChange={(e) => setRate(e.target.value)}
           />
+        </label>
+      )}
+      {foreign && (
+        <label className="flex items-center gap-2 text-sm md:col-span-3 md:self-end">
+          <input type="checkbox" checked={latest} onChange={(e) => setLatest(e.target.checked)} /> {t('documents.editor.latestRateLabel')}
         </label>
       )}
       <p className="text-xs text-muted md:col-span-5">{t('documents.page.recordPaymentHint')}</p>

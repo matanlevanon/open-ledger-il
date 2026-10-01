@@ -112,6 +112,8 @@ export interface ExtractedExternalDoc {
   amountBeforeVat: string | null;
   vatAmount: string | null;
   total: string | null;
+  exchangeRate: string | null;
+  totalIls: string | null;
   paidStatus: 'paid' | 'unpaid' | 'unknown' | null;
 }
 
@@ -152,6 +154,8 @@ export interface FileExternalDocInput {
   amountBeforeVat: string;
   vatAmount: string;
   total: string;
+  exchangeRate?: string | null;
+  totalIls?: string | null;
   paidStatus: 'paid' | 'unpaid' | 'unknown';
 }
 

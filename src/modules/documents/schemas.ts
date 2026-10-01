@@ -71,6 +71,8 @@ export const draftInput = z.object({
   overrideRate: rateString.nullish(),
   /** The day overrideRate belongs to, shown next to it. Optional. */
   overrideRateDate: dateString.nullish(),
+  /** Receipt only: convert each payment at the Bank of Israel rate of its day, not the source document's rate. */
+  latestRate: z.boolean().default(false),
   carryRate: z.boolean().default(false),
 });
 
@@ -93,6 +95,8 @@ export const recordPaymentInput = z.object({
   backdateReason: z.string().trim().max(500).nullish(),
   /** A rate typed for this receipt, foreign currency only. Without it each payment takes the Bank of Israel rate of its day. */
   overrideRate: rateString.nullish(),
+  /** Convert at the Bank of Israel rate of the payment day instead of this document's rate. */
+  latestRate: z.boolean().default(false),
 });
 
 export const cancelInput = z.object({

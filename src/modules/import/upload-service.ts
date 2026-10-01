@@ -1,9 +1,8 @@
 import { type AuditActor, auditStatement } from '../../core/audit';
 import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
 import { ConflictError, NotFoundError } from '../../core/errors';
-import { HOME_CURRENCY, assertCurrency, parseMajor } from '../../core/money';
+import { HOME_CURRENCY, assertCurrency, convert, divRound, normalizeRate, parseMajor } from '../../core/money';
 import type { RateSource } from '../fx';
-import { toIlsMinor } from '../fx';
 import { sha256Hex } from '../pdf';
 import { externalIsIncomeSql, externalSignSql } from './external-kind';
 import type { ExternalDocExtractInput, ExternalDocExtractor } from './upload-extractor';
@@ -99,22 +98,7 @@ export async function fileExternalDocument(
   const vatAmountMinor = parseMajor(input.vatAmount, currency);
   const totalMinor = parseMajor(input.total, currency);
 
-  let totalIlsMinor: number | null = null;
-  let fxRate: string | null = null;
-  let fxRateDate: string | null = null;
-  if (currency === HOME_CURRENCY) {
-    totalIlsMinor = totalMinor;
-  } else {
-    try {
-      const resolved = await fx.rateFor(currency, input.issueDate);
-      fxRate = resolved.rate;
-      fxRateDate = resolved.rateDate;
-      totalIlsMinor = toIlsMinor(totalMinor, resolved);
-    } catch {
-      // No rate could be resolved (docs/currency-and-fx.md style fallback); the row still files,
-      // just excluded from ILS totals (income reports, the ceiling meter) until corrected.
-    }
-  }
+  const { totalIlsMinor, fxRate, fxRateDate } = printedIls(currency, totalMinor, input.issueDate, input.exchangeRate, input.totalIls);
 
   const results = await transaction(db, [
     stmt(
@@ -208,15 +192,33 @@ export async function externalTurnoverIls(db: D1Database, from: string, to: stri
   return row?.total ?? 0;
 }
 
-/** Converts a total to ILS at the Bank of Israel rate for the date, the way filing does. */
-async function ilsFor(fx: RateSource, currency: string, totalMinor: number, date: string) {
-  if (currency === HOME_CURRENCY) return { totalIlsMinor: totalMinor, fxRate: null as string | null, fxRateDate: null as string | null };
-  try {
-    const resolved = await fx.rateFor(currency as Parameters<RateSource['rateFor']>[0], date);
-    return { totalIlsMinor: toIlsMinor(totalMinor, resolved), fxRate: resolved.rate as string | null, fxRateDate: resolved.rateDate as string | null };
-  } catch {
-    return { totalIlsMinor: null, fxRate: null, fxRateDate: null };
+/**
+ * The shekel side of an imported document, from what is printed on it and nothing else. A past
+ * document keeps the rate it was issued with, so the balance and reports match the original. The
+ * printed rate converts the total; a printed shekel total without a rate gives the rate it implies.
+ * With neither, the shekel total stays empty (out of shekel totals) until you add the rate. The
+ * Ledger never looks up or assumes a rate for an imported document.
+ */
+export function printedIls(
+  currency: string,
+  totalMinor: number,
+  issueDate: string,
+  exchangeRate: string | null | undefined,
+  totalIls: string | null | undefined,
+): { totalIlsMinor: number | null; fxRate: string | null; fxRateDate: string | null } {
+  if (currency === HOME_CURRENCY) return { totalIlsMinor: totalMinor, fxRate: null, fxRateDate: null };
+  const ilsPrinted = totalIls ? parseMajor(totalIls, HOME_CURRENCY) : null;
+  if (exchangeRate) {
+    const rate = normalizeRate(exchangeRate);
+    return { totalIlsMinor: ilsPrinted ?? convert(totalMinor, rate), fxRate: rate, fxRateDate: issueDate };
   }
+  if (ilsPrinted !== null && totalMinor !== 0) {
+    // Six decimals: shekel minor units per foreign minor unit, scaled by 1,000,000.
+    const micro = divRound(BigInt(ilsPrinted) * 1_000_000n, BigInt(Math.abs(totalMinor)));
+    const rate = normalizeRate((Number(micro) / 1_000_000).toFixed(6));
+    return { totalIlsMinor: ilsPrinted, fxRate: rate, fxRateDate: issueDate };
+  }
+  return { totalIlsMinor: null, fxRate: null, fxRateDate: null };
 }
 
 /**
@@ -247,9 +249,18 @@ export async function updateExternalDocument(
   const amountBeforeVatMinor = patch.amountBeforeVat !== undefined ? parseMajor(patch.amountBeforeVat, currency) : before.amount_before_vat_minor;
   const vatAmountMinor = patch.vatAmount !== undefined ? parseMajor(patch.vatAmount, currency) : before.vat_amount_minor;
   const totalMinor = patch.total !== undefined ? parseMajor(patch.total, currency) : before.total_minor;
+  // The rate is the one printed on the document: typed here, or the one already on file. A changed
+  // total or date converts again at that same rate, never at a looked-up one.
+  const rateTouched = patch.exchangeRate !== undefined || patch.totalIls !== undefined;
   const ils =
-    currency !== before.currency || issueDate !== before.issue_date || totalMinor !== before.total_minor
-      ? await ilsFor(fx, currency, totalMinor, issueDate)
+    rateTouched || currency !== before.currency || issueDate !== before.issue_date || totalMinor !== before.total_minor
+      ? printedIls(
+          currency,
+          totalMinor,
+          issueDate,
+          patch.exchangeRate !== undefined ? patch.exchangeRate : currency === before.currency ? before.fx_rate : null,
+          patch.totalIls !== undefined ? patch.totalIls : null,
+        )
       : { totalIlsMinor: before.total_ils_minor, fxRate: before.fx_rate, fxRateDate: before.fx_rate_date };
 
   const after = {

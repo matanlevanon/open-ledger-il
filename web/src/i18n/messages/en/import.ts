@@ -36,6 +36,8 @@ export const importFeature = {
   'import.uploads.field.amountBeforeVat': 'Amount before VAT',
   'import.uploads.field.vatAmount': 'VAT',
   'import.uploads.field.total': 'Total',
+  'import.uploads.field.exchangeRate': 'Exchange rate on the document',
+  'import.uploads.field.totalIls': 'Total in ₪ on the document',
   'import.uploads.field.paidStatus': 'Paid status',
   'import.uploads.createClient': 'Create a new client with this name',
   'import.uploads.fileButton': 'File this document',

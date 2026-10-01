@@ -9,6 +9,8 @@ export type PaidStatus = (typeof PAID_STATUSES)[number];
 
 const DATE = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD');
 const MONEY_MAJOR = z.string().regex(/^\d+(\.\d{1,6})?$/, 'Use a plain decimal amount, for example 123.45');
+/** An exchange rate to the shekel as printed on the document, for example 2.988. */
+const RATE = z.string().regex(/^\d+(\.\d{1,6})?$/, 'Use a plain decimal rate, for example 3.65');
 const CURRENCY = z.preprocess((v) => (typeof v === 'string' ? v.trim().toUpperCase() : v), z.enum(CURRENCY_CODES as [string, ...string[]]));
 
 /**
@@ -28,6 +30,10 @@ export const ExtractedExternalDocSchema = z.object({
   amountBeforeVat: MONEY_MAJOR.nullable(),
   vatAmount: MONEY_MAJOR.nullable(),
   total: MONEY_MAJOR.nullable(),
+  /** The exchange rate to the shekel printed on a foreign-currency document. Null when none is printed. */
+  exchangeRate: RATE.nullable().catch(null),
+  /** The total in shekels printed on a foreign-currency document. Null when none is printed. */
+  totalIls: MONEY_MAJOR.nullable().catch(null),
   paidStatus: z.enum(PAID_STATUSES).nullable(),
 });
 export type ExtractedExternalDoc = z.infer<typeof ExtractedExternalDocSchema>;
@@ -43,6 +49,8 @@ export const EMPTY_EXTRACTION: ExtractedExternalDoc = {
   amountBeforeVat: null,
   vatAmount: null,
   total: null,
+  exchangeRate: null,
+  totalIls: null,
   paidStatus: null,
 };
 
@@ -60,6 +68,12 @@ export const FileExternalDocSchema = z.object({
   amountBeforeVat: MONEY_MAJOR,
   vatAmount: MONEY_MAJOR,
   total: MONEY_MAJOR,
+  /**
+   * The rate and shekel total printed on a foreign-currency document. The Ledger never assumes a
+   * rate: without either one the document files with no shekel amount until you add the rate.
+   */
+  exchangeRate: RATE.nullish(),
+  totalIls: MONEY_MAJOR.nullish(),
   paidStatus: z.enum(PAID_STATUSES),
 });
 export type FileExternalDocInput = z.infer<typeof FileExternalDocSchema>;

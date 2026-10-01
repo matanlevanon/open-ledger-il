@@ -23,6 +23,7 @@ export interface ImportedDocument {
   /** Bank of Israel rate of the issue date, resolved when the document was filed. Null for shekels. */
   fx_rate: string | null;
   fx_rate_date: string | null;
+  total_ils_minor: number | null;
   paid_status: string;
   item_id: number | null;
   receipt_json: string | null;
@@ -75,6 +76,8 @@ interface EditForm {
   amountBeforeVat: string;
   vatAmount: string;
   total: string;
+  /** The rate printed on the document. Empty: no rate, no shekel amount. */
+  exchangeRate: string;
   paidStatus: string;
   itemId: number | null;
 }
@@ -92,6 +95,7 @@ function EditRow({ doc, clients, services, onDone }: { doc: ImportedDocument; cl
     amountBeforeVat: major(doc.amount_before_vat_minor),
     vatAmount: major(doc.vat_amount_minor),
     total: major(doc.total_minor),
+    exchangeRate: doc.fx_rate ? String(Number(doc.fx_rate)) : '',
     paidStatus: doc.paid_status,
     itemId: doc.item_id,
   });
@@ -106,7 +110,11 @@ function EditRow({ doc, clients, services, onDone }: { doc: ImportedDocument; cl
     setBusy(true);
     setError(null);
     try {
-      await apiSend('PATCH', `/import/external-documents/${doc.id}`, form);
+      const { exchangeRate, ...rest } = form;
+      await apiSend('PATCH', `/import/external-documents/${doc.id}`, {
+        ...rest,
+        ...(form.currency !== 'ILS' ? { exchangeRate: exchangeRate.trim() || null } : {}),
+      });
       onDone(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -168,6 +176,12 @@ function EditRow({ doc, clients, services, onDone }: { doc: ImportedDocument; cl
             <span className={label}>{t('import.uploads.field.total')}</span>
             <input inputMode="decimal" className={input} value={form.total} onChange={(e) => set({ total: e.target.value })} />
           </label>
+          {form.currency !== 'ILS' && (
+            <label>
+              <span className={label}>{t('import.uploads.field.exchangeRate')}</span>
+              <input inputMode="decimal" dir="ltr" className={input} value={form.exchangeRate} onChange={(e) => set({ exchangeRate: e.target.value })} />
+            </label>
+          )}
           <label>
             <span className={label}>{t('import.uploads.field.paidStatus')}</span>
             <select className={input} value={form.paidStatus} onChange={(e) => set({ paidStatus: e.target.value })}>
@@ -327,7 +341,17 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
                     <td className="px-3 py-2" dir="auto">
                       {d.client_name_text}
                     </td>
-                    <td className="ltr-nums px-3 py-2 text-end tabular-nums">{money(d.total_minor, d.currency)}</td>
+                    <td className="ltr-nums px-3 py-2 text-end tabular-nums">
+                      {money(d.total_minor, d.currency)}
+                      {d.currency !== 'ILS' &&
+                        (d.total_ils_minor !== null ? (
+                          <span className="block text-xs text-muted">
+                            {money(d.total_ils_minor, 'ILS')} @ {d.fx_rate ? Number(d.fx_rate) : ''}
+                          </span>
+                        ) : (
+                          <span className="block text-xs text-danger">{t('documents.imported.noRate')}</span>
+                        ))}
+                    </td>
                     <td className="px-3 py-2">
                       {receipt ? (
                         <a href={`/income/documents/${receipt.id}`} className="text-brand hover:underline">

@@ -33,9 +33,18 @@ const INPUT_SCHEMA = {
     amountBeforeVat: { type: ['string', 'null'], description: 'The amount before VAT, as a plain decimal string' },
     vatAmount: { type: ['string', 'null'], description: 'The VAT amount, as a plain decimal string, or null if none is shown' },
     total: { type: ['string', 'null'], description: 'The total amount including VAT, as a plain decimal string' },
+    exchangeRate: {
+      type: ['string', 'null'],
+      description:
+        'For a document not in ILS: the exchange rate to the shekel printed on the document (for example "Document exchange rate $1 = 2.988" gives "2.988"), as a plain decimal string. Null when no rate is printed. Never look up or guess a rate.',
+    },
+    totalIls: {
+      type: ['string', 'null'],
+      description: 'For a document not in ILS: the total in shekels printed on the document, as a plain decimal string. Null when none is printed.',
+    },
     paidStatus: { type: ['string', 'null'], enum: ['paid', 'unpaid', 'unknown', null], description: 'Whether the document itself shows it as paid' },
   },
-  required: ['source', 'documentType', 'originalNumber', 'issueDate', 'clientName', 'clientTaxId', 'currency', 'amountBeforeVat', 'vatAmount', 'total', 'paidStatus'],
+  required: ['source', 'documentType', 'originalNumber', 'issueDate', 'clientName', 'clientTaxId', 'currency', 'amountBeforeVat', 'vatAmount', 'total', 'exchangeRate', 'totalIls', 'paidStatus'],
 } as const;
 
 /** Claude with vision, forced to answer through one tool call so the output matches the schema. */

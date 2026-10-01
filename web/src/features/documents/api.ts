@@ -236,7 +236,7 @@ export interface DocView {
   payments: DocPayment[];
   /** The document's payment methods multi-select, resolved (R17 task 2). */
   paymentMethods: PaymentMethod[];
-  meta: { source_id: number | null; source_kind: string | null; revises_id: number | null; show_ils: number; carry_rate: number } | null;
+  meta: { source_id: number | null; source_kind: string | null; revises_id: number | null; show_ils: number; carry_rate: number; latest_rate?: number } | null;
   source: { id: number; type: string; display_number: string | null; status: string } | null;
   links: { outgoing: DocLink[]; incoming: DocLink[] };
   events: DocEvent[];
@@ -285,6 +285,7 @@ export interface DraftInput {
   showIls?: boolean;
   overrideRate?: string | null;
   overrideRateDate?: string | null;
+  latestRate?: boolean;
   carryRate?: boolean;
 }
 
@@ -324,7 +325,7 @@ export const docsApi = {
   remove: (id: number) => apiSend<{ ok: true }>('DELETE', `/documents/${id}`),
   finalize: (id: number, backdateReason?: string) => apiSend<DocView>('POST', `/documents/${id}/finalize`, { backdateReason }),
   convert: (id: number, type: string) => apiSend<DocView>('POST', `/documents/${id}/convert`, { type }),
-  recordPayment: (id: number, body: { payments: PaymentInput[]; date?: string; backdateReason?: string; overrideRate?: string | null }) =>
+  recordPayment: (id: number, body: { payments: PaymentInput[]; date?: string; backdateReason?: string; overrideRate?: string | null; latestRate?: boolean }) =>
     apiSend<DocView>('POST', `/documents/${id}/record-payment`, body),
   revise: (id: number) => apiSend<DocView>('POST', `/documents/${id}/revise`),
   duplicate: (id: number) => apiSend<DocView>('POST', `/documents/${id}/duplicate`),

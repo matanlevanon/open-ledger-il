@@ -68,6 +68,8 @@ interface DraftState {
   overrideRate: string | null;
   /** The day the typed rate belongs to (for example the original document's date). Null when unknown. */
   overrideRateDate: string | null;
+  /** Receipt only: each payment at the Bank of Israel rate of its day, not the source document's rate. */
+  latestRate: boolean;
   carryRate: boolean;
   sourceId: number | null;
   sourceKind: MetaRow['source_kind'];
@@ -164,7 +166,7 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
   // indicative or carried), otherwise the Bank of Israel rate of the source's date. A rate typed on
   // the receipt (overrideRate) still wins, below.
   let carried: { rate: string; rateDate: string | null; label: string } | null = null;
-  if ((s.type.kind === 'receipt' || s.type.kind === 'invoice_receipt') && s.sourceId && s.currency !== HOME_CURRENCY) {
+  if ((s.type.kind === 'receipt' || s.type.kind === 'invoice_receipt') && s.sourceId && s.currency !== HOME_CURRENCY && !s.latestRate) {
     const src = await first<DocRow>(db, 'SELECT * FROM documents WHERE id = ?', s.sourceId);
     if (src && src.currency === s.currency) {
       const label = displayNumber(src.type, src.number) ?? '';
@@ -200,7 +202,7 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
       payments.push({ ...p, ...p.preset });
     } else if (s.currency === HOME_CURRENCY) {
       payments.push({ ...p, fxRate: null, fxRateDate: null, fxSource: null, amountIls: p.amountMinor });
-    } else if (s.overrideRate) {
+    } else if (s.overrideRate && !s.latestRate) {
       // A rate typed on the receipt itself wins over the carried and the Bank of Israel rate.
       const agreed = normalizeRate(s.overrideRate);
       payments.push({ ...p, fxRate: agreed, fxRateDate: s.overrideRateDate, fxSource: 'agreed', amountIls: convert(p.amountMinor, agreed) });
@@ -350,17 +352,18 @@ function childStatements(db: D1Database, docId: number, s: DraftState, c: Comput
   out.push(
     stmt(
       db,
-      `INSERT INTO document_meta (document_id, source_id, source_kind, revises_id, show_ils, carry_rate, backdate_reason, credit_reason)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `INSERT INTO document_meta (document_id, source_id, source_kind, revises_id, show_ils, carry_rate, latest_rate, backdate_reason, credit_reason)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT (document_id) DO UPDATE SET source_id = excluded.source_id, source_kind = excluded.source_kind,
          revises_id = excluded.revises_id, show_ils = excluded.show_ils, carry_rate = excluded.carry_rate,
-         backdate_reason = excluded.backdate_reason, credit_reason = excluded.credit_reason`,
+         latest_rate = excluded.latest_rate, backdate_reason = excluded.backdate_reason, credit_reason = excluded.credit_reason`,
       docId,
       s.sourceId,
       s.sourceKind,
       s.revisesId,
       s.showIls,
       s.carryRate,
+      s.latestRate,
       s.backdateReason,
       s.creditReason,
     ),
@@ -560,6 +563,7 @@ async function stateFromDb(db: D1Database, loaded: LoadedDraft): Promise<DraftSt
     overrideRate: doc.fx_source === 'agreed' ? doc.fx_rate : null,
     overrideRateDate: doc.fx_source === 'agreed' ? doc.fx_rate_date : null,
     carryRate: meta?.carry_rate === 1,
+    latestRate: meta?.latest_rate === 1,
     sourceId: meta?.source_id ?? null,
     sourceKind: meta?.source_kind ?? null,
     revisesId: meta?.revises_id ?? null,
@@ -617,6 +621,7 @@ export async function createDraft(ctx: Ctx, input: DraftInput): Promise<number> 
       overrideRate: input.overrideRate ?? null,
       overrideRateDate: input.overrideRate ? (input.overrideRateDate ?? null) : null,
       carryRate: input.carryRate,
+      latestRate: input.latestRate,
       sourceId: null,
       sourceKind: null,
       revisesId: null,
@@ -657,6 +662,7 @@ export async function updateDraft(ctx: Ctx, id: number, patch: DraftPatch): Prom
     s.overrideRateDate = s.overrideRate ? (patch.overrideRateDate ?? null) : null;
   }
   if (patch.carryRate !== undefined) s.carryRate = patch.carryRate;
+  if (patch.latestRate !== undefined) s.latestRate = patch.latestRate;
   await saveDraft(ctx, id, s);
 }
 
@@ -928,7 +934,7 @@ async function hasLiveTargets(db: D1Database, sourceId: number, kinds: string[])
 export async function convertDocument(
   ctx: Ctx,
   sourceId: number,
-  input: { type: string; date?: string; payments?: PaymentInput[]; notes?: string | null; overrideRate?: string | null },
+  input: { type: string; date?: string; payments?: PaymentInput[]; notes?: string | null; overrideRate?: string | null; latestRate?: boolean },
 ): Promise<number> {
   await assertIssuing(ctx.db);
   const { db } = ctx;
@@ -981,6 +987,7 @@ export async function convertDocument(
       overrideRate: isReceiptKind(type) ? (input.overrideRate ?? null) : src.fx_source === 'agreed' ? src.fx_rate : null,
       overrideRateDate: isReceiptKind(type) ? null : src.fx_source === 'agreed' ? src.fx_rate_date : null,
       carryRate: type.kind !== 'receipt' && loaded.meta?.carry_rate === 1,
+      latestRate: isReceiptKind(type) ? (input.latestRate ?? false) : false,
       sourceId,
       sourceKind: rule.kind,
       revisesId: null,
@@ -995,7 +1002,7 @@ export async function convertDocument(
 export async function recordPayment(
   ctx: Ctx,
   sourceId: number,
-  input: { date?: string; payments: PaymentInput[]; notes?: string | null; finalize: boolean; backdateReason?: string | null; overrideRate?: string | null },
+  input: { date?: string; payments: PaymentInput[]; notes?: string | null; finalize: boolean; backdateReason?: string | null; overrideRate?: string | null; latestRate?: boolean },
 ): Promise<{ receiptId: number; finalized: FinalizeOutcome | null }> {
   await assertIssuing(ctx.db);
   const src = await getDoc(ctx.db, sourceId);
@@ -1016,6 +1023,7 @@ export async function recordPayment(
     date: input.date,
     payments: input.payments,
     overrideRate: input.overrideRate ?? null,
+    latestRate: input.latestRate ?? false,
     ...(input.notes !== undefined ? { notes: input.notes } : {}),
   });
   if (!input.finalize) return { receiptId, finalized: null };
@@ -1214,6 +1222,7 @@ export async function creditDocument(
       overrideRate: null,
       overrideRateDate: null,
       carryRate: false,
+      latestRate: false,
       sourceId: id,
       sourceKind: 'credit',
       revisesId: null,
