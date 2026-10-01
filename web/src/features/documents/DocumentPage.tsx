@@ -8,7 +8,7 @@ import { type DocEvent, type DocView, type PaymentMethod, docsApi, paymentMethod
 import { METHOD_LABEL_KEYS, clientName, formatMilli, formatMinor, money, parseMinor, todayLocal, currencyTag } from './format';
 import { ChequeBankFields } from './ChequeBankFields';
 import { DocTypeExplainer } from './DocTypeExplainer';
-import { Card, ErrorNote, Loading, PageTitle, StatusChip, btnDanger, btnPrimary, btnSecondary, errorText, input, label, useLoad } from './ui';
+import { Card, ErrorNote, Loading, PageTitle, StatusChip, btn, btnDanger, btnPrimary, btnSecondary, errorText, input, label, useLoad } from './ui';
 
 // R18 task 10: 300 is the one proforma type now (merged with PF's behaviour); PF is disabled for
 // new documents, so it offers no "convert to" button of its own any more (an already-finalized
@@ -371,10 +371,10 @@ export function DocumentPage() {
                 <button type="button" className={btnSecondary} disabled={busy} onClick={() => void downloadCopy('filed')}>
                   {t('documents.page.downloadFiledCopy')}
                 </button>
-                <button type="button" className={btnSecondary} disabled={busy} onClick={() => void openSendForm()}>
+                <button type="button" className={btnPrimary} disabled={busy} onClick={() => void openSendForm()}>
                   {t('documents.page.sendByEmail')}
                 </button>
-                <button type="button" className={btnSecondary} disabled={busy} onClick={() => void whatsappLink()}>
+                <button type="button" className={`${btn} bg-[#128C4A] text-white hover:opacity-90`} disabled={busy} onClick={() => void whatsappLink()}>
                   {t('documents.page.getWhatsappLink')}
                 </button>
                 <button type="button" className={btnSecondary} disabled={busy} onClick={() => act(() => docsApi.sent(id, 'print'))}>
