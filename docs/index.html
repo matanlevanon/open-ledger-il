@@ -79,6 +79,13 @@ h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02
 .feat .ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px; background: var(--surface-2); border: 1px solid var(--border); font-size: 18px; color: var(--blue); }
 .feat h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 650; letter-spacing: -.01em; }
 .feat p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
+.flist { columns: 3 300px; column-gap: 16px; }
+.fgroup { break-inside: avoid; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin: 0 0 16px; }
+.fgroup h3 { margin: 0 0 10px; font-size: 15.5px; font-weight: 650; }
+.fgroup ul { list-style: none; margin: 0; padding: 0; }
+.fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
+.fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+@media (max-width: 620px) { .fgroup { padding: 16px; } .fgroup li { font-size: 13.5px; } }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
@@ -158,6 +165,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
     </a>
     <nav class="nav-links">
       <a href="#features">Features</a>
+      <a href="#list">Feature list</a>
       <a href="#mobile">On your phone</a>
       <a href="#how">How it works</a>
       <a href="#screens">Screenshots</a>
@@ -224,7 +232,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
         <div class="feat">
           <div class="ico" aria-hidden="true">₪</div>
           <h3>Foreign currency done right</h3>
-          <p>Bank of Israel rates, cached daily. Carry the rate from a payment request to its receipt. Balances stay in the client’s currency.</p>
+          <p>Bank of Israel rates, cached daily. A receipt takes the rate of the document it pays, or a rate you type. Imported documents keep their printed rate.</p>
         </div>
         <div class="feat">
           <div class="ico" aria-hidden="true">⇄</div>
@@ -234,12 +242,12 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
         <div class="feat">
           <div class="ico" aria-hidden="true">↻</div>
           <h3>Recurring and duplicate</h3>
-          <p>Copy any document in one click. Schedule a monthly retainer that waits for your approval or issues and emails itself.</p>
+          <p>Copy any document in one click. Schedule a retainer with payment terms. Copies issue and email themselves, or wait on an approvals page with a Slack notice.</p>
         </div>
         <div class="feat">
           <div class="ico" aria-hidden="true">✉</div>
           <h3>Send with consent</h3>
-          <p>Email or WhatsApp a document. Digital-document consent is recorded per client, and payment reminders go out before and after the due date.</p>
+          <p>Email with CC and BCC, or a short WhatsApp link with a preview. Consent is recorded per client, and payment reminders go out before and after the due date.</p>
         </div>
         <div class="feat">
           <div class="ico" aria-hidden="true">◔</div>
@@ -275,6 +283,116 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
           <div class="ico" aria-hidden="true">⌂</div>
           <h3>Installs like an app</h3>
           <p>Add it to your home screen. It opens on Quick: add an expense, issue a document and see your recent activity.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="list">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Feature list</div>
+        <h2>Every feature, in one list</h2>
+        <p>What ships today in the code, grouped by job.</p>
+      </div>
+      <div class="flist">
+        <div class="fgroup">
+          <h3>Documents</h3>
+          <ul>
+            <li>Quotes, payment requests and pro formas (חשבון עסקה)</li>
+            <li>Receipts and credit receipts as עוסק פטור</li>
+            <li>Tax invoices, invoice/receipts and credit invoices as עוסק מורשה</li>
+            <li>English or bilingual Hebrew and English documents</li>
+            <li>Duplicate any document in one click</li>
+            <li>Create a receipt from any open document, with its payment filled in</li>
+            <li>Cheque payments with bank, branch and account number</li>
+            <li>Delete a draft only after you confirm</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Numbering and compliance</h3>
+          <ul>
+            <li>One gapless series per document type, with your own starting numbers</li>
+            <li>Final documents locked by database triggers and a hash chain</li>
+            <li>PDF with your logo and signature, sealed with a PAdES digital signature</li>
+            <li>ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue</li>
+            <li>פטור ceiling meter with alerts and a guided switch to מורשה</li>
+            <li>Issuing on/off switch, to keep issuing in your current system</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Currency</h3>
+          <ul>
+            <li>Documents in ILS, USD, EUR and other currencies</li>
+            <li>Bank of Israel rates, cached daily</li>
+            <li>A receipt takes the rate of the document it pays</li>
+            <li>Type your own rate, or tick &quot;use latest rate&quot;</li>
+            <li>Foreign and ILS totals printed in their own columns</li>
+            <li>Client balances kept in the client’s currency</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Sending</h3>
+          <ul>
+            <li>Email with To, CC and BCC on every document</li>
+            <li>A CC list per client and a BCC copy list for your own records</li>
+            <li>WhatsApp short link that opens a preview page with your logo</li>
+            <li>A ready greeting in English or Hebrew, by the client’s language</li>
+            <li>Digital-document consent recorded per client</li>
+            <li>Payment reminders before and after the due date</li>
+            <li>A clear confirmation once a document is marked as sent</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Recurring documents</h3>
+          <ul>
+            <li>Weekly, monthly, quarterly or yearly schedules for retainers and pro formas</li>
+            <li>Payment terms in days, set on each copy</li>
+            <li>An end date to stop the schedule</li>
+            <li>Issue and email on its own, or wait for your approval</li>
+            <li>Approvals page on the computer and the phone</li>
+            <li>Slack notice when a copy waits for approval</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Clients and dashboard</h3>
+          <ul>
+            <li>A page per client with contacts, documents and a ledger per currency</li>
+            <li>Open balances, aging and an overdue list</li>
+            <li>Create a receipt straight from the overdue card</li>
+            <li>Cash flow, income by month and top clients</li>
+            <li>Sortable tables, newest first by default</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Expenses and import</h3>
+          <ul>
+            <li>Upload a receipt or snap a photo, Claude reads supplier, date and amount</li>
+            <li>Import a month of expenses from Google Drive</li>
+            <li>Import customers and past documents from another system</li>
+            <li>Imported documents keep the exchange rate printed on them, never a guessed one</li>
+            <li>Documents with no printed rate are flagged for you to fill in</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Reports, exports and backups</h3>
+          <ul>
+            <li>Income, expenses, profit and loss, open items and client ledgers</li>
+            <li>Download as PDF, XLSX or CSV</li>
+            <li>Monthly accountant pack and an accountant login with an end date and access log</li>
+            <li>Unified file (מבנה אחיד) v1.31 for the Tax Authority</li>
+            <li>PCN874 export (allocation-number column)</li>
+            <li>Quarterly backups to R2 and Google Drive</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>On your phone</h3>
+          <ul>
+            <li>Installs on the home screen like an app</li>
+            <li>Quick page: photo, gallery, new document and recent activity</li>
+            <li>Bottom tab bar and tables that turn into cards</li>
+            <li>Photos taken offline upload when you are back online</li>
+          </ul>
         </div>
       </div>
     </div>

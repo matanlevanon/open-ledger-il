@@ -26,7 +26,7 @@ EN = dict(
     lang='en', dir='ltr', file='index.html', other='he.html', other_label='עברית',
     title='Open Ledger IL - invoices and books for an Israeli business, on your own Cloudflare',
     desc='Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.',
-    nav=['Features', 'On your phone', 'How it works', 'Screenshots', 'Setup'], github='View on GitHub',
+    nav=['Features', 'Feature list', 'On your phone', 'How it works', 'Screenshots', 'Setup'], github='View on GitHub',
     badge='<b>Free</b> · Open source (AGPL-3.0) · Self-hosted',
     h1='Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.',
     lead='Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.',
@@ -41,10 +41,10 @@ EN = dict(
         ('#', 'Numbering that cannot break', 'One series per document type, no gaps and no reuse. A final document never changes. A hash chain and database triggers enforce both.'),
         ('✎', 'Signed PDFs', 'Your logo and signature on every document. Cloudflare Browser Rendering draws the PDF and a PAdES signature with your own key seals it.'),
         ('✓', 'ITA allocation numbers', 'The Israel Invoices API v2 client for מספר הקצאה, sandbox and production, with a retry queue and a clear flow when the ITA refuses.'),
-        ('₪', 'Foreign currency done right', 'Bank of Israel rates, cached daily. Carry the rate from a payment request to its receipt. Balances stay in the client’s currency.'),
+        ('₪', 'Foreign currency done right', 'Bank of Israel rates, cached daily. A receipt takes the rate of the document it pays, or a rate you type. Imported documents keep their printed rate.'),
         ('⇄', 'Client ledgers that add up', 'A payment request is charged once and closed by the receipt that pays it. Open balances, aging and an overdue list on the dashboard.'),
-        ('↻', 'Recurring and duplicate', 'Copy any document in one click. Schedule a monthly retainer that waits for your approval or issues and emails itself.'),
-        ('✉', 'Send with consent', 'Email or WhatsApp a document. Digital-document consent is recorded per client, and payment reminders go out before and after the due date.'),
+        ('↻', 'Recurring and duplicate', 'Copy any document in one click. Schedule a retainer with payment terms. Copies issue and email themselves, or wait on an approvals page with a Slack notice.'),
+        ('✉', 'Send with consent', 'Email with CC and BCC, or a short WhatsApp link with a preview. Consent is recorded per client, and payment reminders go out before and after the due date.'),
         ('◔', 'פטור ceiling meter', 'Turnover against the annual ceiling, alerts at 70, 85, 95 and 100 percent, and a guided switch to עוסק מורשה.'),
         ('⤓', 'Expenses from Drive', 'Upload a receipt or import a month from Google Drive. Claude reads each document, you review and file it.'),
         ('∑', 'Reports and an accountant login', 'Income, expenses, profit and loss, per-client ledgers and a monthly accountant pack. Your accountant gets a separate role with an end date and an access log.'),
@@ -52,6 +52,81 @@ EN = dict(
         ('▯', 'Built for your phone', 'A bottom tab bar, bigger text and buttons, and tables that turn into cards. Every screen works at phone width.'),
         ('◉', 'Snap a receipt', 'Take a photo or pick one from the gallery. Claude reads supplier, date and amount. No signal? The photo waits on the phone and uploads later.'),
         ('⌂', 'Installs like an app', 'Add it to your home screen. It opens on Quick: add an expense, issue a document and see your recent activity.'),
+    ],
+    list_eyebrow='Feature list', list_h='Every feature, in one list',
+    list_p='What ships today in the code, grouped by job.',
+    feature_list=[
+        ('Documents', [
+            'Quotes, payment requests and pro formas (חשבון עסקה)',
+            'Receipts and credit receipts as עוסק פטור',
+            'Tax invoices, invoice/receipts and credit invoices as עוסק מורשה',
+            'English or bilingual Hebrew and English documents',
+            'Duplicate any document in one click',
+            'Create a receipt from any open document, with its payment filled in',
+            'Cheque payments with bank, branch and account number',
+            'Delete a draft only after you confirm',
+        ]),
+        ('Numbering and compliance', [
+            'One gapless series per document type, with your own starting numbers',
+            'Final documents locked by database triggers and a hash chain',
+            'PDF with your logo and signature, sealed with a PAdES digital signature',
+            'ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue',
+            'פטור ceiling meter with alerts and a guided switch to מורשה',
+            'Issuing on/off switch, to keep issuing in your current system',
+        ]),
+        ('Currency', [
+            'Documents in ILS, USD, EUR and other currencies',
+            'Bank of Israel rates, cached daily',
+            'A receipt takes the rate of the document it pays',
+            'Type your own rate, or tick "use latest rate"',
+            'Foreign and ILS totals printed in their own columns',
+            'Client balances kept in the client’s currency',
+        ]),
+        ('Sending', [
+            'Email with To, CC and BCC on every document',
+            'A CC list per client and a BCC copy list for your own records',
+            'WhatsApp short link that opens a preview page with your logo',
+            'A ready greeting in English or Hebrew, by the client’s language',
+            'Digital-document consent recorded per client',
+            'Payment reminders before and after the due date',
+            'A clear confirmation once a document is marked as sent',
+        ]),
+        ('Recurring documents', [
+            'Weekly, monthly, quarterly or yearly schedules for retainers and pro formas',
+            'Payment terms in days, set on each copy',
+            'An end date to stop the schedule',
+            'Issue and email on its own, or wait for your approval',
+            'Approvals page on the computer and the phone',
+            'Slack notice when a copy waits for approval',
+        ]),
+        ('Clients and dashboard', [
+            'A page per client with contacts, documents and a ledger per currency',
+            'Open balances, aging and an overdue list',
+            'Create a receipt straight from the overdue card',
+            'Cash flow, income by month and top clients',
+            'Sortable tables, newest first by default',
+        ]),
+        ('Expenses and import', [
+            'Upload a receipt or snap a photo, Claude reads supplier, date and amount',
+            'Import a month of expenses from Google Drive',
+            'Import customers and past documents from another system',
+            'Imported documents keep the exchange rate printed on them, never a guessed one',
+            'Documents with no printed rate are flagged for you to fill in',
+        ]),
+        ('Reports, exports and backups', [
+            'Income, expenses, profit and loss, open items and client ledgers',
+            'Download as PDF, XLSX or CSV',
+            'Monthly accountant pack and an accountant login with an end date and access log',
+            'Unified file (מבנה אחיד) v1.31 for the Tax Authority',
+            'PCN874 export (allocation-number column)',
+            'Quarterly backups to R2 and Google Drive',
+        ]),
+        ('On your phone', [
+            'Installs on the home screen like an app',
+            'Quick page: photo, gallery, new document and recent activity',
+            'Bottom tab bar and tables that turn into cards',
+            'Photos taken offline upload when you are back online',
+        ]),
     ],
     mob_eyebrow='On your phone', mob_h='Your books in your pocket',
     mob_p='Install it on your home screen. It opens on the Quick page, ready for the next receipt.',
@@ -141,7 +216,7 @@ HE = dict(
     lang='he', dir='rtl', file='he.html', other='index.html', other_label='English',
     title='Open Ledger IL - חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, בענן Cloudflare שלך',
     desc='מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.',
-    nav=['יכולות', 'בטלפון', 'איך זה עובד', 'צילומי מסך', 'הקמה'], github='לקוד ב-GitHub',
+    nav=['יכולות', 'רשימת יכולות', 'בטלפון', 'איך זה עובד', 'צילומי מסך', 'הקמה'], github='לקוד ב-GitHub',
     badge='<b>חינם</b> · קוד פתוח (AGPL-3.0) · מאוחסן אצלך',
     h1='חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.',
     lead='הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.',
@@ -156,10 +231,10 @@ HE = dict(
         ('#', 'מספור שלא נשבר', 'סדרה אחת לכל סוג מסמך, בלי חורים ובלי שימוש חוזר. מסמך סופי לא משתנה לעולם. שרשרת גיבוב וטריגרים במסד הנתונים אוכפים את שניהם.'),
         ('✎', 'PDF חתום', 'הלוגו והחתימה שלך על כל מסמך. Browser Rendering של Cloudflare מפיק את ה-PDF, וחתימת PAdES במפתח שלך חותמת אותו.'),
         ('✓', 'מספרי הקצאה', 'חיבור ל-API חשבוניות ישראל v2 של רשות המסים, סביבת ניסוי וייצור, עם תור ניסיונות חוזרים ותהליך ברור כשהרשות מסרבת.'),
-        ('₪', 'מטבע חוץ כמו שצריך', 'שערי בנק ישראל, נשמרים מדי יום. אפשר להעביר את השער מדרישת התשלום לקבלה. היתרות נשארות במטבע של הלקוח.'),
+        ('₪', 'מטבע חוץ כמו שצריך', 'שערי בנק ישראל, נשמרים מדי יום. קבלה מקבלת את השער של המסמך שהיא משלמת, או שער שתקליד. מסמכים מיובאים שומרים את השער המודפס עליהם.'),
         ('⇄', 'כרטסת לקוח שמסתדרת', 'דרישת תשלום נרשמת פעם אחת ונסגרת בקבלה שמשלמת אותה. יתרות פתוחות, גיול ורשימת איחורים בלוח הבקרה.'),
-        ('↻', 'מסמכים חוזרים ושכפול', 'שכפול כל מסמך בלחיצה. ריטיינר חודשי שממתין לאישורך, או מופק ונשלח במייל לבד.'),
-        ('✉', 'שליחה בהסכמה', 'שליחת מסמך במייל או בוואטסאפ. ההסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח, ותזכורות תשלום יוצאות לפני מועד התשלום ואחריו.'),
+        ('↻', 'מסמכים חוזרים ושכפול', 'שכפול כל מסמך בלחיצה. ריטיינר מתוזמן עם תנאי תשלום. העותקים מופקים ונשלחים לבד, או ממתינים בעמוד אישורים עם הודעת Slack.'),
+        ('✉', 'שליחה בהסכמה', 'מייל עם CC ו-BCC, או קישור וואטסאפ מקוצר עם תצוגה מקדימה. ההסכמה נשמרת לכל לקוח, ותזכורות תשלום יוצאות לפני מועד התשלום ואחריו.'),
         ('◔', 'מד תקרת עוסק פטור', 'המחזור מול התקרה השנתית, התראות ב-70, 85, 95 ו-100 אחוז, ומעבר מודרך לעוסק מורשה.'),
         ('⤓', 'הוצאות מ-Drive', 'העלאת קבלה או ייבוא חודש שלם מ-Google Drive. Claude קורא כל מסמך, ואתה בודק ומתייק.'),
         ('∑', 'דוחות וכניסה לרואה החשבון', 'הכנסות, הוצאות, רווח והפסד, כרטסות לקוחות וחבילה חודשית לרואה החשבון. לרואה החשבון תפקיד נפרד עם תאריך סיום ויומן גישה.'),
@@ -167,6 +242,81 @@ HE = dict(
         ('▯', 'בנויה לטלפון', 'סרגל ניווט תחתון, טקסט וכפתורים גדולים יותר, וטבלאות שהופכות לכרטיסים. כל מסך עובד ברוחב של טלפון.'),
         ('◉', 'צילום קבלה', 'מצלמים או בוחרים תמונה מהגלריה. Claude קורא ספק, תאריך וסכום. אין קליטה? התמונה נשמרת בטלפון ועולה אחר כך.'),
         ('⌂', 'מותקנת כמו אפליקציה', 'מוסיפים למסך הבית. היא נפתחת במסך "מהיר": הוספת הוצאה, הפקת מסמך ופעילות אחרונה.'),
+    ],
+    list_eyebrow='רשימת יכולות', list_h='כל היכולות ברשימה אחת',
+    list_p='מה שכבר קיים היום בקוד, לפי תחום.',
+    feature_list=[
+        ('מסמכים', [
+            'הצעות מחיר, דרישות תשלום וחשבונות עסקה',
+            'קבלות וקבלות זיכוי כעוסק פטור',
+            'חשבוניות מס, חשבוניות מס קבלה וחשבוניות זיכוי כעוסק מורשה',
+            'מסמכים באנגלית או בעברית ואנגלית',
+            'שכפול כל מסמך בלחיצה',
+            'הפקת קבלה מכל מסמך פתוח, עם התשלום כבר ממולא',
+            'תשלום בצ׳ק עם בנק, סניף ומספר חשבון',
+            'מחיקת טיוטה רק אחרי אישור',
+        ]),
+        ('מספור ותאימות', [
+            'סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך',
+            'מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב',
+            'PDF עם הלוגו והחתימה שלך, חתום בחתימה דיגיטלית PAdES',
+            'מספרי הקצאה מרשות המסים, ניסוי וייצור, עם תור ניסיונות חוזרים',
+            'מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה',
+            'מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך',
+        ]),
+        ('מטבע', [
+            'מסמכים בשקלים, דולרים, אירו ומטבעות נוספים',
+            'שערי בנק ישראל, נשמרים מדי יום',
+            'קבלה מקבלת את השער של המסמך שהיא משלמת',
+            'הקלדת שער משלך, או סימון "שער אחרון"',
+            'סכומים במטבע חוץ ובשקלים מודפסים כל אחד בעמודה שלו',
+            'יתרות הלקוח נשמרות במטבע שלו',
+        ]),
+        ('שליחה', [
+            'מייל עם נמען, CC ו-BCC בכל מסמך',
+            'רשימת CC לכל לקוח ורשימת BCC לעותק שלך',
+            'קישור וואטסאפ מקוצר שנפתח לעמוד תצוגה עם הלוגו שלך',
+            'ברכה מוכנה בעברית או באנגלית, לפי שפת הלקוח',
+            'הסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח',
+            'תזכורות תשלום לפני מועד התשלום ואחריו',
+            'אישור ברור אחרי שמסמך סומן כנשלח',
+        ]),
+        ('מסמכים חוזרים', [
+            'תזמון שבועי, חודשי, רבעוני או שנתי לריטיינרים ולחשבונות עסקה',
+            'תנאי תשלום בימים, לכל עותק',
+            'תאריך סיום לתזמון',
+            'הפקה ושליחה אוטומטית, או המתנה לאישורך',
+            'עמוד אישורים במחשב ובטלפון',
+            'הודעת Slack כשעותק ממתין לאישור',
+        ]),
+        ('לקוחות ולוח בקרה', [
+            'עמוד לכל לקוח עם אנשי קשר, מסמכים וכרטסת לכל מטבע',
+            'יתרות פתוחות, גיול ורשימת איחורים',
+            'הפקת קבלה ישירות מכרטיס האיחורים',
+            'תזרים, הכנסות לפי חודש ולקוחות מובילים',
+            'טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל',
+        ]),
+        ('הוצאות וייבוא', [
+            'העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום',
+            'ייבוא חודש שלם של הוצאות מ-Google Drive',
+            'ייבוא לקוחות ומסמכי עבר ממערכת אחרת',
+            'מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש',
+            'מסמך בלי שער מודפס מסומן כדי שתשלים אותו',
+        ]),
+        ('דוחות, ייצוא וגיבויים', [
+            'הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות לקוחות',
+            'הורדה כ-PDF, XLSX או CSV',
+            'חבילה חודשית לרואה החשבון וכניסה לרואה החשבון עם תאריך סיום ויומן גישה',
+            'קובץ במבנה אחיד גרסה 1.31 לרשות המסים',
+            'ייצוא PCN874 (עמודת מספר ההקצאה)',
+            'גיבוי רבעוני ל-R2 ול-Google Drive',
+        ]),
+        ('בטלפון', [
+            'מותקנת במסך הבית כמו אפליקציה',
+            'מסך "מהיר": צילום, גלריה, מסמך חדש ופעילות אחרונה',
+            'סרגל ניווט תחתון וטבלאות שהופכות לכרטיסים',
+            'תמונות שצולמו בלי קליטה עולות כשחוזרים לרשת',
+        ]),
     ],
     mob_eyebrow='בטלפון', mob_h='הנהלת החשבונות בכיס',
     mob_p='מתקינים על מסך הבית. היא נפתחת במסך "מהיר", מוכנה לקבלה הבאה.',
@@ -253,7 +403,7 @@ HE = dict(
 )
 
 
-IDS = ['features', 'mobile', 'how', 'screens', 'setup']
+IDS = ['features', 'list', 'mobile', 'how', 'screens', 'setup']
 
 # Set in __main__ to the output folder. The Hebrew page uses a screenshot's -he variant
 # (dashboard-he.png next to dashboard.png) when one exists, and the English one otherwise.
@@ -332,6 +482,13 @@ h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02
 .feat .ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px; background: var(--surface-2); border: 1px solid var(--border); font-size: 18px; color: var(--blue); }
 .feat h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 650; letter-spacing: -.01em; }
 .feat p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
+.flist { columns: 3 300px; column-gap: 16px; }
+.fgroup { break-inside: avoid; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin: 0 0 16px; }
+.fgroup h3 { margin: 0 0 10px; font-size: 15.5px; font-weight: 650; }
+.fgroup ul { list-style: none; margin: 0; padding: 0; }
+.fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
+.fgroup li::before { content: '\\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+@media (max-width: 620px) { .fgroup { padding: 16px; } .fgroup li { font-size: 13.5px; } }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
@@ -406,6 +563,15 @@ def page(c):
           <h3>{e(h)}</h3>
           <p>{e(p)}</p>
         </div>''' for ico, h, p in c['features'])
+    flist = '\n'.join(
+        f'''        <div class="fgroup">
+          <h3>{e(h)}</h3>
+          <ul>
+'''
+        + '\n'.join(f'            <li>{e(i)}</li>' for i in items)
+        + '''
+          </ul>
+        </div>''' for h, items in c['feature_list'])
     steps = '\n'.join(
         f'''        <div class="step">
           <div class="n">{n}</div>
@@ -517,6 +683,19 @@ def page(c):
       </div>
       <div class="features">
 {feats}
+      </div>
+    </div>
+  </section>
+
+  <section id="list">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">{e(c['list_eyebrow'])}</div>
+        <h2>{e(c['list_h'])}</h2>
+        <p>{e(c['list_p'])}</p>
+      </div>
+      <div class="flist">
+{flist}
       </div>
     </div>
   </section>

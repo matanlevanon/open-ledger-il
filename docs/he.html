@@ -79,6 +79,13 @@ h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02
 .feat .ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px; background: var(--surface-2); border: 1px solid var(--border); font-size: 18px; color: var(--blue); }
 .feat h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 650; letter-spacing: -.01em; }
 .feat p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
+.flist { columns: 3 300px; column-gap: 16px; }
+.fgroup { break-inside: avoid; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin: 0 0 16px; }
+.fgroup h3 { margin: 0 0 10px; font-size: 15.5px; font-weight: 650; }
+.fgroup ul { list-style: none; margin: 0; padding: 0; }
+.fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
+.fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+@media (max-width: 620px) { .fgroup { padding: 16px; } .fgroup li { font-size: 13.5px; } }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
@@ -158,6 +165,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
     </a>
     <nav class="nav-links">
       <a href="#features">יכולות</a>
+      <a href="#list">רשימת יכולות</a>
       <a href="#mobile">בטלפון</a>
       <a href="#how">איך זה עובד</a>
       <a href="#screens">צילומי מסך</a>
@@ -224,7 +232,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
         <div class="feat">
           <div class="ico" aria-hidden="true">₪</div>
           <h3>מטבע חוץ כמו שצריך</h3>
-          <p>שערי בנק ישראל, נשמרים מדי יום. אפשר להעביר את השער מדרישת התשלום לקבלה. היתרות נשארות במטבע של הלקוח.</p>
+          <p>שערי בנק ישראל, נשמרים מדי יום. קבלה מקבלת את השער של המסמך שהיא משלמת, או שער שתקליד. מסמכים מיובאים שומרים את השער המודפס עליהם.</p>
         </div>
         <div class="feat">
           <div class="ico" aria-hidden="true">⇄</div>
@@ -234,12 +242,12 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
         <div class="feat">
           <div class="ico" aria-hidden="true">↻</div>
           <h3>מסמכים חוזרים ושכפול</h3>
-          <p>שכפול כל מסמך בלחיצה. ריטיינר חודשי שממתין לאישורך, או מופק ונשלח במייל לבד.</p>
+          <p>שכפול כל מסמך בלחיצה. ריטיינר מתוזמן עם תנאי תשלום. העותקים מופקים ונשלחים לבד, או ממתינים בעמוד אישורים עם הודעת Slack.</p>
         </div>
         <div class="feat">
           <div class="ico" aria-hidden="true">✉</div>
           <h3>שליחה בהסכמה</h3>
-          <p>שליחת מסמך במייל או בוואטסאפ. ההסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח, ותזכורות תשלום יוצאות לפני מועד התשלום ואחריו.</p>
+          <p>מייל עם CC ו-BCC, או קישור וואטסאפ מקוצר עם תצוגה מקדימה. ההסכמה נשמרת לכל לקוח, ותזכורות תשלום יוצאות לפני מועד התשלום ואחריו.</p>
         </div>
         <div class="feat">
           <div class="ico" aria-hidden="true">◔</div>
@@ -275,6 +283,116 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
           <div class="ico" aria-hidden="true">⌂</div>
           <h3>מותקנת כמו אפליקציה</h3>
           <p>מוסיפים למסך הבית. היא נפתחת במסך &quot;מהיר&quot;: הוספת הוצאה, הפקת מסמך ופעילות אחרונה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="list">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">רשימת יכולות</div>
+        <h2>כל היכולות ברשימה אחת</h2>
+        <p>מה שכבר קיים היום בקוד, לפי תחום.</p>
+      </div>
+      <div class="flist">
+        <div class="fgroup">
+          <h3>מסמכים</h3>
+          <ul>
+            <li>הצעות מחיר, דרישות תשלום וחשבונות עסקה</li>
+            <li>קבלות וקבלות זיכוי כעוסק פטור</li>
+            <li>חשבוניות מס, חשבוניות מס קבלה וחשבוניות זיכוי כעוסק מורשה</li>
+            <li>מסמכים באנגלית או בעברית ואנגלית</li>
+            <li>שכפול כל מסמך בלחיצה</li>
+            <li>הפקת קבלה מכל מסמך פתוח, עם התשלום כבר ממולא</li>
+            <li>תשלום בצ׳ק עם בנק, סניף ומספר חשבון</li>
+            <li>מחיקת טיוטה רק אחרי אישור</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>מספור ותאימות</h3>
+          <ul>
+            <li>סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך</li>
+            <li>מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב</li>
+            <li>PDF עם הלוגו והחתימה שלך, חתום בחתימה דיגיטלית PAdES</li>
+            <li>מספרי הקצאה מרשות המסים, ניסוי וייצור, עם תור ניסיונות חוזרים</li>
+            <li>מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה</li>
+            <li>מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>מטבע</h3>
+          <ul>
+            <li>מסמכים בשקלים, דולרים, אירו ומטבעות נוספים</li>
+            <li>שערי בנק ישראל, נשמרים מדי יום</li>
+            <li>קבלה מקבלת את השער של המסמך שהיא משלמת</li>
+            <li>הקלדת שער משלך, או סימון &quot;שער אחרון&quot;</li>
+            <li>סכומים במטבע חוץ ובשקלים מודפסים כל אחד בעמודה שלו</li>
+            <li>יתרות הלקוח נשמרות במטבע שלו</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>שליחה</h3>
+          <ul>
+            <li>מייל עם נמען, CC ו-BCC בכל מסמך</li>
+            <li>רשימת CC לכל לקוח ורשימת BCC לעותק שלך</li>
+            <li>קישור וואטסאפ מקוצר שנפתח לעמוד תצוגה עם הלוגו שלך</li>
+            <li>ברכה מוכנה בעברית או באנגלית, לפי שפת הלקוח</li>
+            <li>הסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח</li>
+            <li>תזכורות תשלום לפני מועד התשלום ואחריו</li>
+            <li>אישור ברור אחרי שמסמך סומן כנשלח</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>מסמכים חוזרים</h3>
+          <ul>
+            <li>תזמון שבועי, חודשי, רבעוני או שנתי לריטיינרים ולחשבונות עסקה</li>
+            <li>תנאי תשלום בימים, לכל עותק</li>
+            <li>תאריך סיום לתזמון</li>
+            <li>הפקה ושליחה אוטומטית, או המתנה לאישורך</li>
+            <li>עמוד אישורים במחשב ובטלפון</li>
+            <li>הודעת Slack כשעותק ממתין לאישור</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>לקוחות ולוח בקרה</h3>
+          <ul>
+            <li>עמוד לכל לקוח עם אנשי קשר, מסמכים וכרטסת לכל מטבע</li>
+            <li>יתרות פתוחות, גיול ורשימת איחורים</li>
+            <li>הפקת קבלה ישירות מכרטיס האיחורים</li>
+            <li>תזרים, הכנסות לפי חודש ולקוחות מובילים</li>
+            <li>טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>הוצאות וייבוא</h3>
+          <ul>
+            <li>העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום</li>
+            <li>ייבוא חודש שלם של הוצאות מ-Google Drive</li>
+            <li>ייבוא לקוחות ומסמכי עבר ממערכת אחרת</li>
+            <li>מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש</li>
+            <li>מסמך בלי שער מודפס מסומן כדי שתשלים אותו</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>דוחות, ייצוא וגיבויים</h3>
+          <ul>
+            <li>הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות לקוחות</li>
+            <li>הורדה כ-PDF, XLSX או CSV</li>
+            <li>חבילה חודשית לרואה החשבון וכניסה לרואה החשבון עם תאריך סיום ויומן גישה</li>
+            <li>קובץ במבנה אחיד גרסה 1.31 לרשות המסים</li>
+            <li>ייצוא PCN874 (עמודת מספר ההקצאה)</li>
+            <li>גיבוי רבעוני ל-R2 ול-Google Drive</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>בטלפון</h3>
+          <ul>
+            <li>מותקנת במסך הבית כמו אפליקציה</li>
+            <li>מסך &quot;מהיר&quot;: צילום, גלריה, מסמך חדש ופעילות אחרונה</li>
+            <li>סרגל ניווט תחתון וטבלאות שהופכות לכרטיסים</li>
+            <li>תמונות שצולמו בלי קליטה עולות כשחוזרים לרשת</li>
+          </ul>
         </div>
       </div>
     </div>
