@@ -81,15 +81,18 @@ export function DocumentPage() {
   const isDraft = d.status === 'draft';
   const isFinal = d.status === 'final';
 
-  async function act(work: () => Promise<DocView>, go = false) {
+  /** Runs an action on the document. True when it went through, false when it showed an error. */
+  async function act(work: () => Promise<DocView>, go = false): Promise<boolean> {
     setBusy(true);
     setActionError(null);
     try {
       const next = await work();
       if (go || next.document.id !== id) navigate(`/income/documents/${next.document.id}`);
       else setData(next);
+      return true;
     } catch (e) {
       setActionError(e instanceof ApiError && e.code === 'backdate_reason_required' ? t('documents.page.backdateReasonSuffix', { message: e.message }) : errorText(e, t));
+      return false;
     } finally {
       setBusy(false);
     }
@@ -148,7 +151,7 @@ export function DocumentPage() {
     setConsentRequired(null);
     try {
       const result = await sendingApi.whatsappLink(id);
-      setSendNotice(result.waUrl ? t('documents.page.linkReadyOpening') : t('documents.page.linkReadyUrl', { url: result.url }));
+      setSendNotice(result.waUrl ? t('documents.page.sentByWhatsappNotice') : t('documents.page.sentByWhatsappUrlNotice', { url: result.url }));
       if (result.waUrl) window.open(result.waUrl, '_blank', 'noopener');
       setData(await docsApi.get(id));
     } catch (e) {
@@ -312,7 +315,19 @@ export function DocumentPage() {
                 ))}
               </ul>
             )}
-            {sendNotice && <p className="mt-2 text-sm text-brand">{sendNotice}</p>}
+            {sendNotice && (
+              <div role="status" className="mt-3 flex items-start justify-between gap-3 rounded-md border border-success bg-surface p-3 text-sm text-ink">
+                <span>
+                  <span aria-hidden="true" className="me-2 font-semibold text-success">
+                    ✓
+                  </span>
+                  {sendNotice}
+                </span>
+                <button type="button" aria-label={t('documents.page.closeNotice')} className="px-1 text-lg leading-none text-muted hover:text-ink" onClick={() => setSendNotice(null)}>
+                  ×
+                </button>
+              </div>
+            )}
             {sendForm && (
               <form
                 className="mt-3 grid gap-2 rounded-md border border-line bg-surface p-3 md:grid-cols-[1fr_1fr_auto_auto]"
@@ -371,13 +386,22 @@ export function DocumentPage() {
                 <button type="button" className={btnSecondary} disabled={busy} onClick={() => void downloadCopy('filed')}>
                   {t('documents.page.downloadFiledCopy')}
                 </button>
-                <button type="button" className={btnPrimary} disabled={busy} onClick={() => void openSendForm()}>
+                <button type="button" className={sentEvents.length === 0 ? btnPrimary : btnSecondary} disabled={busy} onClick={() => void openSendForm()}>
                   {t('documents.page.sendByEmail')}
                 </button>
-                <button type="button" className={`${btn} bg-[#128C4A] text-white hover:opacity-90`} disabled={busy} onClick={() => void whatsappLink()}>
+                <button
+                  type="button"
+                  className={sentEvents.length === 0 ? `${btn} bg-[#128C4A] text-white hover:opacity-90` : btnSecondary}
+                  disabled={busy}
+                  onClick={() => void whatsappLink()}
+                >
                   {t('documents.page.getWhatsappLink')}
                 </button>
-                <button type="button" className={btnSecondary} disabled={busy} onClick={() => act(() => docsApi.sent(id, 'print'))}>
+                <button type="button" className={btnSecondary} disabled={busy} onClick={() => {
+                    setSendNotice(null);
+                    void act(() => docsApi.sent(id, 'print')).then((ok) => ok && setSendNotice(t('documents.page.markedSentByPrintNotice')));
+                  }}
+                >
                   {t('documents.page.markSentByPrint')}
                 </button>
               </div>
