@@ -64,6 +64,8 @@ interface EditorState {
   payments: PaymentText[];
   showIls: boolean;
   overrideRate: string;
+  /** The day the rate belongs to, kept from the document it came from. Cleared when the rate is typed over. */
+  overrideRateDate: string;
   carryRate: boolean;
 }
 
@@ -119,6 +121,7 @@ function fromView(v: DocView): EditorState {
     })),
     showIls: v.meta?.show_ils === 1,
     overrideRate: d.fx_source === 'agreed' ? (d.fx_rate ?? '') : '',
+    overrideRateDate: d.fx_source === 'agreed' ? (d.fx_rate_date ?? '') : '',
     carryRate: v.meta?.carry_rate === 1,
   };
 }
@@ -173,6 +176,7 @@ function toBody(s: EditorState, isReceipt: boolean, t: ReturnType<typeof useT>):
     payments,
     showIls: s.showIls,
     overrideRate: s.overrideRate || null,
+    overrideRateDate: s.overrideRate && s.overrideRateDate ? s.overrideRateDate : null,
     carryRate: s.carryRate,
   };
 }
@@ -229,6 +233,7 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
       payments: isReceipt ? [emptyPayment(today)] : [],
       showIls: false,
       overrideRate: '',
+      overrideRateDate: '',
       carryRate: false,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -669,7 +674,7 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
                   placeholder={t('documents.editor.agreedRatePlaceholder')}
                   className={input}
                   value={state.overrideRate}
-                  onChange={(e) => set({ overrideRate: e.target.value })}
+                  onChange={(e) => set({ overrideRate: e.target.value, overrideRateDate: '' })}
                 />
               </label>
               {!isReceipt && (

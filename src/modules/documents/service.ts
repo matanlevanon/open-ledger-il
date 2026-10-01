@@ -66,6 +66,8 @@ interface DraftState {
   payments: PaymentState[];
   showIls: boolean;
   overrideRate: string | null;
+  /** The day the typed rate belongs to (for example the original document's date). Null when unknown. */
+  overrideRateDate: string | null;
   carryRate: boolean;
   sourceId: number | null;
   sourceKind: MetaRow['source_kind'];
@@ -157,16 +159,25 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
 
   const lines = s.lines.map((l) => ({ ...l, lineTotal: lineTotal(l) }));
 
-  // Carried rate: receipts from a source that carries its rate use that rate (currency-and-fx.md, option 4).
+  // Carried rate: a foreign-currency receipt made from a document takes that document's rate, so
+  // its shekel amount matches the document it pays. The source's own rate when it has one (agreed,
+  // indicative or carried), otherwise the Bank of Israel rate of the source's date. A rate typed on
+  // the receipt (overrideRate) still wins, below.
   let carried: { rate: string; rateDate: string | null; label: string } | null = null;
   if ((s.type.kind === 'receipt' || s.type.kind === 'invoice_receipt') && s.sourceId && s.currency !== HOME_CURRENCY) {
-    const src = await first<DocRow & { carry_rate: number | null }>(
-      db,
-      'SELECT d.*, m.carry_rate FROM documents d LEFT JOIN document_meta m ON m.document_id = d.id WHERE d.id = ?',
-      s.sourceId,
-    );
-    if (src?.carry_rate === 1 && src.fx_rate) {
-      carried = { rate: src.fx_rate, rateDate: src.fx_rate_date, label: displayNumber(src.type, src.number) ?? '' };
+    const src = await first<DocRow>(db, 'SELECT * FROM documents WHERE id = ?', s.sourceId);
+    if (src && src.currency === s.currency) {
+      const label = displayNumber(src.type, src.number) ?? '';
+      if (src.fx_rate) {
+        carried = { rate: src.fx_rate, rateDate: src.fx_rate_date, label };
+      } else {
+        try {
+          const q = await services.fx.rateFor(s.currency, src.date);
+          carried = { rate: q.rate, rateDate: q.rateDate, label };
+        } catch {
+          // No rate on file for that day: each payment falls back to its own day's rate.
+        }
+      }
     }
   }
 
@@ -192,7 +203,7 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
     } else if (s.overrideRate) {
       // A rate typed on the receipt itself wins over the carried and the Bank of Israel rate.
       const agreed = normalizeRate(s.overrideRate);
-      payments.push({ ...p, fxRate: agreed, fxRateDate: p.paidOn, fxSource: 'agreed', amountIls: convert(p.amountMinor, agreed) });
+      payments.push({ ...p, fxRate: agreed, fxRateDate: s.overrideRateDate, fxSource: 'agreed', amountIls: convert(p.amountMinor, agreed) });
     } else if (carried) {
       payments.push({
         ...p,
@@ -250,7 +261,7 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
     if (s.currency === HOME_CURRENCY) {
       totalIls = total;
     } else if (s.overrideRate) {
-      fx = { rate: normalizeRate(s.overrideRate), date: s.date, source: 'agreed' };
+      fx = { rate: normalizeRate(s.overrideRate), date: s.overrideRateDate ?? s.date, source: 'agreed' };
       totalIls = convert(total, fx.rate!);
     } else if (s.showIls) {
       const q = await services.fx.rateFor(s.currency, s.date);
@@ -547,6 +558,7 @@ async function stateFromDb(db: D1Database, loaded: LoadedDraft): Promise<DraftSt
     payments: paymentsFromRows(loaded.payments, type.kind === 'credit' || type.kind === 'credit_invoice'),
     showIls: meta?.show_ils === 1,
     overrideRate: doc.fx_source === 'agreed' ? doc.fx_rate : null,
+    overrideRateDate: doc.fx_source === 'agreed' ? doc.fx_rate_date : null,
     carryRate: meta?.carry_rate === 1,
     sourceId: meta?.source_id ?? null,
     sourceKind: meta?.source_kind ?? null,
@@ -603,6 +615,7 @@ export async function createDraft(ctx: Ctx, input: DraftInput): Promise<number> 
       payments: input.payments,
       showIls: input.showIls,
       overrideRate: input.overrideRate ?? null,
+      overrideRateDate: input.overrideRate ? (input.overrideRateDate ?? null) : null,
       carryRate: input.carryRate,
       sourceId: null,
       sourceKind: null,
@@ -639,7 +652,10 @@ export async function updateDraft(ctx: Ctx, id: number, patch: DraftPatch): Prom
   if (patch.lines !== undefined) s.lines = patch.lines;
   if (patch.payments !== undefined) s.payments = patch.payments;
   if (patch.showIls !== undefined) s.showIls = patch.showIls;
-  if (patch.overrideRate !== undefined) s.overrideRate = patch.overrideRate ?? null;
+  if (patch.overrideRate !== undefined) {
+    s.overrideRate = patch.overrideRate ?? null;
+    s.overrideRateDate = s.overrideRate ? (patch.overrideRateDate ?? null) : null;
+  }
   if (patch.carryRate !== undefined) s.carryRate = patch.carryRate;
   await saveDraft(ctx, id, s);
 }
@@ -963,6 +979,7 @@ export async function convertDocument(
       // A receipt-kind document takes only a rate typed for it, never the source's agreed rate
       // (that one reaches it through carryRate when the source asks for it).
       overrideRate: isReceiptKind(type) ? (input.overrideRate ?? null) : src.fx_source === 'agreed' ? src.fx_rate : null,
+      overrideRateDate: isReceiptKind(type) ? null : src.fx_source === 'agreed' ? src.fx_rate_date : null,
       carryRate: type.kind !== 'receipt' && loaded.meta?.carry_rate === 1,
       sourceId,
       sourceKind: rule.kind,
@@ -1195,6 +1212,7 @@ export async function creditDocument(
       ],
       showIls: false,
       overrideRate: null,
+      overrideRateDate: null,
       carryRate: false,
       sourceId: id,
       sourceKind: 'credit',

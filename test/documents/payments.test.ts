@@ -116,15 +116,41 @@ describe('carried rate', () => {
     expect(res.status).toBe(400);
   });
 
-  it('without carry the receipt uses the payment-date rate even when the request shows ILS', async () => {
+  it('without carry the receipt still takes the rate shown on the request, not the payment-date rate', async () => {
     const client = await makeClient({ currency: 'USD' });
     const pr = await issue('PR', { clientId: client, lines: [line(100000)], showIls: true });
     expect(pr.document.fx_source).toBe('indicative');
     expect(pr.document.fx_rate).toBe('3.731500');
     const r = await ok('POST', `/documents/${pr.document.id}/record-payment`, { payments: [pay(100000, '2026-10-05')] });
-    expect(r.payments[0].fx_rate).toBe('3.725000');
-    expect(r.payments[0].fx_source).toBe('boi');
-    expect(r.payments[0].amount_ils_minor).toBe(372500);
+    expect(r.payments[0].fx_rate).toBe('3.731500');
+    expect(r.payments[0].fx_source).toBe('carried');
+    expect(r.payments[0].amount_ils_minor).toBe(373150);
+  });
+
+  it('a request with no rate of its own gives the receipt the Bank of Israel rate of the request date', async () => {
+    const client = await makeClient({ currency: 'USD' });
+    const pr = await issue('PR', { clientId: client, lines: [line(100000)] });
+    expect(pr.document.fx_rate).toBeNull();
+    const r = await ok('POST', `/documents/${pr.document.id}/record-payment`, { payments: [pay(100000, '2026-10-05')] });
+    expect(r.payments[0].fx_source).toBe('carried');
+    // The request is dated 2026-10-06: its rate (3.7315), not the 2026-10-05 payment-day rate (3.725).
+    expect(r.payments[0].fx_rate).toBe('3.731500');
+    expect(r.payments[0].fx_rate_date! <= pr.document.date).toBe(true);
+  });
+
+  it('a typed rate keeps the date it was given', async () => {
+    const client = await makeClient({ currency: 'USD' });
+    const draft = await ok('POST', '/documents', {
+      type: '400',
+      clientId: client,
+      currency: 'USD',
+      payments: [pay(10000, '2026-10-05')],
+      overrideRate: '3.012',
+      overrideRateDate: '2026-09-01',
+    });
+    expect(draft.payments[0].fx_rate).toBe('3.012000');
+    expect(draft.payments[0].fx_rate_date).toBe('2026-09-01');
+    expect(draft.document.fx_rate_date).toBe('2026-09-01');
   });
 
   it('refuses carry without a rate', async () => {

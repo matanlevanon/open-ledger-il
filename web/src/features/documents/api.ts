@@ -284,6 +284,7 @@ export interface DraftInput {
   payments?: PaymentInput[];
   showIls?: boolean;
   overrideRate?: string | null;
+  overrideRateDate?: string | null;
   carryRate?: boolean;
 }
 

@@ -11,7 +11,8 @@ describe('credit of a partial payment', () => {
   it('credits part of a USD receipt at the receipt rate, then the rest to the exact ILS remainder', async () => {
     const client = await makeClient({ currency: 'USD' });
     const pr = await issue('PR', { clientId: client, lines: [line(100000)] });
-    const receipt = await ok('POST', `/documents/${pr.document.id}/record-payment`, { payments: [pay(33333, '2026-10-05')] });
+    // A typed rate keeps the credit math below on a known rate.
+    const receipt = await ok('POST', `/documents/${pr.document.id}/record-payment`, { payments: [pay(33333, '2026-10-05')], overrideRate: '3.725' });
     expect(receipt.document.fx_rate).toBe('3.725000');
     expect(receipt.document.total_ils_minor).toBe(124165); // 333.33 x 3.725 = 1,241.654 -> 1,241.65
 

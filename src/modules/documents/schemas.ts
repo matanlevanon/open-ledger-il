@@ -69,6 +69,8 @@ export const draftInput = z.object({
   payments: z.array(paymentInput).max(50).default([]),
   showIls: z.boolean().default(false),
   overrideRate: rateString.nullish(),
+  /** The day overrideRate belongs to, shown next to it. Optional. */
+  overrideRateDate: dateString.nullish(),
   carryRate: z.boolean().default(false),
 });
 
