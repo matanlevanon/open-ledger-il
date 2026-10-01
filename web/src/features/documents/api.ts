@@ -28,6 +28,8 @@ export interface Client {
   currency: string;
   client_copy_lang: 'en' | 'bilingual';
   email: string | null;
+  /** Copied on every document emailed to this client, comma separated. */
+  cc_emails: string | null;
   phone: string | null;
   address_en: string | null;
   address_he: string | null;
@@ -321,7 +323,7 @@ export const docsApi = {
   remove: (id: number) => apiSend<{ ok: true }>('DELETE', `/documents/${id}`),
   finalize: (id: number, backdateReason?: string) => apiSend<DocView>('POST', `/documents/${id}/finalize`, { backdateReason }),
   convert: (id: number, type: string) => apiSend<DocView>('POST', `/documents/${id}/convert`, { type }),
-  recordPayment: (id: number, body: { payments: PaymentInput[]; date?: string; backdateReason?: string }) =>
+  recordPayment: (id: number, body: { payments: PaymentInput[]; date?: string; backdateReason?: string; overrideRate?: string | null }) =>
     apiSend<DocView>('POST', `/documents/${id}/record-payment`, body),
   revise: (id: number) => apiSend<DocView>('POST', `/documents/${id}/revise`),
   duplicate: (id: number) => apiSend<DocView>('POST', `/documents/${id}/duplicate`),
@@ -335,7 +337,12 @@ export type SendEmailResult = { status: 'sent'; messageId: string | null };
 export type WhatsAppLinkResult = { status: 'ready'; url: string; waUrl: string | null; expiresAt: string };
 
 export const sendingApi = {
-  sendEmail: (id: number) => apiSend<SendEmailResult>('POST', `/sending/documents/${id}/send`, {}),
+  sendEmail: (id: number, body: { to?: string | null; cc?: string[] | null } = {}) =>
+    apiSend<SendEmailResult>('POST', `/sending/documents/${id}/send`, body),
+  /** The To and CC a send would use: the client's email, the account CC list and the client's CC list. */
+  sendDefaults: (id: number) => apiGet<{ to: string | null; cc: string[] }>(`/sending/documents/${id}/send-defaults`),
+  settings: () => apiGet<{ cc: string }>('/sending/settings'),
+  setCc: (cc: string) => apiSend<{ cc: string }>('PUT', '/sending/settings/cc', { cc }),
   whatsappLink: (id: number) => apiSend<WhatsAppLinkResult>('POST', `/sending/documents/${id}/whatsapp-link`, {}),
   requestConsent: (clientId: number) => apiSend<{ status: 'sent'; expiresAt: string }>('POST', `/sending/clients/${clientId}/consent/request`, {}),
 };

@@ -8,6 +8,8 @@ export interface EmailAttachment {
 
 export interface OutboundEmail {
   to: string;
+  /** Copies. Omitted from the provider call when empty. */
+  cc?: string[];
   subject: string;
   html: string;
   text: string;
@@ -46,6 +48,7 @@ export class ResendMailer implements Mailer {
       body: JSON.stringify({
         from: this.from,
         to: [email.to],
+        ...(email.cc && email.cc.length > 0 ? { cc: email.cc } : {}),
         subject: email.subject,
         html: email.html,
         text: email.text,

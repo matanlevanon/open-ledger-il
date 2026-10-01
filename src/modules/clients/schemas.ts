@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { partialWithoutDefaults } from '../../core/schema';
 import { currency, dateString } from '../documents/schemas';
+import { ccListText } from '../sending/cc';
 
 const text = (max: number) => z.string().trim().max(max).nullish();
 
@@ -20,6 +21,8 @@ const clientFields = z.object({
   currency: currency.default('ILS'),
   clientCopyLang: z.enum(['en', 'bilingual']).default('en'),
   email: z.string().trim().email('Use a valid email.').max(200).nullish().or(z.literal('').transform(() => null)),
+  /** Copied on every document emailed to this client, on top of the account list. Comma separated. */
+  ccEmails: ccListText,
   phone: text(40),
   /** The client's one address, in English or Hebrew as fits the client. */
   addressEn: text(500),

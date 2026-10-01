@@ -6,6 +6,7 @@ import { type MessageKey, useT } from '../../i18n';
 import { type DocListItem, docsApi } from './api';
 import { clientName, money, totalsText } from './format';
 import { ImportedDocuments, type ImportedKind } from './ImportedDocuments';
+import { SortHeader, type SortState, useSort } from './sort';
 import { Card, ErrorNote, Loading, PageTitle, StatusChip, btnPrimary, useLoad } from './ui';
 
 /** Which imported past documents belong on a list, by the list's type codes. */
@@ -107,7 +108,7 @@ export function DocumentTable({ clientId }: { clientId: number }) {
     <>
       <Card title={t('documents.list.documentsTitle')}>
         <ErrorNote error={error} />
-        {!data ? !error && <Loading /> : <Rows items={data.items} />}
+        {!data ? !error && <Loading /> : <Rows items={data.items} defaultSort={{ key: 'date', dir: 'desc' }} />}
       </Card>
       <div className="mt-6">
         <ImportedDocuments clientId={clientId} />
@@ -118,27 +119,45 @@ export function DocumentTable({ clientId }: { clientId: number }) {
 
 const hasIls = (d: DocListItem) => ['receipt', 'credit'].includes(d.kind) && d.currency !== 'ILS' && d.total_ils_minor !== null;
 
-function Rows({ items }: { items: DocListItem[] }) {
+type DocSortKey = 'status' | 'date' | 'number' | 'client' | 'amount' | 'open';
+
+/**
+ * The documents table. Every column header sorts. `defaultSort` orders the rows before any click
+ * (a client's documents open newest first); without it the rows keep the server's order.
+ */
+function Rows({ items, defaultSort = null }: { items: DocListItem[]; defaultSort?: SortState<DocSortKey> | null }) {
   const t = useT();
   const { locale } = usePreferences();
+  const { sort, toggle, apply } = useSort<DocSortKey>(defaultSort, ['date', 'amount', 'open']);
+  const sorted = apply(items, {
+    status: (d) => d.state,
+    date: (d) => d.date,
+    number: (d) => d.display_number,
+    client: (d) => clientName({ name_en: d.client_name_en, name_he: d.client_name_he }, locale),
+    amount: (d) => d.total_ils_minor ?? d.total_minor,
+    open: (d) => d.remaining_minor,
+  });
+  const head = (column: DocSortKey, key: MessageKey, align: 'start' | 'end' = 'start') => (
+    <SortHeader label={t(key)} column={column} sort={sort} onSort={toggle} align={align} />
+  );
   if (items.length === 0) return <p className="py-6 text-center text-muted">{t('documents.list.noDocuments')}</p>;
   return (
     <div className="overflow-x-auto rounded-card border border-line">
       <table className="w-full min-w-[860px] text-sm">
         <thead className="bg-band text-start text-xs uppercase text-muted">
           <tr>
-            <th className="px-3 py-2">{t('documents.list.colStatus')}</th>
-            <th className="px-3 py-2">{t('documents.list.colDate')}</th>
-            <th className="px-3 py-2">{t('documents.list.colNumber')}</th>
-            <th className="px-3 py-2">{t('documents.list.colClient')}</th>
+            {head('status', 'documents.list.colStatus')}
+            {head('date', 'documents.list.colDate')}
+            {head('number', 'documents.list.colNumber')}
+            {head('client', 'documents.list.colClient')}
             <th className="px-3 py-2">{t('documents.list.colRelated')}</th>
-            <th className="px-3 py-2 text-end">{t('documents.list.colAmount')}</th>
-            <th className="px-3 py-2 text-end">{t('documents.list.colOpen')}</th>
+            {head('amount', 'documents.list.colAmount', 'end')}
+            {head('open', 'documents.list.colOpen', 'end')}
             <th className="px-3 py-2" />
           </tr>
         </thead>
         <tbody>
-          {items.map((d) => (
+          {sorted.map((d) => (
             <tr key={d.id} className="border-t border-line">
               <td className="px-3 py-2">
                 <StatusChip state={d.state} overdue={d.overdue} />

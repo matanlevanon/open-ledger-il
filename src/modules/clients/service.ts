@@ -17,6 +17,7 @@ export interface ClientRow {
   currency: string;
   client_copy_lang: 'en' | 'bilingual';
   email: string | null;
+  cc_emails: string | null;
   phone: string | null;
   address_en: string | null;
   address_he: string | null;
@@ -52,6 +53,7 @@ const COLUMNS: [keyof ClientInput, keyof ClientRow][] = [
   ['currency', 'currency'],
   ['clientCopyLang', 'client_copy_lang'],
   ['email', 'email'],
+  ['ccEmails', 'cc_emails'],
   ['phone', 'phone'],
   ['addressEn', 'address_en'],
   ['city', 'city'],

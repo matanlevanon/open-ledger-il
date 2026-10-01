@@ -4,7 +4,9 @@ import { finalizeDocument } from '../../../src/core/numbering';
 import { ConsentRequiredError } from '../../../src/core/errors';
 import { acceptConsent } from '../../../src/modules/sending/consent';
 import { FakeMailer } from '../../../src/modules/sending/mailer';
-import { sendDocumentEmail } from '../../../src/modules/sending/send';
+import { sendDefaults, sendDocumentEmail } from '../../../src/modules/sending/send';
+import { setCcSetting } from '../../../src/modules/sending/settings';
+import { ccListText } from '../../../src/modules/sending/cc';
 import { insertPaymentRequest, insertSendingClient } from '../../fixtures/sending/db';
 import { FakeSignablePdfEngine, makeTestSigningIdentity, type TestSigningIdentity } from '../../fixtures/sending/pdf';
 import { OWNER_ACTOR, db } from '../../helpers';
@@ -120,5 +122,49 @@ describe('sendDocumentEmail', () => {
     await expect(sendDocumentEmail(deps(), { documentId: docId, actor })).rejects.toMatchObject({
       details: { clientName: 'לקוח עברי בע"מ' },
     });
+  });
+});
+
+describe('copies (CC) on document emails', () => {
+  async function readyClient(email: string, ccEmails: string | null) {
+    const clientId = await insertSendingClient({ email });
+    await db().prepare('UPDATE clients SET cc_emails = ? WHERE id = ?').bind(ccEmails, clientId).run();
+    await acceptConsent(db(), { clientId, ip: null, userAgent: null });
+    return clientId;
+  }
+
+  it('copies the account list and the client list by default, without repeats or the To address', async () => {
+    await setCcSetting(db(), 'me@mtn.test, Shared@Client.test');
+    const clientId = await readyClient('client@client.test', 'shared@client.test, cfo@client.test, client@client.test');
+    const docId = await finalizedPaymentRequest(clientId);
+    const d = deps();
+
+    expect(await sendDefaults(db(), docId)).toEqual({ to: 'client@client.test', cc: ['me@mtn.test', 'Shared@Client.test', 'cfo@client.test'] });
+    await sendDocumentEmail(d, { documentId: docId, actor });
+    expect((d.mailer as FakeMailer).sent[0]!.cc).toEqual(['me@mtn.test', 'Shared@Client.test', 'cfo@client.test']);
+    const row = await db().prepare('SELECT cc_addresses FROM send_log WHERE document_id = ?').bind(docId).first<{ cc_addresses: string }>();
+    expect(row!.cc_addresses).toBe('me@mtn.test, Shared@Client.test, cfo@client.test');
+    await setCcSetting(db(), null);
+  });
+
+  it('uses exactly the copies given for one send, including none', async () => {
+    await setCcSetting(db(), 'me@mtn.test');
+    const clientId = await readyClient('one@client.test', 'cfo@client.test');
+    const first = await finalizedPaymentRequest(clientId);
+    const d = deps();
+    await sendDocumentEmail(d, { documentId: first, actor, cc: ['only@mtn.test'] });
+    const second = await finalizedPaymentRequest(clientId);
+    await sendDocumentEmail(d, { documentId: second, actor, cc: [] });
+    const sent = (d.mailer as FakeMailer).sent;
+    expect(sent[0]!.cc).toEqual(['only@mtn.test']);
+    expect(sent[1]!.cc).toEqual([]);
+    await setCcSetting(db(), null);
+  });
+
+  it('stores a typed copy list cleaned up, and refuses a bad address', () => {
+    expect(ccListText.parse(' a@x.test; b@y.test  a@x.test ')).toBe('a@x.test, b@y.test');
+    expect(ccListText.parse('')).toBeNull();
+    expect(ccListText.parse(undefined)).toBeUndefined();
+    expect(ccListText.safeParse('a@x.test, not-an-email').success).toBe(false);
   });
 });

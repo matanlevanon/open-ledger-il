@@ -98,6 +98,24 @@ describe('carried rate', () => {
     expect(r2.payments[0].amount_ils_minor).toBe(210000);
   });
 
+  it('a rate typed on the receipt beats the carried and the payment-date rate', async () => {
+    const client = await makeClient({ currency: 'USD' });
+    const pr = await issue('PR', { clientId: client, lines: [line(100000)], overrideRate: '3.5', carryRate: true });
+    const r = await ok('POST', `/documents/${pr.document.id}/record-payment`, { payments: [pay(100000, '2026-10-05')], overrideRate: '3.6' });
+    expect(r.payments[0].fx_rate).toBe('3.600000');
+    expect(r.payments[0].fx_source).toBe('agreed');
+    expect(r.payments[0].amount_ils_minor).toBe(360000);
+    expect(r.document.fx_source).toBe('agreed');
+    expect(r.document.total_ils_minor).toBe(360000);
+  });
+
+  it('refuses a typed rate on a shekel receipt', async () => {
+    const client = await makeClient();
+    const pr = await issue('PR', { clientId: client, lines: [line(100000)] });
+    const res = await api('POST', `/documents/${pr.document.id}/record-payment`, { payments: [pay(100000, '2026-10-05')], overrideRate: '3.6' });
+    expect(res.status).toBe(400);
+  });
+
   it('without carry the receipt uses the payment-date rate even when the request shows ILS', async () => {
     const client = await makeClient({ currency: 'USD' });
     const pr = await issue('PR', { clientId: client, lines: [line(100000)], showIls: true });

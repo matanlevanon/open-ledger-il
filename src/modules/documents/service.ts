@@ -189,6 +189,10 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
       payments.push({ ...p, ...p.preset });
     } else if (s.currency === HOME_CURRENCY) {
       payments.push({ ...p, fxRate: null, fxRateDate: null, fxSource: null, amountIls: p.amountMinor });
+    } else if (s.overrideRate) {
+      // A rate typed on the receipt itself wins over the carried and the Bank of Israel rate.
+      const agreed = normalizeRate(s.overrideRate);
+      payments.push({ ...p, fxRate: agreed, fxRateDate: p.paidOn, fxSource: 'agreed', amountIls: convert(p.amountMinor, agreed) });
     } else if (carried) {
       payments.push({
         ...p,
@@ -908,7 +912,7 @@ async function hasLiveTargets(db: D1Database, sourceId: number, kinds: string[])
 export async function convertDocument(
   ctx: Ctx,
   sourceId: number,
-  input: { type: string; date?: string; payments?: PaymentInput[]; notes?: string | null },
+  input: { type: string; date?: string; payments?: PaymentInput[]; notes?: string | null; overrideRate?: string | null },
 ): Promise<number> {
   await assertIssuing(ctx.db);
   const { db } = ctx;
@@ -956,7 +960,9 @@ export async function convertDocument(
       lines: linesFromRows(loaded.lines),
       payments,
       showIls: type.kind === 'receipt' ? false : loaded.meta?.show_ils === 1,
-      overrideRate: type.kind !== 'receipt' && src.fx_source === 'agreed' ? src.fx_rate : null,
+      // A receipt-kind document takes only a rate typed for it, never the source's agreed rate
+      // (that one reaches it through carryRate when the source asks for it).
+      overrideRate: isReceiptKind(type) ? (input.overrideRate ?? null) : src.fx_source === 'agreed' ? src.fx_rate : null,
       carryRate: type.kind !== 'receipt' && loaded.meta?.carry_rate === 1,
       sourceId,
       sourceKind: rule.kind,
@@ -972,7 +978,7 @@ export async function convertDocument(
 export async function recordPayment(
   ctx: Ctx,
   sourceId: number,
-  input: { date?: string; payments: PaymentInput[]; notes?: string | null; finalize: boolean; backdateReason?: string | null },
+  input: { date?: string; payments: PaymentInput[]; notes?: string | null; finalize: boolean; backdateReason?: string | null; overrideRate?: string | null },
 ): Promise<{ receiptId: number; finalized: FinalizeOutcome | null }> {
   await assertIssuing(ctx.db);
   const src = await getDoc(ctx.db, sourceId);
@@ -992,6 +998,7 @@ export async function recordPayment(
     type: receiptType,
     date: input.date,
     payments: input.payments,
+    overrideRate: input.overrideRate ?? null,
     ...(input.notes !== undefined ? { notes: input.notes } : {}),
   });
   if (!input.finalize) return { receiptId, finalized: null };

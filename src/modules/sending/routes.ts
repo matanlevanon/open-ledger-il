@@ -11,8 +11,9 @@ import { r2Key } from '../pdf';
 import { acceptConsent, consentHistory, consentState, requestConsent, revokeConsent } from './consent';
 import { declareManualAuth } from '../access/route-guard';
 import type { Mailer } from './mailer';
-import { businessDisplayName, paymentLinkSettings, reminderSettings, setPaymentLinkSettings, setReminderSettings } from './settings';
-import { sendDocumentEmail } from './send';
+import { MAX_CC, ccListText } from './cc';
+import { businessDisplayName, ccSetting, paymentLinkSettings, reminderSettings, setCcSetting, setPaymentLinkSettings, setReminderSettings } from './settings';
+import { sendDefaults, sendDocumentEmail } from './send';
 import { verifySendToken } from './tokens';
 import { createWhatsAppLink } from './whatsapp';
 
@@ -34,7 +35,12 @@ function baseUrl(c: Context<AppEnv>): string {
   return c.env.PUBLIC_APP_URL || new URL(c.req.url).origin;
 }
 
-const sendEmailInput = z.object({ to: z.string().trim().email().nullish(), message: z.string().trim().max(2000).nullish() });
+const sendEmailInput = z.object({
+  to: z.string().trim().email().nullish(),
+  cc: z.array(z.string().trim().email()).max(MAX_CC).nullish(),
+  message: z.string().trim().max(2000).nullish(),
+});
+const ccSettingInput = z.object({ cc: ccListText });
 const reminderSettingsInput = z.object({
   enabled: z.boolean().optional(),
   beforeDays: z.array(z.number().int().min(0)).optional(),
@@ -89,9 +95,14 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
     const user = c.get('user');
     const result = await sendDocumentEmail(
       { db: c.env.DB, files: c.env.FILES, env: c.env, mailer: resolveMailer(c.env), baseUrl: baseUrl(c) },
-      { documentId: id, actor: { userId: user.id, email: user.email }, to: input.to, message: input.message },
+      { documentId: id, actor: { userId: user.id, email: user.email }, to: input.to, cc: input.cc, message: input.message },
     );
     return c.json(result);
+  });
+
+  app.get('/documents/:id/send-defaults', requireFeature('issue_documents'), async (c) => {
+    const id = idParam(c.req.param('id'));
+    return c.json(await sendDefaults(c.env.DB, id));
   });
 
   app.post('/documents/:id/whatsapp-link', requireFeature('issue_documents'), async (c) => {
@@ -137,8 +148,14 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
   });
 
   app.get('/settings', requireFeature('settings'), async (c) => {
-    const [reminders, links] = await Promise.all([reminderSettings(c.env.DB), paymentLinkSettings(c.env.DB)]);
-    return c.json({ reminders, paymentLinks: links });
+    const [reminders, links, cc] = await Promise.all([reminderSettings(c.env.DB), paymentLinkSettings(c.env.DB), ccSetting(c.env.DB)]);
+    return c.json({ reminders, paymentLinks: links, cc });
+  });
+
+  app.put('/settings/cc', requireFeature('settings'), async (c) => {
+    const input = ccSettingInput.parse(await body(c));
+    await setCcSetting(c.env.DB, input.cc ?? null);
+    return c.json({ cc: await ccSetting(c.env.DB) });
   });
 
   app.put('/settings/reminders', requireFeature('settings'), async (c) => {

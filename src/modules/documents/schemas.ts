@@ -89,6 +89,8 @@ export const recordPaymentInput = z.object({
   notes: z.string().max(5000).nullish(),
   finalize: z.boolean().default(true),
   backdateReason: z.string().trim().max(500).nullish(),
+  /** A rate typed for this receipt, foreign currency only. Without it each payment takes the Bank of Israel rate of its day. */
+  overrideRate: rateString.nullish(),
 });
 
 export const cancelInput = z.object({

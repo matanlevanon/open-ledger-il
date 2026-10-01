@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiGet } from '../../api/client';
 import { usePreferences } from '../../app/preferences';
-import { useT } from '../../i18n';
+import { type MessageKey, useT } from '../../i18n';
 import { type Client, apiSend, clientsApi, docsApi, type Service, servicesApi } from './api';
 import { CURRENCIES, clientName, money } from './format';
+import { SortHeader, useSort } from './sort';
 import { Card, ErrorNote, Loading, useLoad } from './ui';
 
 export interface ImportedDocument {
@@ -204,6 +205,8 @@ function EditRow({ doc, clients, services, onDone }: { doc: ImportedDocument; cl
  * Their fields can be corrected, and an unpaid pro forma or payment request can be paid with a
  * receipt issued here.
  */
+type ImportedSortKey = 'date' | 'number' | 'client' | 'amount' | 'paid';
+
 export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[]; clientId?: number }) {
   const t = useT();
   const navigate = useNavigate();
@@ -231,9 +234,20 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
       .catch(() => undefined);
   }, [editing, services.length]);
 
-  const rows = (data?.documents ?? [])
-    .filter((d) => !kinds || kinds.includes(importedKind(d.doc_type) as ImportedKind))
-    .sort((a, b) => b.issue_date.localeCompare(a.issue_date) || b.id - a.id);
+  const { sort, toggle, apply } = useSort<ImportedSortKey>({ key: 'date', dir: 'desc' }, ['date', 'amount']);
+  const rows = apply(
+    (data?.documents ?? []).filter((d) => !kinds || kinds.includes(importedKind(d.doc_type) as ImportedKind)),
+    {
+      date: (d) => d.issue_date,
+      number: (d) => `${d.doc_type} ${d.original_number}`,
+      client: (d) => d.client_name_text,
+      amount: (d) => d.total_minor,
+      paid: (d) => d.paid_status,
+    },
+  );
+  const head = (column: ImportedSortKey, key: MessageKey, align: 'start' | 'end' = 'start') => (
+    <SortHeader label={t(key)} column={column} sort={sort} onSort={toggle} align={align} />
+  );
   if (data && rows.length === 0) return null;
 
   /** Opens a receipt draft for the imported document's client and total, linked to it. */
@@ -268,11 +282,11 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
           <table className="w-full min-w-[760px] text-sm">
             <thead className="bg-band text-start text-xs uppercase text-muted">
               <tr>
-                <th className="px-3 py-2 text-start">{t('documents.list.colDate')}</th>
-                <th className="px-3 py-2 text-start">{t('documents.list.colNumber')}</th>
-                <th className="px-3 py-2 text-start">{t('documents.list.colClient')}</th>
-                <th className="px-3 py-2 text-end">{t('documents.list.colAmount')}</th>
-                <th className="px-3 py-2 text-start">{t('documents.imported.colPaid')}</th>
+                {head('date', 'documents.list.colDate')}
+                {head('number', 'documents.list.colNumber')}
+                {head('client', 'documents.list.colClient')}
+                {head('amount', 'documents.list.colAmount', 'end')}
+                {head('paid', 'documents.imported.colPaid')}
                 <th className="px-3 py-2" />
               </tr>
             </thead>

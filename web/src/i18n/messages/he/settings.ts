@@ -2,6 +2,14 @@ import type { settings as en } from '../en/settings';
 
 export const settings: Record<keyof typeof en, string> = {
   'settings.tabs.issuing': 'הפקת מסמכים',
+  'settings.tabs.email': 'אימייל',
+  'settings.email.title': 'עותקים של מסמכים יוצאים',
+  'settings.email.hint': 'הכתובות האלה מקבלות עותק (CC) של כל מסמך שנשלח באימייל, יחד עם העותקים שהוגדרו בכל לקוח. בטופס השליחה אפשר לשנות את הרשימה לשליחה אחת.',
+  'settings.email.ccLabel': 'עותק (CC) בכל מסמך שנשלח',
+  'settings.email.save': 'שמירה',
+  'settings.email.saved': 'רשימת העותקים נשמרה.',
+  'settings.email.saveError': 'לא הצלחנו לשמור את רשימת העותקים.',
+  'settings.email.loadError': 'לא הצלחנו לטעון את הגדרות האימייל.',
   'settings.issuing.title': 'הפקת מסמכים במערכת',
   'settings.issuing.stateOn': 'פעיל. יוצרים, מפיקים ושולחים מסמכים כאן.',
   'settings.issuing.stateOff': 'כבוי. המסמכים מגיעים מהמערכת שבה אתה מפיק אותם.',

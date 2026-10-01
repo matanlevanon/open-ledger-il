@@ -653,12 +653,14 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
           </Card>
         )}
 
-        {!isReceipt && foreign && (
+        {foreign && (
           <Card title={t('documents.editor.exchangeRateTitle')}>
             <div className="flex flex-wrap items-end gap-4 text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" checked={state.showIls} onChange={(e) => set({ showIls: e.target.checked })} /> {t('documents.editor.showIlsLabel')}
-              </label>
+              {!isReceipt && (
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" checked={state.showIls} onChange={(e) => set({ showIls: e.target.checked })} /> {t('documents.editor.showIlsLabel')}
+                </label>
+              )}
               <label className="block">
                 <span className={label}>{t('documents.editor.agreedRateLabel')}</span>
                 <input
@@ -670,10 +672,13 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
                   onChange={(e) => set({ overrideRate: e.target.value })}
                 />
               </label>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" checked={state.carryRate} onChange={(e) => set({ carryRate: e.target.checked })} /> {t('documents.editor.carryRateLabel')}
-              </label>
+              {!isReceipt && (
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" checked={state.carryRate} onChange={(e) => set({ carryRate: e.target.checked })} /> {t('documents.editor.carryRateLabel')}
+                </label>
+              )}
             </div>
+            {isReceipt && <p className="mt-2 text-xs text-muted">{t('documents.editor.receiptRateHint')}</p>}
           </Card>
         )}
 

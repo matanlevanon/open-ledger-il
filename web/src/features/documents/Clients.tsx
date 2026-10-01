@@ -142,6 +142,7 @@ type ClientFields = {
   currency: string;
   clientCopyLang: 'en' | 'bilingual';
   email: string;
+  ccEmails: string;
   phone: string;
   addressEn: string;
   city: string;
@@ -161,6 +162,7 @@ function fieldsFrom(c?: Client): ClientFields {
     currency: c?.currency ?? 'ILS',
     clientCopyLang: c?.client_copy_lang ?? 'en',
     email: c?.email ?? '',
+    ccEmails: c?.cc_emails ?? '',
     phone: c?.phone ?? '',
     addressEn: c?.address_en || c?.address_he || '',
     city: c?.city ?? '',
@@ -271,6 +273,7 @@ export function ClientForm() {
               <input type="checkbox" checked={current.foreignResident} onChange={(e) => set('foreignResident', e.target.checked)} /> {t('clients.form.foreignResident')}
             </label>
             {text('email', 'clients.form.email', { type: 'email' })}
+            {text('ccEmails', 'clients.form.ccEmails', { dir: 'ltr', placeholder: 'name@example.com, other@example.com' })}
             {text('phone', 'clients.form.phone')}
             {text('addressEn', 'clients.form.address', { dir: 'auto' })}
             {text('city', 'clients.form.city', { dir: 'auto' })}
@@ -472,6 +475,12 @@ export function ClientPage() {
               <dd>{c.client_copy_lang === 'en' ? t('clients.form.langEnglish') : t('clients.form.langBilingual')}</dd>
               <dt className="text-muted">{t('clients.page.emailLabel')}</dt>
               <dd>{c.email ?? t('clients.page.noneFallback')}</dd>
+              {c.cc_emails && (
+                <>
+                  <dt className="text-muted">{t('clients.form.ccEmails')}</dt>
+                  <dd dir="ltr">{c.cc_emails}</dd>
+                </>
+              )}
               <dt className="text-muted">{t('clients.page.digitalDocumentsLabel')}</dt>
               <dd>
                 {t(CONSENT_STATUS_LABEL_KEYS[data.consent.status])}

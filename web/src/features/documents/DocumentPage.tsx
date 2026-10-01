@@ -72,6 +72,7 @@ export function DocumentPage() {
   const paymentMethods = useLoad(() => paymentMethodsApi.list(true), []);
   const [actionError, setActionError] = useState<string | null>(null);
   const [sendNotice, setSendNotice] = useState<string | null>(null);
+  const [sendForm, setSendForm] = useState<{ to: string; cc: string } | null>(null);
   const [consentRequired, setConsentRequired] = useState<{ clientId: number; clientName: string } | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -106,13 +107,31 @@ export function DocumentPage() {
     }
   }
 
+  /** Opens the send form, prefilled with the client's email and the default copies. */
+  async function openSendForm() {
+    setActionError(null);
+    setSendNotice(null);
+    try {
+      const defaults = await sendingApi.sendDefaults(id);
+      setSendForm({ to: defaults.to ?? '', cc: defaults.cc.join(', ') });
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : String(e));
+    }
+  }
+
   async function sendEmail() {
+    if (!sendForm) return;
     setBusy(true);
     setActionError(null);
     setSendNotice(null);
     setConsentRequired(null);
     try {
-      await sendingApi.sendEmail(id);
+      const cc = sendForm.cc
+        .split(/[\s,;]+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+      await sendingApi.sendEmail(id, { to: sendForm.to.trim() || null, cc });
+      setSendForm(null);
       setSendNotice(t('documents.page.sentByEmailNotice'));
       setData(await docsApi.get(id));
     } catch (e) {
@@ -291,6 +310,37 @@ export function DocumentPage() {
               </ul>
             )}
             {sendNotice && <p className="mt-2 text-sm text-brand">{sendNotice}</p>}
+            {sendForm && (
+              <form
+                className="mt-3 grid gap-2 rounded-md border border-line bg-surface p-3 md:grid-cols-[1fr_1fr_auto_auto]"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void sendEmail();
+                }}
+              >
+                <label className="block">
+                  <span className={label}>{t('documents.page.sendTo')}</span>
+                  <input type="email" dir="ltr" required className={input} value={sendForm.to} onChange={(e) => setSendForm({ ...sendForm, to: e.target.value })} />
+                </label>
+                <label className="block">
+                  <span className={label}>{t('documents.page.sendCc')}</span>
+                  <input
+                    dir="ltr"
+                    className={input}
+                    value={sendForm.cc}
+                    placeholder={t('documents.page.sendCcPlaceholder')}
+                    onChange={(e) => setSendForm({ ...sendForm, cc: e.target.value })}
+                  />
+                </label>
+                <button type="submit" className={`${btnPrimary} self-end`} disabled={busy}>
+                  {t('documents.page.sendNow')}
+                </button>
+                <button type="button" className={`${btnSecondary} self-end`} disabled={busy} onClick={() => setSendForm(null)}>
+                  {t('documents.page.sendCancel')}
+                </button>
+                <p className="text-xs text-muted md:col-span-4">{t('documents.page.sendCcHint')}</p>
+              </form>
+            )}
             {consentRequired && (
               <div className="mt-3 rounded-md border border-line bg-surface p-3 text-sm">
                 <p>{t('documents.page.consentRequiredNotice', { clientName: consentRequired.clientName })}</p>
@@ -318,7 +368,7 @@ export function DocumentPage() {
                 <button type="button" className={btnSecondary} disabled={busy} onClick={() => void downloadCopy('filed')}>
                   {t('documents.page.downloadFiledCopy')}
                 </button>
-                <button type="button" className={btnSecondary} disabled={busy} onClick={() => void sendEmail()}>
+                <button type="button" className={btnSecondary} disabled={busy} onClick={() => void openSendForm()}>
                   {t('documents.page.sendByEmail')}
                 </button>
                 <button type="button" className={btnSecondary} disabled={busy} onClick={() => void whatsappLink()}>
@@ -356,7 +406,7 @@ export function DocumentPage() {
                 currency={d.currency}
                 busy={busy}
                 methods={paymentMethods.data?.paymentMethods ?? []}
-                onSubmit={(payment) => act(() => docsApi.recordPayment(id, { payments: [payment] }), true)}
+                onSubmit={({ overrideRate, ...payment }) => act(() => docsApi.recordPayment(id, { payments: [payment], overrideRate }), true)}
               />
             )}
           </Step>
@@ -533,6 +583,7 @@ function RecordPayment({
     bankNumber: string | null;
     branchNumber: string | null;
     accountNumber: string | null;
+    overrideRate: string | null;
   }) => void;
 }) {
   const t = useT();
@@ -543,6 +594,8 @@ function RecordPayment({
   const [reference, setReference] = useState('');
   const [crossed, setCrossed] = useState(false);
   const [bank, setBank] = useState({ bankNumber: '', branchNumber: '', accountNumber: '' });
+  const [rate, setRate] = useState('');
+  const foreign = currency !== 'ILS';
   const [error, setError] = useState<string | null>(null);
   const isCheque = methodId !== null ? methods.find((m) => m.id === methodId)?.type === 'cheque' : method === 'cheque';
   return (
@@ -563,6 +616,7 @@ function RecordPayment({
           bankNumber: isCheque ? bank.bankNumber || null : null,
           branchNumber: isCheque ? bank.branchNumber || null : null,
           accountNumber: isCheque ? bank.accountNumber || null : null,
+          overrideRate: foreign && rate.trim() ? rate.trim() : null,
         });
       }}
     >
@@ -615,6 +669,20 @@ function RecordPayment({
         </label>
       )}
       {isCheque && <ChequeBankFields index={1} value={bank} onChange={(patch) => setBank({ ...bank, ...patch })} />}
+      {foreign && (
+        <label className="block md:col-span-2">
+          <span className={label}>{t('documents.page.receiptRateLabel', { currency })}</span>
+          <input
+            aria-label={t('documents.page.receiptRateLabel', { currency })}
+            inputMode="decimal"
+            dir="ltr"
+            className={input}
+            value={rate}
+            placeholder={t('documents.page.receiptRatePlaceholder')}
+            onChange={(e) => setRate(e.target.value)}
+          />
+        </label>
+      )}
       <p className="text-xs text-muted md:col-span-5">{t('documents.page.recordPaymentHint')}</p>
       <ErrorNote error={error} />
     </form>

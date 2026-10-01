@@ -4,6 +4,14 @@
  */
 export const settings = {
   'settings.tabs.issuing': 'Issuing',
+  'settings.tabs.email': 'Email',
+  'settings.email.title': 'Copies of outgoing documents',
+  'settings.email.hint': 'These addresses get a copy (CC) of every document the Ledger emails, together with the copies set on each client. You can change the list on the send form for one send.',
+  'settings.email.ccLabel': 'CC on every document email',
+  'settings.email.save': 'Save',
+  'settings.email.saved': 'Copy list saved.',
+  'settings.email.saveError': 'Could not save the copy list.',
+  'settings.email.loadError': 'Could not load the email settings.',
   'settings.issuing.title': 'Issue documents in the Ledger',
   'settings.issuing.stateOn': 'On. You create, issue and send documents here.',
   'settings.issuing.stateOff': 'Off. Documents come from the system you issue them in.',
