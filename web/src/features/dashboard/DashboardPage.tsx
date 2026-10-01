@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode, useEffect, useRef, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, ComposedChart, LabelList, Legend, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import {
   type AgingBucket,
@@ -9,11 +9,14 @@ import {
   type DashboardQuery,
   DEFAULT_LAYOUT,
   type LayoutEntry,
+  type OpenItem,
+  type OpenItem,
   type PeriodCard,
   type Range,
   fetchDashboard,
 } from '../../api/dashboard';
 import { usePreferences } from '../../app/preferences';
+import { receiptForImported } from '../documents/ImportedDocuments';
 import { CeilingMeter } from '../../components/CeilingMeter';
 import { EmptyState } from '../../components/EmptyState';
 import { MoneyCell } from '../../components/MoneyCell';
@@ -164,9 +167,46 @@ function useAxis() {
 // Cards
 // ---------------------------------------------------------------------------
 
+/**
+ * The row action, the same as on a client's Documents tab: an imported document gets Create receipt
+ * (or opens the receipt already linked to it), a Ledger document links to its page to record payment.
+ */
+function OpenItemAction({ item }: { item: OpenItem }) {
+  const t = useT();
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  if (!item.imported) {
+    return (
+      <Link to={`/income/documents/${item.documentId}`} className="whitespace-nowrap text-sm font-semibold text-accent-2 hover:underline">
+        {t('documents.list.actionRecordPayment')}
+      </Link>
+    );
+  }
+  const create = () => {
+    setBusy(true);
+    setError(null);
+    receiptForImported(item.documentId)
+      .then((id) => navigate(`/income/documents/${id}`))
+      .catch((e) => {
+        setError(e instanceof Error ? e.message : String(e));
+        setBusy(false);
+      });
+  };
+  return (
+    <span className="whitespace-nowrap">
+      <button type="button" disabled={busy} onClick={create} className="text-sm font-semibold text-accent-2 hover:underline disabled:opacity-50">
+        {t('documents.imported.createReceipt')}
+      </button>
+      {error && <span className="block text-xs text-danger">{error}</span>}
+    </span>
+  );
+}
+
 function OverdueCard({ data }: { data: NonNullable<DashboardData['cards']['overdue']> }) {
   const t = useT();
   const { locale } = usePreferences();
+  const issuing = useIssuing();
   if (data.items.length === 0) return <EmptyState title={t('dashboard.nothingOverdue')} description={t('dash.overdue.emptyDescription')} />;
   const shown = data.items.slice(0, 8);
   return (
@@ -216,6 +256,7 @@ function OverdueCard({ data }: { data: NonNullable<DashboardData['cards']['overd
             render: (i) => (i.daysOverdue > 0 ? t('dash.daysOverdue', { days: i.daysOverdue }) : t('dash.notDueYet')),
           },
           { key: 'amount', header: t('dash.col.open'), numeric: true, render: (i) => <MoneyCell amountMinor={i.remainingMinor} currency={i.currency} ilsMinor={i.ilsMinor} /> },
+          ...(issuing ? [{ key: 'action', header: '', numeric: true, render: (i: OpenItem) => <OpenItemAction item={i} /> }] : []),
         ]}
       />
       {data.items.length > shown.length && <p className="mt-2 text-xs text-muted">{t('dash.moreItems', { count: data.items.length - shown.length })}</p>}

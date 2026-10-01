@@ -222,6 +222,40 @@ function EditRow({ doc, clients, services, onDone }: { doc: ImportedDocument; cl
  * Their fields can be corrected, and an unpaid pro forma or payment request can be paid with a
  * receipt issued here.
  */
+/**
+ * Opens a receipt draft for an imported document's client and total, linked to it, and returns its
+ * id. A חשבונית מס/קבלה once 320 is enabled, otherwise a receipt. A receipt's amount is the sum of its
+ * payments, so the draft starts with one payment of the imported document's full total, dated today.
+ * A foreign-currency receipt also starts with the imported document's own rate and its date, so the
+ * shekel amount matches it. Edit any of these before issuing.
+ */
+export async function createReceiptFromImported(d: ImportedDocument): Promise<number> {
+  const { types } = await docsApi.types();
+  const type = types.find((ty) => ty.code === '320' && ty.enabled) ? '320' : '400';
+  const draft = await docsApi.create({
+    type,
+    clientId: d.client_id,
+    currency: d.currency,
+    lines: [{ description: `${d.doc_type} ${d.original_number}`, unitPriceMinor: d.total_minor, quantityMilli: 1000 }],
+    payments: [{ method: 'bank_transfer', paidOn: todayLocal(), amountMinor: d.total_minor }],
+    ...(d.currency !== 'ILS' && d.fx_rate ? { overrideRate: d.fx_rate, overrideRateDate: d.fx_rate_date } : {}),
+  } as never);
+  await apiSend('POST', `/import/external-documents/${d.id}/receipts`, { documentId: draft.document.id });
+  return draft.document.id;
+}
+
+/**
+ * The receipt for an imported document by id: the one already linked to it (a draft or issued), or a
+ * new draft made the same way as Create receipt on the client's Documents tab.
+ */
+export async function receiptForImported(id: number): Promise<number> {
+  const { documents } = await apiGet<{ documents: ImportedDocument[] }>('/import/external-documents');
+  const d = documents.find((x) => x.id === id);
+  if (!d) throw new Error('Imported document not found.');
+  if (d.receipt_json) return (JSON.parse(d.receipt_json) as LinkedReceipt).id;
+  return createReceiptFromImported(d);
+}
+
 type ImportedSortKey = 'date' | 'number' | 'client' | 'amount' | 'paid';
 
 export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[]; clientId?: number }) {
@@ -271,22 +305,7 @@ export function ImportedDocuments({ kinds, clientId }: { kinds?: ImportedKind[];
   async function createReceipt(d: ImportedDocument) {
     setActionError(null);
     try {
-      const { types } = await docsApi.types();
-      const type = types.find((ty) => ty.code === '320' && ty.enabled) ? '320' : '400';
-      // A receipt's amount is the sum of its payments, so the draft starts with one payment of the
-      // imported document's full total, dated today. A foreign-currency receipt also starts with the
-      // imported document's own rate and its date, so the shekel amount matches it. Edit any of these
-      // before issuing.
-      const draft = await docsApi.create({
-        type,
-        clientId: d.client_id,
-        currency: d.currency,
-        lines: [{ description: `${d.doc_type} ${d.original_number}`, unitPriceMinor: d.total_minor, quantityMilli: 1000 }],
-        payments: [{ method: 'bank_transfer', paidOn: todayLocal(), amountMinor: d.total_minor }],
-        ...(d.currency !== 'ILS' && d.fx_rate ? { overrideRate: d.fx_rate, overrideRateDate: d.fx_rate_date } : {}),
-      } as never);
-      await apiSend('POST', `/import/external-documents/${d.id}/receipts`, { documentId: draft.document.id });
-      navigate(`/income/documents/${draft.document.id}`);
+      navigate(`/income/documents/${await createReceiptFromImported(d)}`);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : String(err));
     }
