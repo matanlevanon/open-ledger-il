@@ -65,7 +65,7 @@ export async function businessDisplayName(db: D1Database): Promise<string> {
   return row?.name_en?.trim() || 'The sender';
 }
 
-/** Addresses copied on every document email, comma separated. Empty when none. */
+/** Addresses blind-copied (BCC) on every document email, comma separated. Empty when none. The key keeps its first name. */
 export async function ccSetting(db: D1Database): Promise<string> {
   return (await setting(db, 'sending.cc_emails')) ?? '';
 }

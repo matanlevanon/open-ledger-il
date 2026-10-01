@@ -133,17 +133,19 @@ describe('copies (CC) on document emails', () => {
     return clientId;
   }
 
-  it('copies the account list and the client list by default, without repeats or the To address', async () => {
+  it('copies the client list as CC and blind-copies the account list, without repeats or the To address', async () => {
     await setCcSetting(db(), 'me@mtn.test, Shared@Client.test');
     const clientId = await readyClient('client@client.test', 'shared@client.test, cfo@client.test, client@client.test');
     const docId = await finalizedPaymentRequest(clientId);
     const d = deps();
 
-    expect(await sendDefaults(db(), docId)).toEqual({ to: 'client@client.test', cc: ['me@mtn.test', 'Shared@Client.test', 'cfo@client.test'] });
+    expect(await sendDefaults(db(), docId)).toEqual({ to: 'client@client.test', cc: ['shared@client.test', 'cfo@client.test'], bcc: ['me@mtn.test'] });
     await sendDocumentEmail(d, { documentId: docId, actor });
-    expect((d.mailer as FakeMailer).sent[0]!.cc).toEqual(['me@mtn.test', 'Shared@Client.test', 'cfo@client.test']);
-    const row = await db().prepare('SELECT cc_addresses FROM send_log WHERE document_id = ?').bind(docId).first<{ cc_addresses: string }>();
-    expect(row!.cc_addresses).toBe('me@mtn.test, Shared@Client.test, cfo@client.test');
+    expect((d.mailer as FakeMailer).sent[0]!.cc).toEqual(['shared@client.test', 'cfo@client.test']);
+    expect((d.mailer as FakeMailer).sent[0]!.bcc).toEqual(['me@mtn.test']);
+    const row = await db().prepare('SELECT cc_addresses, bcc_addresses FROM send_log WHERE document_id = ?').bind(docId).first<{ cc_addresses: string; bcc_addresses: string }>();
+    expect(row!.cc_addresses).toBe('shared@client.test, cfo@client.test');
+    expect(row!.bcc_addresses).toBe('me@mtn.test');
     await setCcSetting(db(), null);
   });
 
@@ -157,6 +159,7 @@ describe('copies (CC) on document emails', () => {
     await sendDocumentEmail(d, { documentId: second, actor, cc: [] });
     const sent = (d.mailer as FakeMailer).sent;
     expect(sent[0]!.cc).toEqual(['only@mtn.test']);
+    expect(sent[0]!.bcc).toEqual(['me@mtn.test']);
     expect(sent[1]!.cc).toEqual([]);
     await setCcSetting(db(), null);
   });

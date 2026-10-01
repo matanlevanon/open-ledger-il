@@ -10,6 +10,8 @@ export interface OutboundEmail {
   to: string;
   /** Copies. Omitted from the provider call when empty. */
   cc?: string[];
+  /** Blind copies. Omitted from the provider call when empty. */
+  bcc?: string[];
   subject: string;
   html: string;
   text: string;
@@ -49,6 +51,7 @@ export class ResendMailer implements Mailer {
         from: this.from,
         to: [email.to],
         ...(email.cc && email.cc.length > 0 ? { cc: email.cc } : {}),
+        ...(email.bcc && email.bcc.length > 0 ? { bcc: email.bcc } : {}),
         subject: email.subject,
         html: email.html,
         text: email.text,

@@ -42,29 +42,32 @@ export interface SendEmailInput {
    * Settings > Email plus the client's own copy list.
    */
   cc?: string[] | null;
+  /** Blind copies for this send. Given (even empty): exactly these. Omitted: the account list in Settings > Email. */
+  bcc?: string[] | null;
   message?: string | null;
 }
 
 /** The To and CC a send would use by default, to prefill the send form. */
-export async function sendDefaults(db: D1Database, documentId: number): Promise<{ to: string | null; cc: string[] }> {
+export async function sendDefaults(db: D1Database, documentId: number): Promise<{ to: string | null; cc: string[]; bcc: string[] }> {
   const doc = await getDoc(db, documentId);
   const client =
     doc.client_id === null ? null : await first<{ email: string | null; cc_emails: string | null }>(db, 'SELECT email, cc_emails FROM clients WHERE id = ?', doc.client_id);
   const to = client?.email ?? null;
-  const cc = finalCc(to ?? '', splitCc(await ccSetting(db)), splitCc(client?.cc_emails));
-  return { to, cc };
+  const cc = finalCc(to ?? '', splitCc(client?.cc_emails));
+  const bcc = finalCc(to ?? '', splitCc(await ccSetting(db))).filter((a) => !cc.some((c) => c.toLowerCase() === a.toLowerCase()));
+  return { to, cc, bcc };
 }
 
 export type SendEmailResult = { status: 'sent'; messageId: string | null };
 
-async function recordSentEvent(db: D1Database, documentId: number, channel: string, to: string | null, actor: SendActor, cc: string[] = []): Promise<void> {
+async function recordSentEvent(db: D1Database, documentId: number, channel: string, to: string | null, actor: SendActor, cc: string[] = [], bcc: string[] = []): Promise<void> {
   await run(
     db,
     `INSERT INTO document_events (document_id, kind, user_id, user_email, details) VALUES (?, 'sent', ?, ?, ?)`,
     documentId,
     actor.userId,
     actor.email,
-    JSON.stringify(cc.length > 0 ? { channel, to, cc } : { channel, to }),
+    JSON.stringify({ channel, to, ...(cc.length > 0 ? { cc } : {}), ...(bcc.length > 0 ? { bcc } : {}) }),
   );
 }
 
@@ -110,7 +113,11 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
   );
   const to = input.to ?? client?.email ?? null;
   if (!to) throw new ValidationError('This client has no email address on file. Provide one.');
-  const cc = input.cc != null ? finalCc(to, input.cc) : finalCc(to, splitCc(await ccSetting(db)), splitCc(client?.cc_emails));
+  // CC: the client's copy list. BCC: the account list in Settings > Email, so the client never sees it.
+  const cc = input.cc != null ? finalCc(to, input.cc) : finalCc(to, splitCc(client?.cc_emails));
+  const bcc = (input.bcc != null ? finalCc(to, input.bcc) : finalCc(to, splitCc(await ccSetting(db)))).filter(
+    (a) => !cc.some((c) => c.toLowerCase() === a.toLowerCase()),
+  );
 
   const engine = deps.engine ?? engineFor(env);
   const signing = await resolveSigningIdentity(db, env, { require: true });
@@ -130,6 +137,7 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
     const sent = await mailer.send({
       to,
       cc,
+      bcc,
       subject: number ? `${number} from ${businessName}` : `Your document from ${businessName}`,
       html: documentEmailHtml(clientName, number, links, input.message ?? null, businessName),
       text: documentEmailText(clientName, number, links, input.message ?? null, businessName),
@@ -143,11 +151,12 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
 
   await run(
     db,
-    `INSERT INTO send_log (document_id, client_id, channel, to_address, cc_addresses, status, reason, provider_message_id) VALUES (?, ?, 'email', ?, ?, ?, ?, ?)`,
+    `INSERT INTO send_log (document_id, client_id, channel, to_address, cc_addresses, bcc_addresses, status, reason, provider_message_id) VALUES (?, ?, 'email', ?, ?, ?, ?, ?, ?)`,
     doc.id,
     doc.client_id,
     to,
     cc.length > 0 ? cc.join(', ') : null,
+    bcc.length > 0 ? bcc.join(', ') : null,
     status,
     reason,
     messageId,
@@ -155,6 +164,6 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
 
   if (status === 'failed') throw new Error(`Could not send the document: ${reason}`);
 
-  await recordSentEvent(db, doc.id, 'email', to, input.actor, cc);
+  await recordSentEvent(db, doc.id, 'email', to, input.actor, cc, bcc);
   return { status: 'sent', messageId };
 }

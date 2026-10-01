@@ -14,6 +14,7 @@ import type { Mailer } from './mailer';
 import { MAX_CC, ccListText } from './cc';
 import { businessDisplayName, ccSetting, paymentLinkSettings, reminderSettings, setCcSetting, setPaymentLinkSettings, setReminderSettings } from './settings';
 import { sendDefaults, sendDocumentEmail } from './send';
+import { shareDoc, sharePageHtml, verifyShareCode } from './share-page';
 import { verifySendToken } from './tokens';
 import { createWhatsAppLink } from './whatsapp';
 
@@ -38,6 +39,7 @@ function baseUrl(c: Context<AppEnv>): string {
 const sendEmailInput = z.object({
   to: z.string().trim().email().nullish(),
   cc: z.array(z.string().trim().email()).max(MAX_CC).nullish(),
+  bcc: z.array(z.string().trim().email()).max(MAX_CC).nullish(),
   message: z.string().trim().max(2000).nullish(),
 });
 const ccSettingInput = z.object({ cc: ccListText });
@@ -95,7 +97,7 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
     const user = c.get('user');
     const result = await sendDocumentEmail(
       { db: c.env.DB, files: c.env.FILES, env: c.env, mailer: resolveMailer(c.env), baseUrl: baseUrl(c) },
-      { documentId: id, actor: { userId: user.id, email: user.email }, to: input.to, cc: input.cc, message: input.message },
+      { documentId: id, actor: { userId: user.id, email: user.email }, to: input.to, cc: input.cc, bcc: input.bcc, message: input.message },
     );
     return c.json(result);
   });
@@ -198,6 +200,37 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
       return c.html(consentAcceptedPage(await businessDisplayName(c.env.DB)));
     },
   );
+
+  // The short WhatsApp link: a page with Open Graph tags for the chat preview, the PDF behind it,
+  // and the business logo the preview shows.
+  app.get('/public/d/:code', declareManualAuth('public link, code carries its own signature and expiry'), async (c) => {
+    const documentId = await verifyShareCode(c.env, c.req.param('code'));
+    const doc = await shareDoc(c.env.DB, documentId);
+    const origin = new URL(c.req.url).origin;
+    return c.html(sharePageHtml(doc, `${origin}/api/sending/public/d/${c.req.param('code')}`, origin));
+  });
+
+  app.get('/public/d/:code/pdf', declareManualAuth('public link, code carries its own signature and expiry'), async (c) => {
+    const documentId = await verifyShareCode(c.env, c.req.param('code'));
+    const doc = await shareDoc(c.env.DB, documentId);
+    const object = await c.env.FILES.get(doc.pdfKey);
+    if (!object) throw new NotFoundError('file', doc.pdfKey);
+    const headers = new Headers();
+    object.writeHttpMetadata(headers);
+    const name = `${doc.title.replace(/[^\w.-]+/g, '-')}.pdf`;
+    headers.set('content-disposition', `${c.req.query('download') ? 'attachment' : 'inline'}; filename="${name}"`);
+    return new Response(object.body, { headers });
+  });
+
+  app.get('/public/logo', declareManualAuth('public business logo for share link previews'), async (c) => {
+    const row = await first<{ logo_r2_key: string | null }>(c.env.DB, 'SELECT logo_r2_key FROM business_profile WHERE id = 1');
+    const object = row?.logo_r2_key ? await c.env.FILES.get(row.logo_r2_key) : null;
+    if (!object) throw new NotFoundError('logo');
+    const headers = new Headers();
+    object.writeHttpMetadata(headers);
+    headers.set('cache-control', 'public, max-age=3600');
+    return new Response(object.body, { headers });
+  });
 
   app.get('/public/share/:token', declareManualAuth('public link, token carries its own signature and expiry'), async (c) => {
     const payload = await verifySendToken(c.env, c.req.param('token'));

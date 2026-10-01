@@ -336,13 +336,13 @@ export const docsApi = {
 };
 
 export type SendEmailResult = { status: 'sent'; messageId: string | null };
-export type WhatsAppLinkResult = { status: 'ready'; url: string; waUrl: string | null; expiresAt: string };
+export type WhatsAppLinkResult = { status: 'ready'; url: string; message: string; waUrl: string | null; expiresAt: string };
 
 export const sendingApi = {
-  sendEmail: (id: number, body: { to?: string | null; cc?: string[] | null } = {}) =>
+  sendEmail: (id: number, body: { to?: string | null; cc?: string[] | null; bcc?: string[] | null } = {}) =>
     apiSend<SendEmailResult>('POST', `/sending/documents/${id}/send`, body),
   /** The To and CC a send would use: the client's email, the account CC list and the client's CC list. */
-  sendDefaults: (id: number) => apiGet<{ to: string | null; cc: string[] }>(`/sending/documents/${id}/send-defaults`),
+  sendDefaults: (id: number) => apiGet<{ to: string | null; cc: string[]; bcc: string[] }>(`/sending/documents/${id}/send-defaults`),
   settings: () => apiGet<{ cc: string }>('/sending/settings'),
   setCc: (cc: string) => apiSend<{ cc: string }>('PUT', '/sending/settings/cc', { cc }),
   whatsappLink: (id: number) => apiSend<WhatsAppLinkResult>('POST', `/sending/documents/${id}/whatsapp-link`, {}),

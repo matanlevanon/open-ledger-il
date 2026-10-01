@@ -6,7 +6,7 @@ import { getDoc } from '../documents/repo';
 import { BrowserRenderingPdfEngine, type PdfEngine, renderAndStore, resolveSigningIdentity } from '../pdf';
 import { isConsentGranted } from './consent';
 import type { Mailer } from './mailer';
-import { SHARE_LINK_TTL_SECONDS, expiresAt, signSendToken } from './tokens';
+import { shareDoc, signShareCode, whatsappMessage } from './share-page';
 import type { SendActor } from './send';
 
 function engineFor(env: Env): PdfEngine {
@@ -23,7 +23,7 @@ export interface WhatsAppLinkDeps {
   baseUrl: string;
 }
 
-export type WhatsAppLinkResult = { status: 'ready'; url: string; waUrl: string | null; expiresAt: string };
+export type WhatsAppLinkResult = { status: 'ready'; url: string; message: string; waUrl: string | null; expiresAt: string };
 
 /**
  * Builds a signed, 30-day link to the client-copy PDF for the owner to paste into WhatsApp
@@ -59,13 +59,15 @@ export async function createWhatsAppLink(deps: WhatsAppLinkDeps, documentId: num
   await renderAndStore(db, files, engine, doc.id, 'client', options, signing);
   await renderAndStore(db, files, engine, doc.id, 'filed', options, signing);
 
-  const exp = expiresAt(SHARE_LINK_TTL_SECONDS);
-  const token = await signSendToken(env, { kind: 'share', documentId: doc.id, variant: 'client', exp });
-  const url = `${baseUrl}/api/sending/public/share/${token}`;
+  // A short link to a page with a preview (logo, document title, amount), and a greeting before it.
+  const { code, exp } = await signShareCode(env, doc.id);
+  const url = `${baseUrl}/api/sending/public/d/${code}`;
+  const share = await shareDoc(db, doc.id);
 
-  const client = await first<{ phone: string | null }>(db, 'SELECT phone FROM clients WHERE id = ?', doc.client_id);
+  const client = await first<{ phone: string | null; client_copy_lang: string | null }>(db, 'SELECT phone, client_copy_lang FROM clients WHERE id = ?', doc.client_id);
+  const message = whatsappMessage(share, url, client?.client_copy_lang === 'bilingual');
   const phone = client?.phone ? client.phone.replace(/[^\d]/g, '') : null;
-  const waUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(url)}` : null;
+  const waUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}` : `https://wa.me/?text=${encodeURIComponent(message)}`;
 
   await run(
     db,
@@ -82,5 +84,5 @@ export async function createWhatsAppLink(deps: WhatsAppLinkDeps, documentId: num
     JSON.stringify({ channel: 'whatsapp' }),
   );
 
-  return { status: 'ready', url, waUrl, expiresAt: new Date(exp * 1000).toISOString() };
+  return { status: 'ready', url, message, waUrl, expiresAt: new Date(exp * 1000).toISOString() };
 }

@@ -72,7 +72,7 @@ export function DocumentPage() {
   const paymentMethods = useLoad(() => paymentMethodsApi.list(true), []);
   const [actionError, setActionError] = useState<string | null>(null);
   const [sendNotice, setSendNotice] = useState<string | null>(null);
-  const [sendForm, setSendForm] = useState<{ to: string; cc: string } | null>(null);
+  const [sendForm, setSendForm] = useState<{ to: string; cc: string; bcc: string } | null>(null);
   const [consentRequired, setConsentRequired] = useState<{ clientId: number; clientName: string } | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -116,7 +116,7 @@ export function DocumentPage() {
     setSendNotice(null);
     try {
       const defaults = await sendingApi.sendDefaults(id);
-      setSendForm({ to: defaults.to ?? '', cc: defaults.cc.join(', ') });
+      setSendForm({ to: defaults.to ?? '', cc: defaults.cc.join(', '), bcc: defaults.bcc.join(', ') });
     } catch (e) {
       setActionError(e instanceof Error ? e.message : String(e));
     }
@@ -129,11 +129,12 @@ export function DocumentPage() {
     setSendNotice(null);
     setConsentRequired(null);
     try {
-      const cc = sendForm.cc
-        .split(/[\s,;]+/)
-        .map((s) => s.trim())
-        .filter(Boolean);
-      await sendingApi.sendEmail(id, { to: sendForm.to.trim() || null, cc });
+      const list = (v: string) =>
+        v
+          .split(/[\s,;]+/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+      await sendingApi.sendEmail(id, { to: sendForm.to.trim() || null, cc: list(sendForm.cc), bcc: list(sendForm.bcc) });
       setSendForm(null);
       setSendNotice(t('documents.page.sentByEmailNotice'));
       setData(await docsApi.get(id));
@@ -330,7 +331,7 @@ export function DocumentPage() {
             )}
             {sendForm && (
               <form
-                className="mt-3 grid gap-2 rounded-md border border-line bg-surface p-3 md:grid-cols-[1fr_1fr_auto_auto]"
+                className="mt-3 grid gap-2 rounded-md border border-line bg-surface p-3 md:grid-cols-[1fr_1fr_1fr_auto_auto]"
                 onSubmit={(e) => {
                   e.preventDefault();
                   void sendEmail();
@@ -350,13 +351,17 @@ export function DocumentPage() {
                     onChange={(e) => setSendForm({ ...sendForm, cc: e.target.value })}
                   />
                 </label>
+                <label className="block">
+                  <span className={label}>{t('documents.page.sendBcc')}</span>
+                  <input dir="ltr" className={input} value={sendForm.bcc} onChange={(e) => setSendForm({ ...sendForm, bcc: e.target.value })} />
+                </label>
                 <button type="submit" className={`${btnPrimary} self-end`} disabled={busy}>
                   {t('documents.page.sendNow')}
                 </button>
                 <button type="button" className={`${btnSecondary} self-end`} disabled={busy} onClick={() => setSendForm(null)}>
                   {t('documents.page.sendCancel')}
                 </button>
-                <p className="text-xs text-muted md:col-span-4">{t('documents.page.sendCcHint')}</p>
+                <p className="text-xs text-muted md:col-span-5">{t('documents.page.sendCcHint')}</p>
               </form>
             )}
             {consentRequired && (

@@ -248,7 +248,20 @@ function OverdueCard({ data }: { data: NonNullable<DashboardData['cards']['overd
               );
             },
           },
-          { key: 'client', header: t('dash.col.client'), render: (i) => (locale === 'he' ? i.clientNameHe : i.clientNameEn) || t('dash.noClient') },
+          {
+            key: 'client',
+            header: t('dash.col.client'),
+            render: (i) => {
+              const name = (locale === 'he' ? i.clientNameHe : i.clientNameEn) || t('dash.noClient');
+              return i.clientId ? (
+                <Link to={`/clients/${i.clientId}`} className="text-accent-2 hover:underline" dir="auto">
+                  {name}
+                </Link>
+              ) : (
+                name
+              );
+            },
+          },
           {
             key: 'age',
             header: t('dash.col.age'),
