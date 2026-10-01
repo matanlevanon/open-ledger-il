@@ -183,7 +183,7 @@ function totalsHtml(doc: RenderDocument, t: Record<string, string>): string {
   // invoice", so both stay even though the SUMIT reference only shows the rate.
   const rateRow =
     doc.totalIlsMinor !== null && doc.fxRate
-      ? `<tr><td>${esc(t.documentExchangeRate)}</td><td class="numeric">$1&nbsp;&nbsp;=&nbsp;&nbsp;${doc.fxRate.replace(/0+$/, '').replace(/\.$/, '')}₪${doc.fxRateDate ? ` (${formatDate(doc.fxRateDate)})` : ''}</td></tr>`
+      ? `<tr><td>${esc(t.documentExchangeRate)}</td><td class="numeric">${esc(currencySymbol(doc.currency))}1&nbsp;&nbsp;=&nbsp;&nbsp;${doc.fxRate.replace(/0+$/, '').replace(/\.$/, '')}₪${doc.fxRateDate ? ` (${formatDate(doc.fxRateDate)})` : ''}</td></tr>`
       : '';
   return `
 <table class="totals">
@@ -385,7 +385,7 @@ function bilingualTotalsHtml(doc: RenderDocument): string {
   // LABELS.he.documentExchangeRate ("שער חליפין למסמך") used in the single-language sections.
   const rateRow =
     doc.totalIlsMinor !== null && doc.fxRate
-      ? `<tr><td>${blText(LABELS.en.documentExchangeRate ?? '', 'שער חליפין')}</td><td class="numeric">$1&nbsp;&nbsp;=&nbsp;&nbsp;${doc.fxRate.replace(/0+$/, '').replace(/\.$/, '')}₪${doc.fxRateDate ? ` (${formatDate(doc.fxRateDate)})` : ''}</td></tr>`
+      ? `<tr><td>${blText(LABELS.en.documentExchangeRate ?? '', 'שער חליפין')}</td><td class="numeric">${esc(currencySymbol(doc.currency))}1&nbsp;&nbsp;=&nbsp;&nbsp;${doc.fxRate.replace(/0+$/, '').replace(/\.$/, '')}₪${doc.fxRateDate ? ` (${formatDate(doc.fxRateDate)})` : ''}</td></tr>`
       : '';
   return `
 <table class="totals">
