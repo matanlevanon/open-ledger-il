@@ -57,6 +57,9 @@ body {
 table.items { width: 100%; border-collapse: collapse; margin-top: 5mm; font-size: 9.5pt; }
 table.items th, table.items td { padding: 2.5mm 2.5mm; border-bottom: 1px solid #eceff3; vertical-align: top; }
 table.items th { text-align: inherit; font-weight: 700; color: #374151; }
+/* Totals under their columns (foreign under foreign, shekels under shekels) when shekels show. */
+table.items tfoot td { border-bottom: none; padding-top: 1.5mm; padding-bottom: 1.5mm; }
+table.items tfoot tr.grand td { padding-top: 3mm; vertical-align: baseline; }
 /* R18 task 4: the line's optional description, below the item name inside the same cell. */
 .line-detail { margin-top: 0.5mm; font-size: 8.5pt; color: #6b7280; font-weight: 400; }
 .numeric { text-align: right; }

@@ -154,7 +154,7 @@ function itemsHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>): 
       ${showIls ? `<th class="numeric">${esc(t.total)} (₪)</th>` : ''}
     </tr>
   </thead>
-  <tbody>${rows}</tbody>
+  <tbody>${rows}</tbody>${itemsTotalsFootHtml(doc, { subtotal: esc(t.subtotal), vat: doc.vatRateBp !== null ? `${esc(t.vat)} (${formatVatRate(doc.vatRateBp)})` : '', total: esc(t.total) })}
 </table>`;
 }
 
@@ -162,6 +162,31 @@ function itemsHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>): 
 function convertLineToIls(doc: RenderDocument, lineTotalMinor: number): number {
   if (doc.totalIlsMinor === null || doc.totalMinor === 0) return 0;
   return Math.round((lineTotalMinor * doc.totalIlsMinor) / doc.totalMinor);
+}
+
+/**
+ * When the document shows shekels, its totals sit inside the items table, each amount under its own
+ * column: the foreign total under "Total (€)", the shekel total under "Total (₪)" (the layout of the
+ * SUMIT reference documents). The shekel subtotal and VAT are the document's ILS total split in the
+ * same ratio, display only; the shekel total is the document's own.
+ */
+function itemsTotalsFootHtml(doc: RenderDocument, labels: { subtotal: string; vat: string; total: string }): string {
+  if (doc.totalIlsMinor === null) return '';
+  const symbol = currencySymbol(doc.currency);
+  const ilsSubtotal = convertLineToIls(doc, doc.subtotalMinor);
+  const row = (label: string, foreign: number, ils: number) =>
+    `<tr><td colspan="3">${label}</td><td class="numeric">${symbol} ${formatAmount(foreign, doc.currency)}</td><td class="numeric">₪ ${formatAmount(ils, 'ILS')}</td></tr>`;
+  const vatRow = doc.vatRateBp !== null ? row(labels.vat, doc.vatAmountMinor, doc.totalIlsMinor - ilsSubtotal) : '';
+  return `
+  <tfoot>
+    ${row(labels.subtotal, doc.subtotalMinor, ilsSubtotal)}
+    ${vatRow}
+    <tr class="grand">
+      <td colspan="3">${labels.total}</td>
+      <td class="numeric"><span class="grand-amount">${formatAmount(doc.totalMinor, doc.currency)}</span> <span class="grand-ccy">${symbol}</span></td>
+      <td class="numeric"><span class="grand-amount">${formatAmount(doc.totalIlsMinor, 'ILS')}</span> <span class="grand-ccy">₪</span></td>
+    </tr>
+  </tfoot>`;
 }
 
 function totalsHtml(doc: RenderDocument, t: Record<string, string>): string {
@@ -185,6 +210,8 @@ function totalsHtml(doc: RenderDocument, t: Record<string, string>): string {
     doc.totalIlsMinor !== null && doc.fxRate
       ? `<tr><td>${esc(t.documentExchangeRate)}</td><td class="numeric">${esc(currencySymbol(doc.currency))}1&nbsp;&nbsp;=&nbsp;&nbsp;${doc.fxRate.replace(/0+$/, '').replace(/\.$/, '')}₪${doc.fxRateDate ? ` (${formatDate(doc.fxRateDate)})` : ''}</td></tr>`
       : '';
+  // With shekels shown, subtotal, VAT and both totals already sit under their columns in the items table.
+  if (doc.totalIlsMinor !== null) return rateRow ? `<table class="totals">${rateRow}</table>` : '';
   return `
 <table class="totals">
   <tr><td>${esc(t.subtotal)}</td><td class="numeric">${symbol} ${formatAmount(doc.subtotalMinor, doc.currency)}</td></tr>
@@ -362,7 +389,11 @@ function bilingualItemsHtml(doc: RenderDocument): string {
       ${showIls ? `<th class="numeric">${blText(`${LABELS.en.total} (₪)`, LABELS.he.total ?? '')}</th>` : ''}
     </tr>
   </thead>
-  <tbody>${rows}</tbody>
+  <tbody>${rows}</tbody>${itemsTotalsFootHtml(doc, {
+    subtotal: bl('subtotal'),
+    vat: doc.vatRateBp !== null ? blText(`${LABELS.en.vat} (${formatVatRate(doc.vatRateBp)})`, LABELS.he.vat ?? '') : '',
+    total: bl('total'),
+  })}
 </table>`;
 }
 
@@ -387,6 +418,7 @@ function bilingualTotalsHtml(doc: RenderDocument): string {
     doc.totalIlsMinor !== null && doc.fxRate
       ? `<tr><td>${blText(LABELS.en.documentExchangeRate ?? '', 'שער חליפין')}</td><td class="numeric">${esc(currencySymbol(doc.currency))}1&nbsp;&nbsp;=&nbsp;&nbsp;${doc.fxRate.replace(/0+$/, '').replace(/\.$/, '')}₪${doc.fxRateDate ? ` (${formatDate(doc.fxRateDate)})` : ''}</td></tr>`
       : '';
+  if (doc.totalIlsMinor !== null) return rateRow ? `<table class="totals">${rateRow}</table>` : '';
   return `
 <table class="totals">
   <tr><td>${bl('subtotal')}</td><td class="numeric">${symbol} ${formatAmount(doc.subtotalMinor, doc.currency)}</td></tr>
