@@ -9,7 +9,34 @@ import type { AppEnv, Env } from '../../env';
 import { type DocumentsModuleOptions, buildDocumentsServices } from '../documents';
 import type { Ctx } from '../documents/service';
 import { ResendMailer, sendDocumentEmail } from '../sending';
-import { FREQUENCIES, type SendFn, approveRun, createSchedule, listRuns, listSchedules, runDue, skipRun, updateSchedule } from './service';
+import { slackNotifier } from '../ita/notify';
+import { FREQUENCIES, type PendingNotifier, type SendFn, approveRun, createSchedule, listRuns, listSchedules, runDue, skipRun, updateSchedule } from './service';
+
+/**
+ * Posts to Slack (SLACK_WEBHOOK_URL) when a recurring copy waits for approval: what it is, for whom,
+ * how much, and a link to the Approvals page. No webhook set: nothing is sent.
+ */
+function pendingSlack(env: Env, baseUrl: string): PendingNotifier {
+  const slack = slackNotifier(env.SLACK_WEBHOOK_URL, (input, init) => fetch(input, init));
+  return async ({ documentId, scheduleName }) => {
+    const doc = await first<{ type_name: string; client_name: string | null; total_minor: number; currency: string; due_date: string | null }>(
+      env.DB,
+      `SELECT dt.name_en AS type_name, COALESCE(NULLIF(c.name_en, ''), c.name_he) AS client_name, d.total_minor, d.currency, d.due_date
+       FROM documents d JOIN document_types dt ON dt.code = d.type LEFT JOIN clients c ON c.id = d.client_id WHERE d.id = ?`,
+      documentId,
+    );
+    if (!doc) return;
+    let amount = `${(doc.total_minor / 100).toFixed(2)} ${doc.currency}`;
+    try {
+      amount = new Intl.NumberFormat('en-US', { style: 'currency', currency: doc.currency }).format(doc.total_minor / 100);
+    } catch {
+      // keep the plain form
+    }
+    const parts = [`${doc.type_name}${doc.client_name ? ` for ${doc.client_name}` : ''}`, amount, doc.due_date ? `due ${doc.due_date}` : null].filter(Boolean);
+    const link = baseUrl ? `${baseUrl}/income/approvals` : '/income/approvals';
+    await slack.send(`:hourglass: Recurring document waiting for your approval${scheduleName ? ` (${scheduleName})` : ''}: ${parts.join(', ')}. Approve or skip: ${link}`);
+  };
+}
 
 /** Daily, with the payment reminders: a copy made in the morning is in the client's inbox with them. */
 export const RECURRING_CRON = '0 7 * * *';
@@ -36,6 +63,8 @@ const createInput = z.object({
   endDate: dateString.nullable().optional(),
   mode: z.enum(['approve', 'auto']).default('approve'),
   sendEmail: z.boolean().default(true),
+  /** Payment terms: each copy is due this many days after it is issued. */
+  dueDays: z.number().int().min(0).max(365).nullable().optional(),
 });
 const patchInput = z.object({
   name: z.string().max(200).nullable().optional(),
@@ -45,6 +74,7 @@ const patchInput = z.object({
   mode: z.enum(['approve', 'auto']).optional(),
   sendEmail: z.boolean().optional(),
   active: z.boolean().optional(),
+  dueDays: z.number().int().min(0).max(365).nullable().optional(),
 });
 
 async function body(c: Context<AppEnv>): Promise<unknown> {
@@ -101,7 +131,7 @@ export function createRecurringModule(options: RecurringModuleOptions = {}): Mod
 
   /** Runs every schedule that is due today, now, instead of waiting for the morning run. */
   r.post('/run-due', requireFeature('issue_documents'), async (c) => {
-    const result = await runDue(ctx(c), send(c));
+    const result = await runDue(ctx(c), send(c), pendingSlack(c.env, c.env.PUBLIC_APP_URL || new URL(c.req.url).origin));
     return c.json({ ...result, ...(await state(c)) });
   });
 
@@ -124,7 +154,7 @@ export function createRecurringModule(options: RecurringModuleOptions = {}): Mod
       if (controller.cron !== RECURRING_CRON) return;
       const c = await cronCtx(env, options);
       if (!c) return;
-      await runDue(c, sendFor(env, env.PUBLIC_APP_URL ?? ''));
+      await runDue(c, sendFor(env, env.PUBLIC_APP_URL ?? ''), pendingSlack(env, env.PUBLIC_APP_URL ?? ''));
     },
   };
 }

@@ -29,6 +29,7 @@ interface Schedule {
   mode: Mode;
   send_email: number;
   active: number;
+  due_days: number | null;
 }
 
 interface Run {
@@ -53,8 +54,8 @@ interface RecurringState {
 }
 
 const FREQUENCIES: Frequency[] = ['weekly', 'monthly', 'quarterly', 'yearly'];
-/** Documents that ask for money repeat: payment requests, pro formas, tax invoices. */
-const TEMPLATE_TYPES = 'PR,300,305';
+/** Documents that ask for money repeat: payment requests, pro formas, transaction and tax invoices. */
+const TEMPLATE_TYPES = 'PR,PF,300,305';
 
 const STATUS_KEY: Record<Run['status'], MessageKey> = {
   pending_approval: 'recurring.status.pending',
@@ -77,6 +78,7 @@ function NewSchedule({ onCreated }: { onCreated: (s: RecurringState) => void }) 
     endDate: '',
     mode: 'approve' as Mode,
     sendEmail: true,
+    dueDays: '',
   });
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -92,9 +94,14 @@ function NewSchedule({ onCreated }: { onCreated: (s: RecurringState) => void }) 
     setBusy(true);
     setError(null);
     try {
-      const next = await apiSend<RecurringState>('POST', '/recurring', { ...form, endDate: form.endDate || null, name: form.name || null });
+      const next = await apiSend<RecurringState>('POST', '/recurring', {
+        ...form,
+        endDate: form.endDate || null,
+        name: form.name || null,
+        dueDays: form.dueDays.trim() === '' ? null : Number(form.dueDays),
+      });
       onCreated(next);
-      setForm((f) => ({ ...f, templateDocumentId: 0, name: '', endDate: '' }));
+      setForm((f) => ({ ...f, templateDocumentId: 0, name: '', endDate: '', dueDays: '' }));
     } catch (e) {
       setError(errorText(e, t));
     } finally {
@@ -143,6 +150,17 @@ function NewSchedule({ onCreated }: { onCreated: (s: RecurringState) => void }) 
           <span className={label}>{t('recurring.field.endDate')}</span>
           <input type="date" dir="ltr" className={input} value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
         </label>
+        <label>
+          <span className={label}>{t('recurring.field.dueDays')}</span>
+          <input
+            inputMode="numeric"
+            dir="ltr"
+            className={input}
+            value={form.dueDays}
+            placeholder={t('recurring.field.dueDaysPlaceholder')}
+            onChange={(e) => setForm({ ...form, dueDays: e.target.value.replace(/\D/g, '').slice(0, 3) })}
+          />
+        </label>
         <label className="sm:col-span-2">
           <span className={label}>{t('recurring.field.mode')}</span>
           <select className={input} value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value as Mode })}>
@@ -161,6 +179,111 @@ function NewSchedule({ onCreated }: { onCreated: (s: RecurringState) => void }) 
       </button>
     </Card>
   );
+}
+
+/**
+ * Approvals: every recurring copy waiting for you, as cards that work on a phone. Approve issues it
+ * (and emails it when the schedule says so), Skip deletes the draft, Open shows the draft first.
+ */
+export function ApprovalsPage() {
+  const t = useT();
+  const issuing = useIssuing();
+  const { locale } = usePreferences();
+  const { data, error } = useLoad(() => apiGet<RecurringState>('/recurring'), []);
+  const [state, setState] = useState<RecurringState | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState<string | null>(null);
+  useEffect(() => {
+    if (data) setState(data);
+  }, [data]);
+
+  async function act(work: () => Promise<RecurringState>, notice: string) {
+    setBusy(true);
+    setActionError(null);
+    setDone(null);
+    try {
+      setState(await work());
+      setDone(notice);
+    } catch (e) {
+      setActionError(errorText(e, t));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const pending = (state?.runs ?? []).filter((r) => r.status === 'pending_approval');
+  return (
+    <section className="mx-auto flex max-w-2xl flex-col gap-4">
+      <PageTitle subtitle={t('approvals.subtitle')}>{t('nav.incomeApprovals')}</PageTitle>
+      {!issuing && <p className="rounded-md bg-surface px-3 py-2 text-sm text-muted">{t('issuing.recurringPaused')}</p>}
+      <ErrorNote error={error ?? actionError} />
+      {done && (
+        <div role="status" className="flex items-start justify-between gap-3 rounded-md border border-success bg-surface p-3 text-sm">
+          <span>{done}</span>
+          <button type="button" aria-label={t('documents.page.closeNotice')} className="px-1 text-lg leading-none text-muted hover:text-ink" onClick={() => setDone(null)}>
+            ×
+          </button>
+        </div>
+      )}
+      {!state ? (
+        !error && <Loading />
+      ) : pending.length === 0 ? (
+        <Card>
+          <p className="py-6 text-center text-sm text-muted">{t('approvals.empty')}</p>
+          <p className="text-center text-sm">
+            <Link to="/income/recurring" className="text-brand hover:underline">
+              {t('approvals.toRecurring')}
+            </Link>
+          </p>
+        </Card>
+      ) : (
+        pending.map((r) => (
+          <Card key={r.id}>
+            <div className="flex flex-col gap-1 text-sm">
+              <span className="text-base font-semibold text-ink">{r.schedule_name || t('recurring.draft')}</span>
+              <span>{clientName({ name_en: r.client_name_en, name_he: r.client_name_he }, locale)}</span>
+              <span className="ltr-nums text-lg font-semibold">{r.total_minor !== null && r.currency ? money(r.total_minor, r.currency) : ''}</span>
+              <span className="text-muted">{t('approvals.runDate', { date: r.run_date })}</span>
+              {r.send_email === 1 && <span className="text-muted">{t('approvals.willEmail')}</span>}
+            </div>
+            {issuing && (
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <button
+                  type="button"
+                  className={btnPrimary}
+                  disabled={busy}
+                  onClick={() => void act(() => apiSend<RecurringState>('POST', `/recurring/runs/${r.id}/approve`), r.send_email ? t('approvals.approvedSent') : t('approvals.approved'))}
+                >
+                  {r.send_email ? t('recurring.approveSend') : t('recurring.approve')}
+                </button>
+                <Link to={`/income/documents/${r.document_id}`} className={btnSecondary}>
+                  {t('approvals.open')}
+                </Link>
+                <button
+                  type="button"
+                  className={btnSecondary}
+                  disabled={busy}
+                  onClick={() => {
+                    if (!window.confirm(t('approvals.skipConfirm'))) return;
+                    void act(() => apiSend<RecurringState>('POST', `/recurring/runs/${r.id}/skip`), t('approvals.skipped'));
+                  }}
+                >
+                  {t('recurring.skip')}
+                </button>
+              </div>
+            )}
+          </Card>
+        ))
+      )}
+    </section>
+  );
+}
+
+/** How many recurring copies wait for approval, for the Quick page and the menu. */
+export function usePendingApprovals(): number {
+  const { data } = useLoad(() => apiGet<RecurringState>('/recurring').catch(() => null), []);
+  return (data?.runs ?? []).filter((r) => r.status === 'pending_approval').length;
 }
 
 export function RecurringPage() {
@@ -248,6 +371,7 @@ export function RecurringPage() {
                       <th className="px-3 py-2 text-end">{t('recurring.col.amount')}</th>
                       <th className="px-3 py-2 text-start">{t('recurring.col.frequency')}</th>
                       <th className="px-3 py-2 text-start">{t('recurring.col.next')}</th>
+                      <th className="px-3 py-2 text-start">{t('recurring.col.due')}</th>
                       <th className="px-3 py-2 text-start">{t('recurring.col.mode')}</th>
                       <th className="px-3 py-2" />
                     </tr>
@@ -264,6 +388,22 @@ export function RecurringPage() {
                         <td className="ltr-nums px-3 py-2 text-end tabular-nums">{money(s.total_minor, s.currency)}</td>
                         <td className="px-3 py-2">{t(`recurring.frequency.${s.frequency}` as MessageKey)}</td>
                         <td className="ltr-nums px-3 py-2">{s.active ? s.next_run_date : t('recurring.paused')}</td>
+                        <td className="px-3 py-2">
+                          <input
+                            aria-label={t('recurring.field.dueDays')}
+                            inputMode="numeric"
+                            dir="ltr"
+                            className={`${input} w-20`}
+                            defaultValue={s.due_days ?? ''}
+                            placeholder="—"
+                            disabled={busy}
+                            onBlur={(e) => {
+                              const v = e.target.value.replace(/\D/g, '');
+                              const next = v === '' ? null : Math.min(365, Number(v));
+                              if (next !== s.due_days) void act(() => apiSend<RecurringState>('PATCH', `/recurring/${s.id}`, { dueDays: next }));
+                            }}
+                          />
+                        </td>
                         <td className="px-3 py-2">
                           <select
                             className={input}

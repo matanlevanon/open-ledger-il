@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { usePreferences } from '../../app/preferences';
 import { useT } from '../../i18n';
 import { CREATE_NEW_LABEL_KEYS } from '../../layout/nav';
+import { usePendingApprovals } from '../documents/Recurring';
 import { type DocType, docsApi } from '../documents/api';
 import { money, newDocumentPath, offeredDocumentTypes } from '../documents/format';
 import { Card, ErrorNote, PageTitle, StatusChip, errorText, useLoad } from '../documents/ui';
@@ -28,6 +29,7 @@ const bigBtn =
   'flex min-h-[6.5rem] flex-1 flex-col items-center justify-center gap-2 rounded-card border border-line px-3 py-4 text-base font-semibold shadow-card active:opacity-80 cursor-pointer';
 
 export function QuickPage() {
+  const pendingApprovals = usePendingApprovals();
   const t = useT();
   const issuing = useIssuing();
   const navigate = useNavigate();
@@ -115,6 +117,12 @@ export function QuickPage() {
   return (
     <section aria-labelledby="page-title" className="mx-auto flex max-w-2xl flex-col gap-4">
       <PageTitle>{t('quick.title')}</PageTitle>
+      {pendingApprovals > 0 && (
+        <Link to="/income/approvals" className="flex items-center justify-between rounded-card border border-brand bg-surface px-4 py-3 text-sm font-semibold text-ink">
+          <span>{t('quick.pendingApprovals', { count: pendingApprovals })}</span>
+          <span className="text-brand">{t('quick.review')}</span>
+        </Link>
+      )}
 
       <Card title={t('quick.expense.title')}>
         <div className="flex gap-3">

@@ -3,6 +3,7 @@ import { all, first, run } from '../../core/db';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import { issuingEnabled } from '../../core/issuing';
 import { type Ctx, deleteDraft, duplicateDocument, finalize, updateDraft } from '../documents/service';
+import { addDays } from '../fx/rates';
 
 /**
  * Recurring documents. A schedule points at a template document and a frequency. On each run
@@ -33,6 +34,8 @@ export interface ScheduleRow {
   send_email: number;
   active: number;
   last_run_at: string | null;
+  /** Each copy is due this many days after it is issued. Null: the template's own gap. */
+  due_days: number | null;
 }
 
 export interface ScheduleView extends ScheduleRow {
@@ -110,6 +113,7 @@ export interface CreateScheduleInput {
   endDate?: string | null;
   mode: RecurringMode;
   sendEmail: boolean;
+  dueDays?: number | null;
 }
 
 export async function createSchedule(ctx: Ctx, input: CreateScheduleInput): Promise<number> {
@@ -120,8 +124,8 @@ export async function createSchedule(ctx: Ctx, input: CreateScheduleInput): Prom
   if (input.endDate && input.endDate < input.startDate) throw new ValidationError('The end date is before the first run date.');
   const { lastRowId } = await run(
     db,
-    `INSERT INTO recurring_schedules (name, template_document_id, frequency, anchor_day, next_run_date, end_date, mode, send_email, created_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO recurring_schedules (name, template_document_id, frequency, anchor_day, next_run_date, end_date, mode, send_email, due_days, created_by)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     input.name?.trim() || null,
     input.templateDocumentId,
     input.frequency,
@@ -130,6 +134,7 @@ export async function createSchedule(ctx: Ctx, input: CreateScheduleInput): Prom
     input.endDate ?? null,
     input.mode,
     input.sendEmail ? 1 : 0,
+    input.dueDays ?? null,
     actor.userId,
   );
   await auditAs(db, actor, 'recurring.create', 'recurring_schedule', lastRowId, input);
@@ -144,6 +149,7 @@ export interface UpdateScheduleInput {
   mode?: RecurringMode;
   sendEmail?: boolean;
   active?: boolean;
+  dueDays?: number | null;
 }
 
 export async function updateSchedule(ctx: Ctx, id: number, patch: UpdateScheduleInput): Promise<void> {
@@ -157,7 +163,7 @@ export async function updateSchedule(ctx: Ctx, id: number, patch: UpdateSchedule
   await run(
     db,
     `UPDATE recurring_schedules SET name = ?, frequency = ?, anchor_day = ?, next_run_date = ?, end_date = ?, mode = ?, send_email = ?, active = ?,
-       updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
+       due_days = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
     patch.name !== undefined ? patch.name?.trim() || null : before.name,
     patch.frequency ?? before.frequency,
     patch.nextRunDate ? Number(patch.nextRunDate.slice(8, 10)) : before.anchor_day,
@@ -166,6 +172,7 @@ export async function updateSchedule(ctx: Ctx, id: number, patch: UpdateSchedule
     patch.mode ?? before.mode,
     patch.sendEmail !== undefined ? (patch.sendEmail ? 1 : 0) : before.send_email,
     patch.active !== undefined ? (patch.active ? 1 : 0) : before.active,
+    patch.dueDays !== undefined ? patch.dueDays : before.due_days,
     id,
   );
   await auditAs(db, actor, 'recurring.update', 'recurring_schedule', id, patch);
@@ -225,8 +232,17 @@ async function issueAndSend(ctx: Ctx, runId: number, documentId: number, sendEma
   }
 }
 
+/** Sets a copy's due date to its issue date plus the schedule's payment terms, when it has them. */
+async function applyDueDays(ctx: Ctx, documentId: number, date: string, dueDays: number | null): Promise<void> {
+  if (dueDays === null || dueDays === undefined) return;
+  await updateDraft(ctx, documentId, { dueDate: addDays(date, dueDays) } as never);
+}
+
+/** Tells the owner a copy waits for approval (Slack). Never fails the run. */
+export type PendingNotifier = (pending: { runId: number; documentId: number; scheduleName: string | null }) => Promise<void>;
+
 /** One run of one schedule. The UNIQUE (schedule_id, run_date) row makes a second call a no-op. */
-async function runOne(ctx: Ctx, s: ScheduleRow, runDate: string, send: SendFn): Promise<void> {
+async function runOne(ctx: Ctx, s: ScheduleRow, runDate: string, send: SendFn, notify?: PendingNotifier): Promise<void> {
   const { db } = ctx;
   const inserted = await run(db, `INSERT OR IGNORE INTO recurring_runs (schedule_id, run_date, status) VALUES (?, ?, 'failed')`, s.id, runDate);
   if (inserted.changes === 0) return;
@@ -234,8 +250,16 @@ async function runOne(ctx: Ctx, s: ScheduleRow, runDate: string, send: SendFn): 
   let documentId: number | null = null;
   try {
     documentId = await duplicateDocument(ctx, s.template_document_id, { date: ctx.services.today() });
+    await applyDueDays(ctx, documentId, ctx.services.today(), s.due_days);
     if (s.mode === 'approve') {
       await setRun(db, runId, 'pending_approval', null, documentId);
+      if (notify) {
+        try {
+          await notify({ runId, documentId, scheduleName: s.name });
+        } catch {
+          // A missed notice never blocks the run. The copy still waits on the Approvals page.
+        }
+      }
       return;
     }
     await setRun(db, runId, 'issued', null, documentId);
@@ -256,7 +280,7 @@ export interface RunDueResult {
  * Runs every active schedule whose next run date has come. A schedule that missed days runs once
  * per missed date, capped at 12, and moves on to its next date. Past its end date it turns off.
  */
-export async function runDue(ctx: Ctx, send: SendFn): Promise<RunDueResult> {
+export async function runDue(ctx: Ctx, send: SendFn, notify?: PendingNotifier): Promise<RunDueResult> {
   const { db } = ctx;
   if (!(await issuingEnabled(db))) return { schedules: 0, runs: 0, issuingOff: true };
   const today = ctx.services.today();
@@ -265,7 +289,7 @@ export async function runDue(ctx: Ctx, send: SendFn): Promise<RunDueResult> {
   for (const s of due) {
     let runDate = s.next_run_date;
     for (let i = 0; i < 12 && runDate <= today && (!s.end_date || runDate <= s.end_date); i += 1) {
-      await runOne(ctx, s, runDate, send);
+      await runOne(ctx, s, runDate, send, notify);
       runs += 1;
       runDate = nextRunDate(runDate, s.frequency, s.anchor_day);
     }
@@ -283,9 +307,9 @@ export async function runDue(ctx: Ctx, send: SendFn): Promise<RunDueResult> {
 }
 
 async function pendingRun(db: D1Database, runId: number) {
-  const r = await first<{ id: number; document_id: number | null; status: string; send_email: number }>(
+  const r = await first<{ id: number; document_id: number | null; status: string; send_email: number; due_days: number | null }>(
     db,
-    `SELECT r.id, r.document_id, r.status, s.send_email FROM recurring_runs r JOIN recurring_schedules s ON s.id = r.schedule_id WHERE r.id = ?`,
+    `SELECT r.id, r.document_id, r.status, s.send_email, s.due_days FROM recurring_runs r JOIN recurring_schedules s ON s.id = r.schedule_id WHERE r.id = ?`,
     runId,
   );
   if (!r) throw new NotFoundError('Recurring run', runId);
@@ -299,7 +323,10 @@ export async function approveRun(ctx: Ctx, runId: number, send: SendFn): Promise
   const today = ctx.services.today();
   const doc = await first<{ status: string; date: string }>(ctx.db, 'SELECT status, date FROM documents WHERE id = ?', r.document_id);
   if (!doc || doc.status !== 'draft') throw new ValidationError('The draft for this run is gone or already final.');
-  if (doc.date !== today) await updateDraft(ctx, r.document_id, { date: today } as never);
+  if (doc.date !== today) {
+    await updateDraft(ctx, r.document_id, { date: today } as never);
+    await applyDueDays(ctx, r.document_id, today, r.due_days);
+  }
   await auditAs(ctx.db, ctx.actor as AuditActor, 'recurring.approve', 'recurring_run', runId, { documentId: r.document_id });
   await issueAndSend(ctx, runId, r.document_id, r.send_email === 1, send);
 }
