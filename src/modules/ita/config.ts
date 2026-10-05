@@ -16,18 +16,19 @@ export interface ItaUrls {
   api: string;
 }
 
-// Sandbox hosts come from the portal's OpenAPI files (specs/israel-invoices/openapi-sandbox):
-// authorize on openapi.taxes.gov.il, token and API calls on t-ita-api.taxes.gov.il.
-// Production is unverified until the production portal publishes its files.
+// SHAAM's address change notice of 18.12.2023. Sandbox: /authorize stays on openapi.taxes.gov.il,
+// every other call moved to ita-api.taxes.gov.il. Production: only the Invoices calls moved to
+// ita-api, /authorize and the token stay on openapi. Recheck production against its portal files.
+// The portal's OpenAPI files also list t-ita-api.taxes.gov.il, which has no public DNS record.
 export const ITA_URLS: Record<ItaEnvironment, ItaUrls> = {
   sandbox: {
     authorize: 'https://openapi.taxes.gov.il/shaam/tsandbox/longtimetoken/oauth2/authorize',
-    token: 'https://t-ita-api.taxes.gov.il/shaam/tsandbox/longtimetoken/oauth2/token',
-    api: 'https://t-ita-api.taxes.gov.il/shaam/tsandbox/',
+    token: 'https://ita-api.taxes.gov.il/shaam/tsandbox/longtimetoken/oauth2/token',
+    api: 'https://ita-api.taxes.gov.il/shaam/tsandbox/',
   },
   production: {
-    authorize: 'https://ita-api.taxes.gov.il/shaam/production/longtimetoken/oauth2/authorize',
-    token: 'https://ita-api.taxes.gov.il/shaam/production/longtimetoken/oauth2/token',
+    authorize: 'https://openapi.taxes.gov.il/shaam/production/longtimetoken/oauth2/authorize',
+    token: 'https://openapi.taxes.gov.il/shaam/production/longtimetoken/oauth2/token',
     api: 'https://ita-api.taxes.gov.il/shaam/production/',
   },
 };
