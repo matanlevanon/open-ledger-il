@@ -16,12 +16,14 @@ export interface ItaUrls {
   api: string;
 }
 
-// Unverified in the docs: the production authorize host. Confirm both in the portal swagger.
+// Sandbox hosts come from the portal's OpenAPI files (specs/israel-invoices/openapi-sandbox):
+// authorize on openapi.taxes.gov.il, token and API calls on t-ita-api.taxes.gov.il.
+// Production is unverified until the production portal publishes its files.
 export const ITA_URLS: Record<ItaEnvironment, ItaUrls> = {
   sandbox: {
     authorize: 'https://openapi.taxes.gov.il/shaam/tsandbox/longtimetoken/oauth2/authorize',
-    token: 'https://openapi.taxes.gov.il/shaam/tsandbox/longtimetoken/oauth2/token',
-    api: 'https://ita-api.taxes.gov.il/shaam/tsandbox/',
+    token: 'https://t-ita-api.taxes.gov.il/shaam/tsandbox/longtimetoken/oauth2/token',
+    api: 'https://t-ita-api.taxes.gov.il/shaam/tsandbox/',
   },
   production: {
     authorize: 'https://ita-api.taxes.gov.il/shaam/production/longtimetoken/oauth2/authorize',
@@ -34,8 +36,7 @@ export const ITA_URLS: Record<ItaEnvironment, ItaUrls> = {
 export const ITA_PATHS = {
   approval: 'Invoices/v2/Approval',
   multiApproval: 'Multi-invoices/v2/MultiApproval',
-  // Spec v2.0 section 4.2 names the service InvoiceDecisionApi. docs/israel-invoices-api.md writes
-  // Invoice-decision. Confirm in the portal swagger and change here only.
+  // Confirmed in the portal's OpenAPI file invoicedecisionapi_v1.json.
   decisionCancel: 'InvoiceDecisionApi/v1/Cancel',
   decisionContinue: 'InvoiceDecisionApi/v1/Continue',
   decisionFurtherObjection: 'InvoiceDecisionApi/v1/FurtherObjection',
