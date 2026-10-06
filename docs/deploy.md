@@ -321,7 +321,7 @@ Confirm it actually works on this database at least once, before you need it for
    `d1 time-travel restore` command against the real `DB` binding's id, confirm the restored state,
    then re-enable the Worker. Time-travel restores in place; it does not create a new database.
 
-## Tax Authority egress (allocation numbers)
+## Tax Authority relay (allocation numbers)
 
 The Tax Authority refuses some calls that come from outside Israel. A Worker runs in whichever
 Cloudflare data center takes the request, and Israeli users are often served from Frankfurt. On
@@ -329,28 +329,29 @@ Cloudflare data center takes the request, and Israeli users are often served fro
 worked. Check where you are served from at `https://<your ledger address>/cdn-cgi/trace`, the
 `colo=` line.
 
-The fix ships with the code: a second, small Worker in `workers/ita-egress`, placed near Tel Aviv
-(`placement.region = "gcp:me-west1"`). The main Worker sends its Tax Authority calls to it over a
-service binding. Only the server-side calls move: the token exchange, the access token renewal
-and the invoice calls. The Tax Authority sign-in page opens in your own browser as before.
+Placement hints do not fix it. A Worker with `placement.region = "gcp:me-west1"` ran in Mumbai
+(BOM), and the Tax Authority refused that too.
+
+The fix is a small relay on a server with an Israeli address. With `ITA_RELAY_URL`,
+`ITA_RELAY_CLIENT_ID` and `ITA_RELAY_CLIENT_SECRET` set (docs/secrets.md), the Worker sends its
+Tax Authority calls there. Only the server-side calls move: the token exchange, the access token
+renewal and the invoice calls. The sign-in page opens in your own browser as before. Without the
+three secrets the Worker calls the Tax Authority directly.
+
+The relay ships in `tools/ita-relay`, with its setup steps in
+`tools/ita-relay/README.md`. Any Linux server with an Israeli address works,
+for example Oracle Cloud's Always Free tier in the Israel Central (Jerusalem) region.
+The server reaches Cloudflare through a tunnel, behind an Access service token.
 
 Why not the browser for all of it: the Tax Authority's API does not accept calls from a web page
 on another address (no CORS), and the token calls carry the app's client secret, which must
 never reach a browser.
 
-Set it up once, before the main Worker's build that adds the binding:
+On the ITA screen, Check route tries both routes with a fake token. "Reached the ITA" with any
+HTTP status means the address was accepted. "Turned away, HTTP 403" means it was not.
 
-1. Cloudflare dashboard, Workers & Pages, Create, Import a repository. Pick this repository.
-2. Project name `open-ledger-il-ita-egress`. Root directory `workers/ita-egress`. Build command empty.
-   Deploy command `npx wrangler deploy`.
-3. Deploy. The Worker has no public address, which is intended.
-4. Push the commit that adds the `[[services]]` binding `ITA_EGRESS` to the main `wrangler.toml`.
-   Its build then deploys against the egress Worker.
-5. On the ITA screen click Test renewal. The message names the data center the call left from.
-   TLV is the goal.
-
-`ITA_RELAY_URL` (docs/secrets.md) is the other option: a relay you host at an Israeli address.
-When set, it takes precedence over the egress Worker.
+Without a relay you can still issue invoices above the threshold: request the allocation number
+in the Tax Authority's web app and enter it on the ITA screen.
 
 ### How long a login lasts
 

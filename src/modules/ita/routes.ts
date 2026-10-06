@@ -41,6 +41,9 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const env = (c: { env: AppEnv['Bindings'] }) => c.env as ItaEnv;
   const service = (c: { env: AppEnv['Bindings'] }) => new ItaAllocationService(env(c), deps);
+  // Where the Tax Authority calls leave from: the relay, or this Worker's data center.
+  const origin = (e: ItaEnv, raw: Request) =>
+    (e.ITA_RELAY_URL ?? '').trim() ? 'relay' : `worker ${(raw as { cf?: { colo?: string } }).cf?.colo ?? 'unknown'}`;
 
   // Every ITA route is owner only: 'ita' is an owner-only feature (src/core/auth.ts).
   app.use('*', requireFeature('ita'));
@@ -52,8 +55,8 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
 
   /**
    * Route check without spending a login. Sends a deliberately invalid refresh request to the
-   * ITA token address twice: through the egress Worker (when bound) and directly from this
-   * Worker. A JSON OAuth error means the call reached the ITA. A bare 403 means it was turned
+   * ITA token address directly from this Worker and, when ITA_RELAY_URL is set, through the relay.
+   * A JSON OAuth error means the call reached the ITA. A bare 403 means it was turned
    * away before that, by where it came from. No real token is sent.
    */
   app.get('/route-check', async (c) => {
@@ -88,18 +91,9 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
         return { status: 0, reached: false, reply: err instanceof Error ? `${err.name}: ${err.message}`.slice(0, 200) : 'error' };
       }
     };
-    const egress = e.ITA_EGRESS;
-    const egressWhere = egress
-      ? await egress
-          .fetch('https://ita-egress.internal/__where')
-          .then((r) => r.json() as Promise<{ colo: string | null }>)
-          .then((w) => w.colo)
-          .catch(() => null)
-      : null;
     const result = {
       environment: s.tokens.environment,
       direct: { from: (c.req.raw as { cf?: { colo?: string } }).cf?.colo ?? null, ...(await probe(deps.fetch)) },
-      egress: egress ? { from: egressWhere, ...(await probe((input, init) => egress.fetch(input, init))) } : null,
       relay: (e.ITA_RELAY_URL ?? '').trim()
         ? {
             from: 'relay',
@@ -120,15 +114,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
   /** Renews the login now, the same way the daily check does, so a fix can be tested at once. */
   app.post('/refresh', async (c) => {
     const s = service(c);
-    // Where the Tax Authority call left from: the ita-egress data center, or this Worker's own.
-    const egress = env(c).ITA_EGRESS;
-    const where = egress
-      ? await egress
-          .fetch('https://ita-egress.internal/__where')
-          .then((r) => r.json() as Promise<{ colo: string | null }>)
-          .then((w) => w.colo)
-          .catch(() => null)
-      : ((c.req.raw as { cf?: { colo?: string } }).cf?.colo ?? null);
+    const where = origin(env(c), c.req.raw);
     try {
       await s.tokens.refresh();
       await audit(c, 'ita.refresh.manual', 'ita', s.tokens.environment, { from: where });
@@ -187,14 +173,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     try {
       await s.tokens.exchangeCode(code, saved.redirect_uri, c.get('user').id);
     } catch (err) {
-      const egress = env(c).ITA_EGRESS;
-      const from = egress
-        ? await egress
-            .fetch('https://ita-egress.internal/__where')
-            .then((r) => r.json() as Promise<{ colo: string | null }>)
-            .then((w) => `egress ${w.colo}`)
-            .catch(() => 'egress unknown')
-        : `worker ${(c.req.raw as { cf?: { colo?: string } }).cf?.colo ?? 'unknown'}`;
+      const from = origin(env(c), c.req.raw);
       await audit(c, 'ita.connect.failed', 'ita', s.tokens.environment, {
         reason: 'exchange',
         detail: err instanceof Error ? err.message.slice(0, 500) : String(err).slice(0, 500),

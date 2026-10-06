@@ -43,7 +43,6 @@ export const ita = {
   'ita.route.check': 'Check route',
   'ita.route.running': 'Checking…',
   'ita.route.direct': 'Direct',
-  'ita.route.egress': 'Through the egress Worker',
   'ita.route.relay': 'Through the relay',
   'ita.route.reached': '{name} (from {from}): reached the ITA, HTTP {status}.',
   'ita.route.blocked': '{name} (from {from}): turned away, HTTP {status}. {reply}',

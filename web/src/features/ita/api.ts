@@ -72,7 +72,6 @@ export interface RouteProbe {
 export interface RouteCheck {
   environment: string;
   direct: RouteProbe;
-  egress: RouteProbe | null;
   relay: RouteProbe | null;
 }
 
@@ -81,7 +80,7 @@ export interface ItaApi {
   request(documentId: number): Promise<ActionResult>;
   decide(documentId: number, choice: RefusalChoice): Promise<ActionResult>;
   manual(documentId: number, confirmationNumber: string, note: string): Promise<ActionResult>;
-  /** Checks whether the ITA token address answers, directly and through the egress Worker. */
+  /** Checks whether the ITA token address answers, directly and through the relay. */
   routeCheck?(): Promise<RouteCheck>;
   /** Renews the ITA login now. */
   refresh?(): Promise<{ ok: boolean; reason?: string; from?: string | null }>;

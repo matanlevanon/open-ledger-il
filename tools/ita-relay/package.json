@@ -1,0 +1,14 @@
+{
+  "name": "ita-relay",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Forwards the Ledger's Israel Tax Authority calls from an Israeli address, behind Cloudflare Access service auth",
+  "license": "AGPL-3.0-only",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js"
+  }
+}

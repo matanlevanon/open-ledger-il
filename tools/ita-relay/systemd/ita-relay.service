@@ -1,0 +1,21 @@
+[Unit]
+Description=ita-relay, forwards the Ledger's Tax Authority calls from this server's Israeli address
+Documentation=file:/home/ubuntu/open-ledger-il/tools/ita-relay/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Change User and the paths if your server's user is not ubuntu.
+User=ubuntu
+WorkingDirectory=/home/ubuntu/open-ledger-il/tools/ita-relay
+EnvironmentFile=/home/ubuntu/.ita-relay.env
+ExecStart=/usr/bin/node /home/ubuntu/open-ledger-il/tools/ita-relay/src/server.js
+Restart=always
+RestartSec=10
+NoNewPrivileges=true
+StandardOutput=append:/home/ubuntu/ita-relay.log
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

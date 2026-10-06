@@ -67,12 +67,7 @@ export interface ItaEnv extends Env {
   /** The business VAT number (עוסק מורשה). Defaults to OWNER_TAX_ID, which is the same number for an individual. */
   ITA_VAT_NUMBER?: string;
   SLACK_WEBHOOK_URL?: string;
-  /**
-   * Service binding to the ita-egress Worker (workers/ita-egress), placed near Tel Aviv. When bound,
-   * the Tax Authority calls go through it. See relayedFetch.
-   */
-  ITA_EGRESS?: Fetcher;
-  /** Optional relay with an Israeli address, e.g. https://ita-relay.example.com. Overrides ITA_EGRESS. */
+  /** Optional relay with an Israeli address, e.g. https://ita-relay.example.com. See relayedFetch. */
   ITA_RELAY_URL?: string;
   /** Cloudflare Access service token the relay accepts. Both are required when ITA_RELAY_URL is set. */
   ITA_RELAY_CLIENT_ID?: string;
@@ -89,23 +84,14 @@ const RELAY_HOSTS: Record<string, string> = {
  * The fetch the ITA module uses for server-side calls (token, renewal, invoices).
  *
  * A Worker runs in whichever Cloudflare data center takes the request, often outside Israel,
- * and the Tax Authority refuses some of those calls with a bare 403. Three routes, in order:
+ * and the Tax Authority refuses some of those calls with a bare 403. Two routes:
  *   1. ITA_RELAY_URL set: a relay with an Israeli address, with the Access service token headers.
- *   2. ITA_EGRESS bound: the ita-egress Worker, placed near Tel Aviv, over the service binding.
- *      fetch() keeps the placement, RPC would not, so the call stays a plain fetch.
- *   3. Neither: a direct call from wherever this Worker runs.
+ *   2. Unset: a direct call from wherever this Worker runs.
  * The browser sign-in (authorize) never passes here: it runs in the user's own browser.
  */
 export function relayedFetch(env: ItaEnv, base: typeof fetch): typeof fetch {
   const relay = (env.ITA_RELAY_URL ?? '').trim().replace(/\/+$/, '');
-  if (!relay) {
-    const egress = env.ITA_EGRESS;
-    if (!egress) return base;
-    return (input, init) => {
-      const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
-      return RELAY_HOSTS[url.hostname] ? egress.fetch(url.href, init) : base(input, init);
-    };
-  }
+  if (!relay) return base;
   const id = (env.ITA_RELAY_CLIENT_ID ?? '').trim();
   const secret = (env.ITA_RELAY_CLIENT_SECRET ?? '').trim();
   if (!id || !secret) throw new ConfigError('ITA_RELAY_URL is set. Set ITA_RELAY_CLIENT_ID and ITA_RELAY_CLIENT_SECRET too.');
