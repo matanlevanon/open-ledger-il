@@ -82,6 +82,71 @@ function ClientGroup({ title, clients, open, onToggle, locale, onNavigate }: Cli
   );
 }
 
+/** Per-browser memory of whether a menu section (Income) is open. Never throws in private browsing. */
+function sectionStorageKey(email: string | undefined, path: string): string {
+  return `open-ledger-il-sidebar-section${path}-open:${email ?? 'anon'}`;
+}
+
+interface NavSectionProps {
+  section: (typeof NAV)[number];
+  role: Role | undefined;
+  features: string[];
+  email?: string;
+  onNavigate?: () => void;
+}
+
+/** A menu section with sub items (Income). The header opens and closes it, and the choice is remembered. */
+function NavSection({ section, role, features, email, onNavigate }: NavSectionProps) {
+  const t = useT();
+  const { locale } = usePreferences();
+  const location = useLocation();
+  const children = (section.children ?? []).filter((c) => canSee(c, role, features));
+  const [open, setOpen] = useState(() => {
+    try {
+      const v = localStorage.getItem(sectionStorageKey(email, section.path));
+      return v === null ? true : v === '1';
+    } catch {
+      return true;
+    }
+  });
+  const toggle = () => {
+    setOpen((was) => {
+      try {
+        localStorage.setItem(sectionStorageKey(email, section.path), was ? '0' : '1');
+      } catch {
+        // Storage disabled: the toggle still works this session.
+      }
+      return !was;
+    });
+  };
+  // A closed section still shows which page inside it is open.
+  const current = open ? undefined : children.find((c) => location.pathname === c.path || location.pathname.startsWith(`${c.path}/`));
+  return (
+    <>
+      <button
+        type="button"
+        className="flex w-full items-center justify-between rounded-md px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted hover:bg-surface"
+        aria-expanded={open}
+        onClick={toggle}
+      >
+        <span>{t(section.label)}</span>
+        <span aria-hidden="true">{open ? '▾' : locale === 'he' ? '◂' : '▸'}</span>
+      </button>
+      {(open || current) && (
+        <ul className="ms-3 flex flex-col gap-1 border-s border-line ps-2">
+          {(open ? children : [current!]).map((child) => (
+            <li key={child.path}>
+              <NavLink to={child.path} className={itemClass} onClick={onNavigate}>
+                {t(child.label)}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
+
 interface ClientsNavItemProps {
   onNavigate?: () => void;
   email?: string;
@@ -266,20 +331,7 @@ export function Sidebar({ role, features, email, onNavigate, issuing = true }: S
           ) : (
             <li key={section.path}>
               {section.children ? (
-                <>
-                  <p className="px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted">{t(section.label)}</p>
-                  <ul className="ms-3 flex flex-col gap-1 border-s border-line ps-2">
-                    {section.children
-                      .filter((c) => canSee(c, role, features))
-                      .map((child) => (
-                        <li key={child.path}>
-                          <NavLink to={child.path} className={itemClass} onClick={onNavigate}>
-                            {t(child.label)}
-                          </NavLink>
-                        </li>
-                      ))}
-                  </ul>
-                </>
+                <NavSection section={section} role={role} features={features} email={email} onNavigate={onNavigate} />
               ) : (
                 <NavLink to={section.path} end={section.path === '/'} className={itemClass} onClick={onNavigate}>
                   {t(section.label)}
