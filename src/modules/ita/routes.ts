@@ -111,7 +111,10 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     try {
       await s.tokens.exchangeCode(code, saved.redirect_uri, c.get('user').id);
     } catch (err) {
-      await audit(c, 'ita.connect.failed', 'ita', s.tokens.environment, { reason: 'exchange' });
+      await audit(c, 'ita.connect.failed', 'ita', s.tokens.environment, {
+        reason: 'exchange',
+        detail: err instanceof Error ? err.message.slice(0, 500) : String(err).slice(0, 500),
+      });
       if (err instanceof Error && 'code' in err && typeof err.code === 'string') return back(`error=${encodeURIComponent(err.code)}`);
       throw err;
     }

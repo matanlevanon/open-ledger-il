@@ -157,9 +157,12 @@ export class ItaTokenStore {
       redirect_uri: redirectUri,
       scope: ITA_SCOPE,
     });
-    if (status >= 500) throw new ItaUnavailableError('The ITA login service is not answering.');
+    if (status >= 500) throw new ItaUnavailableError(`The ITA login service is not answering (HTTP ${status}${ItaTokenStore.errorText(json)}).`);
     const tokens = ItaTokenStore.parse(json);
-    if (status !== 200 || !tokens) throw new ItaReconnectError('The ITA refused the login. Connect again.');
+    if (status !== 200 || !tokens) {
+      const why = status === 200 ? ': the reply had no usable tokens' : ItaTokenStore.errorText(json);
+      throw new ItaReconnectError(`The ITA refused the login (HTTP ${status}${why}). Connect again.`);
+    }
 
     const now = this.io.now();
     const key = await this.key();
