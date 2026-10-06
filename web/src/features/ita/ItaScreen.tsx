@@ -52,6 +52,21 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
   });
   const [busy, setBusy] = useState<number | null>(null);
   const [renewing, setRenewing] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const checkRoute = () => {
+    if (!api.routeCheck) return;
+    setChecking(true);
+    const line = (name: string, p: { from: string | null; status: number; reached: boolean; reply: string } | null) =>
+      p ? t(p.reached ? 'ita.route.reached' : 'ita.route.blocked', { name, from: p.from ?? '?', status: p.status, reply: p.reply }) : '';
+    api
+      .routeCheck()
+      .then((r) => {
+        const text = [line(t('ita.route.direct'), r.direct), line(t('ita.route.egress'), r.egress)].filter(Boolean).join(' ');
+        setNotice({ tone: r.egress?.reached || r.direct.reached ? 'ok' : 'error', text });
+      })
+      .catch(() => setNotice({ tone: 'error', text: t('ita.route.failed') }))
+      .finally(() => setChecking(false));
+  };
   const testRenewal = () => {
     if (!api.refresh) return;
     setRenewing(true);
@@ -138,6 +153,16 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            {api.routeCheck && (
+              <button
+                type="button"
+                className="rounded-card border border-line bg-canvas px-4 py-2 text-sm text-ink disabled:opacity-50"
+                disabled={checking}
+                onClick={checkRoute}
+              >
+                {checking ? t('ita.route.running') : t('ita.route.check')}
+              </button>
+            )}
             {c.status === 'active' && api.refresh && (
               <button
                 type="button"

@@ -6,7 +6,7 @@ import { all, first, run } from '../../core/db';
 import { thresholdOn } from '../../core/config';
 import type { AppEnv } from '../../env';
 import { supplierConfirmationNumber, supplierInvoiceDetails } from './buyer';
-import { type ItaEnv, ITA_SERVICE_PAGE_URL, ITA_WEB_APP_URL } from './config';
+import { type ItaEnv, ITA_SCOPE, ITA_SERVICE_PAGE_URL, ITA_URLS, ITA_WEB_APP_URL, itaCredentials } from './config';
 import { randomToken } from './crypto';
 import { allocationGate } from './gate';
 import { RELOGIN_BANNER_DAY } from './jobs';
@@ -48,6 +48,61 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
   app.get('/status', async (c) => {
     const status = await service(c).tokens.status();
     return c.json({ connection: { ...status, banner: status.connected && (status.days_since_login ?? 0) >= RELOGIN_BANNER_DAY } });
+  });
+
+  /**
+   * Route check without spending a login. Sends a deliberately invalid refresh request to the
+   * ITA token address twice: through the egress Worker (when bound) and directly from this
+   * Worker. A JSON OAuth error means the call reached the ITA. A bare 403 means it was turned
+   * away before that, by where it came from. No real token is sent.
+   */
+  app.get('/route-check', async (c) => {
+    const e = env(c);
+    const s = service(c);
+    const tokenUrl = ITA_URLS[s.tokens.environment].token;
+    let auth = '';
+    try {
+      const { clientId, clientSecret } = itaCredentials(e);
+      auth = `Basic ${btoa(`${clientId}:${clientSecret}`)}`;
+    } catch {
+      // No client credentials yet: the check still shows whether the address is reachable.
+    }
+    const probe = async (doFetch: typeof fetch) => {
+      try {
+        const res = await doFetch(tokenUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', ...(auth ? { Authorization: auth } : {}) },
+          body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: 'route-check', scope: ITA_SCOPE }).toString(),
+          signal: AbortSignal.timeout(20_000),
+        });
+        const text = (await res.text()).replace(/\s+/g, ' ').trim().slice(0, 200);
+        let reached = false;
+        try {
+          const j = JSON.parse(text) as Record<string, unknown>;
+          reached = typeof j.error === 'string' || typeof j.httpCode === 'string' || typeof j.moreInformation === 'string';
+        } catch {
+          reached = false;
+        }
+        return { status: res.status, reached, reply: text };
+      } catch (err) {
+        return { status: 0, reached: false, reply: err instanceof Error ? err.name : 'error' };
+      }
+    };
+    const egress = e.ITA_EGRESS;
+    const egressWhere = egress
+      ? await egress
+          .fetch('https://ita-egress.internal/__where')
+          .then((r) => r.json() as Promise<{ colo: string | null }>)
+          .then((w) => w.colo)
+          .catch(() => null)
+      : null;
+    const result = {
+      environment: s.tokens.environment,
+      direct: { from: (c.req.raw as { cf?: { colo?: string } }).cf?.colo ?? null, ...(await probe(deps.fetch)) },
+      egress: egress ? { from: egressWhere, ...(await probe((input, init) => egress.fetch(input, init))) } : null,
+    };
+    await audit(c, 'ita.route.check', 'ita', s.tokens.environment, result);
+    return c.json(result);
   });
 
   /** Renews the login now, the same way the daily check does, so a fix can be tested at once. */

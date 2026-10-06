@@ -62,11 +62,26 @@ export interface ActionResult {
   hearing_url: string | null;
 }
 
+export interface RouteProbe {
+  from: string | null;
+  status: number;
+  reached: boolean;
+  reply: string;
+}
+
+export interface RouteCheck {
+  environment: string;
+  direct: RouteProbe;
+  egress: RouteProbe | null;
+}
+
 export interface ItaApi {
   overview(): Promise<Overview>;
   request(documentId: number): Promise<ActionResult>;
   decide(documentId: number, choice: RefusalChoice): Promise<ActionResult>;
   manual(documentId: number, confirmationNumber: string, note: string): Promise<ActionResult>;
+  /** Checks whether the ITA token address answers, directly and through the egress Worker. */
+  routeCheck?(): Promise<RouteCheck>;
   /** Renews the ITA login now. */
   refresh?(): Promise<{ ok: boolean; reason?: string; from?: string | null }>;
 }
@@ -89,6 +104,7 @@ export const httpItaApi: ItaApi = {
   request: (id) => post(`/allocations/${id}/request`),
   decide: (id, choice) => post(`/allocations/${id}/decision`, { choice }),
   manual: (id, confirmationNumber, note) => post(`/allocations/${id}/manual`, { confirmation_number: confirmationNumber, source_note: note }),
+  routeCheck: () => apiGet<RouteCheck>('/ita/route-check'),
   refresh: async () => {
     const res = await fetch('/api/ita/refresh', { method: 'POST', headers: { Accept: 'application/json' } });
     const json = (await res.json().catch(() => null)) as { ok?: boolean; reason?: string; from?: string | null } | null;

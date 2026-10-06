@@ -40,6 +40,13 @@ export const ita = {
   // Connection card
   'ita.connection.title': 'Connection',
   'ita.renewal.test': 'Test renewal',
+  'ita.route.check': 'Check route',
+  'ita.route.running': 'Checking…',
+  'ita.route.direct': 'Direct',
+  'ita.route.egress': 'Through Tel Aviv',
+  'ita.route.reached': '{name} (from {from}): reached the ITA, HTTP {status}.',
+  'ita.route.blocked': '{name} (from {from}): turned away, HTTP {status}. {reply}',
+  'ita.route.failed': 'The route check did not run.',
   'ita.renewal.running': 'Renewing…',
   'ita.renewal.ok': 'The ITA renewed the login. The call left from {from}.',
   'ita.renewal.failed': 'The ITA refused the renewal. {reason} The call left from {from}.',

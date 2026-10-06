@@ -37,6 +37,13 @@ export const ita: Record<keyof typeof en, string> = {
   // Connection card
   'ita.connection.title': 'חיבור',
   'ita.renewal.test': 'בדיקת חידוש',
+  'ita.route.check': 'בדיקת נתיב',
+  'ita.route.running': 'בודק…',
+  'ita.route.direct': 'ישיר',
+  'ita.route.egress': 'דרך תל אביב',
+  'ita.route.reached': '{name} (מ-{from}): הגיע לרשות המסים, HTTP {status}.',
+  'ita.route.blocked': '{name} (מ-{from}): נחסם, HTTP {status}. {reply}',
+  'ita.route.failed': 'בדיקת הנתיב לא רצה.',
   'ita.renewal.running': 'מחדש…',
   'ita.renewal.ok': 'רשות המסים חידשה את ההתחברות. הקריאה יצאה מ-{from}.',
   'ita.renewal.failed': 'רשות המסים סירבה לחידוש. {reason} הקריאה יצאה מ-{from}.',
