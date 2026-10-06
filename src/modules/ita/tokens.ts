@@ -123,6 +123,16 @@ export class ItaTokenStore {
     return { status: res.status, json };
   }
 
+  /** The ITA's error code and description, for the stored reason. Never includes a token. */
+  private static errorText(json: unknown): string {
+    if (!json || typeof json !== 'object') return '';
+    const o = json as Record<string, unknown>;
+    const parts = [o.error, o.error_description, o.moreInformation, o.httpMessage]
+      .filter((v): v is string => typeof v === 'string' && v.length > 0)
+      .map((v) => v.slice(0, 200));
+    return parts.length ? `: ${parts.join(' / ')}` : '';
+  }
+
   private static parse(json: unknown): TokenResponse | null {
     if (!json || typeof json !== 'object') return null;
     const o = json as Record<string, unknown>;
@@ -206,7 +216,16 @@ export class ItaTokenStore {
     }
     const key = await this.key();
     const refreshToken = await this.open(key, row.refresh_token_enc, 'refresh');
-    const { status, json } = await this.postToken({ grant_type: 'refresh_token', refresh_token: refreshToken, scope: ITA_SCOPE });
+    // The ITA developer guide sends client_id and client_secret in the refresh body as well as
+    // the Basic header. The first refresh with the header alone was refused.
+    const { clientId, clientSecret } = itaCredentials(this.env);
+    const { status, json } = await this.postToken({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      scope: ITA_SCOPE,
+      client_id: clientId,
+      client_secret: clientSecret,
+    });
     if (status >= 500) throw new ItaUnavailableError('The ITA login service is not answering.');
     const tokens = ItaTokenStore.parse(json);
     if (status !== 200 || !tokens) {
@@ -214,7 +233,7 @@ export class ItaTokenStore {
       if (latest && latest.rotation !== row.rotation && latest.status === 'active' && latest.access_token_enc) {
         return this.open(key, latest.access_token_enc, 'access');
       }
-      await this.markReconnect('The ITA refused the refresh token.');
+      await this.markReconnect(`The ITA refused the refresh token (HTTP ${status}${ItaTokenStore.errorText(json)}).`);
       throw new ItaReconnectError();
     }
 
