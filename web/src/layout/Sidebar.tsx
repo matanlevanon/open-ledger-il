@@ -82,28 +82,30 @@ function ClientGroup({ title, clients, open, onToggle, locale, onNavigate }: Cli
   );
 }
 
-/** Per-browser memory of whether a menu section (Income) is open. Never throws in private browsing. */
-function sectionStorageKey(email: string | undefined, path: string): string {
-  return `open-ledger-il-sidebar-section${path}-open:${email ?? 'anon'}`;
+/**
+ * Per-browser memory of whether a menu section (Income) is open. Never throws in private browsing.
+ * Not keyed by user: the email arrives after the first render, so a per-user key read the wrong entry.
+ */
+function sectionStorageKey(path: string): string {
+  return `open-ledger-il-sidebar-section${path}-open`;
 }
 
 interface NavSectionProps {
   section: (typeof NAV)[number];
   role: Role | undefined;
   features: string[];
-  email?: string;
   onNavigate?: () => void;
 }
 
 /** A menu section with sub items (Income). The header opens and closes it, and the choice is remembered. */
-function NavSection({ section, role, features, email, onNavigate }: NavSectionProps) {
+function NavSection({ section, role, features, onNavigate }: NavSectionProps) {
   const t = useT();
   const { locale } = usePreferences();
   const location = useLocation();
   const children = (section.children ?? []).filter((c) => canSee(c, role, features));
   const [open, setOpen] = useState(() => {
     try {
-      const v = localStorage.getItem(sectionStorageKey(email, section.path));
+      const v = localStorage.getItem(sectionStorageKey(section.path));
       return v === null ? true : v === '1';
     } catch {
       return true;
@@ -112,7 +114,7 @@ function NavSection({ section, role, features, email, onNavigate }: NavSectionPr
   const toggle = () => {
     setOpen((was) => {
       try {
-        localStorage.setItem(sectionStorageKey(email, section.path), was ? '0' : '1');
+        localStorage.setItem(sectionStorageKey(section.path), was ? '0' : '1');
       } catch {
         // Storage disabled: the toggle still works this session.
       }
@@ -331,7 +333,7 @@ export function Sidebar({ role, features, email, onNavigate, issuing = true }: S
           ) : (
             <li key={section.path}>
               {section.children ? (
-                <NavSection section={section} role={role} features={features} email={email} onNavigate={onNavigate} />
+                <NavSection section={section} role={role} features={features} onNavigate={onNavigate} />
               ) : (
                 <NavLink to={section.path} end={section.path === '/'} className={itemClass} onClick={onNavigate}>
                   {t(section.label)}
