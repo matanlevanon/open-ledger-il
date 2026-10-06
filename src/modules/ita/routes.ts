@@ -50,6 +50,25 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     return c.json({ connection: { ...status, banner: status.connected && (status.days_since_login ?? 0) >= RELOGIN_BANNER_DAY } });
   });
 
+  /** Renews the login now, the same way the daily check does, so a fix can be tested at once. */
+  app.post('/refresh', async (c) => {
+    const s = service(c);
+    try {
+      await s.tokens.refresh();
+      await audit(c, 'ita.refresh.manual', 'ita', s.tokens.environment);
+      return c.json({ ok: true });
+    } catch (err) {
+      const row = await first<{ status_reason: string | null }>(
+        c.env.DB,
+        'SELECT status_reason FROM ita_tokens WHERE environment = ?',
+        s.tokens.environment,
+      );
+      const reason = row?.status_reason ?? (err instanceof Error ? err.message : 'The renewal failed.');
+      await audit(c, 'ita.refresh.failed', 'ita', s.tokens.environment, { reason });
+      return c.json({ ok: false, reason });
+    }
+  });
+
   /** Starts the ITA login. The browser follows the redirect to the ITA. */
   app.get('/connect', async (c) => {
     const s = service(c);

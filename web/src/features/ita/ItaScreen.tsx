@@ -51,6 +51,21 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
     return err ? { tone: 'error', text: errKey ? t(errKey) : t('ita.callbackError.default') } : null;
   });
   const [busy, setBusy] = useState<number | null>(null);
+  const [renewing, setRenewing] = useState(false);
+  const testRenewal = () => {
+    if (!api.refresh) return;
+    setRenewing(true);
+    api
+      .refresh()
+      .then((r) =>
+        setNotice(r.ok ? { tone: 'ok', text: t('ita.renewal.ok') } : { tone: 'error', text: t('ita.renewal.failed', { reason: r.reason ?? '' }) }),
+      )
+      .catch(() => setNotice({ tone: 'error', text: t('ita.renewal.failed', { reason: '' }) }))
+      .finally(() => {
+        setRenewing(false);
+        load();
+      });
+  };
 
   const load = useCallback(() => {
     api
@@ -118,9 +133,21 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
               {c.status === 'reconnect_required' && t('ita.connection.reconnectRequired', { environment: c.environment })}
             </p>
           </div>
-          <a href={CONNECT_URL} className="rounded-card bg-brand px-4 py-2 text-sm text-brand-ink">
-            {c.status === 'not_connected' ? t('ita.connection.connectToIta') : t('ita.connection.connectAgain')}
-          </a>
+          <div className="flex flex-wrap gap-2">
+            {c.status === 'active' && api.refresh && (
+              <button
+                type="button"
+                className="rounded-card border border-line bg-canvas px-4 py-2 text-sm text-ink disabled:opacity-50"
+                disabled={renewing}
+                onClick={testRenewal}
+              >
+                {renewing ? t('ita.renewal.running') : t('ita.renewal.test')}
+              </button>
+            )}
+            <a href={CONNECT_URL} className="rounded-card bg-brand px-4 py-2 text-sm text-brand-ink">
+              {c.status === 'not_connected' ? t('ita.connection.connectToIta') : t('ita.connection.connectAgain')}
+            </a>
+          </div>
         </div>
         <p className="mt-2 text-xs text-muted">{t('ita.connection.environmentHint', { environment: c.environment })}</p>
       </div>

@@ -36,6 +36,10 @@ export const ita: Record<keyof typeof en, string> = {
 
   // Connection card
   'ita.connection.title': 'חיבור',
+  'ita.renewal.test': 'בדיקת חידוש',
+  'ita.renewal.running': 'מחדש…',
+  'ita.renewal.ok': 'רשות המסים חידשה את ההתחברות. הבדיקה היומית תעבוד.',
+  'ita.renewal.failed': 'רשות המסים סירבה לחידוש. {reason}',
   'ita.connection.notConnected': 'לא מחובר.',
   'ita.connection.active': 'מחובר ל-{environment}. ההתחברות תפוג בעוד {days} ימים.',
   'ita.connection.reconnectRequired': 'נדרשת התחברות מחדש ב-{environment}.',

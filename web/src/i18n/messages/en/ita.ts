@@ -39,6 +39,10 @@ export const ita = {
 
   // Connection card
   'ita.connection.title': 'Connection',
+  'ita.renewal.test': 'Test renewal',
+  'ita.renewal.running': 'Renewing…',
+  'ita.renewal.ok': 'The ITA renewed the login. The daily check will work.',
+  'ita.renewal.failed': 'The ITA refused the renewal. {reason}',
   'ita.connection.notConnected': 'Not connected.',
   'ita.connection.active': 'Connected to {environment}. Login ends in {days} days.',
   'ita.connection.reconnectRequired': 'Reconnect needed on {environment}.',
