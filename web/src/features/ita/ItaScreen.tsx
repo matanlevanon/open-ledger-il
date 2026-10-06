@@ -61,8 +61,10 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
     api
       .routeCheck()
       .then((r) => {
-        const text = [line(t('ita.route.direct'), r.direct), line(t('ita.route.egress'), r.egress)].filter(Boolean).join(' ');
-        setNotice({ tone: r.egress?.reached || r.direct.reached ? 'ok' : 'error', text });
+        const text = [line(t('ita.route.direct'), r.direct), line(t('ita.route.egress'), r.egress), line(t('ita.route.relay'), r.relay)]
+          .filter(Boolean)
+          .join(' ');
+        setNotice({ tone: r.relay?.reached || r.egress?.reached || r.direct.reached ? 'ok' : 'error', text });
       })
       .catch(() => setNotice({ tone: 'error', text: t('ita.route.failed') }))
       .finally(() => setChecking(false));

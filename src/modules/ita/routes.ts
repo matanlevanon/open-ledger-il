@@ -6,7 +6,7 @@ import { all, first, run } from '../../core/db';
 import { thresholdOn } from '../../core/config';
 import type { AppEnv } from '../../env';
 import { supplierConfirmationNumber, supplierInvoiceDetails } from './buyer';
-import { type ItaEnv, ITA_SCOPE, ITA_SERVICE_PAGE_URL, ITA_URLS, ITA_WEB_APP_URL, itaCredentials } from './config';
+import { type ItaEnv, ITA_SCOPE, ITA_SERVICE_PAGE_URL, ITA_URLS, ITA_WEB_APP_URL, itaCredentials, relayedFetch } from './config';
 import { randomToken } from './crypto';
 import { allocationGate } from './gate';
 import { RELOGIN_BANNER_DAY } from './jobs';
@@ -100,6 +100,18 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
       environment: s.tokens.environment,
       direct: { from: (c.req.raw as { cf?: { colo?: string } }).cf?.colo ?? null, ...(await probe(deps.fetch)) },
       egress: egress ? { from: egressWhere, ...(await probe((input, init) => egress.fetch(input, init))) } : null,
+      relay: (e.ITA_RELAY_URL ?? '').trim()
+        ? {
+            from: 'relay',
+            ...(await (async () => {
+              try {
+                return await probe(relayedFetch(e, deps.fetch));
+              } catch (err) {
+                return { status: 0, reached: false, reply: err instanceof Error ? err.message : 'error' };
+              }
+            })()),
+          }
+        : null,
     };
     await audit(c, 'ita.route.check', 'ita', s.tokens.environment, result);
     return c.json(result);

@@ -73,6 +73,7 @@ export interface RouteCheck {
   environment: string;
   direct: RouteProbe;
   egress: RouteProbe | null;
+  relay: RouteProbe | null;
 }
 
 export interface ItaApi {
