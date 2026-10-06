@@ -85,7 +85,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
         }
         return { status: res.status, reached, reply: text };
       } catch (err) {
-        return { status: 0, reached: false, reply: err instanceof Error ? err.name : 'error' };
+        return { status: 0, reached: false, reply: err instanceof Error ? `${err.name}: ${err.message}`.slice(0, 200) : 'error' };
       }
     };
     const egress = e.ITA_EGRESS;
