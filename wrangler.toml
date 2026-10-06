@@ -37,6 +37,7 @@ SOFTWARE_PRODUCER_NAME = ""
 #   ITA_CLIENT_ID_SANDBOX, ITA_CLIENT_SECRET_SANDBOX         (R12)
 #   ITA_CLIENT_ID_PRODUCTION, ITA_CLIENT_SECRET_PRODUCTION   (R12)
 #   ITA_TOKEN_KEY         AES-GCM key for stored ITA tokens, 32 random bytes base64 (R12)
+#   ITA_RELAY_URL, ITA_RELAY_CLIENT_ID, ITA_RELAY_CLIENT_SECRET   Optional relay with an Israeli address (R24)
 #   ITA_VAT_NUMBER        Business VAT number sent to the ITA. Optional, defaults to OWNER_TAX_ID (R12)
 #   ANTHROPIC_API_KEY     Expense extraction (R07)
 #   GOOGLE_SERVICE_ACCOUNT_JSON  Drive and Sheets read, expense import and backup (R07, R14, R20)

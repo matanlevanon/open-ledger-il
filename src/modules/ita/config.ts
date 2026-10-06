@@ -67,6 +67,43 @@ export interface ItaEnv extends Env {
   /** The business VAT number (עוסק מורשה). Defaults to OWNER_TAX_ID, which is the same number for an individual. */
   ITA_VAT_NUMBER?: string;
   SLACK_WEBHOOK_URL?: string;
+  /** Optional relay with an Israeli address, e.g. https://ita-relay.example.com. See relayedFetch. */
+  ITA_RELAY_URL?: string;
+  /** Cloudflare Access service token the relay accepts. Both are required when ITA_RELAY_URL is set. */
+  ITA_RELAY_CLIENT_ID?: string;
+  ITA_RELAY_CLIENT_SECRET?: string;
+}
+
+/** Tax Authority hosts the relay forwards, by the path prefix it expects. */
+const RELAY_HOSTS: Record<string, string> = {
+  'openapi.taxes.gov.il': 'openapi',
+  'ita-api.taxes.gov.il': 'ita-api',
+};
+
+/**
+ * The fetch the ITA module uses for server-side calls (token, renewal, invoices).
+ *
+ * A Worker runs in whichever Cloudflare data center takes the request, often outside Israel,
+ * and the Tax Authority refuses some of those calls with a bare 403. With ITA_RELAY_URL set,
+ * calls to the Tax Authority hosts go through a relay with an Israeli address instead, carrying
+ * the Cloudflare Access service token headers. Without it, calls go out directly as before.
+ * The browser sign-in (authorize) never passes here: it runs in the user's own browser.
+ */
+export function relayedFetch(env: ItaEnv, base: typeof fetch): typeof fetch {
+  const relay = (env.ITA_RELAY_URL ?? '').trim().replace(/\/+$/, '');
+  if (!relay) return base;
+  const id = (env.ITA_RELAY_CLIENT_ID ?? '').trim();
+  const secret = (env.ITA_RELAY_CLIENT_SECRET ?? '').trim();
+  if (!id || !secret) throw new ConfigError('ITA_RELAY_URL is set. Set ITA_RELAY_CLIENT_ID and ITA_RELAY_CLIENT_SECRET too.');
+  return (input, init) => {
+    const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
+    const prefix = RELAY_HOSTS[url.hostname];
+    if (!prefix) return base(input, init);
+    const headers = new Headers(init?.headers);
+    headers.set('CF-Access-Client-Id', id);
+    headers.set('CF-Access-Client-Secret', secret);
+    return base(`${relay}/${prefix}${url.pathname}${url.search}`, { ...init, headers });
+  };
 }
 
 export function itaEnvironment(env: Env): ItaEnvironment {

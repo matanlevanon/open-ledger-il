@@ -1,6 +1,6 @@
 import { first, run } from '../../core/db';
 import { ValidationError } from '../../core/errors';
-import { type ItaEnv, type ItaEnvironment, ITA_SCOPE, ITA_URLS, itaCredentials, itaEnvironment } from './config';
+import { type ItaEnv, type ItaEnvironment, ITA_SCOPE, ITA_URLS, itaCredentials, itaEnvironment, relayedFetch } from './config';
 import { decryptToken, encryptToken, importTokenKey } from './crypto';
 import { ItaReconnectError, ItaUnavailableError } from './errors';
 
@@ -107,7 +107,7 @@ export class ItaTokenStore {
     const { clientId, clientSecret } = itaCredentials(this.env);
     let res: Response;
     try {
-      res = await this.io.fetch(ITA_URLS[this.environment].token, {
+      res = await relayedFetch(this.env, this.io.fetch)(ITA_URLS[this.environment].token, {
         method: 'POST',
         headers: {
           Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,

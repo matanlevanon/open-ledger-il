@@ -1,4 +1,4 @@
-import { type ItaEnv, type ItaPath, ITA_URLS } from './config';
+import { type ItaEnv, type ItaPath, ITA_URLS, relayedFetch } from './config';
 import { ItaReconnectError, ItaUnavailableError } from './errors';
 import type { ClockAndFetch, ItaTokenStore } from './tokens';
 
@@ -37,7 +37,7 @@ export class ItaClient {
 
   private async send(path: ItaPath, body: unknown, token: string): Promise<Response> {
     const url = `${ITA_URLS[this.tokens.environment].api}${path}`;
-    return this.io.fetch(url, {
+    return relayedFetch(this.env, this.io.fetch)(url, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify(body),
