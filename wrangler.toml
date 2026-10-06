@@ -48,6 +48,12 @@ SOFTWARE_PRODUCER_NAME = ""
 #   MCP_TOKEN             Bearer token for /mcp (R14)
 # Local development: copy .dev.vars.example to .dev.vars (git-ignored).
 
+# Tax Authority calls go through the egress Worker placed near Tel Aviv (workers/ita-egress,
+# docs/deploy.md). Deploy that Worker first: this build fails while it does not exist.
+[[services]]
+binding = "ITA_EGRESS"
+service = "open-ledger-il-ita-egress"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "open-ledger-il"
