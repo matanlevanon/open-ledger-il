@@ -119,7 +119,14 @@ export class ItaTokenStore {
     } catch {
       throw new ItaUnavailableError('The ITA login service is not answering.');
     }
-    const json = await res.json().catch(() => null);
+    // A reply that is not JSON (a firewall page, say) is kept as text, so the reason shows its source.
+    const text = await res.text().catch(() => '');
+    let json: unknown = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      json = text ? { body: text.replace(/\s+/g, ' ').trim() } : null;
+    }
     return { status: res.status, json };
   }
 
@@ -127,7 +134,7 @@ export class ItaTokenStore {
   private static errorText(json: unknown): string {
     if (!json || typeof json !== 'object') return '';
     const o = json as Record<string, unknown>;
-    const parts = [o.error, o.error_description, o.moreInformation, o.httpMessage]
+    const parts = [o.error, o.error_description, o.moreInformation, o.httpMessage, o.body]
       .filter((v): v is string => typeof v === 'string' && v.length > 0)
       .map((v) => v.slice(0, 200));
     return parts.length ? `: ${parts.join(' / ')}` : '';

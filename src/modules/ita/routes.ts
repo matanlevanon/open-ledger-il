@@ -120,9 +120,18 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     try {
       await s.tokens.exchangeCode(code, saved.redirect_uri, c.get('user').id);
     } catch (err) {
+      const egress = env(c).ITA_EGRESS;
+      const from = egress
+        ? await egress
+            .fetch('https://ita-egress.internal/__where')
+            .then((r) => r.json() as Promise<{ colo: string | null }>)
+            .then((w) => `egress ${w.colo}`)
+            .catch(() => 'egress unknown')
+        : `worker ${(c.req.raw as { cf?: { colo?: string } }).cf?.colo ?? 'unknown'}`;
       await audit(c, 'ita.connect.failed', 'ita', s.tokens.environment, {
         reason: 'exchange',
         detail: err instanceof Error ? err.message.slice(0, 500) : String(err).slice(0, 500),
+        from,
       });
       if (err instanceof Error && 'code' in err && typeof err.code === 'string') return back(`error=${encodeURIComponent(err.code)}`);
       throw err;
