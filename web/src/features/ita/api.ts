@@ -68,7 +68,7 @@ export interface ItaApi {
   decide(documentId: number, choice: RefusalChoice): Promise<ActionResult>;
   manual(documentId: number, confirmationNumber: string, note: string): Promise<ActionResult>;
   /** Renews the ITA login now. */
-  refresh?(): Promise<{ ok: boolean; reason?: string }>;
+  refresh?(): Promise<{ ok: boolean; reason?: string; from?: string | null }>;
 }
 
 async function post(path: string, body?: unknown): Promise<ActionResult> {
@@ -91,8 +91,8 @@ export const httpItaApi: ItaApi = {
   manual: (id, confirmationNumber, note) => post(`/allocations/${id}/manual`, { confirmation_number: confirmationNumber, source_note: note }),
   refresh: async () => {
     const res = await fetch('/api/ita/refresh', { method: 'POST', headers: { Accept: 'application/json' } });
-    const json = (await res.json().catch(() => null)) as { ok?: boolean; reason?: string } | null;
-    return { ok: Boolean(res.ok && json?.ok), reason: json?.reason ?? (res.ok ? undefined : `HTTP ${res.status}`) };
+    const json = (await res.json().catch(() => null)) as { ok?: boolean; reason?: string; from?: string | null } | null;
+    return { ok: Boolean(res.ok && json?.ok), reason: json?.reason ?? (res.ok ? undefined : `HTTP ${res.status}`), from: json?.from ?? null };
   },
 };
 

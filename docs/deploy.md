@@ -320,3 +320,42 @@ Confirm it actually works on this database at least once, before you need it for
    dashboard, disable the route, or pause the Custom Domain), then run the same
    `d1 time-travel restore` command against the real `DB` binding's id, confirm the restored state,
    then re-enable the Worker. Time-travel restores in place; it does not create a new database.
+
+## Tax Authority egress (allocation numbers)
+
+The Tax Authority refuses some calls that come from outside Israel. A Worker runs in whichever
+Cloudflare data center takes the request, and Israeli users are often served from Frankfurt. On
+6 October 2026 the token call from Frankfurt got a bare HTTP 403 and the same call from Tel Aviv
+worked. Check where you are served from at `https://<your ledger address>/cdn-cgi/trace`, the
+`colo=` line.
+
+The fix ships with the code: a second, small Worker in `workers/ita-egress`, placed near Tel Aviv
+(`placement.region = "gcp:me-west1"`). The main Worker sends its Tax Authority calls to it over a
+service binding. Only the server-side calls move: the token exchange, the access token renewal
+and the invoice calls. The Tax Authority sign-in page opens in your own browser as before.
+
+Why not the browser for all of it: the Tax Authority's API does not accept calls from a web page
+on another address (no CORS), and the token calls carry the app's client secret, which must
+never reach a browser.
+
+Set it up once, before the main Worker's build that adds the binding:
+
+1. Cloudflare dashboard, Workers & Pages, Create, Import a repository. Pick this repository.
+2. Project name `open-ledger-il-ita-egress`. Root directory `workers/ita-egress`. Build command empty.
+   Deploy command `npx wrangler deploy`.
+3. Deploy. The Worker has no public address, which is intended.
+4. Push the commit that adds the `[[services]]` binding `ITA_EGRESS` to the main `wrangler.toml`.
+   Its build then deploys against the egress Worker.
+5. On the ITA screen click Test renewal. The message names the data center the call left from.
+   TLV is the goal.
+
+`ITA_RELAY_URL` (docs/secrets.md) is the other option: a relay you host at an Israeli address.
+When set, it takes precedence over the egress Worker.
+
+### How long a login lasts
+
+An ITA login lasts 90 days from the sign-in with your user code and one-time code. The Ledger
+does not renew it every night. The access token, valid for minutes, is renewed when a call needs
+it. Slack reminders go out on days 75, 85 and 89, the ITA screen shows a banner from day 80, and
+on day 90 the connection is marked for reconnecting with one more message.
+

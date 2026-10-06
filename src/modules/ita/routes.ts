@@ -53,10 +53,19 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
   /** Renews the login now, the same way the daily check does, so a fix can be tested at once. */
   app.post('/refresh', async (c) => {
     const s = service(c);
+    // Where the Tax Authority call left from: the ita-egress data center, or this Worker's own.
+    const egress = env(c).ITA_EGRESS;
+    const where = egress
+      ? await egress
+          .fetch('https://ita-egress.internal/__where')
+          .then((r) => r.json() as Promise<{ colo: string | null }>)
+          .then((w) => w.colo)
+          .catch(() => null)
+      : ((c.req.raw as { cf?: { colo?: string } }).cf?.colo ?? null);
     try {
       await s.tokens.refresh();
-      await audit(c, 'ita.refresh.manual', 'ita', s.tokens.environment);
-      return c.json({ ok: true });
+      await audit(c, 'ita.refresh.manual', 'ita', s.tokens.environment, { from: where });
+      return c.json({ ok: true, from: where });
     } catch (err) {
       const row = await first<{ status_reason: string | null }>(
         c.env.DB,
@@ -64,8 +73,8 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
         s.tokens.environment,
       );
       const reason = row?.status_reason ?? (err instanceof Error ? err.message : 'The renewal failed.');
-      await audit(c, 'ita.refresh.failed', 'ita', s.tokens.environment, { reason });
-      return c.json({ ok: false, reason });
+      await audit(c, 'ita.refresh.failed', 'ita', s.tokens.environment, { reason, from: where });
+      return c.json({ ok: false, reason, from: where });
     }
   });
 

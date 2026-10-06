@@ -11,8 +11,12 @@ export const ITA_CRONS = {
   tokenCheck: '30 5 * * *',
 } as const;
 
-/** Day after the interactive login when the Slack reminder goes out. The dashboard banner starts at day 80. */
-export const RELOGIN_REMINDER_DAY = 75;
+/**
+ * Days after the interactive login when the Slack reminder goes out: a first notice, a second,
+ * and the last day. The login ends on day 90. The dashboard banner starts at day 80.
+ */
+export const RELOGIN_REMINDER_DAYS = [75, 85, 89] as const;
+export const RELOGIN_REMINDER_DAY = RELOGIN_REMINDER_DAYS[0];
 export const RELOGIN_BANNER_DAY = 80;
 
 export interface QueueRunResult {
@@ -84,39 +88,51 @@ export interface TokenCheckResult {
   reminded: boolean;
 }
 
+/** Which reminder (1, 2 or 3) is due on a given day after the login. 0 means none yet. */
+export function reminderStage(daysSinceLogin: number): number {
+  let stage = 0;
+  RELOGIN_REMINDER_DAYS.forEach((day, i) => {
+    if (daysSinceLogin >= day) stage = i + 1;
+  });
+  return stage;
+}
+
 /**
- * Daily: refreshes the token to prove the login still works, and sends the day-75 re-login
- * reminder once per login.
+ * Daily: reads the login dates and sends the re-login reminders on days 75, 85 and 89.
+ *
+ * It does not renew the login every night. The ITA login lasts 90 days from the interactive
+ * sign-in whatever happens in between (developer guide: refresh without signing in until the
+ * earlier of the consent count or 3 months), so a nightly renewal proves little and adds a daily
+ * chance to fail. The short-lived access token is renewed when a call needs it.
  */
 export async function runTokenCheck(env: ItaEnv, deps: ItaDeps): Promise<TokenCheckResult> {
   const service = new ItaAllocationService(env, deps);
   const tokens = service.tokens;
   const notifier = deps.notifier(env);
-  const before = await tokens.status();
-  if (before.status === 'not_connected') return { status: 'not_connected', refreshed: false, reminded: false };
+  const status = await tokens.status();
+  if (status.status !== 'active') return { status: status.status, refreshed: false, reminded: false };
 
-  let refreshed = false;
-  if (before.status === 'active') {
-    try {
-      await tokens.refresh();
-      refreshed = true;
-    } catch (err) {
-      if (err instanceof ItaReconnectError) {
-        await notifier.send(`Open Ledger IL: the ITA ${before.environment} login stopped working. Open the ITA screen and connect again.`);
-      } else if (!(err instanceof DomainError)) {
-        throw err;
-      }
-    }
+  if ((status.days_until_relogin ?? 0) <= 0) {
+    await tokens.markReconnect('The ITA login expired after 90 days.');
+    await notifier.send(`Open Ledger IL: the ITA ${status.environment} login expired. Open the ITA screen and connect again.`);
+    return { status: 'reconnect_required', refreshed: false, reminded: true };
   }
 
-  const status = await tokens.status();
+  const days = status.days_since_login ?? 0;
+  const due = reminderStage(days);
+  const nowMs = deps.now().getTime();
+  const sentAtDay = status.reminder_sent_at ? days - Math.floor((nowMs - Date.parse(status.reminder_sent_at)) / 86_400_000) : -1;
+  const sent = sentAtDay >= 0 ? reminderStage(sentAtDay) : 0;
+
   let reminded = false;
-  if (status.status === 'active' && (status.days_since_login ?? 0) >= RELOGIN_REMINDER_DAY && !status.reminder_sent_at) {
+  if (due > sent) {
+    const left = status.days_until_relogin ?? 0;
+    const when = left <= 1 ? 'tomorrow' : `in ${left} days`;
     reminded = await notifier.send(
-      `Open Ledger IL: the ITA ${status.environment} login ends in ${status.days_until_relogin} days. ` +
+      `Open Ledger IL: the ITA ${status.environment} login ends ${when}. ` +
         'Open the ITA screen and connect again with your user code and one-time code.',
     );
     if (reminded) await tokens.markReminderSent();
   }
-  return { status: status.status, refreshed, reminded };
+  return { status: status.status, refreshed: false, reminded };
 }

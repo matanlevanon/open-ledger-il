@@ -58,7 +58,11 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
     api
       .refresh()
       .then((r) =>
-        setNotice(r.ok ? { tone: 'ok', text: t('ita.renewal.ok') } : { tone: 'error', text: t('ita.renewal.failed', { reason: r.reason ?? '' }) }),
+        setNotice(
+          r.ok
+            ? { tone: 'ok', text: t('ita.renewal.ok', { from: r.from ?? '?' }) }
+            : { tone: 'error', text: t('ita.renewal.failed', { reason: r.reason ?? '', from: r.from ?? '?' }) },
+        ),
       )
       .catch(() => setNotice({ tone: 'error', text: t('ita.renewal.failed', { reason: '' }) }))
       .finally(() => {
