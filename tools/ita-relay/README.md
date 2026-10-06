@@ -1,15 +1,22 @@
 # ita-relay
 
 Forwards the Ledger's server-side calls to the Israel Tax Authority from a
-server with an Israeli address. You need it only for allocation numbers
-(מספרי הקצאה), and only when the Tax Authority turns your Worker away.
+server with a fixed Israeli address. You need it only for allocation numbers
+(מספרי הקצאה), and only as a fallback.
+
+Start with Option 1 in docs/deploy.md, "Reaching the Tax Authority": the
+Worker calls the Tax Authority directly, and works whenever Cloudflare serves
+you from Tel Aviv. Set up this relay when that keeps failing, or when you want
+every call to succeed, including the scheduled retries.
 
 ## Why
 
 The Ledger is a Cloudflare Worker. A Worker runs in whichever Cloudflare data
-center takes the request, and Israeli users are often served from Frankfurt.
-On 6 October 2026 the Tax Authority's token endpoint answered calls from
-Frankfurt with a bare HTTP 403, and the same login worked from Tel Aviv.
+center takes the request. Israeli users are served from Tel Aviv some of the
+time and from Frankfurt at other times. On 6 October 2026 the Tax Authority's
+token endpoint answered calls from Frankfurt with a bare HTTP 403. On 7
+October the same Worker was served from Tel Aviv and got through. Scheduled
+jobs run in a data center Cloudflare picks, often outside Israel.
 Cloudflare's placement hints did not help: a Worker placed "near Tel Aviv"
 ran in Mumbai, which was refused too.
 
@@ -18,8 +25,8 @@ connection. The relay carries only what the Worker sends: the token exchange,
 the access token renewal and the invoice calls. Those carry the app's client
 secret, so they cannot move to the browser.
 
-Check first. On the ITA screen, click Check route. If Direct reached the ITA,
-you do not need this.
+Check first. On the ITA screen, click Check route a few times over a few
+minutes. If Direct shows TLV and reached the ITA, Option 1 works for you.
 
 ## What it forwards
 
