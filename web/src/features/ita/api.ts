@@ -21,8 +21,10 @@ export interface QueueDocument {
   status: string;
   date: string;
   customer_name: string | null;
+  customer_vat_number?: string | null;
   payment_amount_minor: number;
   vat_amount_minor: number;
+  total_minor?: number;
 }
 
 export interface AllocationItem {
@@ -53,6 +55,9 @@ export interface Overview {
   refused: AllocationItem[];
   without_numbers: WithoutNumber[];
   links: { web_app: string; hearing: string };
+  /** 'manual': no ITA API app is set up, numbers come from the ITA web app. */
+  mode?: 'api' | 'manual';
+  business_vat_number?: string | null;
 }
 
 export interface ActionResult {

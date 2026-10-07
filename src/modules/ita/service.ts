@@ -9,6 +9,7 @@ import {
   ITA_PATHS,
   ITA_SERVICE_PAGE_URL,
   itaIdentity,
+  itaManualMode,
 } from './config';
 import { ALLOCATION_STATUSES, type AllocationDocumentStore, D1AllocationDocuments } from './documents';
 import { ItaReconnectError, ItaUnavailableError } from './errors';
@@ -62,7 +63,7 @@ export interface AllocationRow {
 export interface AllocationResult {
   document_id: number;
   status: AllocationRowStatus;
-  outcome: ApprovalOutcome['kind'] | 'decision_sent' | 'manual' | 'unchanged';
+  outcome: ApprovalOutcome['kind'] | 'decision_sent' | 'manual' | 'manual_required' | 'unchanged';
   confirmation_number: string | null;
   short_number: string | null;
   error_code: string | null;
@@ -105,6 +106,8 @@ const OK_MESSAGES: Record<string, string> = {
   pending: 'The ITA is not answering. Open Ledger IL retries every 15 minutes for 24 hours.',
   unauthorized: 'Reconnect to ITA. Open Ledger IL retries every 15 minutes after that.',
 };
+
+const MANUAL_MODE_MESSAGE = 'No ITA API app is set up. Request this number in the ITA web app and enter it on the ITA screen.';
 
 interface Prepared {
   doc: AllocationDocument;
@@ -234,10 +237,43 @@ export class ItaAllocationService implements AllocationService {
   }
 
   async request(documentId: number, actor: AuditActor): Promise<AllocationResult> {
+    if (itaManualMode(this.env)) return this.queueForWebApp(documentId, actor);
     const prepared = await this.prepare(documentId);
     if (!('body' in prepared)) return prepared;
     const outcome = approvalOutcome(await this.client.post(ITA_PATHS.approval, prepared.body));
     return this.apply(prepared, outcome, prepared.source, ITA_PATHS.approval, actor);
+  }
+
+  /**
+   * Manual mode: no ITA call. The document waits on the ITA screen for a number from the ITA web
+   * app. The 24-hour deadline drives the Slack reminder in the retry queue job.
+   */
+  private async queueForWebApp(documentId: number, actor: AuditActor): Promise<AllocationResult> {
+    const doc = await this.docs.get(documentId);
+    if (!doc) throw new NotFoundError('Document', documentId);
+    const existing = await this.row(documentId);
+    if (existing?.status === 'approved') return this.result(existing, 'unchanged', OK_MESSAGES.approved!);
+    if (!(ALLOCATION_STATUSES as readonly string[]).includes(doc.status)) {
+      throw new ConflictError('not_awaiting_allocation', 'This document is not waiting for an allocation number.');
+    }
+    const row = await this.ensureRow(doc);
+    const now = this.now();
+    const message = MANUAL_MODE_MESSAGE;
+    await transaction(this.db, [
+      stmt(
+        this.db,
+        `UPDATE ita_allocations SET status = 'pending', source = 'manual_mode', deadline_at = COALESCE(deadline_at, ?),
+           next_attempt_at = NULL, last_error_code = 'manual_mode', last_error_message = ?, updated_at = ?
+         WHERE id = ? AND status IN ('pending', 'failed')`,
+        this.later(RETRY_WINDOW_MS),
+        message,
+        now,
+        row.id,
+      ),
+      auditStatement(this.db, actor, 'ita.allocation.manual_required', 'document', doc.id, { invoice_id: row.invoice_id }),
+    ]);
+    if (doc.status === 'awaiting_allocation') await this.docs.setStatus(doc.id, 'allocation_pending');
+    return this.result(await this.rowById(row.id), 'manual_required', message);
   }
 
   /** One MultiApproval call for many documents. Used by the retry queue. */

@@ -370,6 +370,21 @@ Why not the browser for all of it: the Tax Authority's API does not accept calls
 on another address (no CORS), and the token calls carry the app's client secret, which must never
 reach a browser.
 
+### Option 3: no API app, numbers by hand
+
+Leave the ITA client id and secret for your ITA_ENV unset and the Ledger runs in manual mode. It
+never calls the Tax Authority, so you need no developer portal registration, no API app and no
+relay. You still need ITA_ENV set, and an ITA personal area user code to sign in to the web app.
+
+1. Issue the tax invoice as usual. When it needs an allocation number, it waits in the queue on
+   the ITA screen.
+2. Click Copy details, then Open the ITA web app. Sign in with your user code and one-time code,
+   request the number and paste in the details.
+3. Type the number back on the ITA screen and click Save number. The document becomes final.
+
+A number still missing after 24 hours raises one Slack alert. Set the two secrets later and the
+Ledger switches to the API on its own.
+
 ### How long a login lasts
 
 An ITA login lasts 90 days from the sign-in with your user code and one-time code. The Ledger

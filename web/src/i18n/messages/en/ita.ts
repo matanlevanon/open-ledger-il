@@ -74,6 +74,12 @@ export const ita = {
   'ita.queue.stalled': 'No answer for 24 hours. Request the number in the ITA web app and enter it here.',
   'ita.queue.failedDefault': 'The ITA rejected the request.',
   'ita.queue.retryNow': 'Retry now',
+  'ita.queue.manualWaiting': 'Request this number in the ITA web app, then enter it here.',
+  'ita.queue.copyDetails': 'Copy details',
+  'ita.queue.copied': 'Copied',
+  'ita.manual.title': 'Manual mode',
+  'ita.manual.body':
+    'No ITA API app is set up, so the Ledger does not connect to the ITA. Request each allocation number in the ITA web app, then enter it in the queue below. A Slack reminder goes out when a number is still missing after 24 hours.',
   'ita.queue.openWebApp': 'Open the ITA web app',
   'ita.queue.allocationNumberLabel': 'Allocation number',
   'ita.queue.noteLabel': 'Note',

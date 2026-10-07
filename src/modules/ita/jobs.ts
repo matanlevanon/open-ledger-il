@@ -1,7 +1,7 @@
 import { SYSTEM_ACTOR } from '../../core/audit';
 import { all, run } from '../../core/db';
 import { DomainError } from '../../core/errors';
-import { type ItaEnv, ITA_WEB_APP_URL, itaEnvironment } from './config';
+import { type ItaEnv, ITA_WEB_APP_URL, itaEnvironment, itaManualMode } from './config';
 import { ItaReconnectError } from './errors';
 import { type ItaDeps, ItaAllocationService } from './service';
 
@@ -53,8 +53,9 @@ export async function runRetryQueue(env: ItaEnv, deps: ItaDeps): Promise<QueueRu
     environment,
   );
   for (const row of unalerted) {
+    const why = row.attempts === 0 ? 'after 24 hours' : `after 24 hours and ${row.attempts} tries`;
     const sent = await notifier.send(
-      `Open Ledger IL: document ${row.document_id} has no ITA allocation number after 24 hours and ${row.attempts} tries. ` +
+      `Open Ledger IL: document ${row.document_id} has no ITA allocation number ${why}. ` +
         `Request the number in the ITA web app (${ITA_WEB_APP_URL}) and enter it on the ITA screen.`,
     );
     if (sent) {
@@ -62,6 +63,9 @@ export async function runRetryQueue(env: ItaEnv, deps: ItaDeps): Promise<QueueRu
       result.alerts++;
     }
   }
+
+  // Manual mode never calls the ITA. The reminders above still go out.
+  if (itaManualMode(env)) return result;
 
   const due = await all<{ document_id: number }>(
     env.DB,

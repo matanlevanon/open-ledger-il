@@ -71,6 +71,12 @@ export const ita: Record<keyof typeof en, string> = {
   'ita.queue.stalled': 'אין מענה כבר 24 שעות. בקש את המספר באפליקציית האינטרנט של רשות המסים והזן אותו כאן.',
   'ita.queue.failedDefault': 'רשות המסים דחתה את הבקשה.',
   'ita.queue.retryNow': 'נסה שוב עכשיו',
+  'ita.queue.manualWaiting': 'בקש את המספר באפליקציית האינטרנט של רשות המסים, והזן אותו כאן.',
+  'ita.queue.copyDetails': 'העתקת פרטים',
+  'ita.queue.copied': 'הועתק',
+  'ita.manual.title': 'מצב ידני',
+  'ita.manual.body':
+    'לא הוגדרה אפליקציית API של רשות המסים, ולכן המערכת לא מתחברת לרשות המסים. בקש כל מספר הקצאה באפליקציית האינטרנט של רשות המסים, והזן אותו בתור למטה. תזכורת ב-Slack נשלחת כשמספר עדיין חסר אחרי 24 שעות.',
   'ita.queue.openWebApp': 'פתח את אפליקציית האינטרנט של רשות המסים',
   'ita.queue.allocationNumberLabel': 'מספר הקצאה',
   'ita.queue.noteLabel': 'הערה',

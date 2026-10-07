@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 (2026-10-08)
+
+### Tax Authority (allocation numbers)
+- Manual mode. With no ITA API app set up, the Ledger never calls the Tax Authority. An invoice
+  that needs an allocation number waits on the ITA screen. Copy details puts the invoice details
+  on the clipboard for the ITA web app, and the number is typed back in. A number still missing
+  after 24 hours raises one Slack alert. docs/deploy.md, Option 3.
+- Queue rows carry the client's VAT number and the total with VAT.
+
 ## 1.1.0 (2026-10-07)
 
 ### Tax Authority (allocation numbers)

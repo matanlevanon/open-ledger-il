@@ -128,6 +128,21 @@ export function itaCredentials(env: ItaEnv): ItaCredentials {
   return { environment, clientId, clientSecret };
 }
 
+/**
+ * Manual mode: no ITA API app for the current environment (its client id or secret is not set).
+ * The Ledger then never calls the ITA. An invoice that needs an allocation number waits on the
+ * ITA screen until the number is requested in the ITA web app and typed in.
+ */
+export function itaManualMode(env: ItaEnv): boolean {
+  try {
+    itaCredentials(env);
+    return false;
+  } catch (err) {
+    if (err instanceof ConfigError) return true;
+    throw err;
+  }
+}
+
 /** The dealer and operator numbers sent with every call. Values come only from secrets. */
 export interface ItaIdentity {
   vatNumber: string;

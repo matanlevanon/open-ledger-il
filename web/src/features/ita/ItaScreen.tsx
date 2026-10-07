@@ -126,6 +126,7 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
   if (!data) return <p className="text-muted">{t('ita.loadingStatus')}</p>;
 
   const c = data.connection;
+  const manual = data.mode === 'manual';
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl space-y-6">
       <h1 id="page-title" className="font-heading text-3xl text-ink">
@@ -138,12 +139,21 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
         </p>
       )}
 
-      {(c.banner || c.status === 'reconnect_required') && (
+      {!manual && (c.banner || c.status === 'reconnect_required') && (
         <p role="alert" className="rounded-card border border-warning bg-tile-peach px-4 py-3 text-sm text-ink">
           {c.status === 'reconnect_required' ? t('ita.banner.reconnectRequired') : t('ita.banner.reloginSoon', { days: c.days_until_relogin ?? 0 })}
         </p>
       )}
 
+      {manual ? (
+        <div className="rounded-card border border-line bg-surface p-5 shadow-card" data-testid="manual-mode">
+          <h2 className="text-lg text-ink">{t('ita.manual.title')}</h2>
+          <p className="mt-1 text-sm text-muted">{t('ita.manual.body')}</p>
+          <a className="mt-3 inline-block text-sm text-accent-2 underline" href={data.links.web_app} target="_blank" rel="noreferrer">
+            {t('ita.queue.openWebApp')}
+          </a>
+        </div>
+      ) : (
       <div className="rounded-card border border-line bg-surface p-5 shadow-card">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -182,6 +192,7 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
         </div>
         <p className="mt-2 text-xs text-muted">{t('ita.connection.environmentHint', { environment: c.environment })}</p>
       </div>
+      )}
 
       <div className="rounded-card border border-line bg-canvas p-5 shadow-card">
         <h2 className="text-lg text-ink">{t('ita.refused.title')}</h2>
@@ -203,7 +214,17 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
         ) : (
           <ul className="mt-3 space-y-4">
             {data.queue.map((item) => (
-              <QueueRow key={item.document_id} item={item} webAppUrl={data.links.web_app} busy={busy === item.document_id} onAct={act} api={api} t={t} />
+              <QueueRow
+                key={item.document_id}
+                item={item}
+                webAppUrl={data.links.web_app}
+                manual={manual}
+                businessVat={data.business_vat_number ?? null}
+                busy={busy === item.document_id}
+                onAct={act}
+                api={api}
+                t={t}
+              />
             ))}
           </ul>
         )}
@@ -293,10 +314,41 @@ function RefusedRow({ item, busy, api, onAct, hearingUrl, t }: RowProps & { hear
   );
 }
 
-function QueueRow({ item, busy, api, onAct, webAppUrl, t }: RowProps & { webAppUrl: string }) {
+/** The invoice details the ITA web app asks for, in Hebrew, ready to paste. */
+function webAppDetails(d: NonNullable<AllocationItem['document']>, businessVat: string | null): string {
+  const money = (minor: number | undefined) => (minor === undefined ? '' : (minor / 100).toFixed(2));
+  return [
+    `מספר עוסק מורשה: ${businessVat ?? ''}`,
+    `מספר עוסק של הלקוח: ${d.customer_vat_number ?? ''}`,
+    `שם הלקוח: ${d.customer_name ?? ''}`,
+    `מספר מסמך: ${d.number ?? ''}`,
+    `תאריך: ${d.date}`,
+    `סכום לפני מע"מ: ${money(d.payment_amount_minor)}`,
+    `מע"מ: ${money(d.vat_amount_minor)}`,
+    `סכום כולל מע"מ: ${money(d.total_minor)}`,
+  ].join('\n');
+}
+
+function QueueRow({
+  item,
+  busy,
+  api,
+  onAct,
+  webAppUrl,
+  manual = false,
+  businessVat = null,
+  t,
+}: RowProps & { webAppUrl: string; manual?: boolean; businessVat?: string | null }) {
   const d = item.document;
   const [number, setNumber] = useState('');
   const [note, setNote] = useState('');
+  const [copied, setCopied] = useState(false);
+  const waitingForWebApp = manual || item.last_error_code === 'manual_mode';
+
+  function copyDetails() {
+    if (!d || !navigator.clipboard) return;
+    void navigator.clipboard.writeText(webAppDetails(d, businessVat)).then(() => setCopied(true));
+  }
 
   function submit(e: FormEvent) {
     e.preventDefault();
@@ -309,17 +361,27 @@ function QueueRow({ item, busy, api, onAct, webAppUrl, t }: RowProps & { webAppU
         <p className="text-ink">
           {d ? docLabel(d, t) : t('ita.documentFallback', { id: item.document_id })} {d?.customer_name ? t('ita.forCustomer', { name: d.customer_name }) : ''}
         </p>
-        <span className="rounded-full bg-tile-blue px-2 py-0.5 text-xs text-ink">{STATUS_TEXT_KEYS[item.status] ? t(STATUS_TEXT_KEYS[item.status]!) : item.status}</span>
+        <span className="rounded-full bg-tile-blue px-2 py-0.5 text-xs text-ink">
+          {waitingForWebApp ? t('ita.status.stalled') : STATUS_TEXT_KEYS[item.status] ? t(STATUS_TEXT_KEYS[item.status]!) : item.status}
+        </span>
       </div>
       <p className="mt-1 text-sm text-muted">
-        {item.status === 'pending' && t('ita.queue.triedTimes', { attempts: item.attempts, next: when(item.next_attempt_at, t) })}
-        {item.status === 'stalled' && t('ita.queue.stalled')}
+        {waitingForWebApp && item.status !== 'failed' && t('ita.queue.manualWaiting')}
+        {!waitingForWebApp && item.status === 'pending' && t('ita.queue.triedTimes', { attempts: item.attempts, next: when(item.next_attempt_at, t) })}
+        {!waitingForWebApp && item.status === 'stalled' && t('ita.queue.stalled')}
         {item.status === 'failed' && (item.last_error_message ?? t('ita.queue.failedDefault'))}
       </p>
       <div className="mt-3 flex flex-wrap items-end gap-3">
-        <button type="button" disabled={busy} className="rounded-card border border-line px-3 py-2 text-sm" onClick={() => onAct(item.document_id, () => api.request(item.document_id))}>
-          {t('ita.queue.retryNow')}
-        </button>
+        {!waitingForWebApp && (
+          <button type="button" disabled={busy} className="rounded-card border border-line px-3 py-2 text-sm" onClick={() => onAct(item.document_id, () => api.request(item.document_id))}>
+            {t('ita.queue.retryNow')}
+          </button>
+        )}
+        {d && (
+          <button type="button" className="rounded-card border border-line px-3 py-2 text-sm" onClick={copyDetails}>
+            {copied ? t('ita.queue.copied') : t('ita.queue.copyDetails')}
+          </button>
+        )}
         <a className="text-sm text-accent-2 underline" href={webAppUrl} target="_blank" rel="noreferrer">
           {t('ita.queue.openWebApp')}
         </a>

@@ -6,7 +6,7 @@ import { all, first, run } from '../../core/db';
 import { thresholdOn } from '../../core/config';
 import type { AppEnv } from '../../env';
 import { supplierConfirmationNumber, supplierInvoiceDetails } from './buyer';
-import { type ItaEnv, ITA_SCOPE, ITA_SERVICE_PAGE_URL, ITA_URLS, ITA_WEB_APP_URL, itaCredentials, relayedFetch } from './config';
+import { type ItaEnv, ITA_SCOPE, ITA_SERVICE_PAGE_URL, ITA_URLS, ITA_WEB_APP_URL, itaCredentials, itaManualMode, relayedFetch } from './config';
 import { randomToken } from './crypto';
 import { allocationGate } from './gate';
 import { RELOGIN_BANNER_DAY } from './jobs';
@@ -209,8 +209,10 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
           status: d.status,
           date: d.date,
           customer_name: d.customerName,
+          customer_vat_number: d.customerVatNumber || null,
           payment_amount_minor: d.paymentAmountMinor,
           vat_amount_minor: d.vatAmountMinor,
+          total_minor: d.totalMinor,
         },
       };
     };
@@ -256,6 +258,8 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
       refused,
       without_numbers: withoutNumbers,
       links: { web_app: ITA_WEB_APP_URL, hearing: ITA_SERVICE_PAGE_URL },
+      mode: itaManualMode(env(c)) ? 'manual' : 'api',
+      business_vat_number: ((env(c).ITA_VAT_NUMBER ?? env(c).OWNER_TAX_ID) || '').trim() || null,
     });
   });
 
