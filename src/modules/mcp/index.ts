@@ -33,7 +33,7 @@ interface JsonRpcMessage {
 }
 
 const PROTOCOL_VERSION = '2025-06-18';
-const SERVER_INFO = { name: 'open-ledger-il', version: '1.0.0' };
+const SERVER_INFO = { name: 'open-ledger-il', version: '1.1.0' };
 
 function mcpActor(headers: { get(name: string): string | null }): AuditActor {
   return {

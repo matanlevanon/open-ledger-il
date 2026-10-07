@@ -316,7 +316,7 @@ function countryName(code: string | null): string {
 export function softwareInfo(env: Env): SoftwareInfo {
   return {
     name: env.SOFTWARE_NAME || 'Open Ledger IL',
-    version: env.SOFTWARE_VERSION || '1.0.0',
+    version: env.SOFTWARE_VERSION || '1.1.0',
     registrationNumber: (env.SOFTWARE_REGISTRATION_NUMBER ?? '').replace(/\D/g, ''),
     producerVat: (env.SOFTWARE_PRODUCER_VAT ?? '').replace(/\D/g, ''),
     producerName: env.SOFTWARE_PRODUCER_NAME || 'MTN',

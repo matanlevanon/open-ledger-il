@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.1.0 (2026-10-07)
+
+### Tax Authority (allocation numbers)
+- Sandbox token and API calls moved to `ita-api.taxes.gov.il`, per the SHAAM address notice.
+- The login lasts 90 days. No nightly renewal: Slack reminders on days 75, 85 and 89, a banner
+  from day 80, and a reconnect on day 90. The access token renews when a call needs it.
+- Check route tests the path to the Tax Authority without a login. Test renewal renews on demand.
+  Both say which data center the call left from.
+- Refused logins and renewals record the Tax Authority's reason and the data center.
+- Optional relay with a fixed Israeli address, in `tools/ita-relay`, for when Cloudflare serves
+  you from outside Israel. docs/deploy.md, "Reaching the Tax Authority", starts with the
+  Cloudflare-only route.
+
+### Documents and money
+- Unified file (מבנה אחיד) passes the Tax Authority checker's structure checks. A demo file with
+  the two printouts for software registration: `npm run demo:unified-file`.
+- A receipt takes the exchange rate of the document it pays. Imported documents keep the rate
+  printed on them. A receipt rate typed by hand overrides both.
+- Recurring documents wait on an approvals page, with a Slack notice and payment terms.
+- CC and BCC on document emails, a short WhatsApp link with a preview, sortable document tables.
+- Create a receipt from the dashboard's Overdue and open card.
+- An owner switch turns document issuing off, for anyone who keeps issuing in their current system.
+
+### Interface
+- A collapsible Income section in the sidebar that remembers its state. Quick is "פעולות מהירות"
+  in Hebrew.
+- A phone Quick page with receipt capture, issue buttons and recent activity.
+
 ## 1.0.0 (2026-09-29)
 
 The first public release of MTN - Open Ledger IL: invoicing, expenses and books for an Israeli
