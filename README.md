@@ -10,7 +10,7 @@ The product page, in English and Hebrew, is published with GitHub Pages from the
 
 **Free, on your own.** Open Ledger IL is free to install and use, with no license fee and no usage limits. The setup guide, [docs/deploy.md](docs/deploy.md), walks you through it step by step: Cloudflare account, database, sign-in and the Tax Authority connection. Updates are published here for free. You apply them when you choose.
 
-**Set up for you.** Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪900, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself. [Ask for a setup in Discussions](../../discussions).
+**Set up for you.** Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪900, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself. Ask through the request form on the product page. The link is in this repository's **About** box.
 
 ## Who it is for
 

@@ -148,6 +148,14 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 .foot a:hover { color: var(--text); }
 .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
+.setup-form { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+.setup-form h3 { grid-column: 1 / -1; margin: 0; }
+.setup-form label { display: grid; gap: 6px; font-size: 14px; color: var(--text-dim); }
+.setup-form .full { grid-column: 1 / -1; }
+.setup-form input, .setup-form select, .setup-form textarea { font: inherit; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); }
+.setup-form .hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.setup-form .status { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--text-dim); }
+@media (max-width: 640px) { .setup-form { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -453,9 +461,42 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
         <div class="step">
           <h3>הקמה עבורך</h3>
           <p>מעדיף שמישהו אחר יקים? אתקין ואפרוס את המערכת בחשבונות Cloudflare ורשות המסים שלך, ואמסור לך אותה פועלת. התשלום החד פעמי הוא ₪900, פחות ממנוי שנתי במסלול ביניים בתוכנת חשבוניות בתשלום, שעולה כ-₪700 עד ₪1,200 בכל שנה. מאותו רגע המערכת שלך: בלי מנוי, עדכונים בחינם, ואת התחזוקה אתה מבצע בעצמך.</p>
-          <p><a href="#" data-gh="/discussions">לבקשת הקמה</a></p>
+          <p><a href="#setup-form">לבקשת הקמה</a></p>
         </div>
       </div>
+      <form class="setup-form" id="setup-form" novalidate>
+        <h3>לבקשת הקמה</h3>
+        <label>שם<input name="name" autocomplete="name" required></label>
+        <label>אימייל<input name="email" type="email" autocomplete="email" required></label>
+        <label>טלפון<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>סוג העסק<select name="type"><option>עוסק פטור</option><option>עוסק מורשה</option><option>חברה בע"מ</option><option>אחר</option></select></label>
+        <label class="full">משהו שכדאי שאדע<textarea name="message" rows="4"></textarea></label>
+        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>
+        <div class="full"><button class="btn btn-primary" type="submit">שליחת בקשה</button></div>
+        <p class="status" role="status"></p>
+      </form>
+      <script>
+      (function () {
+        var f = document.getElementById('setup-form'); if (!f) return;
+        var st = f.querySelector('.status');
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var d = new FormData(f);
+          if (d.get('hp')) return;
+          var email = String(d.get('email') || '').trim();
+          if (!d.get('name') || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { st.textContent = 'נא למלא שם ואימייל תקין.'; return; }
+          var btn = f.querySelector('button'); btn.disabled = true; st.textContent = 'שולח...';
+          var msg = 'טלפון: ' + (d.get('phone') || '-') + '\nסוג העסק: ' + d.get('type') + '\n\n' + (d.get('message') || '');
+          fetch('https://contact.matanlevanon.com/lead', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)' })
+          }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
+            .then(function (ok) { st.textContent = ok ? 'תודה. הבקשה הגיעה אליי, ואחזור אליך באימייל.' : 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; if (ok) f.reset(); })
+            .catch(function () { st.textContent = 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; })
+            .finally(function () { btn.disabled = false; });
+        });
+      })();
+      </script>
     </div>
   </section>
 

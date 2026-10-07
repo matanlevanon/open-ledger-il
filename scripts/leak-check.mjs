@@ -4,6 +4,8 @@
 // in the repo. scripts/leak-denylist.txt holds:
 //   sha256:<hex>:<length>  the SHA-256 of one lowercased term, and its length in characters
 //   fragment:<text>        a non-identifying, case-insensitive substring to refuse outright
+//   allow:<text>           an exact, case-insensitive string published on purpose (the setup
+//                          request address). It is removed from a line before the checks run.
 // The script hashes candidate strings (words, word pairs and triples, dotted or dashed compound
 // tokens, and their prefixes) and compares. Binary files (PDF, PNG, fonts) are checked through
 // their printable strings, which covers PDF info and XMP metadata and PNG text chunks.
@@ -26,6 +28,7 @@ const HAS_LETTER = /\p{L}/u;
 function loadDenylist() {
   const hashes = new Map();
   const fragments = [];
+  const allowed = [];
   for (const raw of readFileSync(DENYLIST, 'utf8').split(/\r?\n/)) {
     const line = raw.trim();
     if (!line || line.startsWith('#')) continue;
@@ -34,12 +37,21 @@ function loadDenylist() {
       hashes.set(hex.toLowerCase(), Number(len));
     } else if (line.startsWith('fragment:')) {
       fragments.push(line.slice('fragment:'.length).toLowerCase());
+    } else if (line.startsWith('allow:')) {
+      allowed.push(line.slice('allow:'.length).toLowerCase());
     }
   }
-  return { hashes, lengths: [...new Set(hashes.values())].sort((a, b) => a - b), fragments };
+  return { hashes, lengths: [...new Set(hashes.values())].sort((a, b) => a - b), fragments, allowed };
 }
 
-const { hashes, lengths, fragments } = loadDenylist();
+const { hashes, lengths, fragments, allowed } = loadDenylist();
+
+/** The line with every allowed string blanked out, lowercased. */
+function withoutAllowed(line) {
+  let lower = line.toLowerCase();
+  for (const a of allowed) lower = lower.split(a).join(' ');
+  return lower;
+}
 const cache = new Map();
 
 function sha(value) {
@@ -93,8 +105,8 @@ function candidates(line) {
 function checkText(file, text, findings, binary = false) {
   const lines = text.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const lower = line.toLowerCase();
+    const line = withoutAllowed(lines[i]);
+    const lower = line;
     for (const fragment of fragments) {
       if (lower.includes(fragment)) findings.push({ file, line: i + 1, rule: `fragment "${fragment}"` });
     }
