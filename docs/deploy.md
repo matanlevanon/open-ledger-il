@@ -160,8 +160,8 @@ for `ledger` on this zone first, or the add is refused.
 | `OWNER_TAX_ID` | Your ID number (ת"ז). The ITA user id, and the fallback when Settings > Business has no tax id |
 | `SIGNING_KEY_PEM` | PDF signing private key. Made by `node scripts/make-signing-cert.mjs "Your Business Name"`, run on your computer. Ask your accountant whether you need a certificate from a licensed authority instead |
 | `SIGNING_CERT_PEM` | PDF signing certificate, from the same script |
-| `ITA_CLIENT_ID_SANDBOX`, `ITA_CLIENT_SECRET_SANDBOX` | ITA developer portal, sandbox app registration |
-| `ITA_CLIENT_ID_PRODUCTION`, `ITA_CLIENT_SECRET_PRODUCTION` | ITA developer portal, production app registration, once approved |
+| `ITA_CLIENT_ID_SANDBOX`, `ITA_CLIENT_SECRET_SANDBOX` | ITA developer portal, sandbox app registration: https://openapi-portal.taxes.gov.il/sandbox |
+| `ITA_CLIENT_ID_PRODUCTION`, `ITA_CLIENT_SECRET_PRODUCTION` | ITA developer portal, production app registration, once approved: https://openapi-portal.taxes.gov.il/shaam/production |
 | `ITA_TOKEN_KEY` | 32 random bytes, base64. Generate on your computer: `openssl rand -base64 32` |
 | `ITA_VAT_NUMBER` | Optional. Business VAT number once עוסק מורשה. Leave unset until then |
 | `ANTHROPIC_API_KEY` | Anthropic console, a key scoped to this Worker's use. Reads expense documents (R07) and, since R17, "Upload existing documents" under Import; unset, both fall back to a manual-entry review screen |
