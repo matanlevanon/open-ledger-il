@@ -262,7 +262,7 @@ export class ItaAllocationService implements AllocationService {
     await transaction(this.db, [
       stmt(
         this.db,
-        `UPDATE ita_allocations SET status = 'pending', source = 'manual_mode', deadline_at = COALESCE(deadline_at, ?),
+        `UPDATE ita_allocations SET status = 'pending', deadline_at = COALESCE(deadline_at, ?),
            next_attempt_at = NULL, last_error_code = 'manual_mode', last_error_message = ?, updated_at = ?
          WHERE id = ? AND status IN ('pending', 'failed')`,
         this.later(RETRY_WINDOW_MS),
