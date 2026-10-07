@@ -1181,6 +1181,11 @@ export async function creditDocument(
 
   const date = input.date ?? ctx.services.today();
   const label = displayNumber(orig.type, orig.number) ?? '';
+  // The credit line carries the amount before VAT, split the same way the document splits its
+  // payments, so the lines add up to the subtotal (unified file: D110 field 1267 sums to C100
+  // field 1219). The payment keeps the VAT-inclusive amount.
+  const creditRate = orig.vat_rate_bp ?? 0;
+  const linePrice = creditRate > 0 ? Number(divRound(BigInt(amount) * 10_000n, BigInt(10_000 + creditRate))) : amount;
   const method = input.refundMethod ?? loaded.payments[0]?.method ?? 'bank_transfer';
   const creditId = await insertDraft(
     ctx,
@@ -1199,7 +1204,7 @@ export async function creditDocument(
           description: `Credit for ${origType.name_en} ${label}`,
           descriptionHe: `זיכוי ל${origType.name_he} ${orig.number}`,
           quantityMilli: 1000,
-          unitPriceMinor: -amount,
+          unitPriceMinor: -linePrice,
           discountMinor: 0,
         },
       ],
