@@ -10,7 +10,6 @@ import {
   DEFAULT_LAYOUT,
   type LayoutEntry,
   type OpenItem,
-  type OpenItem,
   type PeriodCard,
   type Range,
   fetchDashboard,
