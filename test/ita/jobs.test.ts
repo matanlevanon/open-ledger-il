@@ -103,12 +103,12 @@ describe('allocation rule: retry queue every 15 minutes for 24 hours', () => {
 });
 
 describe('token check and the day-75 reminder', () => {
-  it('refreshes daily and sends one reminder from day 75', async () => {
+  it('never renews the login, and sends one reminder from day 75', async () => {
     const ctx = await setupIta();
     ctx.clock.advance((RELOGIN_REMINDER_DAY - 1) * DAY);
-    expect(await runTokenCheck(ctx.env, ctx.deps)).toEqual({ status: 'active', refreshed: true, reminded: false });
+    expect(await runTokenCheck(ctx.env, ctx.deps)).toEqual({ status: 'active', refreshed: false, reminded: false });
     ctx.clock.advance(DAY);
-    expect(await runTokenCheck(ctx.env, ctx.deps)).toEqual({ status: 'active', refreshed: true, reminded: true });
+    expect(await runTokenCheck(ctx.env, ctx.deps)).toEqual({ status: 'active', refreshed: false, reminded: true });
     expect(ctx.notifier.messages[0]).toContain('ends in 15 days');
     ctx.clock.advance(DAY);
     expect((await runTokenCheck(ctx.env, ctx.deps)).reminded).toBe(false);
@@ -125,10 +125,10 @@ describe('token check and the day-75 reminder', () => {
     expect(await ctx.service.tokens.status()).toMatchObject({ days_since_login: 0, reminder_sent_at: null });
   });
 
-  it('a lapsed login raises a Slack alert', async () => {
+  it('marks the login for reconnecting on day 90 and raises a Slack alert', async () => {
     const ctx = await setupIta();
-    ctx.mock.revokeRefreshTokens();
+    ctx.clock.advance(90 * DAY);
     expect(await runTokenCheck(ctx.env, ctx.deps)).toMatchObject({ status: 'reconnect_required', refreshed: false });
-    expect(ctx.notifier.messages[0]).toContain('stopped working');
+    expect(ctx.notifier.messages.at(-1)).toContain('expired');
   });
 });

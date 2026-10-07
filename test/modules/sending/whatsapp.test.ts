@@ -4,7 +4,7 @@ import { finalizeDocument } from '../../../src/core/numbering';
 import { ConsentRequiredError } from '../../../src/core/errors';
 import { acceptConsent } from '../../../src/modules/sending/consent';
 import { FakeMailer } from '../../../src/modules/sending/mailer';
-import { verifySendToken } from '../../../src/modules/sending/tokens';
+import { verifyShareCode } from '../../../src/modules/sending/share-page';
 import { createWhatsAppLink } from '../../../src/modules/sending/whatsapp';
 import { insertPaymentRequest, insertSendingClient } from '../../fixtures/sending/db';
 import { FakeSignablePdfEngine, makeTestSigningIdentity, type TestSigningIdentity } from '../../fixtures/sending/pdf';
@@ -57,19 +57,18 @@ describe('createWhatsAppLink', () => {
 
     const result = await createWhatsAppLink(deps(), docId, actor);
     if (result.status !== 'ready') throw new Error('expected ready');
-    expect(result.url).toMatch(/^https:\/\/ledger\.test\/api\/sending\/public\/share\//);
+    expect(result.url).toMatch(/^https:\/\/ledger\.test\/api\/sending\/public\/d\//);
     expect(result.waUrl).toMatch(/^https:\/\/wa\.me\/972501234567\?text=/);
 
-    const token = result.url.split('/').pop()!;
-    const payload = await verifySendToken(env, token);
-    expect(payload).toMatchObject({ kind: 'share', documentId: docId, variant: 'client' });
+    const code = result.url.split('/').pop()!;
+    expect(await verifyShareCode(env, code)).toBe(docId);
 
     const near30Days = Math.round((Date.parse(result.expiresAt) - Date.now()) / 86400000);
     expect(near30Days).toBeGreaterThanOrEqual(29);
     expect(near30Days).toBeLessThanOrEqual(30);
   });
 
-  it('omits the wa.me URL when the client has no phone number', async () => {
+  it('leaves the recipient open in the wa.me URL when the client has no phone number', async () => {
     const clientId = await insertSendingClient({ phone: null });
     await acceptConsent(db(), { clientId, ip: null, userAgent: null });
     const docId = await insertPaymentRequest(clientId);
@@ -77,6 +76,6 @@ describe('createWhatsAppLink', () => {
 
     const result = await createWhatsAppLink(deps(), docId, actor);
     if (result.status !== 'ready') throw new Error('expected ready');
-    expect(result.waUrl).toBeNull();
+    expect(result.waUrl).toMatch(/^https:\/\/wa\.me\/\?text=/);
   });
 });

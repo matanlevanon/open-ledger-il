@@ -25,6 +25,8 @@ function extracted(originalNumber: string) {
     amountBeforeVat: '300.00',
     vatAmount: '0',
     total: '300.00',
+    exchangeRate: '3.7000',
+    totalIls: null,
     paidStatus: 'paid',
   };
 }
@@ -81,7 +83,8 @@ describe('import: upload existing documents (R17 task 7)', () => {
     const body = (await res.json()) as { document: { id: number; source: string; total_minor: number; total_ils_minor: number | null } };
     expect(body.document.source).toBe('sumit');
     expect(body.document.total_minor).toBe(30000);
-    expect(body.document.total_ils_minor).not.toBeNull();
+    // The ILS total comes from the rate printed on the document, never an assumed one.
+    expect(body.document.total_ils_minor).toBe(111000);
 
     const updateError = await sqlError("UPDATE external_documents SET r2_key = 'other' WHERE id = ?", body.document.id);
     expect(updateError).toContain('append_only');

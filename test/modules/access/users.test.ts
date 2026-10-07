@@ -124,7 +124,7 @@ describe('PATCH /access/users/:id', () => {
   it('updates the end date, renews (reactivates) on a future date, and toggles a feature', async () => {
     const invite = await req('/access/users', 'owner-u@example.com', {
       method: 'POST',
-      body: JSON.stringify({ email: 'renew@example.com', accessEndsOn: '2026-10-05' }),
+      body: JSON.stringify({ email: 'renew@example.com', accessEndsOn: '2099-10-05' }),
     });
     const { user } = (await invite.json()) as { user: { id: number } };
     await run(env.DB, 'UPDATE users SET active = 0 WHERE id = ?', user.id);
