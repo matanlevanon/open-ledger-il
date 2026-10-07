@@ -50,11 +50,14 @@ describe('manual mode: no ITA API app', () => {
     expect(mock.calls).toHaveLength(0);
     expect(notifier.messages).toHaveLength(0);
     clock.advance(25 * HOUR);
+    // Storage is shared across this file, so the invoice queued in the test above is also due.
+    const mine = () => notifier.messages.filter((m) => m.includes(`document ${doc.id} `));
     const run = await runRetryQueue(ienv, deps);
-    expect(run).toMatchObject({ retried: 0, stalled: 1, alerts: 1 });
-    expect(notifier.messages[0]).toContain(`document ${doc.id} has no ITA allocation number after 24 hours.`);
+    expect(run.retried).toBe(0);
+    expect(mine()).toHaveLength(1);
+    expect(mine()[0]).toContain(`document ${doc.id} has no ITA allocation number after 24 hours.`);
     expect(mock.calls).toHaveLength(0);
     await runRetryQueue(ienv, deps);
-    expect(notifier.messages).toHaveLength(1);
+    expect(mine()).toHaveLength(1);
   });
 });
