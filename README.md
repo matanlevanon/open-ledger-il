@@ -6,6 +6,12 @@ The product page, in English and Hebrew, is published with GitHub Pages from the
 
 > **Not tax or legal advice.** You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant before you issue a real document.
 
+## Two ways to run it
+
+**Free, on your own.** Open Ledger IL is free to install and use, with no license fee and no usage limits. The setup guide, [docs/deploy.md](docs/deploy.md), walks you through it step by step: Cloudflare account, database, sign-in and the Tax Authority connection. Updates are published here for free. You apply them when you choose.
+
+**Set up for you.** Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪900, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself. [Ask for a setup in Discussions](../../discussions).
+
 ## Who it is for
 
 - A עוסק פטור who issues quotes, payment requests and receipts, and watches the annual ceiling.
