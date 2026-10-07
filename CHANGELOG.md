@@ -14,7 +14,9 @@
   Cloudflare-only route.
 
 ### Documents and money
-- Unified file (מבנה אחיד) passes the Tax Authority checker's structure checks. A demo file with
+- A credit invoice's line carries the amount before VAT, so its lines add up to its subtotal. The
+  refund keeps the full amount.
+- Unified file (מבנה אחיד) passes the Tax Authority checker's structure and totals checks. A demo file with
   the two printouts for software registration: `npm run demo:unified-file`.
 - A receipt takes the exchange rate of the document it pays. Imported documents keep the rate
   printed on them. A receipt rate typed by hand overrides both.
