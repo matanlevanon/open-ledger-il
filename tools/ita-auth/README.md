@@ -34,7 +34,10 @@ refusals use the key `broker_error`.
    `<broker address>/callback`, for example
    `https://ita-auth.example.com/callback`.
 2. Deploy this folder as a Worker named `ita-auth`, from this folder on your
-   computer: `npx wrangler deploy`.
+   computer: `npx wrangler deploy`. Or connect the Worker to your fork so a
+   push deploys it: Settings > Build > Connect, root directory
+   `/tools/ita-auth`, no build command, deploy command `npx wrangler deploy`,
+   include path `tools/ita-auth/*`.
 3. Attach your hostname: Workers & Pages > ita-auth > Settings > Domains &
    Routes > Add > Custom domain.
 4. Add the secrets under Settings > Variables and Secrets, each as type
