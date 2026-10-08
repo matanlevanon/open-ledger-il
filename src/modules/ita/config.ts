@@ -17,8 +17,8 @@ export interface ItaUrls {
 }
 
 // SHAAM's address change notice of 18.12.2023. Sandbox: /authorize stays on openapi.taxes.gov.il,
-// every other call moved to ita-api.taxes.gov.il. Production: only the Invoices calls moved to
-// ita-api, /authorize and the token stay on openapi. Recheck production against its portal files.
+// every other call moved to ita-api.taxes.gov.il. Production follows the same split: on 2026-10-08
+// the production token call to openapi.taxes.gov.il timed out from the Israeli relay on every try.
 // The portal's OpenAPI files also list t-ita-api.taxes.gov.il, which has no public DNS record.
 export const ITA_URLS: Record<ItaEnvironment, ItaUrls> = {
   sandbox: {
@@ -28,7 +28,7 @@ export const ITA_URLS: Record<ItaEnvironment, ItaUrls> = {
   },
   production: {
     authorize: 'https://openapi.taxes.gov.il/shaam/production/longtimetoken/oauth2/authorize',
-    token: 'https://openapi.taxes.gov.il/shaam/production/longtimetoken/oauth2/token',
+    token: 'https://ita-api.taxes.gov.il/shaam/production/longtimetoken/oauth2/token',
     api: 'https://ita-api.taxes.gov.il/shaam/production/',
   },
 };
