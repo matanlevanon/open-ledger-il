@@ -181,6 +181,7 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
                 className="rounded-card border border-line bg-canvas px-4 py-2 text-sm text-ink disabled:opacity-50"
                 disabled={renewing}
                 onClick={testRenewal}
+                title={t('ita.renewal.hint')}
               >
                 {renewing ? t('ita.renewal.running') : t('ita.renewal.test')}
               </button>

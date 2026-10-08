@@ -39,7 +39,8 @@ export const ita = {
 
   // Connection card
   'ita.connection.title': 'Connection',
-  'ita.renewal.test': 'Test renewal',
+  'ita.renewal.test': 'Renew now',
+  'ita.renewal.hint': 'Renews the ITA login now, the same renewal the daily check runs. Your current login keeps working.',
   'ita.route.check': 'Check route',
   'ita.route.running': 'Checking…',
   'ita.route.direct': 'Direct',
