@@ -55,3 +55,6 @@ fragment:cmo as a service
 fragment:cmo-as-a-service
 # Published on purpose: the setup request form posts here.
 allow:https://contact.matanlevanon.com/lead
+allow:open-ledger@matanlevanon.com
+allow:Built by Matan Levanon
+allow:נבנה על ידי מתן לבנון

@@ -4,6 +4,7 @@ export const common: Record<keyof typeof en, string> = {
   'nav.unifiedFile': 'מבנה אחיד',
   'issuing.offNote': 'הפקת המסמכים כבויה. המסמכים מגיעים מהמערכת האחרת דרך ייבוא. הבעלים מפעיל את ההפקה בהגדרות > הפקת מסמכים.',
   'issuing.recurringPaused': 'הפקת המסמכים כבויה, ולכן המסמכים החוזרים מושהים.',
+  'app.footer.builtBy': 'נבנה על ידי מתן לבנון',
   'app.name': 'Open Ledger IL',
 
   'topbar.openMenu': 'פתח תפריט',

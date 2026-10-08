@@ -10,6 +10,8 @@ import { Sidebar } from './Sidebar';
 import { useStackTables } from './stackTables';
 import { TopBar } from './TopBar';
 
+const FOOTER_EMAIL = 'open-ledger@matanlevanon.com';
+
 interface AppShellProps {
   children: ReactNode;
   /** Injected in tests. Defaults to GET /api/me. */
@@ -63,8 +65,9 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
 
   return (
     <IssuingProvider value={{ issuing, setIssuing }}>
-    <div className="flex h-full min-w-0">
-      <aside className="hidden w-[var(--sidebar-width)] shrink-0 md:block">{sidebar}</aside>
+    {/* The page itself scrolls. The sidebar stays in view on wide screens. */}
+    <div className="flex min-h-full min-w-0">
+      <aside className="sticky top-0 hidden h-screen w-[var(--sidebar-width)] shrink-0 self-start md:block">{sidebar}</aside>
       {drawerOpen && (
         <div className="fixed inset-0 z-30 md:hidden">
           <button type="button" aria-label={t('sidebar.closeMenu')} className="absolute inset-0 bg-ink/30" onClick={() => setDrawerOpen(false)} />
@@ -73,10 +76,17 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
       )}
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar me={me} error={error} onMenu={() => setDrawerOpen(true)} />
-        {/* Bottom padding on phones keeps the last row clear of the tab bar. */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto px-4 pb-28 pt-5 md:px-8 md:py-6">
+        <main ref={mainRef} className="flex-1 px-4 pb-6 pt-5 md:px-8 md:py-6">
           {showSetup ? <SetupScreen missing={missing} onSaved={checkSetup} /> : children}
         </main>
+        {/* Bottom padding on phones keeps the footer clear of the tab bar. */}
+        <footer className="border-t border-line px-4 pb-28 pt-4 text-center text-xs text-muted md:px-8 md:pb-4">
+          {t('app.footer.builtBy')} (
+          <a href={`mailto:${FOOTER_EMAIL}`} className="ltr-nums text-ink underline-offset-2 hover:underline">
+            {FOOTER_EMAIL}
+          </a>
+          )
+        </footer>
       </div>
       <BottomNav role={me?.role} features={me?.features ?? []} onMore={() => setDrawerOpen(true)} />
     </div>

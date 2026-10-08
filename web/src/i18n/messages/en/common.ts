@@ -6,6 +6,7 @@ export const common = {
   'nav.unifiedFile': 'Unified file',
   'issuing.offNote': 'Issuing is off. Documents come from your other system through Import. The owner turns issuing on in Settings > Issuing.',
   'issuing.recurringPaused': 'Issuing is off, so recurring schedules are paused.',
+  'app.footer.builtBy': 'Built by Matan Levanon',
   'app.name': 'Open Ledger IL',
 
   'topbar.openMenu': 'Open menu',
