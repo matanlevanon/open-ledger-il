@@ -42,6 +42,8 @@ export const ita = {
   'ita.renewal.test': 'Test renewal',
   'ita.renewal.hint': 'Tests the same ITA connection the Ledger uses when a new document needs an allocation number. The 90-day login stays as it is.',
   'ita.route.check': 'Check route',
+  'ita.route.hint': 'Checks that the ITA answers, directly and through the relay, without using your login. A refusal here is expected and means the call got through.',
+  'ita.help.label': 'What does this do?',
   'ita.route.running': 'Checking…',
   'ita.route.direct': 'Direct',
   'ita.route.relay': 'Through the relay',

@@ -1,5 +1,6 @@
 import { type FormEvent, useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { HelpTip } from '../../components/HelpTip';
 import { useT, type MessageKey } from '../../i18n';
 import { CONNECT_URL, type AllocationItem, type ItaApi, type Overview, type RefusalChoice, httpItaApi } from './api';
 
@@ -166,25 +167,30 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
           </div>
           <div className="flex flex-wrap gap-2">
             {api.routeCheck && (
-              <button
-                type="button"
-                className="rounded-card border border-line bg-canvas px-4 py-2 text-sm text-ink disabled:opacity-50"
-                disabled={checking}
-                onClick={checkRoute}
-              >
-                {checking ? t('ita.route.running') : t('ita.route.check')}
-              </button>
+              <span className="relative inline-flex">
+                <button
+                  type="button"
+                  className="rounded-card border border-line bg-canvas px-4 py-2 text-sm text-ink disabled:opacity-50"
+                  disabled={checking}
+                  onClick={checkRoute}
+                >
+                  {checking ? t('ita.route.running') : t('ita.route.check')}
+                </button>
+                <HelpTip label={t('ita.help.label')} text={t('ita.route.hint')} />
+              </span>
             )}
             {c.status === 'active' && api.refresh && (
-              <button
-                type="button"
-                className="rounded-card border border-line bg-canvas px-4 py-2 text-sm text-ink disabled:opacity-50"
-                disabled={renewing}
-                onClick={testRenewal}
-                title={t('ita.renewal.hint')}
-              >
-                {renewing ? t('ita.renewal.running') : t('ita.renewal.test')}
-              </button>
+              <span className="relative inline-flex">
+                <button
+                  type="button"
+                  className="rounded-card border border-line bg-canvas px-4 py-2 text-sm text-ink disabled:opacity-50"
+                  disabled={renewing}
+                  onClick={testRenewal}
+                >
+                  {renewing ? t('ita.renewal.running') : t('ita.renewal.test')}
+                </button>
+                <HelpTip label={t('ita.help.label')} text={t('ita.renewal.hint')} />
+              </span>
             )}
             <a href={CONNECT_URL} className="rounded-card bg-brand px-4 py-2 text-sm text-brand-ink">
               {c.status === 'not_connected' ? t('ita.connection.connectToIta') : t('ita.connection.connectAgain')}

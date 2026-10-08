@@ -39,6 +39,8 @@ export const ita: Record<keyof typeof en, string> = {
   'ita.renewal.test': 'בדיקת חידוש',
   'ita.renewal.hint': 'בודק את אותו חיבור לרשות המסים שהמערכת משתמשת בו כשמסמך חדש צריך מספר הקצאה. ההתחברות ל-90 יום נשארת כפי שהיא.',
   'ita.route.check': 'בדיקת נתיב',
+  'ita.route.hint': 'בודק שרשות המסים עונה, ישירות ודרך הממסר, בלי להשתמש בהתחברות שלך. דחייה כאן צפויה ופירושה שהפנייה הגיעה.',
+  'ita.help.label': 'מה זה עושה?',
   'ita.route.running': 'בודק…',
   'ita.route.direct': 'ישיר',
   'ita.route.relay': 'דרך הממסר',
