@@ -78,6 +78,8 @@ export interface RouteCheck {
   environment: string;
   direct: RouteProbe;
   relay: RouteProbe | null;
+  /** Present when the install signs in through a login broker (tools/ita-auth). */
+  broker?: RouteProbe | null;
 }
 
 export interface ItaApi {

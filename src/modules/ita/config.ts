@@ -72,6 +72,30 @@ export interface ItaEnv extends Env {
   /** Cloudflare Access service token the relay accepts. Both are required when ITA_RELAY_URL is set. */
   ITA_RELAY_CLIENT_ID?: string;
   ITA_RELAY_CLIENT_SECRET?: string;
+  /**
+   * Optional login broker (tools/ita-auth) that holds a shared ITA API app's client secret.
+   * When set, the Ledger needs no ITA client id or secret of its own. Name and key are the
+   * ones the broker's operator issued for this install.
+   */
+  ITA_BROKER_URL?: string;
+  ITA_BROKER_CLIENT?: string;
+  ITA_BROKER_KEY?: string;
+}
+
+export interface ItaBroker {
+  url: string;
+  client: string;
+  key: string;
+}
+
+/** The login broker settings, or null when ITA_BROKER_URL is not set. */
+export function itaBroker(env: ItaEnv): ItaBroker | null {
+  const url = (env.ITA_BROKER_URL ?? '').trim().replace(/\/+$/, '');
+  if (!url) return null;
+  const client = (env.ITA_BROKER_CLIENT ?? '').trim();
+  const key = (env.ITA_BROKER_KEY ?? '').trim();
+  if (!client || !key) throw new ConfigError('ITA_BROKER_URL is set. Set ITA_BROKER_CLIENT and ITA_BROKER_KEY too.');
+  return { url, client, key };
 }
 
 /** Tax Authority hosts the relay forwards, by the path prefix it expects. */
@@ -134,6 +158,8 @@ export function itaCredentials(env: ItaEnv): ItaCredentials {
  * ITA screen until the number is requested in the ITA web app and typed in.
  */
 export function itaManualMode(env: ItaEnv): boolean {
+  // A login broker holds the app's credentials, so this install calls the ITA without its own.
+  if ((env.ITA_BROKER_URL ?? '').trim()) return false;
   try {
     itaCredentials(env);
     return false;

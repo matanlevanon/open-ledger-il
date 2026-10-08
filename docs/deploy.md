@@ -385,6 +385,17 @@ relay. You still need ITA_ENV set, and an ITA personal area user code to sign in
 A number still missing after 24 hours raises one Slack alert. Set the two secrets later and the
 Ledger switches to the API on its own.
 
+### Option 4: a login broker run by whoever set up your install
+
+When someone runs several installs on one ITA API app, the app's client secret stays with them, in
+a small Worker called ita-auth (tools/ita-auth/README.md). Your install gets three settings from
+them instead of a client id and secret: ITA_BROKER_URL, ITA_BROKER_CLIENT and ITA_BROKER_KEY.
+
+The broker handles the sign-in and the token renewal only. Invoices go straight from your Worker
+to the Tax Authority with your own access token, so the broker never sees them. You still sign in
+with your own user code and one-time code, and the ITA consent screen names the broker's app.
+Check route shows a third line, Through the login broker.
+
 ### How long a login lasts
 
 An ITA login lasts 90 days from the sign-in with your user code and one-time code. The Ledger

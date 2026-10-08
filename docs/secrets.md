@@ -19,6 +19,9 @@ Set a secret on your computer with `npx wrangler secret put <NAME>`, or in the C
 | `ITA_RELAY_URL` | R24 | Optional. A relay with an Israeli address for the Tax Authority calls, for a Worker served outside Israel (the Tax Authority answered Frankfurt with 403). Unset means direct calls |
 | `ITA_RELAY_CLIENT_ID` | R24 | Cloudflare Access service token Client ID for the relay. Required with `ITA_RELAY_URL` |
 | `ITA_RELAY_CLIENT_SECRET` | R24 | Cloudflare Access service token Client Secret for the relay. Required with `ITA_RELAY_URL` |
+| `ITA_BROKER_URL` | ita-auth | Optional. A login broker (tools/ita-auth) that holds a shared ITA API app's client secret. Set, the install needs no ITA client id or secret of its own |
+| `ITA_BROKER_CLIENT` | ita-auth | This install's name at the broker. Required with `ITA_BROKER_URL` |
+| `ITA_BROKER_KEY` | ita-auth | This install's key at the broker. Required with `ITA_BROKER_URL` |
 | `ITA_VAT_NUMBER` | R12 | Optional. Business VAT number (עוסק מורשה) sent to the ITA. Defaults to `OWNER_TAX_ID`, the same number for an individual |
 | `ANTHROPIC_API_KEY` | R07, R17 | Expense extraction; also "Upload existing documents" (Import), reading fields from a previously-issued document. Unset: both screens fall back to manual entry |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | R07, R14, R20 | Drive ingest and backup. R20 reads the monthly index sheets too, so the key needs Drive API and Sheets API on its project. Setup: `docs/drive-expenses-setup.md` |

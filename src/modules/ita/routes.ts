@@ -6,7 +6,7 @@ import { all, first, run } from '../../core/db';
 import { thresholdOn } from '../../core/config';
 import type { AppEnv } from '../../env';
 import { supplierConfirmationNumber, supplierInvoiceDetails } from './buyer';
-import { type ItaEnv, ITA_SCOPE, ITA_SERVICE_PAGE_URL, ITA_URLS, ITA_WEB_APP_URL, itaCredentials, itaManualMode, relayedFetch } from './config';
+import { type ItaEnv, ITA_SCOPE, ITA_SERVICE_PAGE_URL, ITA_URLS, ITA_WEB_APP_URL, itaBroker, itaCredentials, itaManualMode, relayedFetch } from './config';
 import { randomToken } from './crypto';
 import { allocationGate } from './gate';
 import { RELOGIN_BANNER_DAY } from './jobs';
@@ -43,7 +43,11 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
   const service = (c: { env: AppEnv['Bindings'] }) => new ItaAllocationService(env(c), deps);
   // Where the Tax Authority calls leave from: the relay, or this Worker's data center.
   const origin = (e: ItaEnv, raw: Request) =>
-    (e.ITA_RELAY_URL ?? '').trim() ? 'relay' : `worker ${(raw as { cf?: { colo?: string } }).cf?.colo ?? 'unknown'}`;
+    (e.ITA_BROKER_URL ?? '').trim()
+      ? 'broker'
+      : (e.ITA_RELAY_URL ?? '').trim()
+        ? 'relay'
+        : `worker ${(raw as { cf?: { colo?: string } }).cf?.colo ?? 'unknown'}`;
 
   // Every ITA route is owner only: 'ita' is an owner-only feature (src/core/auth.ts).
   app.use('*', requireFeature('ita'));
@@ -70,12 +74,12 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     } catch {
       // No client credentials yet: the check still shows whether the address is reachable.
     }
-    const probe = async (doFetch: typeof fetch) => {
+    const probe = async (doFetch: typeof fetch, target = tokenUrl, headers: Record<string, string> = auth ? { Authorization: auth } : {}, extra: Record<string, string> = {}) => {
       try {
-        const res = await doFetch(tokenUrl, {
+        const res = await doFetch(target, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', ...(auth ? { Authorization: auth } : {}) },
-          body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: 'route-check', scope: ITA_SCOPE }).toString(),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json', ...headers },
+          body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: 'route-check', scope: ITA_SCOPE, ...extra }).toString(),
           signal: AbortSignal.timeout(20_000),
         });
         const text = (await res.text()).replace(/\s+/g, ' ').trim().slice(0, 200);
@@ -106,6 +110,23 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
             })()),
           }
         : null,
+      broker: await (async () => {
+        try {
+          const broker = itaBroker(e);
+          if (!broker) return null;
+          return {
+            from: 'broker',
+            ...(await probe(
+              deps.fetch,
+              `${broker.url}/token`,
+              { 'X-Ita-Broker-Client': broker.client, 'X-Ita-Broker-Key': broker.key },
+              { environment: s.tokens.environment },
+            )),
+          };
+        } catch (err) {
+          return { from: 'broker', status: 0, reached: false, reply: err instanceof Error ? err.message : 'error' };
+        }
+      })(),
     };
     await audit(c, 'ita.route.check', 'ita', s.tokens.environment, result);
     return c.json(result);

@@ -1,0 +1,11 @@
+{
+  "name": "ita-auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ITA login broker: keeps one ITA API app's client secret for several Open Ledger IL installs",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  }
+}

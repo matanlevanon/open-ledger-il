@@ -1,6 +1,6 @@
 import { first, run } from '../../core/db';
-import { ValidationError } from '../../core/errors';
-import { type ItaEnv, type ItaEnvironment, ITA_SCOPE, ITA_URLS, itaCredentials, itaEnvironment, relayedFetch } from './config';
+import { ConfigError, ValidationError } from '../../core/errors';
+import { type ItaEnv, type ItaEnvironment, ITA_SCOPE, ITA_URLS, itaBroker, itaCredentials, itaEnvironment, relayedFetch } from './config';
 import { decryptToken, encryptToken, importTokenKey } from './crypto';
 import { ItaReconnectError, ItaUnavailableError } from './errors';
 
@@ -93,6 +93,15 @@ export class ItaTokenStore {
 
   /** Builds the browser URL for the ITA login. */
   authorizeUrl(state: string, redirectUri: string): string {
+    // With a login broker, the broker sends the browser to the ITA and back to this install.
+    const broker = itaBroker(this.env);
+    if (broker) {
+      const url = new URL(`${broker.url}/authorize`);
+      url.searchParams.set('client', broker.client);
+      url.searchParams.set('environment', this.environment);
+      url.searchParams.set('state', state);
+      return url.toString();
+    }
     const { clientId } = itaCredentials(this.env);
     const url = new URL(ITA_URLS[this.environment].authorize);
     url.searchParams.set('response_type', 'code');
@@ -104,20 +113,37 @@ export class ItaTokenStore {
   }
 
   private async postToken(body: Record<string, string>): Promise<{ status: number; json: unknown }> {
-    const { clientId, clientSecret } = itaCredentials(this.env);
+    const broker = itaBroker(this.env);
     let res: Response;
     try {
-      res = await relayedFetch(this.env, this.io.fetch)(ITA_URLS[this.environment].token, {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'application/json',
-        },
-        body: new URLSearchParams(body).toString(),
-      });
-    } catch {
-      throw new ItaUnavailableError('The ITA login service is not answering.');
+      if (broker) {
+        // The broker adds the app's client credentials and its own redirect address, then returns
+        // the ITA reply as it came.
+        res = await this.io.fetch(`${broker.url}/token`, {
+          method: 'POST',
+          headers: {
+            'X-Ita-Broker-Client': broker.client,
+            'X-Ita-Broker-Key': broker.key,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+          body: new URLSearchParams({ ...body, environment: this.environment }).toString(),
+        });
+      } else {
+        const { clientId, clientSecret } = itaCredentials(this.env);
+        res = await relayedFetch(this.env, this.io.fetch)(ITA_URLS[this.environment].token, {
+          method: 'POST',
+          headers: {
+            Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+          body: new URLSearchParams(body).toString(),
+        });
+      }
+    } catch (err) {
+      if (err instanceof ConfigError) throw err;
+      throw new ItaUnavailableError(broker ? 'The ITA login broker is not answering.' : 'The ITA login service is not answering.');
     }
     // A reply that is not JSON (a firewall page, say) is kept as text, so the reason shows its source.
     const text = await res.text().catch(() => '');
@@ -127,6 +153,9 @@ export class ItaTokenStore {
     } catch {
       json = text ? { body: text.replace(/\s+/g, ' ').trim() } : null;
     }
+    // The broker's own refusals (unknown install, wrong key) are a setup problem, not a refused login.
+    const brokerError = broker && json && typeof json === 'object' ? (json as Record<string, unknown>).broker_error : undefined;
+    if (typeof brokerError === 'string') throw new ItaUnavailableError(`The ITA login broker refused the call: ${brokerError.slice(0, 200)}`);
     return { status: res.status, json };
   }
 
@@ -228,13 +257,13 @@ export class ItaTokenStore {
     const refreshToken = await this.open(key, row.refresh_token_enc, 'refresh');
     // The ITA developer guide sends client_id and client_secret in the refresh body as well as
     // the Basic header. The first refresh with the header alone was refused.
-    const { clientId, clientSecret } = itaCredentials(this.env);
+    // A login broker adds the client credentials itself.
+    const credentials = itaBroker(this.env) ? {} : (({ clientId, clientSecret }) => ({ client_id: clientId, client_secret: clientSecret }))(itaCredentials(this.env));
     const { status, json } = await this.postToken({
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
       scope: ITA_SCOPE,
-      client_id: clientId,
-      client_secret: clientSecret,
+      ...credentials,
     });
     if (status >= 500) throw new ItaUnavailableError('The ITA login service is not answering.');
     const tokens = ItaTokenStore.parse(json);

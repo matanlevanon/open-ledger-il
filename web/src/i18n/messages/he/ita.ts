@@ -43,6 +43,7 @@ export const ita: Record<keyof typeof en, string> = {
   'ita.help.label': 'מה זה עושה?',
   'ita.route.running': 'בודק…',
   'ita.route.direct': 'ישיר',
+  'ita.route.broker': 'דרך שרת ההתחברות',
   'ita.route.relay': 'דרך הממסר',
   'ita.route.reached': '{name} (מ-{from}): הגיע לרשות המסים, HTTP {status}.',
   'ita.route.blocked': '{name} (מ-{from}): נחסם, HTTP {status}. {reply}',

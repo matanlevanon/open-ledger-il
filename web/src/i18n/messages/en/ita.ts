@@ -47,6 +47,7 @@ export const ita = {
   'ita.route.running': 'Checking…',
   'ita.route.direct': 'Direct',
   'ita.route.relay': 'Through the relay',
+  'ita.route.broker': 'Through the login broker',
   'ita.route.reached': '{name} (from {from}): reached the ITA, HTTP {status}.',
   'ita.route.blocked': '{name} (from {from}): turned away, HTTP {status}. {reply}',
   'ita.route.failed': 'The route check did not run.',

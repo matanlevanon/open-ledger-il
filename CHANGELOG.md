@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### Tax Authority (allocation numbers)
+- Login broker. tools/ita-auth is a Worker that keeps one ITA API app's client secret for several
+  installs. An install with ITA_BROKER_URL, ITA_BROKER_CLIENT and ITA_BROKER_KEY signs in and
+  renews through it, with no client id or secret of its own. Invoice calls still go straight to
+  the ITA. Check route probes the broker too. docs/deploy.md, Option 4.
+- The production token call goes to ita-api.taxes.gov.il.
+- A "?" on Check route and Test renewal explains each one.
+
+### Layout
+- One page scroll instead of a scroll box inside the page. A footer on every screen.
+
 ## 1.2.0 (2026-10-08)
 
 ### Tax Authority (allocation numbers)
