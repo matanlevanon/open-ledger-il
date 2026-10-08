@@ -111,7 +111,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     return c.json(result);
   });
 
-  /** Renews the login now, the same way the daily check does, so a fix can be tested at once. */
+  /** Renews the short-lived access token now, the same renewal an allocation call triggers on its own. */
   app.post('/refresh', async (c) => {
     const s = service(c);
     const where = origin(env(c), c.req.raw);

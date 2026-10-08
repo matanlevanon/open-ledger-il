@@ -37,7 +37,7 @@ export const ita: Record<keyof typeof en, string> = {
   // Connection card
   'ita.connection.title': 'חיבור',
   'ita.renewal.test': 'חדש עכשיו',
-  'ita.renewal.hint': 'מחדש עכשיו את ההתחברות לרשות המסים, אותו חידוש שהבדיקה היומית מריצה. ההתחברות הנוכחית ממשיכה לעבוד.',
+  'ita.renewal.hint': 'מחדש עכשיו את אסימון הגישה הקצר מול רשות המסים. המערכת עושה זאת לבד כשחשבונית צריכה מספר הקצאה. ההתחברות ל-90 יום נשארת כפי שהיא.',
   'ita.route.check': 'בדיקת נתיב',
   'ita.route.running': 'בודק…',
   'ita.route.direct': 'ישיר',
