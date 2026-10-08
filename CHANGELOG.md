@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.0 (2026-10-08)
 
 ### Tax Authority (allocation numbers)
 - Login broker. tools/ita-auth is a Worker that keeps one ITA API app's client secret for several
