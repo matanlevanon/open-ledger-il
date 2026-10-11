@@ -317,8 +317,8 @@ body{margin:0;font:15px/1.5 "Segoe UI",system-ui,sans-serif;background:#f6f5f2;c
 h1{font-size:22px;margin:0 0 4px}p{color:#6b6a66;margin:0 0 18px}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e3e1db;border-radius:12px;overflow:hidden}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid #e3e1db;font-size:14px;vertical-align:top}th{font-size:12px;color:#6b6a66;font-weight:600}
 td span{color:#6b6a66;font-size:12px}tr.paused td{color:#6b6a66}button{font:inherit;font-size:13px;border-radius:8px;padding:5px 12px;border:1px solid #e3e1db;background:#fff;cursor:pointer}
-tr.active button{border-color:#c0362c;color:#c0362c}a{color:#1f5fd1}@media(max-width:640px){th:nth-child(4),td:nth-child(4){display:none}}</style></head>
-<body><main><h1>Login broker clients</h1><p>Signed in as ${esc(email)}. Pause blocks a client at once. Resume brings it back with the same key.</p>
+tr.active button{border-color:#c0362c;color:#c0362c}a{color:#1f5fd1}.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}a.out{font-size:14px;border:1px solid #e3e1db;border-radius:8px;padding:5px 12px;background:#fff;text-decoration:none;color:#1d1d1b}@media(max-width:640px){th:nth-child(4),td:nth-child(4){display:none}}</style></head>
+<body><main><div class="top"><h1>Login broker clients</h1><a class="out" href="/cdn-cgi/access/logout">Sign out</a></div><p>Signed in as ${esc(email)}. Pause blocks a client at once. Resume brings it back with the same key.</p>
 <table><thead><tr><th>Business</th><th>Address</th><th>Status</th><th>Added</th><th>Last used</th><th></th></tr></thead>
 <tbody>${rows || '<tr><td colspan="6">No clients yet. The installer adds them.</td></tr>'}</tbody></table></main></body></html>`, {
     headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY' },

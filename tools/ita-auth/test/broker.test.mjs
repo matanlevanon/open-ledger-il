@@ -36,7 +36,7 @@ r = await tok(a.name, a2.key); ok(r.status === 200, 'new key works');
 r = await call('/admin'); ok(r.status === 403, 'admin refuses without Access');
 r = await call('/admin', { headers: { 'Cf-Access-Jwt-Assertion': jwt('other@example.com') } }); ok(r.status === 403, 'admin refuses a non-admin email');
 r = await call('/admin', { headers: { 'Cf-Access-Jwt-Assertion': jwt('boss@example.com', 'OTHER') } }); ok(r.status === 403, 'admin refuses a wrong audience');
-r = await call('/admin', { headers: { 'Cf-Access-Jwt-Assertion': jwt('boss@example.com') } }); const html = await r.text(); ok(r.status === 200 && html.includes('Acme Ltd') && html.includes('Pause'), 'admin lists the client');
+r = await call('/admin', { headers: { 'Cf-Access-Jwt-Assertion': jwt('boss@example.com') } }); const html = await r.text(); ok(r.status === 200 && html.includes('Acme Ltd') && html.includes('Pause') && html.includes('/cdn-cgi/access/logout'), 'admin lists the client, with Sign out');
 r = await call(`/admin/clients/${a.name}/pause`, { method: 'POST', headers: { 'Cf-Access-Jwt-Assertion': jwt('boss@example.com'), Origin: 'https://evil.example' } }); ok(r.status === 403, 'pause refuses a cross-site post');
 r = await call(`/admin/clients/${a.name}/pause`, { method: 'POST', headers: { 'Cf-Access-Jwt-Assertion': jwt('boss@example.com'), Origin: 'https://ita-auth.example.com' } }); ok(r.status === 303, 'pause works');
 r = await tok(a.name, a2.key); ok(r.status === 401, 'paused client is refused');
