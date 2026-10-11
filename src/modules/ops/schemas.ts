@@ -14,7 +14,13 @@ export const businessPatch = z.object({
     .trim()
     .refine((v) => v === '' || isValidIsraeliId(v), 'Enter a valid Israeli ID or company number (9 digits).')
     .nullish(),
-  email: z.string().trim().email().nullish(),
+  // Empty means no email. The form sends '' for a blank field, and .email() alone refused it.
+  email: z
+    .string()
+    .trim()
+    .refine((v) => v === '' || z.string().email().safeParse(v).success, 'Enter a valid email address, or leave it empty.')
+    .transform((v) => (v === '' ? null : v))
+    .nullish(),
   phone: z.string().trim().max(50).nullish(),
   website: z.string().trim().max(300).nullish(),
   bankDetails: z.string().trim().max(2000).nullish(),

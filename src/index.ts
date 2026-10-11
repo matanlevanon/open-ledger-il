@@ -102,7 +102,9 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
       return c.json(errorBody(mapped.code, mapped.message, mapped.details), mapped.status);
     }
     if (mapped instanceof ZodError) {
-      return c.json(errorBody('validation_error', 'Some fields are not valid.', mapped.issues), 400);
+      // Name the fields, so a toast says what to fix instead of a bare "not valid".
+      const named = mapped.issues.map((i) => `${i.path.join('.') || 'input'}: ${i.message}`).join('; ');
+      return c.json(errorBody('validation_error', named ? `Some fields are not valid. ${named}` : 'Some fields are not valid.', mapped.issues), 400);
     }
     if (mapped instanceof HTTPException) {
       return c.json(errorBody('http_error', mapped.message || 'Request failed.'), mapped.status as ContentfulStatusCode);
