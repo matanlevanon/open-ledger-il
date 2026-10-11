@@ -13,6 +13,8 @@ export function r2KeyFor(sha256: string, filename: string): string {
 }
 
 export async function storeFile(env: Env, key: string, bytes: ArrayBuffer, contentType: string): Promise<void> {
+  // Same key means same bytes. Keep the stored copy: the files bucket refuses overwrites.
+  if (await env.FILES.head(key)) return;
   await env.FILES.put(key, bytes, { httpMetadata: { contentType } });
 }
 

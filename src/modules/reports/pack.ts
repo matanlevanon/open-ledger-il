@@ -131,9 +131,12 @@ export async function buildAccountantPack(env: Env, period: string, deps: Accoun
   const [pdfBytes, zipBytes] = await Promise.all([buildSummaryPdf(period, pl, meterPct, files.length), buildExpenseZip(env, files)]);
   const xlsxBytes = buildXlsx([incomeSheet(income), expenseSheet(expenses), profitLossSheet(pl), clientLedgersSheet(clientLedgers)]);
 
-  const pdfKey = `accountant-packs/${period}/summary.pdf`;
-  const xlsxKey = `accountant-packs/${period}/detail.xlsx`;
-  const zipKey = `accountant-packs/${period}/expense-files.zip`;
+  // Each run gets its own folder, so a rebuilt pack never overwrites an earlier one (write-once,
+  // the files bucket refuses overwrites). The table row points at the latest run.
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const pdfKey = `accountant-packs/${period}/${stamp}/summary.pdf`;
+  const xlsxKey = `accountant-packs/${period}/${stamp}/detail.xlsx`;
+  const zipKey = `accountant-packs/${period}/${stamp}/expense-files.zip`;
   await Promise.all([
     env.FILES.put(pdfKey, pdfBytes, { httpMetadata: { contentType: 'application/pdf' } }),
     env.FILES.put(xlsxKey, xlsxBytes, { httpMetadata: { contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } }),

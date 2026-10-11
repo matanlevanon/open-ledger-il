@@ -30,7 +30,8 @@ export async function uploadExternalDocument(
 ): Promise<UploadResult> {
   const sha256 = await sha256Hex(input.bytes);
   const key = `external-documents/${sha256}.pdf`;
-  await files.put(key, input.bytes, { httpMetadata: { contentType: input.contentType } });
+  // Same key means same bytes. Keep the stored copy: the files bucket refuses overwrites.
+  if (!(await files.head(key))) await files.put(key, input.bytes, { httpMetadata: { contentType: input.contentType } });
 
   let extraction: ExtractedExternalDoc = EMPTY_EXTRACTION;
   let extractionError: string | null = null;

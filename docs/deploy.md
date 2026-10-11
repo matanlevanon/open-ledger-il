@@ -33,7 +33,8 @@ from the R2 export, entirely in memory, so it never needs a second database to r
 
 ### Lock `open-ledger-il-files` against deletion (docs/legal-requirements.md, instruction 25: 7-year retention)
 
-R2 has no dashboard button for this yet. It is a Wrangler command only.
+**Cloudflare dashboard.** R2 Object Storage > the files bucket > **Settings** > **Bucket Lock Rules** >
+**Add**. Name `seven-year-retention`, prefix empty, retention 2557 days. Or use Wrangler:
 
 **Your computer**, once authenticated (`npx wrangler login`):
 
@@ -46,6 +47,10 @@ in the bucket for that long. It does not block reads, and it does not need repea
 for `open-ledger-il-backups`. A backup restore test only ever reads its own export back from this
 bucket and recomputes hashes in memory; it never writes anywhere, so no lock is needed there. Do
 not lock a bucket you still expect to prune.
+
+The Ledger writes each file once: a later render of a document is stored as a numbered copy, a
+rebuilt accountant pack gets its own folder, and a file uploaded twice keeps its first copy. So the
+lock never blocks it.
 
 ## 3. Browser Rendering: no setup needed
 

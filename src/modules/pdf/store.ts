@@ -16,6 +16,8 @@ interface PdfHashEntry {
   variant: RenderVariant;
   sha256: string;
   at: string;
+  /** Where this render was stored. Entries written before write-once storage have none. */
+  key?: string;
 }
 
 function parsePdfHashes(raw: unknown): PdfHashEntry[] {
@@ -266,6 +268,11 @@ export function r2Key(date: string, seriesId: string, number: number, variant: R
   return `docs/${year}/${seriesId}/${number}-${variant}.pdf`;
 }
 
+/** R2 key for the nth later render (a copy, העתק) of a variant. The original keeps r2Key. */
+export function r2CopyKey(date: string, seriesId: string, number: number, variant: RenderVariant, n: number): string {
+  return r2Key(date, seriesId, number, variant).replace(/\.pdf$/, `-copy-${n}.pdf`);
+}
+
 /**
  * The "Download" button's filename (R17 task 3): "<type>-<number>-<client>.pdf", for example
  * "PR-0088-Acme-Ltd.pdf". Strips characters a filesystem or a browser might choke on.
@@ -359,9 +366,6 @@ export async function renderAndStore(
     ? await signPdf(new Uint8Array(rendered), { ...signing, signerName: doc.business.nameEn || undefined })
     : new Uint8Array(rendered);
   const sha256 = await sha256Hex(bytes);
-  const key = r2Key(doc.date, doc.seriesId, doc.number, variant);
-
-  await files.put(key, bytes, { httpMetadata: { contentType: 'application/pdf' } });
 
   const current = await first<{ pdf_hashes: string | null; updated_at: string }>(
     db,
@@ -370,7 +374,15 @@ export async function renderAndStore(
   );
   if (!current) throw new NotFoundError('Document', documentId);
   const entries = parsePdfHashes(current.pdf_hashes);
-  entries.push({ variant, sha256, at: new Date().toISOString() });
+
+  // Write-once (the files bucket carries a 7-year retention lock that refuses overwrites): the
+  // original keeps r2Key, and each later render, a copy, gets its own key. Nothing stored is replaced.
+  let n = entries.filter((h) => h.variant === variant).length;
+  let key = n === 0 ? r2Key(doc.date, doc.seriesId, doc.number, variant) : r2CopyKey(doc.date, doc.seriesId, doc.number, variant, n);
+  while (await files.head(key)) key = r2CopyKey(doc.date, doc.seriesId, doc.number, variant, ++n);
+  await files.put(key, bytes, { httpMetadata: { contentType: 'application/pdf' } });
+
+  entries.push({ variant, sha256, at: new Date().toISOString(), key });
   const result = await run(
     db,
     'UPDATE documents SET pdf_hashes = ?, updated_at = ? WHERE id = ? AND pdf_hashes IS ?',

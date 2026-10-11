@@ -85,6 +85,10 @@ describe('renderAndStore', () => {
 
     const second = await renderAndStore(db(), env.FILES, new FakePdfEngine(), draftId, 'filed', { ownerTaxId: null });
     expect(second.html).toContain('העתק');
+    // Write-once: the copy gets its own key and the original stays in place.
+    expect(second.key).not.toBe(first.key);
+    expect(second.key).toMatch(/-filed-copy-1\.pdf$/);
+    expect(await env.FILES.head(first.key)).not.toBeNull();
 
     const row = await db().prepare('SELECT pdf_hashes FROM documents WHERE id = ?').bind(draftId).first<{ pdf_hashes: string }>();
     const hashes = JSON.parse(row!.pdf_hashes) as unknown[];
