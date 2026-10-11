@@ -7,3 +7,10 @@ keep_vars = true
 
 [observability]
 enabled = true
+
+# The client registry. Make your own with: npx wrangler d1 create ita-auth-clients
+# then put its id here and apply migrations/0001_clients.sql once.
+[[d1_databases]]
+binding = "DB"
+database_name = "ita-auth-clients"
+database_id = "bd0385db-51ac-464d-ae87-c731aa7e20f0"

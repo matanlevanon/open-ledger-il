@@ -6,6 +6,7 @@
   "description": "ITA login broker: keeps one ITA API app's client secret for several Open Ledger IL installs",
   "license": "AGPL-3.0-only",
   "scripts": {
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "test": "node test/broker.test.mjs"
   }
 }

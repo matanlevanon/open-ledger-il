@@ -7,6 +7,7 @@ export const common: Record<keyof typeof en, string> = {
   'app.footer.builtBy': 'נבנה על ידי מתן לבנון',
   'app.name': 'Open Ledger IL',
 
+  'topbar.by': 'מאת',
   'topbar.openMenu': 'פתח תפריט',
   'topbar.signingIn': 'מתחבר',
   'topbar.switchToLightTheme': 'עבור לערכת נושא בהירה',

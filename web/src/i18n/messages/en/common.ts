@@ -9,6 +9,7 @@ export const common = {
   'app.footer.builtBy': 'Built by Matan Levanon',
   'app.name': 'Open Ledger IL',
 
+  'topbar.by': 'by',
   'topbar.openMenu': 'Open menu',
   'topbar.signingIn': 'Signing in',
   'topbar.switchToLightTheme': 'Switch to light theme',

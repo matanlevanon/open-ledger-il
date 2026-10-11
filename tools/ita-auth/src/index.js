@@ -15,12 +15,19 @@
  *        grant_type=authorization_code&code=...&environment=...
  *        grant_type=refresh_token&refresh_token=...&environment=...
  *        Adds the client credentials and returns the ITA reply as it came, status included.
+ *   POST /register  header X-Ita-Broker-Admin, JSON body { origin, business }
+ *        Adds a Ledger install, or gives an existing one a new key. Returns { name, key }. The
+ *        installer calls this, so nobody creates keys by hand.
+ *   GET  /admin, POST /admin/clients/<name>/pause | resume
+ *        The client list, behind Cloudflare Access. Pause blocks a client at once and keeps its row.
  *   GET  /health
  *
- * Secrets and variables (see README.md)
+ * Bindings, secrets and variables (see README.md)
+ *   DB                              D1 database with the clients table (migrations/0001_clients.sql)
  *   PUBLIC_URL                      optional, this Worker's own address. Default: the request's own.
  *   STATE_SECRET                    32 random bytes, base64. Signs the login state.
- *   BROKER_CLIENTS                  JSON list of Ledger installs allowed to use the broker
+ *   REGISTER_SECRET                 32 random bytes, base64. Lets the installer add clients.
+ *   ACCESS_TEAM_DOMAIN, ACCESS_AUD, ADMIN_EMAILS   the Access app in front of /admin
  *   ITA_CLIENT_ID_PRODUCTION, ITA_CLIENT_SECRET_PRODUCTION   (and _SANDBOX, optional)
  *   ITA_RELAY_URL, ITA_RELAY_CLIENT_ID, ITA_RELAY_CLIENT_SECRET   optional Israeli relay
  *
@@ -51,20 +58,15 @@ function publicUrl(env, requestUrl) {
   return ((env.PUBLIC_URL ?? '').trim() || new URL(requestUrl).origin).replace(/\/+$/, '');
 }
 
-/** The Ledger installs allowed to use the broker: [{ name, origin, key_sha256 }]. */
-function clients(env) {
-  let list;
-  try {
-    list = JSON.parse(env.BROKER_CLIENTS ?? '[]');
-  } catch {
-    throw new Error('BROKER_CLIENTS is not valid JSON.');
-  }
-  if (!Array.isArray(list)) throw new Error('BROKER_CLIENTS must be a JSON list.');
-  return list.filter((c) => c && typeof c.name === 'string' && typeof c.origin === 'string' && typeof c.key_sha256 === 'string');
+function db(env) {
+  if (!env.DB) throw new Error('Bind the ita-auth-clients D1 database as DB.');
+  return env.DB;
 }
 
-function findClient(env, name) {
-  return clients(env).find((c) => c.name === name) ?? null;
+/** An active Ledger install allowed to use the broker: { name, origin, key_sha256 }, or null. */
+async function findClient(env, name) {
+  if (!name || name.length > 80) return null;
+  return db(env).prepare("SELECT name, origin, key_sha256 FROM clients WHERE name = ? AND status = 'active'").bind(name).first();
 }
 
 function credentials(env, environment) {
@@ -140,7 +142,7 @@ function itaFetch(env) {
 }
 
 async function authorize(env, url) {
-  const client = findClient(env, url.searchParams.get('client') ?? '');
+  const client = await findClient(env, url.searchParams.get('client') ?? '');
   const environment = url.searchParams.get('environment') ?? '';
   const state = url.searchParams.get('state') ?? '';
   if (!client) return fail(403, 'Unknown client.');
@@ -161,7 +163,7 @@ async function authorize(env, url) {
 async function callback(env, url) {
   const payload = await readState(env, url.searchParams.get('state'));
   if (!payload) return fail(400, 'The sign-in link expired or was changed. Start again from the Ledger.');
-  const client = findClient(env, payload.c);
+  const client = await findClient(env, payload.c);
   if (!client) return fail(403, 'Unknown client.');
   const back = new URL('/api/ita/callback', client.origin);
   back.searchParams.set('state', payload.s);
@@ -175,8 +177,9 @@ async function callback(env, url) {
 async function token(env, request) {
   const name = request.headers.get('X-Ita-Broker-Client') ?? '';
   const key = request.headers.get('X-Ita-Broker-Key') ?? '';
-  const client = findClient(env, name);
+  const client = await findClient(env, name);
   if (!client || !key || !sameText(await sha256Hex(key), client.key_sha256.toLowerCase())) return fail(401, 'Unknown client or wrong key.');
+  await db(env).prepare("UPDATE clients SET last_seen_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE name = ?").bind(client.name).run();
 
   const form = new URLSearchParams(await request.text());
   const environment = form.get('environment') ?? '';
@@ -219,6 +222,121 @@ async function token(env, request) {
   });
 }
 
+const NOW = "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')";
+const slug = (host) => host.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'ledger';
+
+/** The installer adds a Ledger install here. The key is made here and returned once. */
+async function register(env, request) {
+  const secret = (env.REGISTER_SECRET ?? '').trim();
+  if (secret.length < 32) return fail(503, 'Registration is not set up on this broker.');
+  const given = request.headers.get('X-Ita-Broker-Admin') ?? '';
+  if (!given || !sameText(await sha256Hex(given), await sha256Hex(secret))) return fail(401, 'Wrong or missing admin secret.');
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return fail(400, 'Send a JSON body with origin and business.');
+  }
+  let origin;
+  try {
+    const u = new URL(String(body?.origin ?? ''));
+    if (u.protocol !== 'https:') throw new Error('not https');
+    origin = u.origin;
+  } catch {
+    return fail(400, 'origin must be the install address, starting with https://.');
+  }
+  const business = String(body?.business ?? '').trim().slice(0, 200) || null;
+  const key = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  const hash = await sha256Hex(key);
+  const d = db(env);
+
+  const existing = await d.prepare('SELECT name, status FROM clients WHERE origin = ?').bind(origin).first();
+  if (existing) {
+    if (existing.status !== 'active') return fail(403, 'This install is paused. Resume it on the broker admin page first.');
+    await d.batch([
+      d.prepare(`UPDATE clients SET key_sha256 = ?, business = COALESCE(?, business), updated_at = ${NOW} WHERE name = ?`).bind(hash, business, existing.name),
+      d.prepare("INSERT INTO client_events (client, action, by) VALUES (?, 'key renewed', 'installer')").bind(existing.name),
+    ]);
+    console.log(`register client=${existing.name} renewed`);
+    return json(200, { name: existing.name, key, renewed: true });
+  }
+  const base = slug(new URL(origin).hostname);
+  let name = base;
+  for (let i = 2; await d.prepare('SELECT 1 FROM clients WHERE name = ?').bind(name).first(); i++) name = `${base}-${i}`;
+  await d.batch([
+    d.prepare('INSERT INTO clients (name, origin, business, key_sha256) VALUES (?, ?, ?, ?)').bind(name, origin, business, hash),
+    d.prepare("INSERT INTO client_events (client, action, by) VALUES (?, 'registered', 'installer')").bind(name),
+  ]);
+  console.log(`register client=${name} new`);
+  return json(201, { name, key });
+}
+
+const dec = new TextDecoder();
+
+/** The signed-in admin's email from the Cloudflare Access token, or null. Checks the signature. */
+async function accessEmail(env, request) {
+  const team = (env.ACCESS_TEAM_DOMAIN ?? '').trim().replace(/\/+$/, '');
+  const aud = (env.ACCESS_AUD ?? '').trim();
+  const admins = (env.ADMIN_EMAILS ?? '').split(/[\s,;]+/).map((e) => e.trim().toLowerCase()).filter(Boolean);
+  if (!team || !aud || !admins.length) return null;
+  const jwt = request.headers.get('Cf-Access-Jwt-Assertion') ?? '';
+  const [h, p, sig] = jwt.split('.');
+  if (!h || !p || !sig) return null;
+  try {
+    const header = JSON.parse(dec.decode(fromB64url(h)));
+    const payload = JSON.parse(dec.decode(fromB64url(p)));
+    const certs = await (await fetch(`${team}/cdn-cgi/access/certs`)).json();
+    const jwk = (certs.keys ?? []).find((k) => k.kid === header.kid);
+    if (!jwk) return null;
+    const key = await crypto.subtle.importKey('jwk', jwk, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
+    if (!(await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, fromB64url(sig), enc.encode(`${h}.${p}`)))) return null;
+    const auds = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
+    if (!auds.includes(aud) || !(payload.exp * 1000 > Date.now())) return null;
+    const email = String(payload.email ?? '').toLowerCase();
+    return admins.includes(email) ? email : null;
+  } catch {
+    return null;
+  }
+}
+
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+
+async function adminPage(env, email) {
+  const { results } = await db(env).prepare('SELECT name, origin, business, status, created_at, last_seen_at FROM clients ORDER BY created_at DESC').all();
+  const day = (t) => (t ? esc(String(t).slice(0, 10)) : 'never');
+  const rows = (results ?? []).map((c) => `<tr class="${c.status}">
+  <td><b>${esc(c.business || c.name)}</b><br><span>${esc(c.name)}</span></td>
+  <td><a href="${esc(c.origin)}" target="_blank" rel="noopener">${esc(new URL(c.origin).hostname)}</a></td>
+  <td>${c.status === 'active' ? 'Active' : 'Paused'}</td>
+  <td>${day(c.created_at)}</td><td>${day(c.last_seen_at)}</td>
+  <td><form method="post" action="/admin/clients/${encodeURIComponent(c.name)}/${c.status === 'active' ? 'pause' : 'resume'}">
+  <button>${c.status === 'active' ? 'Pause' : 'Resume'}</button></form></td></tr>`).join('');
+  return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ita-auth clients</title><style>
+body{margin:0;font:15px/1.5 "Segoe UI",system-ui,sans-serif;background:#f6f5f2;color:#1d1d1b}main{max-width:960px;margin:0 auto;padding:28px 16px}
+h1{font-size:22px;margin:0 0 4px}p{color:#6b6a66;margin:0 0 18px}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e3e1db;border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid #e3e1db;font-size:14px;vertical-align:top}th{font-size:12px;color:#6b6a66;font-weight:600}
+td span{color:#6b6a66;font-size:12px}tr.paused td{color:#6b6a66}button{font:inherit;font-size:13px;border-radius:8px;padding:5px 12px;border:1px solid #e3e1db;background:#fff;cursor:pointer}
+tr.active button{border-color:#c0362c;color:#c0362c}a{color:#1f5fd1}@media(max-width:640px){th:nth-child(4),td:nth-child(4){display:none}}</style></head>
+<body><main><h1>Login broker clients</h1><p>Signed in as ${esc(email)}. Pause blocks a client at once. Resume brings it back with the same key.</p>
+<table><thead><tr><th>Business</th><th>Address</th><th>Status</th><th>Added</th><th>Last used</th><th></th></tr></thead>
+<tbody>${rows || '<tr><td colspan="6">No clients yet. The installer adds them.</td></tr>'}</tbody></table></main></body></html>`, {
+    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY' },
+  });
+}
+
+async function setStatus(env, request, url, email, name, action) {
+  // The page posts to itself. A post from anywhere else is refused.
+  if (request.headers.get('Origin') !== publicUrl(env, url)) return fail(403, 'Wrong origin.');
+  const status = action === 'pause' ? 'paused' : 'active';
+  const d = db(env);
+  const r = await d.prepare(`UPDATE clients SET status = ?, updated_at = ${NOW} WHERE name = ?`).bind(status, name).run();
+  if (!r.meta?.changes) return fail(404, 'No such client.');
+  await d.prepare('INSERT INTO client_events (client, action, by) VALUES (?, ?, ?)').bind(name, action === 'pause' ? 'paused' : 'resumed', email).run();
+  console.log(`admin ${action} client=${name} by=${email}`);
+  return Response.redirect(`${publicUrl(env, url)}/admin`, 303);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -227,6 +345,14 @@ export default {
       if (request.method === 'GET' && url.pathname === '/authorize') return await authorize(env, url);
       if (request.method === 'GET' && url.pathname === '/callback') return await callback(env, url);
       if (request.method === 'POST' && url.pathname === '/token') return await token(env, request);
+      if (request.method === 'POST' && url.pathname === '/register') return await register(env, request);
+      if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
+        const email = await accessEmail(env, request);
+        if (!email) return fail(403, 'Sign in through Cloudflare Access with an admin email.');
+        if (request.method === 'GET' && url.pathname === '/admin') return await adminPage(env, email);
+        const m = url.pathname.match(/^\/admin\/clients\/([^/]+)\/(pause|resume)$/);
+        if (request.method === 'POST' && m) return await setStatus(env, request, url, email, decodeURIComponent(m[1]), m[2]);
+      }
       return fail(404, 'Not found.');
     } catch (err) {
       console.log(`config-error ${err instanceof Error ? err.message : String(err)}`);

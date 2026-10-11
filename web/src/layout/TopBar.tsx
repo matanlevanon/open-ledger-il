@@ -5,6 +5,8 @@ import { usePreferences } from '../app/preferences';
 import { useT } from '../i18n';
 import defaultLogo from '../brand/default-logo.svg';
 import defaultLogoDark from '../brand/default-logo-dark.svg';
+import makerLogoDark from '../brand/maker-logo-dark.svg';
+import makerLogoLight from '../brand/maker-logo-light.svg';
 
 /** The logo uploaded in Settings > Business. A 404 (none uploaded) or 403 (not the owner) shows the default. */
 const UPLOADED_LOGO_URL = '/api/ops/business/logo';
@@ -61,6 +63,10 @@ export function TopBar({ me, error, onMenu }: TopBarProps) {
           onError={() => setUploaded(false)}
         />
       </Link>
+      <span className="ms-2 hidden items-center gap-1.5 text-xs text-muted sm:flex">
+        {t('topbar.by')}
+        <img src={theme === 'light' ? makerLogoLight : makerLogoDark} alt="MTN" className="h-5 w-auto" />
+      </span>
 
       <div className="ms-auto flex items-center gap-1 text-sm md:gap-3">
         <button
