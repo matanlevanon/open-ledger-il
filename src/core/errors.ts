@@ -105,6 +105,7 @@ const TRIGGER_CODES: Record<string, () => DomainError> = {
   business_mismatch: () => new DomainError('business_mismatch', 'This belongs to another business.', 409),
   business_locked: () => new DomainError('business_locked', 'A business is never deleted.', 409),
   brand_in_use: () => new DomainError('brand_in_use', 'A brand is never deleted. Turn it off instead.', 409),
+  business_document_fixed: () => new DomainError('business_document_fixed', 'A business document never changes once confirmed. Upload a new one instead.', 409),
 };
 
 /** Maps a D1 trigger error to a typed domain error. Returns the input when no code matches. */

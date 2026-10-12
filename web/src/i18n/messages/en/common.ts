@@ -62,6 +62,7 @@ export const common = {
   'nav.expenses': 'Expenses',
   'nav.ita': 'ITA',
   'nav.reports': 'Reports',
+  'nav.businessDocuments': 'Business documents',
   'nav.accountant': 'Accountant',
   'nav.import': 'Import',
   'nav.settings': 'Settings',

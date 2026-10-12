@@ -3,6 +3,9 @@ import type { dashboard as en } from '../en/dashboard';
 export const dashboard: Record<keyof typeof en, string> = {
   'dashboard.tileImportDocuments': 'ייבוא מסמכים',
   'dashboard.title': 'לוח בקרה',
+  'dashboard.documentEnds': '{name} מסתיים ב-{date}, בעוד {days} ימים.',
+  'dashboard.documentEnded': '{name} הסתיים ב-{date}.',
+  'dashboard.documentRenew': 'העלאת החדש',
   'dashboard.loading': 'טוען את לוח הבקרה.',
   'dashboard.loadError': 'טעינת לוח הבקרה נכשלה. נסה שוב.',
   'dashboard.tileNewQuote': 'הצעת מחיר חדשה',

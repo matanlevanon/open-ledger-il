@@ -60,6 +60,7 @@ export const common: Record<keyof typeof en, string> = {
   'nav.expenses': 'הוצאות',
   'nav.ita': 'רשות המסים',
   'nav.reports': 'דוחות',
+  'nav.businessDocuments': 'מסמכי העסק',
   'nav.accountant': 'רואה חשבון',
   'nav.import': 'ייבוא',
   'nav.settings': 'הגדרות',

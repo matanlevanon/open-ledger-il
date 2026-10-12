@@ -58,6 +58,7 @@ export const access = {
   'access.feature.unifiedFile': 'Unified file',
   'access.feature.pcn874': 'PCN874',
   'access.feature.bankMatches': 'Bank matches',
+  'access.feature.businessDocuments': 'Business documents',
   'access.feature.notes': 'Notes',
 
   // InviteForm.tsx

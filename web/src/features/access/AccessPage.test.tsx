@@ -44,6 +44,7 @@ describe('AccessPage', () => {
                   pcn874: true,
                   bank_matches: false,
                   notes: true,
+                  business_documents: false,
                 },
               },
             ],

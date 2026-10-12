@@ -16,6 +16,7 @@ export const dashboardFixture: DashboardData = {
   ceiling: { year: 2026, currency: 'ILS', limitMinor: 12283300, currentMinor: 8410000 },
   vatDue: { applicable: false, amountMinor: 0, currency: 'ILS', period: null, outputMinor: 0, inputMinor: 0 },
   businessType: { entityType: 'osek_patur', showCeiling: true },
+  expiringDocuments: [],
   ita: { connected: false, message: 'Connects after the switch to עוסק מורשה.' },
   cards: {
     overdue: {

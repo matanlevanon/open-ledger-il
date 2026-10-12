@@ -2,7 +2,8 @@ import { type Context, Hono } from 'hono';
 import { z } from 'zod';
 import { all, first } from '../../core/db';
 import { requireFeature } from '../../core/auth';
-import { NotFoundError, ValidationError } from '../../core/errors';
+import { NotFoundError, UnauthorizedError, ValidationError } from '../../core/errors';
+import { openSharedDocument } from '../business-documents/service';
 import type { AppEnv, Env } from '../../env';
 import { clientDisplayName } from '../clients/display';
 import { getDoc } from '../documents/repo';
@@ -255,6 +256,23 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
     object.writeHttpMetadata(headers);
     headers.set('content-disposition', `inline; filename="${key.split('/').pop()}"`);
     return new Response(object.body, { headers });
+  });
+
+  // R24 Phase C: a shared business document. Under /public/ so Access lets the recipient through.
+  // The token, its expiry and the link row (revoked or not) decide. Every opening is audited.
+  app.get('/public/bd/:token', declareManualAuth('public link, token and link row carry signature, expiry and revocation'), async (c) => {
+    try {
+      const { row, object } = await openSharedDocument(c.env, c.req.param('token'), { ip: ip(c), userAgent: userAgent(c) });
+      const headers = new Headers({ 'content-type': row.content_type, 'cache-control': 'no-store' });
+      headers.set('content-disposition', `inline; filename="${encodeURIComponent(row.file_name)}"`);
+      return new Response(object.body, { headers });
+    } catch (err) {
+      if (!(err instanceof UnauthorizedError)) throw err;
+      return c.html(
+        `<!doctype html><html><body style="font-family:sans-serif;max-width:480px;margin:40px auto;padding:0 16px"><h1>Link unavailable</h1><p>${escapeHtml(err.message)} Ask the sender for a new link.</p></body></html>`,
+        410,
+      );
+    }
   });
 
   return app;

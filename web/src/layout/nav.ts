@@ -44,6 +44,7 @@ export const NAV: NavSection[] = [
   { label: 'nav.reports', path: '/reports', run: 'R08', feature: 'reports' },
   { label: 'nav.unifiedFile', path: '/unified-file', run: 'R25', feature: 'unified_file' },
   { label: 'nav.accountant', path: '/accountant', run: 'R09', feature: 'monthly_pack' },
+  { label: 'nav.businessDocuments', path: '/business-documents', run: 'R24', feature: 'business_documents' },
   { label: 'nav.import', path: '/import', run: 'R10' },
   { label: 'nav.settings', path: '/settings', run: 'R14' },
   { label: 'nav.about', path: '/about', run: 'R22' },

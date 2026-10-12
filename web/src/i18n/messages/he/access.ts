@@ -56,6 +56,7 @@ export const access: Record<keyof typeof en, string> = {
   'access.feature.unifiedFile': 'קובץ אחיד',
   'access.feature.pcn874': 'PCN874',
   'access.feature.bankMatches': 'התאמות בנק',
+  'access.feature.businessDocuments': 'מסמכי העסק',
   'access.feature.notes': 'הערות',
 
   // InviteForm.tsx

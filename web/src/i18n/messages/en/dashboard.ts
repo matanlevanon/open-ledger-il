@@ -1,6 +1,9 @@
 export const dashboard = {
   'dashboard.tileImportDocuments': 'Import documents',
   'dashboard.title': 'Dashboard',
+  'dashboard.documentEnds': 'Your {name} ends on {date}, in {days} days.',
+  'dashboard.documentEnded': 'Your {name} ended on {date}.',
+  'dashboard.documentRenew': 'Upload the new one',
   'dashboard.loading': 'Loading the dashboard.',
   'dashboard.loadError': 'Could not load the dashboard. Try again.',
   'dashboard.tileNewQuote': 'New quote',

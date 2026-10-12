@@ -14,6 +14,7 @@ export const FEATURE_LABEL_KEYS: Record<keyof AccessFeatures, MessageKey> = {
   unified_file: 'access.feature.unifiedFile',
   pcn874: 'access.feature.pcn874',
   bank_matches: 'access.feature.bankMatches',
+  business_documents: 'access.feature.businessDocuments',
   notes: 'access.feature.notes',
 };
 
@@ -29,4 +30,5 @@ export const DEFAULT_FEATURES: AccessFeatures = {
   pcn874: true,
   bank_matches: false,
   notes: true,
+  business_documents: false,
 };

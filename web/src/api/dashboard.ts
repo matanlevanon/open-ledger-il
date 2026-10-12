@@ -119,6 +119,8 @@ export interface DashboardData {
   };
   /** R24: the business type. Absent on an older Worker. */
   businessType?: { entityType: EntityType; showCeiling: boolean };
+  /** R24 Phase C: certificates that end within 30 days, or ended. Absent on an older Worker. */
+  expiringDocuments?: { id: number; type: string; typeLabel: { en: string; he: string }; validUntil: string; daysLeft: number }[];
   ita: { connected: boolean; message: string };
   cards: DashboardCards;
   /** Present when the call named no cards: the stored layout that picked them. */

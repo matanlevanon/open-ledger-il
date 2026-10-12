@@ -10,7 +10,9 @@ import type { Env } from '../../env';
  */
 export type SendTokenPayload =
   | { kind: 'consent'; clientId: number; exp: number }
-  | { kind: 'share'; documentId: number; variant: 'client'; exp: number };
+  | { kind: 'share'; documentId: number; variant: 'client'; exp: number }
+  /** R24 Phase C: a business document share link. The link row decides if it still opens. */
+  | { kind: 'business_document'; linkId: number; exp: number };
 
 function base64url(bytes: Uint8Array): string {
   let str = '';

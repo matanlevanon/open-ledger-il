@@ -495,6 +495,7 @@ function usePeriodCard(card: PeriodCard, today: string) {
 
 export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsrael() }: DashboardPageProps) {
   const t = useT();
+  const { locale } = usePreferences();
   const issuing = useIssuing();
   const [data, setData] = useState<DashboardData | null>(null);
   const [layout, setLayout] = useState<LayoutEntry[]>(DEFAULT_LAYOUT);
@@ -681,6 +682,18 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
         </p>
       )}
       {!data && !error && <p className="mt-6 text-sm text-muted">{t('dashboard.loading')}</p>}
+      {(data?.expiringDocuments ?? []).map((d) => (
+        <p key={d.id} data-testid="expiring-document" className="mt-4 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink">
+          {t(d.daysLeft < 0 ? 'dashboard.documentEnded' : 'dashboard.documentEnds', {
+            name: locale === 'he' ? d.typeLabel.he : d.typeLabel.en,
+            date: d.validUntil,
+            days: String(d.daysLeft),
+          })}{' '}
+          <Link to="/settings?tab=documents" className="font-semibold text-accent-2 hover:underline">
+            {t('dashboard.documentRenew')}
+          </Link>
+        </p>
+      ))}
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {visible.map((card) => (

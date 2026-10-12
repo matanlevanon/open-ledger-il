@@ -1,3 +1,4 @@
+import { type ExpiringDocument, expiringDocuments } from '../business-documents/service';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom, auditStatement } from '../../core/audit';
@@ -117,6 +118,8 @@ export interface DashboardData {
   ita: { connected: boolean; message: string };
   /** R24: the business type pill, and whether the ceiling card shows at all. */
   businessType: { entityType: EntityType; showCeiling: boolean };
+  /** R24 Phase C: certificates that end within 30 days, or ended. One dashboard line each. */
+  expiringDocuments: ExpiringDocument[];
   cards: DashboardCards;
 }
 
@@ -293,6 +296,7 @@ export async function buildDashboard(db: D1Database, today: string, businessId: 
       message: legalMode.mode === 'murshe' ? 'Not connected yet.' : 'Connects after the switch to עוסק מורשה.',
     },
     businessType: { entityType, showCeiling },
+    expiringDocuments: await expiringDocuments(db, businessId, today),
     cards,
   };
 }

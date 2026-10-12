@@ -32,6 +32,7 @@ import { ItaScreen } from './ita/ItaScreen';
 
 import { ServicesPage } from './settings/ServicesTab';
 import { SettingsPage } from './settings/SettingsPage';
+import { BusinessDocumentsPage } from './business-documents/BusinessDocumentsPage';
 
 import { AboutPage } from './about/AboutPage';
 
@@ -57,6 +58,9 @@ export const featureRoutes: FeatureRoute[] = [
   { path: '/ita', component: ItaScreen },
 
   { path: '/settings', component: SettingsPage },
+
+  // R24 Phase C: business documents for the assistant and the accountant (owners also have the Settings tab).
+  { path: '/business-documents', component: BusinessDocumentsPage },
 
   { path: '/about', component: AboutPage },
 ];

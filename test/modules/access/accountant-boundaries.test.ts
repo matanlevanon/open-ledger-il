@@ -69,6 +69,7 @@ beforeAll(async () => {
     'pcn874',
     'bank_matches',
     'notes',
+    'business_documents',
   ]) {
     await run(env.DB, `INSERT INTO user_features (user_id, feature, enabled) VALUES (?, ?, 1)`, cpa.lastRowId, feature);
   }

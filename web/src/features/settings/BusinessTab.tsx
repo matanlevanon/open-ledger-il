@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { takePrefill } from '../business-documents/api';
 import { TextField, TextareaField } from '../../components/fields';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
@@ -56,6 +57,7 @@ export function BusinessTab({ onSaved, setup = false, entityType }: BusinessTabP
   const [forbidden, setForbidden] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [prefilled, setPrefilled] = useState(false);
   const toast = useToast();
   const t = useT();
 
@@ -69,7 +71,19 @@ export function BusinessTab({ onSaved, setup = false, entityType }: BusinessTabP
 
   useEffect(() => {
     fetchBusiness()
-      .then((body) => setForm(toForm(body.business)))
+      .then((body) => {
+        const loaded = toForm(body.business);
+        const prefill = takePrefill();
+        if (prefill) {
+          setPrefilled(true);
+          setForm({
+            ...loaded,
+            nameEn: prefill.nameEn || loaded.nameEn,
+            nameHe: prefill.nameHe || loaded.nameHe,
+            taxId: prefill.taxId || loaded.taxId,
+          });
+        } else setForm(loaded);
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 403) setForbidden(true);
         else setError(err instanceof Error ? err.message : t('settings.business.loadErrorFallback'));
@@ -100,6 +114,11 @@ export function BusinessTab({ onSaved, setup = false, entityType }: BusinessTabP
 
   return (
     <div className="flex flex-col gap-4">
+      {prefilled && (
+        <p role="status" className="rounded-md bg-surface p-3 text-sm text-ink" data-testid="business-prefilled">
+          {t('bdocs.prefilled')}
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <TextField label={t('settings.business.nameEnLabel')} required value={form.nameEn} onChange={set('nameEn')} />
         <TextField label={t('settings.business.nameHeLabel')} required dir="rtl" value={form.nameHe} onChange={set('nameHe')} />

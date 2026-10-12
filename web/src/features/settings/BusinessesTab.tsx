@@ -4,12 +4,16 @@ import { type BusinessList, type EntityType, type NewBusinessInput, createBusine
 import { setCurrentBusiness } from '../../app/business';
 import { type MessageKey, useT } from '../../i18n';
 import { btnPrimary, btnSecondary, input, label } from '../documents/ui';
+import { readCertificate, uploadDocument } from '../business-documents/api';
 import { TypedConfirm, confirmMatches } from './BusinessTypeSwitchDialog';
 
 interface Props {
   /** Injected in tests. */
   load?: () => Promise<BusinessList>;
   create?: (input: NewBusinessInput) => Promise<{ businessId: number }>;
+  /** Injected in tests: read a certificate, and store it in the new business. */
+  readCert?: typeof readCertificate;
+  storeCert?: typeof uploadDocument;
   /** Opens the Add business form at once (the switcher's Add a business). */
   startAdding?: boolean;
 }
@@ -21,7 +25,7 @@ const EMPTY: NewBusinessInput = { entityType: 'company', nameEn: '', nameHe: '',
  * first-run setup: type, names, tax ID and address, then Connect the Tax Authority for it. A
  * Ledger that already has an עוסק business offers a company only (B3), and says why.
  */
-export function BusinessesTab({ load = fetchBusinesses, create = createBusiness, startAdding = false }: Props) {
+export function BusinessesTab({ load = fetchBusinesses, create = createBusiness, startAdding = false, readCert = readCertificate, storeCert = uploadDocument }: Props) {
   const t = useT();
   const [data, setData] = useState<BusinessList | null>(null);
   const [adding, setAdding] = useState(startAdding);
@@ -30,6 +34,30 @@ export function BusinessesTab({ load = fetchBusinesses, create = createBusiness,
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<number | null>(null);
+  const [cert, setCert] = useState<File | null>(null);
+  const [certNote, setCertNote] = useState<string | null>(null);
+
+  const pickCert = async (file: File | null) => {
+    setCert(file);
+    setCertNote(null);
+    if (!file) return;
+    try {
+      const res = await readCert(file);
+      const x = res.extracted;
+      if (x) {
+        setForm((f) => ({
+          ...f,
+          entityType: x.type === 'company_registration' && data?.addableTypes.includes('company') ? 'company' : f.entityType,
+          nameEn: x.nameEn || f.nameEn,
+          nameHe: x.nameHe || f.nameHe,
+          taxId: x.taxId?.replace(/\D/g, '') || f.taxId,
+        }));
+        setCertNote(t('businesses.certRead'));
+      } else setCertNote(res.reader ? (res.readError ?? t('bdocs.readFailed')) : t('businesses.certNoReader'));
+    } catch (err) {
+      setCertNote(err instanceof Error ? err.message : t('bdocs.readFailed'));
+    }
+  };
 
   useEffect(() => {
     load()
@@ -55,6 +83,12 @@ export function BusinessesTab({ load = fetchBusinesses, create = createBusiness,
     setError(null);
     try {
       const { businessId } = await create({ ...form, taxId: form.taxId.trim(), addressHe: form.addressHe || null });
+      if (cert) {
+        // The certificate goes to the new business. A failure here never undoes the business.
+        await storeCert({ file: cert, type: form.entityType === 'company' ? 'company_registration' : 'vat_registration' }, businessId).catch(() => undefined);
+        setCert(null);
+        setCertNote(null);
+      }
       setCreated(businessId);
       setAdding(false);
       setForm(EMPTY);
@@ -104,6 +138,11 @@ export function BusinessesTab({ load = fetchBusinesses, create = createBusiness,
             <h2 id="add-business-title" className="font-heading text-lg text-ink">
               {t('businesses.addTitle')}
             </h2>
+            <label className="block rounded-md border border-dashed border-line p-3">
+              <span className={label}>{t('businesses.certTitle')}</span>
+              <input className={`${input} mt-1`} type="file" accept="application/pdf,image/jpeg,image/png" onChange={(e) => void pickCert(e.target.files?.[0] ?? null)} />
+              <span className="mt-1 block text-xs text-muted">{certNote ?? t('businesses.certHint')}</span>
+            </label>
             {data.addableTypes.length === 1 && data.addableTypes[0] === 'company' && (
               <p className="text-xs text-muted" data-testid="one-osek-note">
                 {t('businesses.companyOnly')}

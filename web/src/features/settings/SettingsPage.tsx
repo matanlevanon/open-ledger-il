@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { MessageKey } from '../../i18n';
 import { useT } from '../../i18n';
+import { BusinessDocumentsPanel } from '../business-documents/BusinessDocumentsPanel';
 import { BackupsTab } from './BackupsTab';
 import { BrandsTab } from './BrandsTab';
 import { BusinessesTab } from './BusinessesTab';
@@ -17,10 +18,11 @@ import { SignatureTab } from './SignatureTab';
 import { TaxTab } from './TaxTab';
 import { UpdatesTab } from './UpdatesTab';
 
-type Tab = 'business' | 'businesses' | 'brands' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
+type Tab = 'business' | 'documents' | 'businesses' | 'brands' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
 
 const TABS: [Tab, MessageKey][] = [
   ['business', 'settings.tabs.business'],
+  ['documents', 'settings.tabs.documents'],
   ['businesses', 'settings.tabs.businesses'],
   ['brands', 'settings.tabs.brands'],
   ['issuing', 'settings.tabs.issuing'],
@@ -75,6 +77,7 @@ export function SettingsPage() {
 
       <div className="mt-6 rounded-card border border-line bg-canvas p-4 shadow-card">
         {tab === 'business' && <BusinessTab />}
+        {tab === 'documents' && <BusinessDocumentsPanel onUseDetails={() => setTab('business')} />}
         {tab === 'businesses' && <BusinessesTab startAdding={new URLSearchParams(window.location.search).get('add') === '1'} />}
         {tab === 'brands' && <BrandsTab />}
         {tab === 'issuing' && <IssuingTab />}

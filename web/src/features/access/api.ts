@@ -9,6 +9,7 @@ export interface AccessFeatures {
   unified_file: boolean;
   pcn874: boolean;
   bank_matches: boolean;
+  business_documents: boolean;
   notes: boolean;
 }
 
