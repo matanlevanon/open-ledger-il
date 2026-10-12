@@ -22,7 +22,7 @@ export type Role = 'owner' | 'assistant' | 'accountant';
  * R24 Phase B (R23 task 6): an assistant issues and sends documents, keeps clients and expenses.
  * No Settings, numbering, users, legal-mode switch or ITA connection, no reports or exports.
  */
-export const ASSISTANT_FEATURES = ['issue_documents', 'quotes', 'income_documents', 'clients', 'expenses', 'notes', 'business_documents'] as const;
+export const ASSISTANT_FEATURES = ['issue_documents', 'quotes', 'income_documents', 'clients', 'expenses', 'notes', 'business_documents', 'contracts'] as const;
 
 /** Switches an owner can grant an accountant. Defaults from docs/accountant-access.md. */
 export const DEFAULT_ACCOUNTANT_FEATURES = {
@@ -36,6 +36,8 @@ export const DEFAULT_ACCOUNTANT_FEATURES = {
   bank_matches: false,
   // R24 Phase C: business certificates. Off until the owner turns it on.
   business_documents: false,
+  // R25: signed contracts and work orders, view only. Off until the owner turns it on.
+  contracts: false,
   notes: true,
 } as const;
 

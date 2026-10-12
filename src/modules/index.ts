@@ -52,6 +52,9 @@ import { createBusinessesModule } from './businesses';
 // R24 Phase C: business documents (certificates), share links and the expiry alert.
 import { businessDocumentsModule } from './business-documents';
 
+// R25: contracts and work orders, Fill & Sign. The public signing link mounts under /sending/public/c.
+import { createContractsModule, createContractsPublicModule } from './contracts';
+
 // R14 mcp: `mcpModule` mounts at the top-level `/mcp` path in src/index.ts, not under /api. It
 // authenticates with the MCP_TOKEN bearer secret, not Cloudflare Access, and owns no cron, so it
 // does not belong in this registry.
@@ -122,4 +125,7 @@ export const modules: ModuleDef[] = [
   createBusinessesModule(documentsServiceOptions),
 
   businessDocumentsModule,
+
+  createContractsModule({ documentsOptions: documentsServiceOptions }),
+  createContractsPublicModule(),
 ];

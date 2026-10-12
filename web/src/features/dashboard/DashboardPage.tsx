@@ -695,6 +695,23 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
         </p>
       ))}
 
+      {(data?.contracts?.unsigned ?? []).map((c) => (
+        <p key={`u${c.id}`} data-testid="contract-unsigned" className="mt-4 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink">
+          {t('dashboard.contractUnsigned', { title: c.title, days: String(c.daysSinceSent) })}{' '}
+          <Link to={`/contracts/${c.id}`} className="font-semibold text-accent-2 hover:underline">
+            {t('dashboard.contractOpen')}
+          </Link>
+        </p>
+      ))}
+      {(data?.contracts?.expiring ?? []).map((c) => (
+        <p key={`e${c.id}`} data-testid="contract-expiring" className="mt-4 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink">
+          {t('dashboard.contractExpiring', { title: c.title, date: c.expiresAt.slice(0, 10) })}{' '}
+          <Link to={`/contracts/${c.id}`} className="font-semibold text-accent-2 hover:underline">
+            {t('dashboard.contractOpen')}
+          </Link>
+        </p>
+      ))}
+
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {visible.map((card) => (
           <Fragment key={card}>{renderCard(card)}</Fragment>

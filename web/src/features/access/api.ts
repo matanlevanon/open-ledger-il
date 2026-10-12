@@ -10,6 +10,7 @@ export interface AccessFeatures {
   pcn874: boolean;
   bank_matches: boolean;
   business_documents: boolean;
+  contracts: boolean;
   notes: boolean;
 }
 

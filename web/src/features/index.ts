@@ -34,6 +34,8 @@ import { ServicesPage } from './settings/ServicesTab';
 import { SettingsPage } from './settings/SettingsPage';
 import { BusinessDocumentsPage } from './business-documents/BusinessDocumentsPage';
 
+import { ContractsRoutes } from './contracts';
+
 import { AboutPage } from './about/AboutPage';
 
 export const featureRoutes: FeatureRoute[] = [
@@ -61,6 +63,9 @@ export const featureRoutes: FeatureRoute[] = [
 
   // R24 Phase C: business documents for the assistant and the accountant (owners also have the Settings tab).
   { path: '/business-documents', component: BusinessDocumentsPage },
+
+  // R25: contracts and work orders. The list lives on the client page, templates in Settings.
+  { path: '/contracts/*', component: ContractsRoutes },
 
   { path: '/about', component: AboutPage },
 ];

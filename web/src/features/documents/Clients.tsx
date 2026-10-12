@@ -4,6 +4,7 @@ import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { type MessageKey, useT } from '../../i18n';
 import { type Client, type ClientConsent, type ConsentFormInput, clientsApi, docsApi } from './api';
 import { DocumentTable } from './DocumentList';
+import { ClientContracts } from '../contracts/ClientContracts';
 import { TYPE_NAME_KEYS } from './Editor';
 import { CURRENCIES, newDocumentPath, offeredDocumentTypes, totalsText } from './format';
 import { LedgerView } from './Ledger';
@@ -335,10 +336,12 @@ export function ClientForm() {
   );
 }
 
-const TABS: { key: 'overview' | 'ledger' | 'documents'; label: MessageKey }[] = [
+const TABS: { key: 'overview' | 'ledger' | 'documents' | 'contracts'; label: MessageKey }[] = [
   { key: 'overview', label: 'clients.page.tabOverview' },
-  { key: 'ledger', label: 'clients.page.tabLedger' },
   { key: 'documents', label: 'clients.page.tabDocuments' },
+  // R25 Screen A: Overview, Documents, Contracts, Ledger.
+  { key: 'contracts', label: 'clients.page.tabContracts' },
+  { key: 'ledger', label: 'clients.page.tabLedger' },
 ];
 
 /**
@@ -594,6 +597,7 @@ export function ClientPage() {
       )}
       {tab === 'ledger' && <LedgerView clientId={c.id} />}
       {tab === 'documents' && <DocumentTable clientId={c.id} />}
+      {tab === 'contracts' && <ClientContracts clientId={c.id} canCreate={issuing} />}
     </section>
   );
 }

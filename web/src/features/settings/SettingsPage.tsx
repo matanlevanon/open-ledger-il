@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { MessageKey } from '../../i18n';
 import { useT } from '../../i18n';
 import { BusinessDocumentsPanel } from '../business-documents/BusinessDocumentsPanel';
+import { ContractTemplatesTab } from '../contracts/ContractTemplatesTab';
 import { BackupsTab } from './BackupsTab';
 import { BrandsTab } from './BrandsTab';
 import { BusinessesTab } from './BusinessesTab';
@@ -18,7 +19,7 @@ import { SignatureTab } from './SignatureTab';
 import { TaxTab } from './TaxTab';
 import { UpdatesTab } from './UpdatesTab';
 
-type Tab = 'business' | 'documents' | 'businesses' | 'brands' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
+type Tab = 'business' | 'documents' | 'businesses' | 'brands' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'contracts' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
 
 const TABS: [Tab, MessageKey][] = [
   ['business', 'settings.tabs.business'],
@@ -32,6 +33,7 @@ const TABS: [Tab, MessageKey][] = [
   ['rates', 'settings.tabs.rates'],
   ['paymentMethods', 'settings.tabs.paymentMethods'],
   ['services', 'settings.tabs.services'],
+  ['contracts', 'settings.tabs.contracts'],
   ['signature', 'settings.tabs.signature'],
   ['expenses', 'settings.tabs.expenses'],
   ['dashboard', 'settings.tabs.dashboard'],
@@ -87,6 +89,7 @@ export function SettingsPage() {
         {tab === 'rates' && <RatesTab />}
         {tab === 'paymentMethods' && <PaymentMethodsTab />}
         {tab === 'services' && <ServicesTab />}
+        {tab === 'contracts' && <ContractTemplatesTab />}
         {tab === 'signature' && <SignatureTab />}
         {tab === 'expenses' && <ExpensesTab />}
         {tab === 'dashboard' && <DashboardTab />}

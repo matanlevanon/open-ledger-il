@@ -23,6 +23,11 @@ export interface SignPdfOptions extends SigningIdentity {
   fieldName?: string;
   /** The /Name entry, the business name from Settings > Business. */
   signerName?: string;
+  /**
+   * R25: a certifying signature (DocMDP, ISO 32000-1 12.8.2.2) with P=1. No change of any kind is
+   * permitted after signing, so a PDF reader shows any later change as breaking the certification.
+   */
+  certify?: boolean;
 }
 
 export interface VerifyPdfResult {
@@ -97,6 +102,11 @@ export async function signPdf(bytes: Uint8Array, options: SignPdfOptions): Promi
   if (options.reason) sigDict.set(PDFName.of('Reason'), PDFString.of(options.reason));
   if (options.location) sigDict.set(PDFName.of('Location'), PDFString.of(options.location));
   const sigRef = context.register(sigDict);
+  if (options.certify) {
+    const transformParams = context.obj({ Type: 'TransformParams', P: 1, V: '1.2' });
+    sigDict.set(PDFName.of('Reference'), context.obj([context.obj({ Type: 'SigRef', TransformMethod: 'DocMDP', TransformParams: transformParams })]));
+    doc.catalog.set(PDFName.of('Perms'), context.obj({ DocMDP: sigRef }));
+  }
 
   const widget = PDFDict.withContext(context);
   widget.set(PDFName.of('Type'), PDFName.of('Annot'));

@@ -1,4 +1,5 @@
 import { type ExpiringDocument, expiringDocuments } from '../business-documents/service';
+import { type ContractLines, contractLines } from '../contracts/service';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom, auditStatement } from '../../core/audit';
@@ -120,6 +121,8 @@ export interface DashboardData {
   businessType: { entityType: EntityType; showCeiling: boolean };
   /** R24 Phase C: certificates that end within 30 days, or ended. One dashboard line each. */
   expiringDocuments: ExpiringDocument[];
+  /** R25: contracts sent and not signed after 7 days, and signing links that end within 2 days. */
+  contracts: ContractLines;
   cards: DashboardCards;
 }
 
@@ -297,6 +300,7 @@ export async function buildDashboard(db: D1Database, today: string, businessId: 
     },
     businessType: { entityType, showCeiling },
     expiringDocuments: await expiringDocuments(db, businessId, today),
+    contracts: await contractLines(db, businessId),
     cards,
   };
 }
@@ -396,10 +400,12 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
   routes.get('/', requireFeatureOrAssistant('reports'), async (c) => {
     const request = parseDashboardQuery(c.req.query());
     const businessId = businessIdOf(c);
-    if (request.cards) return c.json(await buildDashboard(c.env.DB, today(), businessId, request));
+    // R25: unsigned contracts are not the accountant's to see.
+    const scoped = (d: DashboardData): DashboardData => (c.get('user').role === 'accountant' ? { ...d, contracts: { unsigned: [], expiring: [] } } : d);
+    if (request.cards) return c.json(scoped(await buildDashboard(c.env.DB, today(), businessId, request)));
     const layout = await getDashboardLayout(c.env.DB, businessId);
     const cards = layout.filter((e) => e.visible).map((e) => e.id);
-    return c.json({ ...(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards })), layout });
+    return c.json({ ...scoped(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards })), layout });
   });
   // Phone Quick page: the latest documents and expenses, newest first.
   routes.get('/activity', requireFeatureOrAssistant('reports'), async (c) => {
