@@ -74,6 +74,8 @@ export const draftInput = z.object({
   /** Receipt only: convert each payment at the Bank of Israel rate of its day, not the source document's rate. */
   latestRate: z.boolean().default(false),
   carryRate: z.boolean().default(false),
+  /** R24: the brand printed on the document. Null or absent: the business's default brand. */
+  brandId: z.number().int().positive().nullish(),
 });
 
 export const draftPatch = partialWithoutDefaults(draftInput.omit({ type: true }));

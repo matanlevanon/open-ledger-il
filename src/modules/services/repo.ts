@@ -24,13 +24,14 @@ export interface ServiceRow {
   updated_at: string;
 }
 
-export async function listServices(db: D1Database, activeOnly = false): Promise<ServiceRow[]> {
-  const where = activeOnly ? 'WHERE active = 1' : '';
-  return all<ServiceRow>(db, `SELECT * FROM items ${where} ORDER BY sort_order, id`);
+/** R24: each business has its own services catalog. */
+export async function listServices(db: D1Database, businessId: number, activeOnly = false): Promise<ServiceRow[]> {
+  const where = activeOnly ? 'AND active = 1' : '';
+  return all<ServiceRow>(db, `SELECT * FROM items WHERE business_id = ? ${where} ORDER BY sort_order, id`, businessId);
 }
 
-export async function getService(db: D1Database, id: number): Promise<ServiceRow> {
-  const row = await first<ServiceRow>(db, 'SELECT * FROM items WHERE id = ?', id);
+export async function getService(db: D1Database, id: number, businessId: number): Promise<ServiceRow> {
+  const row = await first<ServiceRow>(db, 'SELECT * FROM items WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('Service', id);
   return row;
 }

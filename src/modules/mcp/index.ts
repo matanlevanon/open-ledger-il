@@ -101,7 +101,12 @@ export function mcpRoutes(): Hono<AppEnv> {
     if (body === null || typeof body !== 'object') {
       return c.json({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Invalid JSON.' } }, 400);
     }
-    const env: McpEnv = { db: c.env.DB, actor: mcpActor(c.req.raw.headers) };
+    // R24: one token, one business per call. X-Business-Id names it, business 1 by default.
+    const wanted = Number(c.req.header('X-Business-Id') ?? '1');
+    const businessId = Number.isSafeInteger(wanted) && wanted > 0 ? wanted : 1;
+    const known = await c.env.DB.prepare('SELECT id FROM businesses WHERE id = ?').bind(businessId).first();
+    if (!known) return c.json({ jsonrpc: '2.0', id: null, error: { code: -32602, message: 'Unknown business.' } }, 400);
+    const env: McpEnv = { db: c.env.DB, actor: mcpActor(c.req.raw.headers), businessId };
     if (Array.isArray(body)) {
       const results = (await Promise.all(body.map((m) => handleMcpMessage(env, m as JsonRpcMessage)))).filter((r) => r !== null);
       return results.length > 0 ? c.json(results) : c.body(null, 202);

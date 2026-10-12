@@ -3,6 +3,7 @@ import { NotFoundError, UnauthorizedError } from '../../core/errors';
 import type { Env } from '../../env';
 import { clientDisplayName } from '../clients/display';
 import { getDoc } from '../documents/repo';
+import { businessOfDocument, printedIdentity } from '../businesses/service';
 import { displayNumber } from '../documents/types';
 import { allocationGate } from '../ita';
 import { r2Key } from '../pdf';
@@ -80,9 +81,10 @@ function money(minor: number, currency: string): string {
 }
 
 /** The business name as printed on documents (Settings > Business). */
-export async function senderName(db: D1Database): Promise<string> {
-  const row = await first<{ name_en: string | null; name_he: string | null }>(db, 'SELECT name_en, name_he FROM business_profile WHERE id = 1');
-  return row?.name_en?.trim() || row?.name_he?.trim() || 'Your supplier';
+/** R24: the name a document goes out under, its brand over its business. */
+export async function senderName(db: D1Database, businessId: number, brandId: number | null = null): Promise<string> {
+  const identity = await printedIdentity(db, businessId, brandId);
+  return identity.nameEn.trim() || identity.nameHe.trim() || 'Your supplier';
 }
 
 export interface ShareDoc {
@@ -94,18 +96,21 @@ export interface ShareDoc {
   date: string;
   sender: string;
   hasLogo: boolean;
+  /** R24: the brand's logo, for the share preview. */
+  logoR2Key: string | null;
   pdfKey: string;
 }
 
 /** Everything the share page and the WhatsApp message need about a document. */
 export async function shareDoc(db: D1Database, documentId: number): Promise<ShareDoc> {
-  const doc = await getDoc(db, documentId);
+  // Reached by a signed link, so the document itself names its business.
+  const doc = await getDoc(db, documentId, await businessOfDocument(db, documentId));
   // Defense in depth: re-check CLAUDE.md rule 3 at delivery time, not only when the link was made.
   const gate = await allocationGate(db, doc.id);
   if (!gate.allowed || doc.number === null || doc.status === 'draft') throw new NotFoundError('Document');
   const type = await first<{ name_en: string; name_he: string | null }>(db, 'SELECT name_en, name_he FROM document_types WHERE code = ?', doc.type);
   const client = doc.client_id === null ? null : await first<{ name_en: string | null; name_he: string | null }>(db, 'SELECT name_en, name_he FROM clients WHERE id = ?', doc.client_id);
-  const logo = await first<{ logo_r2_key: string | null }>(db, 'SELECT logo_r2_key FROM business_profile WHERE id = 1');
+  const identity = await printedIdentity(db, doc.business_id, doc.brand_id);
   const number = String(doc.number);
   return {
     id: doc.id,
@@ -114,8 +119,9 @@ export async function shareDoc(db: D1Database, documentId: number): Promise<Shar
     clientName: client ? clientDisplayName(client, 'en') : '',
     amount: money(Math.abs(doc.total_minor), doc.currency),
     date: `${doc.date.slice(8, 10)}/${doc.date.slice(5, 7)}/${doc.date.slice(0, 4)}`,
-    sender: await senderName(db),
-    hasLogo: Boolean(logo?.logo_r2_key),
+    sender: await senderName(db, doc.business_id, doc.brand_id),
+    hasLogo: Boolean(identity.logoR2Key),
+    logoR2Key: identity.logoR2Key,
     pdfKey: r2Key(doc.date, doc.series_id, doc.number, 'client'),
   };
 }
@@ -123,8 +129,10 @@ export async function shareDoc(db: D1Database, documentId: number): Promise<Shar
 /** The page WhatsApp previews and the client opens: who sent what, the amount and an Open button. */
 export function sharePageHtml(d: ShareDoc, pageUrl: string, origin: string): string {
   const title = `${d.title} from ${d.sender}`;
+  // R24: the logo of this document's brand, reached through the same signed page link.
+  const logoUrl = `${pageUrl}/logo`;
   const description = [d.clientName, d.amount, d.date].filter(Boolean).join(' · ');
-  const image = d.hasLogo ? `${origin}/api/sending/public/logo` : '';
+  const image = d.hasLogo ? logoUrl : '';
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>

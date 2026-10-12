@@ -41,6 +41,9 @@ export interface Ctx {
   services: Services;
 }
 
+/** R24: the business every query of this request is scoped to. */
+export const bizOf = (ctx: Ctx): number => ctx.user.businessId;
+
 // ---------------------------------------------------------------------------
 // Draft state and computation
 // ---------------------------------------------------------------------------
@@ -84,6 +87,8 @@ interface DraftState {
    * carried none).
    */
   vatRateBpOverride?: number | null;
+  /** R24: the brand printed on the document. Null: the business's default brand. */
+  brandId?: number | null;
 }
 
 interface Computed {
@@ -122,14 +127,14 @@ function addDays(date: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-async function openSeriesFor(db: D1Database, type: string): Promise<string> {
-  const row = await first<{ id: string }>(db, 'SELECT id FROM series WHERE doc_type = ? AND closed_at IS NULL', type);
+async function openSeriesFor(db: D1Database, type: string, businessId: number): Promise<string> {
+  const row = await first<{ id: string }>(db, 'SELECT id FROM series WHERE doc_type = ? AND business_id = ? AND closed_at IS NULL', type, businessId);
   if (!row) conflict('series_closed', `No open number series for type ${type}.`);
   return row.id;
 }
 
-async function assertModeAllows(db: D1Database, type: DocTypeRow, date: string): Promise<string> {
-  const mode = (await legalModeOn(db, date)).mode;
+async function assertModeAllows(db: D1Database, type: DocTypeRow, date: string, businessId: number): Promise<string> {
+  const mode = (await legalModeOn(db, date, businessId)).mode;
   if (type.modes !== 'both' && type.modes !== mode) {
     conflict('wrong_legal_mode', `${type.name_en} is not issued in ${mode === 'patur' ? 'עוסק פטור' : 'עוסק מורשה'} mode.`);
   }
@@ -137,9 +142,9 @@ async function assertModeAllows(db: D1Database, type: DocTypeRow, date: string):
 }
 
 /** Instruction 18ב(ד): with a secured signature, money comes in by card, crossed cheque or bank transfer only. */
-export async function assertPaymentMethods(db: D1Database, type: DocTypeRow, payments: PaymentInput[]): Promise<void> {
+export async function assertPaymentMethods(db: D1Database, type: DocTypeRow, payments: PaymentInput[], businessId: number): Promise<void> {
   if (!RECEIPT_TYPES.includes(type.code) && type.kind !== 'invoice_receipt') return;
-  if ((await signatureMode(db)) !== 'secured') return;
+  if ((await signatureMode(db, businessId)) !== 'secured') return;
   for (const p of payments) {
     const ok = p.method === 'card' || p.method === 'bank_transfer' || (p.method === 'cheque' && p.chequeCrossed);
     if (!ok) {
@@ -153,7 +158,7 @@ export async function assertPaymentMethods(db: D1Database, type: DocTypeRow, pay
 
 async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
   const { db, services } = ctx;
-  const mode = await assertModeAllows(db, s.type, s.date);
+  const mode = await assertModeAllows(db, s.type, s.date, bizOf(ctx));
   const receiptKind = isReceiptKind(s.type);
   if (!receiptKind && s.payments.length > 0) invalid('Only receipts carry payments.');
   if (s.carryRate && !(s.overrideRate || s.showIls)) invalid('Set a rate or show ILS before you carry the rate to the receipt.');
@@ -167,7 +172,7 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
   // the receipt (overrideRate) still wins, below.
   let carried: { rate: string; rateDate: string | null; label: string } | null = null;
   if ((s.type.kind === 'receipt' || s.type.kind === 'invoice_receipt') && s.sourceId && s.currency !== HOME_CURRENCY && !s.latestRate) {
-    const src = await first<DocRow>(db, 'SELECT * FROM documents WHERE id = ?', s.sourceId);
+    const src = await first<DocRow>(db, 'SELECT * FROM documents WHERE id = ? AND business_id = ?', s.sourceId, bizOf(ctx));
     if (src && src.currency === s.currency) {
       const label = displayNumber(src.type, src.number) ?? '';
       if (src.fx_rate) {
@@ -192,7 +197,7 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
       resolvedPayments.push(p);
       continue;
     }
-    const methodRow = await getPaymentMethod(db, p.methodId);
+    const methodRow = await getPaymentMethod(db, p.methodId, bizOf(ctx));
     resolvedPayments.push({ ...p, method: legacyMethodBucket(methodRow) });
   }
 
@@ -231,7 +236,7 @@ async function compute(ctx: Ctx, s: DraftState): Promise<Computed> {
   if (s.vatRateBpOverride !== undefined) {
     vatRateBp = s.vatRateBpOverride;
   } else if (mode === 'murshe') {
-    const client = s.clientId ? await loadClient(db, s.clientId) : null;
+    const client = s.clientId ? await loadClient(db, s.clientId, bizOf(ctx)) : null;
     vatRateBp = client?.foreign_resident === 1 ? 0 : (await vatRateOn(db, s.date)).rate_bp;
   } else {
     vatRateBp = null;
@@ -396,11 +401,12 @@ interface ClientRow {
   payment_method_ids: string | null;
 }
 
-async function loadClient(db: D1Database, clientId: number): Promise<ClientRow> {
+async function loadClient(db: D1Database, clientId: number, businessId: number): Promise<ClientRow> {
   const client = await first<ClientRow>(
     db,
-    'SELECT id, currency, client_copy_lang, country, foreign_resident, vat_number, company_id, payment_instructions, payment_method_ids FROM clients WHERE id = ?',
+    'SELECT id, currency, client_copy_lang, country, foreign_resident, vat_number, company_id, payment_instructions, payment_method_ids FROM clients WHERE id = ? AND business_id = ?',
     clientId,
+    businessId,
   );
   if (!client) throw new NotFoundError('Client', clientId);
   return client;
@@ -412,31 +418,34 @@ function allocationClientOf(client: ClientRow | null): AllocationCheckClient | n
 }
 
 /** Business-level default payment instructions (R16 task 7), the fallback when a client has none of its own. */
-async function defaultPaymentInstructions(db: D1Database): Promise<string | null> {
-  const row = await first<{ payment_instructions: string | null }>(db, 'SELECT payment_instructions FROM business_profile WHERE id = 1');
+async function defaultPaymentInstructions(db: D1Database, businessId: number): Promise<string | null> {
+  const row = await first<{ payment_instructions: string | null }>(db, 'SELECT payment_instructions FROM businesses WHERE id = ?', businessId);
   return row?.payment_instructions ?? null;
 }
 
 /** Business-level default payment methods (R17 task 2), the fallback when a client has none of its own. */
-async function defaultPaymentMethodIds(db: D1Database): Promise<number[]> {
-  const row = await first<{ payment_method_ids: string | null }>(db, 'SELECT payment_method_ids FROM business_profile WHERE id = 1');
+async function defaultPaymentMethodIds(db: D1Database, businessId: number): Promise<number[]> {
+  const row = await first<{ payment_method_ids: string | null }>(db, 'SELECT payment_method_ids FROM businesses WHERE id = ?', businessId);
   return parseMethodIds(row?.payment_method_ids);
 }
 
 async function insertDraft(ctx: Ctx, s: DraftState, event: { kind: string; details?: unknown }): Promise<number> {
-  await assertBusinessReady(ctx.db);
+  const businessId = bizOf(ctx);
+  await assertBusinessReady(ctx.db, businessId);
   const { db, actor } = ctx;
-  const seriesId = await openSeriesFor(db, s.type.code);
-  await assertMethodIdsExist(db, s.paymentMethodIds);
+  const seriesId = await openSeriesFor(db, s.type.code, businessId);
+  await assertMethodIdsExist(db, s.paymentMethodIds, businessId);
   const c = await compute(ctx, s);
-  await assertPaymentMethods(db, s.type, s.payments);
+  await assertPaymentMethods(db, s.type, s.payments, bizOf(ctx));
   const d = c.doc;
+  // R24: the brand printed on the document. The business's default brand unless the editor picked one.
+  const brandId = s.brandId ?? (await defaultBrandId(db, businessId));
   const { lastRowId: id } = await run(
     db,
     `INSERT INTO documents (type, series_id, status, legal_mode, client_id, date, due_date, currency, fx_rate, fx_rate_date,
        fx_source, subtotal_minor, vat_rate_bp, vat_amount_minor, total_minor, total_ils_minor, lang_variant, notes, payment_instructions,
-       payment_method_ids, created_by)
-     VALUES (?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       payment_method_ids, created_by, business_id, brand_id)
+     VALUES (?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     s.type.code,
     seriesId,
     d.legal_mode,
@@ -457,6 +466,8 @@ async function insertDraft(ctx: Ctx, s: DraftState, event: { kind: string; detai
     d.payment_instructions,
     d.payment_method_ids,
     actor.userId,
+    businessId,
+    brandId,
   );
   try {
     await transaction(db, [
@@ -473,18 +484,19 @@ async function insertDraft(ctx: Ctx, s: DraftState, event: { kind: string; detai
 
 async function saveDraft(ctx: Ctx, id: number, s: DraftState, auditAction = 'document.update_draft'): Promise<void> {
   const { db, actor } = ctx;
-  await assertMethodIdsExist(db, s.paymentMethodIds);
+  await assertMethodIdsExist(db, s.paymentMethodIds, bizOf(ctx));
   const c = await compute(ctx, s);
-  await assertPaymentMethods(db, s.type, s.payments);
+  await assertPaymentMethods(db, s.type, s.payments, bizOf(ctx));
   const d = c.doc;
+  const brandId = s.brandId ?? (await defaultBrandId(db, bizOf(ctx)));
   await mapped(
     transaction(db, [
       stmt(
         db,
         `UPDATE documents SET legal_mode = ?, client_id = ?, date = ?, due_date = ?, currency = ?, fx_rate = ?,
            fx_rate_date = ?, fx_source = ?, subtotal_minor = ?, vat_rate_bp = ?, vat_amount_minor = ?, total_minor = ?,
-           total_ils_minor = ?, lang_variant = ?, notes = ?, payment_instructions = ?, payment_method_ids = ?, updated_at = ?
-         WHERE id = ? AND status = 'draft'`,
+           total_ils_minor = ?, lang_variant = ?, notes = ?, payment_instructions = ?, payment_method_ids = ?, brand_id = ?, updated_at = ?
+         WHERE id = ? AND status = 'draft' AND business_id = ?`,
         d.legal_mode,
         d.client_id,
         d.date,
@@ -502,8 +514,10 @@ async function saveDraft(ctx: Ctx, id: number, s: DraftState, auditAction = 'doc
         d.notes,
         d.payment_instructions,
         d.payment_method_ids,
+        brandId,
         nowIso(),
         id,
+        bizOf(ctx),
       ),
       stmt(db, 'DELETE FROM document_lines WHERE document_id = ?', id),
       stmt(db, 'DELETE FROM payment_details WHERE payment_id IN (SELECT id FROM payments WHERE document_id = ?)', id),
@@ -572,6 +586,7 @@ async function stateFromDb(db: D1Database, loaded: LoadedDraft): Promise<DraftSt
     // A credit draft reloaded from the DB (for example on finalize) keeps the rate it was created
     // with rather than recomputing it from today's mode and rate table.
     vatRateBpOverride: type.kind === 'credit' || type.kind === 'credit_invoice' ? doc.vat_rate_bp : undefined,
+    brandId: doc.brand_id ?? null,
   };
 }
 
@@ -585,24 +600,25 @@ function assertCanSeeType(user: AuthUser, type: string) {
 
 export async function createDraft(ctx: Ctx, input: DraftInput): Promise<number> {
   const { db } = ctx;
-  await assertIssuing(db);
+  await assertIssuing(db, bizOf(ctx));
   assertCanSeeType(ctx.user, input.type);
   const type = await getType(db, input.type);
   if (type.enabled !== 1) conflict('type_disabled', `${type.name_en} is not available yet.`);
   if (type.kind === 'credit') invalid('Create a credit receipt from the receipt it credits.');
-  const client = input.clientId ? await loadClient(db, input.clientId) : null;
+  const client = input.clientId ? await loadClient(db, input.clientId, bizOf(ctx)) : null;
+  if (input.brandId != null) await assertBrand(db, input.brandId, bizOf(ctx));
   const date = input.date ?? ctx.services.today();
   // A new quote or payment request prefills from the client's own payment instructions, falling
   // back to the business default, unless the caller already sent its own text (R16 task 7).
   const paymentInstructions =
     input.paymentInstructions !== undefined && input.paymentInstructions !== null
       ? input.paymentInstructions
-      : (client?.payment_instructions ?? (await defaultPaymentInstructions(db)));
+      : (client?.payment_instructions ?? (await defaultPaymentInstructions(db, bizOf(ctx))));
   // Same prefill rule as paymentInstructions (R16 task 7): a caller-sent selection wins;
   // otherwise the client's last-used methods, falling back to the business default (R17 task 2).
   const clientMethodIds = parseMethodIds(client?.payment_method_ids);
   const paymentMethodIds =
-    input.paymentMethodIds.length > 0 ? input.paymentMethodIds : clientMethodIds.length > 0 ? clientMethodIds : await defaultPaymentMethodIds(db);
+    input.paymentMethodIds.length > 0 ? input.paymentMethodIds : clientMethodIds.length > 0 ? clientMethodIds : await defaultPaymentMethodIds(db, bizOf(ctx));
   return insertDraft(
     ctx,
     {
@@ -627,6 +643,7 @@ export async function createDraft(ctx: Ctx, input: DraftInput): Promise<number> 
       revisesId: null,
       backdateReason: null,
       creditReason: null,
+      brandId: input.brandId ?? null,
     },
     { kind: 'created' },
   );
@@ -634,8 +651,8 @@ export async function createDraft(ctx: Ctx, input: DraftInput): Promise<number> 
 
 export async function updateDraft(ctx: Ctx, id: number, patch: DraftPatch): Promise<void> {
   const { db } = ctx;
-  await assertIssuing(db);
-  const loaded = await loadFull(db, id);
+  await assertIssuing(db, bizOf(ctx));
+  const loaded = await loadFull(db, id, bizOf(ctx));
   assertCanSeeType(ctx.user, loaded.doc.type);
   if (loaded.doc.status !== 'draft') throw new ConflictError('not_draft', 'Only a draft can be edited. Cancel or credit instead.');
   const s = await stateFromDb(db, loaded);
@@ -663,12 +680,16 @@ export async function updateDraft(ctx: Ctx, id: number, patch: DraftPatch): Prom
   }
   if (patch.carryRate !== undefined) s.carryRate = patch.carryRate;
   if (patch.latestRate !== undefined) s.latestRate = patch.latestRate;
+  if (patch.brandId !== undefined) {
+    if (patch.brandId !== null) await assertBrand(db, patch.brandId, bizOf(ctx));
+    s.brandId = patch.brandId;
+  }
   await saveDraft(ctx, id, s);
 }
 
 export async function deleteDraft(ctx: Ctx, id: number): Promise<void> {
   const { db, actor } = ctx;
-  const doc = await getDoc(db, id);
+  const doc = await getDoc(db, id, bizOf(ctx));
   assertCanSeeType(ctx.user, doc.type);
   if (doc.status !== 'draft') throw new ConflictError('not_draft', 'Only a draft can be deleted. Cancel or credit instead.');
   await mapped(
@@ -701,7 +722,7 @@ async function validateForFinalize(ctx: Ctx, s: DraftState, doc: DocRow, backdat
   const today = services.today();
   if (s.type.enabled !== 1) conflict('type_disabled', `${s.type.name_en} is not available yet.`);
   if (!s.clientId) invalid('Pick a client before you finalize.');
-  const client = await loadClient(db, s.clientId);
+  const client = await loadClient(db, s.clientId, bizOf(ctx));
 
   if (isReceiptKind(s.type)) {
     if (s.payments.length === 0) invalid('Add at least one payment.');
@@ -729,13 +750,13 @@ async function validateForFinalize(ctx: Ctx, s: DraftState, doc: DocRow, backdat
 
   // Date rules. Bookkeeping documents are never dated ahead. Back-dating past the limit needs the owner and a reason.
   if (s.type.bookkeeping === 1 && s.date > today) invalid('A bookkeeping document cannot be dated in the future.');
-  const limit = addDays(today, -(await backdateDays(db)));
+  const limit = addDays(today, -(await backdateDays(db, bizOf(ctx))));
   let backdate: string | null = null;
   if (s.date < limit) {
     if (user.role !== 'owner') throw new ForbiddenError('Only the owner can back-date a document.');
     const reason = (backdateReason ?? s.backdateReason ?? '').trim();
     if (!reason) {
-      throw new ConflictError('backdate_reason_required', `The date is more than ${await backdateDays(db)} days back. Add a reason.`);
+      throw new ConflictError('backdate_reason_required', `The date is more than ${await backdateDays(db, bizOf(ctx))} days back. Add a reason.`);
     }
     backdate = reason;
   }
@@ -748,16 +769,16 @@ async function validateForFinalize(ctx: Ctx, s: DraftState, doc: DocRow, backdat
     conflict('date_before_last_in_series', `The last ${s.type.name_en.toLowerCase()} is dated ${last.date}. Pick that date or later.`);
   }
 
-  await assertPaymentMethods(db, s.type, s.payments);
+  await assertPaymentMethods(db, s.type, s.payments, bizOf(ctx));
 
   if (s.sourceId) {
-    const src = await getDoc(db, s.sourceId);
+    const src = await getDoc(db, s.sourceId, bizOf(ctx));
     if (src.status !== 'final') conflict('source_not_open', 'The source document is no longer open.');
     if (src.currency !== s.currency) conflict('currency_mismatch', 'The currency must match the source document.');
     if (s.sourceKind === 'payment') {
       const srcTypeForBalance = await getType(db, src.type);
       if (srcTypeForBalance.kind === 'demand') {
-        const bal = await demandBalance(db, src.id);
+        const bal = await demandBalance(db, src.id, bizOf(ctx));
         if (!bal || bal.remaining_minor <= 0) conflict('source_paid', 'The source document is already paid.');
         if (doc.total_minor > bal.remaining_minor) {
           conflict('payment_exceeds_balance', 'The payment is more than the open balance of the source document.');
@@ -768,15 +789,15 @@ async function validateForFinalize(ctx: Ctx, s: DraftState, doc: DocRow, backdat
       // (migrations/0100_documents.sql) still refuses a payment that would exceed its total_minor.
     }
   }
-  if (s.revisesId) await assertRevisable(db, s.revisesId);
+  if (s.revisesId) await assertRevisable(db, s.revisesId, bizOf(ctx));
   return backdate;
 }
 
 /** Freezes a draft: number, hash chain, links, timeline. Calling it again on a final document returns the same number. */
 export async function finalize(ctx: Ctx, id: number, opts: { backdateReason?: string | null } = {}): Promise<FinalizeOutcome> {
   const { db } = ctx;
-  await assertIssuing(db);
-  const loaded = await loadFull(db, id);
+  await assertIssuing(db, bizOf(ctx));
+  const loaded = await loadFull(db, id, bizOf(ctx));
   assertCanSeeType(ctx.user, loaded.doc.type);
   if (loaded.doc.status !== 'draft') {
     if (loaded.doc.number !== null && loaded.doc.status !== 'cancelled') {
@@ -789,7 +810,7 @@ export async function finalize(ctx: Ctx, id: number, opts: { backdateReason?: st
     return await finalizeDraft(ctx, loaded, opts);
   } catch (err) {
     // A concurrent finalize of the same draft won. Return its number.
-    const now = await getDoc(db, id);
+    const now = await getDoc(db, id, bizOf(ctx));
     if (now.number !== null && now.status !== 'draft' && now.status !== 'cancelled') {
       return { id, number: now.number, alreadyFinal: true, status: now.status === 'final' ? 'final' : 'awaiting_allocation' };
     }
@@ -807,15 +828,15 @@ async function finalizeDraft(ctx: Ctx, loaded: LoadedDraft, opts: { backdateReas
   s.backdateReason = backdate;
   await saveDraft(ctx, id, s, 'document.prepare_finalize');
   await run(db, "UPDATE documents SET issuance_date = ? WHERE id = ? AND status = 'draft'", services.today(), id);
-  const fresh = await loadFull(db, id);
+  const fresh = await loadFull(db, id, bizOf(ctx));
   const doc = fresh.doc;
 
-  if (RECEIPT_TYPES.includes(doc.type)) await services.ceiling.check(doc.total_ils_minor ?? 0, doc.date);
+  if (RECEIPT_TYPES.includes(doc.type)) await services.ceiling.check(doc.total_ils_minor ?? 0, doc.date, bizOf(ctx));
 
-  const source = s.sourceId ? await getDoc(db, s.sourceId) : null;
-  const sourceBalance = source && s.sourceKind === 'payment' ? await demandBalance(db, source.id) : null;
+  const source = s.sourceId ? await getDoc(db, s.sourceId, bizOf(ctx)) : null;
+  const sourceBalance = source && s.sourceKind === 'payment' ? await demandBalance(db, source.id, bizOf(ctx)) : null;
   const carried = fresh.payments.some((p) => p.fx_source === 'carried');
-  const client = doc.client_id ? await loadClient(db, doc.client_id) : null;
+  const client = doc.client_id ? await loadClient(db, doc.client_id, bizOf(ctx)) : null;
   const needsAlloc = await needsAllocation(
     db,
     { type: doc.type, date: doc.date, subtotalMinor: doc.subtotal_minor, vatAmountMinor: doc.vat_amount_minor, currency: assertCurrency(doc.currency), fxRate: doc.fx_rate },
@@ -936,9 +957,9 @@ export async function convertDocument(
   sourceId: number,
   input: { type: string; date?: string; payments?: PaymentInput[]; notes?: string | null; overrideRate?: string | null; latestRate?: boolean },
 ): Promise<number> {
-  await assertIssuing(ctx.db);
+  await assertIssuing(ctx.db, bizOf(ctx));
   const { db } = ctx;
-  const loaded = await loadFull(db, sourceId);
+  const loaded = await loadFull(db, sourceId, bizOf(ctx));
   const src = loaded.doc;
   assertCanSeeType(ctx.user, src.type);
   assertCanSeeType(ctx.user, input.type);
@@ -954,7 +975,7 @@ export async function convertDocument(
   }
   let remaining = src.total_minor;
   if (srcType.kind === 'demand') {
-    const bal = await demandBalance(db, sourceId);
+    const bal = await demandBalance(db, sourceId, bizOf(ctx));
     if (!bal || bal.superseded) conflict('source_converted', 'This document is already converted.');
     remaining = bal.remaining_minor;
     if (rule.kind === 'converted' && bal.paid_minor > 0) {
@@ -993,6 +1014,7 @@ export async function convertDocument(
       revisesId: null,
       backdateReason: null,
       creditReason: null,
+      brandId: src.brand_id ?? null,
     },
     { kind: 'created', details: { from: label } },
   );
@@ -1004,8 +1026,8 @@ export async function recordPayment(
   sourceId: number,
   input: { date?: string; payments: PaymentInput[]; notes?: string | null; finalize: boolean; backdateReason?: string | null; overrideRate?: string | null; latestRate?: boolean },
 ): Promise<{ receiptId: number; finalized: FinalizeOutcome | null }> {
-  await assertIssuing(ctx.db);
-  const src = await getDoc(ctx.db, sourceId);
+  await assertIssuing(ctx.db, bizOf(ctx));
+  const src = await getDoc(ctx.db, sourceId, bizOf(ctx));
   const srcType = await getType(ctx.db, src.type);
   if (srcType.kind !== 'demand' && srcType.kind !== 'invoice') {
     invalid('Record payments against a payment request, a transaction invoice or a tax invoice.');
@@ -1016,7 +1038,7 @@ export async function recordPayment(
   // invoice (305) is already the invoice: its payment is a plain receipt (400), the series R11
   // keeps open through the switch precisely so this stays possible (runs/R11-murshe.md fix 1).
   const date = input.date ?? ctx.services.today();
-  const mode = (await legalModeOn(ctx.db, date)).mode;
+  const mode = (await legalModeOn(ctx.db, date, bizOf(ctx))).mode;
   const receiptType = srcType.kind === 'invoice' ? RECEIPT_TYPES[0]! : mode === 'murshe' ? '320' : RECEIPT_TYPES[0]!;
   const receiptId = await convertDocument(ctx, sourceId, {
     type: receiptType,
@@ -1031,10 +1053,10 @@ export async function recordPayment(
   return { receiptId, finalized };
 }
 
-async function assertRevisable(db: D1Database, id: number): Promise<DocRow> {
-  const doc = await getDoc(db, id);
+async function assertRevisable(db: D1Database, id: number, businessId: number): Promise<DocRow> {
+  const doc = await getDoc(db, id, businessId);
   if (!REVISABLE_TYPES.includes(doc.type)) conflict('not_revisable', 'Only quotes and payment requests can be revised.');
-  if (!(await quotesEditableUntilConverted(db))) conflict('not_revisable', 'Revising quotes and payment requests is off in settings.');
+  if (!(await quotesEditableUntilConverted(db, businessId))) conflict('not_revisable', 'Revising quotes and payment requests is off in settings.');
   if (doc.status !== 'final') conflict('not_revisable', 'Only a final, open document can be revised.');
   if (await hasLiveTargets(db, id, ['converted', 'payment', 'credit'])) {
     conflict('not_revisable', 'This document is already converted or paid.');
@@ -1045,10 +1067,10 @@ async function assertRevisable(db: D1Database, id: number): Promise<DocRow> {
 /** Opens a new draft that replaces a final quote or payment request. Finalizing it cancels the original. */
 export async function reviseDocument(ctx: Ctx, id: number): Promise<number> {
   const { db } = ctx;
-  await assertIssuing(db);
-  const loaded = await loadFull(db, id);
+  await assertIssuing(db, bizOf(ctx));
+  const loaded = await loadFull(db, id, bizOf(ctx));
   assertCanSeeType(ctx.user, loaded.doc.type);
-  await assertRevisable(db, id);
+  await assertRevisable(db, id, bizOf(ctx));
   const s = await stateFromDb(db, loaded);
   s.revisesId = id;
   s.date = ctx.services.today();
@@ -1072,8 +1094,8 @@ function daysFrom(from: string, to: string): number {
  */
 export async function duplicateDocument(ctx: Ctx, id: number, opts: { date?: string } = {}): Promise<number> {
   const { db } = ctx;
-  await assertIssuing(db);
-  const loaded = await loadFull(db, id);
+  await assertIssuing(db, bizOf(ctx));
+  const loaded = await loadFull(db, id, bizOf(ctx));
   assertCanSeeType(ctx.user, loaded.doc.type);
   const s = await stateFromDb(db, loaded);
   if (!DUPLICABLE_KINDS.has(s.type.kind)) conflict('not_duplicable', 'A credit is made from the document it credits. It cannot be duplicated.');
@@ -1098,8 +1120,8 @@ export async function duplicateDocument(ctx: Ctx, id: number, opts: { date?: str
 
 export async function cancelDocument(ctx: Ctx, id: number, reason: string): Promise<void> {
   const { db, actor } = ctx;
-  await assertIssuing(db);
-  const doc = await getDoc(db, id);
+  await assertIssuing(db, bizOf(ctx));
+  const doc = await getDoc(db, id, bizOf(ctx));
   assertCanSeeType(ctx.user, doc.type);
   if (doc.status === 'draft') conflict('not_final', 'Delete a draft instead of cancelling it.');
   if (doc.status !== 'final') conflict('not_final', 'Only a final document can be cancelled.');
@@ -1142,9 +1164,9 @@ export async function creditDocument(
     backdateReason?: string | null;
   },
 ): Promise<{ creditId: number; finalized: FinalizeOutcome | null }> {
-  await assertIssuing(ctx.db);
+  await assertIssuing(ctx.db, bizOf(ctx));
   const { db } = ctx;
-  const loaded = await loadFull(db, id);
+  const loaded = await loadFull(db, id, bizOf(ctx));
   const orig = loaded.doc;
   assertCanSeeType(ctx.user, orig.type);
   if (orig.status !== 'final') conflict('not_final', 'Only a final document can be credited.');
@@ -1236,6 +1258,7 @@ export async function creditDocument(
       // Always the credited document's own rate (docs/currency-and-fx.md, "Credit documents"),
       // never today's: null for a document that carried no VAT.
       vatRateBpOverride: orig.vat_rate_bp,
+      brandId: orig.brand_id ?? null,
     },
     { kind: 'created', details: { credits: label, mode: input.mode } },
   );
@@ -1246,7 +1269,7 @@ export async function creditDocument(
 /** Records that a final document went out. R06 calls this after a send. A sent document can no longer be cancelled. */
 export async function markSent(ctx: Ctx, id: number, input: { channel: string; to?: string | null }): Promise<void> {
   const { db, actor } = ctx;
-  const doc = await getDoc(db, id);
+  const doc = await getDoc(db, id, bizOf(ctx));
   assertCanSeeType(ctx.user, doc.type);
   if (doc.status !== 'final') conflict('not_final', 'Finalize the document before you send it.');
   await mapped(
@@ -1282,7 +1305,7 @@ export interface OpenPaymentRequestSummary {
  * that already has a payment, conversion or credit against it is not "open" in this sense and is
  * left out: the owner is already handling it document by document.
  */
-export async function listOpenFinalPaymentRequests(db: D1Database): Promise<OpenPaymentRequestSummary[]> {
+export async function listOpenFinalPaymentRequests(db: D1Database, businessId: number): Promise<OpenPaymentRequestSummary[]> {
   const rows = await all<{
     id: number;
     number: number | null;
@@ -1296,7 +1319,8 @@ export async function listOpenFinalPaymentRequests(db: D1Database): Promise<Open
     db,
     `SELECT d.id, d.number, d.client_id, c.name_en AS client_name_en, c.name_he AS client_name_he, d.date, d.currency, d.total_minor
      FROM documents d LEFT JOIN clients c ON c.id = d.client_id
-     WHERE d.type = 'PR' AND d.status = 'final' ORDER BY d.date, d.id`,
+     WHERE d.type = 'PR' AND d.status = 'final' AND d.business_id = ? ORDER BY d.date, d.id`,
+    businessId,
   );
   const out: OpenPaymentRequestSummary[] = [];
   for (const r of rows) {
@@ -1331,11 +1355,11 @@ export async function listOpenFinalPaymentRequests(db: D1Database): Promise<Open
  */
 export async function repriceOpenDraftsForSwitch(ctx: Ctx, effectiveDate: string, actor: AuditActor): Promise<number[]> {
   const { db } = ctx;
-  const drafts = await all<{ id: number }>(db, "SELECT id FROM documents WHERE status = 'draft' ORDER BY id");
+  const drafts = await all<{ id: number }>(db, "SELECT id FROM documents WHERE status = 'draft' AND business_id = ? ORDER BY id", bizOf(ctx));
   const repriced: number[] = [];
   for (const row of drafts) {
     try {
-      const loaded = await loadFull(db, row.id);
+      const loaded = await loadFull(db, row.id, bizOf(ctx));
       const s = await stateFromDb(db, loaded);
       if (s.date < effectiveDate) s.date = effectiveDate;
       await saveDraft({ ...ctx, actor }, row.id, s, 'document.reprice_draft');
@@ -1345,6 +1369,17 @@ export async function repriceOpenDraftsForSwitch(ctx: Ctx, effectiveDate: string
     }
   }
   return repriced;
+}
+
+/** R24: the business's default brand, printed when the editor picks none. */
+async function defaultBrandId(db: D1Database, businessId: number): Promise<number | null> {
+  const row = await first<{ id: number }>(db, 'SELECT id FROM brands WHERE business_id = ? AND is_default = 1', businessId);
+  return row?.id ?? null;
+}
+
+async function assertBrand(db: D1Database, brandId: number, businessId: number): Promise<void> {
+  const row = await first<{ id: number }>(db, 'SELECT id FROM brands WHERE id = ? AND business_id = ? AND active = 1', brandId, businessId);
+  if (!row) throw new NotFoundError('Brand', brandId);
 }
 
 export { assertCanSeeType };

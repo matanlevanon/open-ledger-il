@@ -24,6 +24,10 @@ export function isQuarterStart(scheduledTime: number): boolean {
  */
 const CORE_TABLES = [
   'business_profile',
+  // R24: every business, its brands and who may open it. One backup holds them all.
+  'businesses',
+  'brands',
+  'user_businesses',
   'legal_modes',
   'vat_rates',
   'thresholds',
@@ -68,6 +72,8 @@ export interface BackupManifest {
   tables: Record<string, number>;
   documentCount: number;
   chainHeadHash: string;
+  /** R24: one section per business, its document count and its own chain head. */
+  businesses: { id: number; documentCount: number; chainHeadHash: string }[];
 }
 
 /**
@@ -119,7 +125,8 @@ async function uploadOffSiteCopy(
     await notifier.send(':warning: Open Ledger IL quarterly backup: GOOGLE_SERVICE_ACCOUNT_JSON is not set, so the off-site Google Drive copy was skipped. The R2 backup still ran.');
     return false;
   }
-  const rootFolderId = await getDriveRootFolder(env.DB);
+  // The off-site copy goes to business 1's Drive folder. One backup holds every business.
+  const rootFolderId = await getDriveRootFolder(env.DB, 1);
   if (!rootFolderId) {
     console.warn('The Drive root folder (Settings, Expenses) is not set. Skipping the off-site Google Drive backup copy.');
     await notifier.send(':warning: Open Ledger IL quarterly backup: the Drive root folder is not set, so the off-site Google Drive copy was skipped. The R2 backup still ran.');
@@ -159,6 +166,16 @@ export async function runBackup(
   const uid = crypto.randomUUID();
   const dataKey = `exports/${dateKey}/${uid}-data.json`;
   const manifestKey = `exports/${dateKey}/${uid}-manifest.json`;
+  const sections = new Map<number, { id: number; documentCount: number; chainHeadHash: string }>();
+  for (const b of tables.businesses ?? []) sections.set(Number(b.id), { id: Number(b.id), documentCount: 0, chainHeadHash: GENESIS_HASH });
+  for (const d of tables.documents ?? []) {
+    const s = sections.get(Number(d.business_id ?? 1));
+    if (s) s.documentCount += 1;
+  }
+  for (const f of finalizations) {
+    const s = sections.get(Number(f.business_id ?? 1));
+    if (s && typeof f.hash === 'string') s.chainHeadHash = f.hash;
+  }
   const manifest: BackupManifest = {
     ranAt: at,
     kind,
@@ -166,6 +183,7 @@ export async function runBackup(
     tables: Object.fromEntries(Object.entries(tables).map(([table, rows]) => [table, rows.length])),
     documentCount,
     chainHeadHash,
+    businesses: [...sections.values()],
   };
 
   const dataJson = JSON.stringify(tables);

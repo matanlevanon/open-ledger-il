@@ -1,4 +1,4 @@
-import { type AuditActor, auditStatement } from '../../core/audit';
+import { type AuditActor, auditStatement, actorBiz } from '../../core/audit';
 import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
 import { ConflictError, NotFoundError } from '../../core/errors';
 import { HOME_CURRENCY, assertCurrency, convert, divRound, normalizeRate, parseMajor } from '../../core/money';
@@ -43,8 +43,8 @@ export async function uploadExternalDocument(
 
   const { lastRowId: uploadId } = await run(
     db,
-    `INSERT INTO external_document_uploads (r2_key, sha256, filename, content_type, extracted_json, extraction_error, uploaded_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO external_document_uploads (r2_key, sha256, filename, content_type, extracted_json, extraction_error, uploaded_by, business_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     key,
     sha256,
     input.filename,
@@ -52,12 +52,13 @@ export async function uploadExternalDocument(
     JSON.stringify(extraction),
     extractionError,
     actor.userId,
+    actorBiz(actor),
   );
   return { uploadId, extraction, extractionError };
 }
 
-async function getUpload(db: D1Database, id: number): Promise<ExternalDocumentUploadRow> {
-  const row = await first<ExternalDocumentUploadRow>(db, 'SELECT * FROM external_document_uploads WHERE id = ?', id);
+async function getUpload(db: D1Database, id: number, businessId: number): Promise<ExternalDocumentUploadRow> {
+  const row = await first<ExternalDocumentUploadRow>(db, 'SELECT * FROM external_document_uploads WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('Upload', id);
   return row;
 }
@@ -88,8 +89,9 @@ export async function fileExternalDocument(
   actor: AuditActor,
   input: FileExternalDocInput,
 ): Promise<ExternalDocumentRow> {
-  const upload = await getUpload(db, input.uploadId);
+  const upload = await getUpload(db, input.uploadId, actorBiz(actor));
   if (upload.filed_document_id !== null) conflict('already_filed', 'This upload was already filed.');
+  if (input.clientId) await assertClientInBusiness(db, input.clientId, actorBiz(actor));
 
   const existing = await findDuplicate(db, input.source, input.documentType, input.originalNumber);
   if (existing) conflict('duplicate_external_document', `${input.documentType} ${input.originalNumber} is already filed.`);
@@ -106,8 +108,8 @@ export async function fileExternalDocument(
       db,
       `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_id, client_name_text, client_tax_id,
          currency, amount_before_vat_minor, vat_amount_minor, total_minor, total_ils_minor, fx_rate, fx_rate_date, paid_status,
-         r2_key, sha256, upload_id, filed_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         r2_key, sha256, upload_id, filed_by, business_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       input.source,
       input.originalNumber,
       input.documentType,
@@ -127,6 +129,7 @@ export async function fileExternalDocument(
       upload.sha256,
       upload.id,
       actor.userId,
+      actorBiz(actor),
     ),
     auditStatement(db, actor, 'external_document.file', 'external_document', null, { source: input.source, originalNumber: input.originalNumber }),
   ]);
@@ -135,6 +138,12 @@ export async function fileExternalDocument(
   const row = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ?', id);
   if (!row) throw new NotFoundError('External document', id);
   return row;
+}
+
+/** R24: an imported document names a client of its own business only. */
+async function assertClientInBusiness(db: D1Database, clientId: number, businessId: number): Promise<void> {
+  const row = await first<{ id: number }>(db, 'SELECT id FROM clients WHERE id = ? AND business_id = ?', clientId, businessId);
+  if (!row) throw new NotFoundError('Client', clientId);
 }
 
 function conflict(code: string, message: string): never {
@@ -147,9 +156,9 @@ export interface ExternalDocFilter {
   to?: string;
 }
 
-export async function listExternalDocuments(db: D1Database, filter: ExternalDocFilter = {}): Promise<ExternalDocumentRow[]> {
-  const where: string[] = [];
-  const params: (string | number)[] = [];
+export async function listExternalDocuments(db: D1Database, filter: ExternalDocFilter, businessId: number): Promise<ExternalDocumentRow[]> {
+  const where: string[] = ['business_id = ?'];
+  const params: (string | number)[] = [businessId];
   if (filter.clientId) {
     where.push('client_id = ?');
     params.push(filter.clientId);
@@ -169,24 +178,25 @@ export async function listExternalDocuments(db: D1Database, filter: ExternalDocF
          FROM external_document_receipts r JOIN documents d ON d.id = r.document_id
          WHERE r.external_id = x.id AND d.status <> 'cancelled' ORDER BY (d.status = 'final') DESC, d.id DESC LIMIT 1
        ) AS receipt_json
-     FROM external_documents x ${where.length ? `WHERE ${where.map((w) => `x.${w}`).join(' AND ')}` : ''} ORDER BY x.issue_date, x.id`,
+     FROM external_documents x WHERE ${where.map((w) => `x.${w}`).join(' AND ')} ORDER BY x.issue_date, x.id`,
     ...params,
   );
 }
 
-export async function getExternalDocument(db: D1Database, id: number): Promise<ExternalDocumentRow> {
-  const row = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ?', id);
+export async function getExternalDocument(db: D1Database, id: number, businessId: number): Promise<ExternalDocumentRow> {
+  const row = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('External document', id);
   return row;
 }
 
 /** Turnover from uploaded external documents in a date range (R17 task 7: the ceiling meter and income reports). */
-export async function externalTurnoverIls(db: D1Database, from: string, to: string): Promise<number> {
+export async function externalTurnoverIls(db: D1Database, from: string, to: string, businessId: number): Promise<number> {
   const row = await first<{ total: number | null }>(
     db,
     // Turnover is receipts and invoices. A quote, payment request or pro forma is paid by a receipt.
     `SELECT SUM(${externalSignSql('doc_type')} * total_ils_minor) AS total FROM external_documents
-     WHERE issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('doc_type')}`,
+     WHERE business_id = ? AND issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('doc_type')}`,
+    businessId,
     from,
     to,
   );
@@ -234,15 +244,16 @@ export async function updateExternalDocument(
   id: number,
   patch: UpdateExternalDocInput,
 ): Promise<ExternalDocumentRow> {
-  const before = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ?', id);
+  const before = await first<ExternalDocumentRow>(db, 'SELECT * FROM external_documents WHERE id = ? AND business_id = ?', id, actorBiz(actor));
   if (!before) throw new NotFoundError('External document', id);
+  if (patch.clientId) await assertClientInBusiness(db, patch.clientId, actorBiz(actor));
   const docType = patch.documentType ?? before.doc_type;
   const originalNumber = patch.originalNumber ?? before.original_number;
   const duplicate = await findDuplicate(db, before.source, docType, originalNumber);
   if (duplicate && duplicate.id !== id) conflict('duplicate_external_document', `${docType} ${originalNumber} is already filed.`);
 
   if (patch.itemId) {
-    const item = await first<{ id: number }>(db, 'SELECT id FROM items WHERE id = ?', patch.itemId);
+    const item = await first<{ id: number }>(db, 'SELECT id FROM items WHERE id = ? AND business_id = ?', patch.itemId, actorBiz(actor));
     if (!item) throw new NotFoundError('Service', patch.itemId);
   }
   const currency = assertCurrency(patch.currency ?? before.currency);
@@ -299,9 +310,9 @@ export async function updateExternalDocument(
 
 /** Records that a receipt in this ledger pays an imported past document (see migrations/2240). */
 export async function linkReceipt(db: D1Database, actor: AuditActor, externalId: number, documentId: number): Promise<void> {
-  const ext = await first<{ id: number }>(db, 'SELECT id FROM external_documents WHERE id = ?', externalId);
+  const ext = await first<{ id: number }>(db, 'SELECT id FROM external_documents WHERE id = ? AND business_id = ?', externalId, actorBiz(actor));
   if (!ext) throw new NotFoundError('External document', externalId);
-  const doc = await first<{ id: number }>(db, 'SELECT id FROM documents WHERE id = ?', documentId);
+  const doc = await first<{ id: number }>(db, 'SELECT id FROM documents WHERE id = ? AND business_id = ?', documentId, actorBiz(actor));
   if (!doc) throw new NotFoundError('Document', documentId);
   await transaction(db, [
     stmt(db, 'INSERT OR IGNORE INTO external_document_receipts (external_id, document_id) VALUES (?, ?)', externalId, documentId),

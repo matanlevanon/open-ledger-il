@@ -1,4 +1,5 @@
 import { type FormEvent, useEffect, useState } from 'react';
+import { fetchBrands } from '../../api/businesses';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ApiError } from '../../api/client';
 import { usePreferences } from '../../app/preferences';
@@ -60,6 +61,8 @@ interface EditorState {
   paymentInstructions: string;
   paymentMethodIds: number[];
   langVariant: 'en' | 'bilingual';
+  /** R24: the brand to print. Null: the business's default brand. */
+  brandId: number | null;
   lines: LineText[];
   payments: PaymentText[];
   showIls: boolean;
@@ -101,6 +104,7 @@ function fromView(v: DocView): EditorState {
     paymentInstructions: d.payment_instructions ?? '',
     paymentMethodIds: d.payment_method_ids ? (JSON.parse(d.payment_method_ids) as number[]) : [],
     langVariant: d.lang_variant,
+    brandId: d.brand_id ?? null,
     lines: v.lines.map((l) => ({
       description: l.description_en,
       descriptionHe: l.description_he ?? '',
@@ -175,6 +179,7 @@ function toBody(s: EditorState, isReceipt: boolean, t: ReturnType<typeof useT>):
     paymentInstructions: s.paymentInstructions || null,
     paymentMethodIds: s.paymentMethodIds,
     langVariant: s.langVariant,
+    brandId: s.brandId,
     lines,
     payments,
     showIls: s.showIls,
@@ -204,6 +209,8 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
   const business = useLoad(() => fetchBusiness(), []);
   const paymentMethods = useLoad(() => paymentMethodsApi.list(true), []);
   const services = useLoad(() => servicesApi.list(true), []);
+  // R24: the brand picker shows once the business has more than one active brand.
+  const brands = useLoad(() => fetchBrands().then((b) => b.brands.filter((x) => x.active === 1)).catch(() => []), []);
   const existing = useLoad(async () => (editing ? docsApi.get(Number(id)) : null), [id]);
   const [state, setState] = useState<EditorState | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -233,6 +240,7 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
       paymentInstructions: '',
       paymentMethodIds: [],
       langVariant: 'en',
+      brandId: null,
       lines: [emptyLine()],
       payments: isReceipt ? [emptyPayment(today)] : [],
       showIls: false,
@@ -440,6 +448,23 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
                 <option value="bilingual">{t('documents.editor.langBilingual')}</option>
               </select>
             </label>
+            {(brands.data?.length ?? 0) > 1 && (
+              <label className="block">
+                <span className={label}>{t('documents.editor.brandLabel')}</span>
+                <select
+                  aria-label={t('documents.editor.brandLabel')}
+                  className={input}
+                  value={state.brandId ?? brands.data!.find((b) => b.is_default === 1)?.id ?? ''}
+                  onChange={(e) => set({ brandId: Number(e.target.value) })}
+                >
+                  {brands.data!.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name_en || b.name_he || t('brands.sameAsBusiness')}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
           </div>
         </Card>
 

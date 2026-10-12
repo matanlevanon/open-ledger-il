@@ -19,7 +19,7 @@ class RecordingNotifier implements Notifier {
 describe('opsGapScheduled (runs/R14-ops.md: Slack alert on any gap or hash-chain break)', () => {
   it('ignores a cron fire that is not its own', async () => {
     const notifier = new RecordingNotifier();
-    await opsGapScheduled(controller('0 0 0 0 0'), env, undefined, { notifier, check: async () => ({ ok: false, series: [], chain: { ok: false, checked: 0, allocationsChecked: 0, headHash: '', breaks: [] } }) });
+    await opsGapScheduled(controller('0 0 0 0 0'), env, undefined, { notifier, check: async () => ({ ok: false, series: [], chain: { ok: false, checked: 0, allocationsChecked: 0, headHash: '', headHashes: {}, breaks: [] } }) });
     expect(notifier.sent).toEqual([]);
   });
 
@@ -27,7 +27,7 @@ describe('opsGapScheduled (runs/R14-ops.md: Slack alert on any gap or hash-chain
     const notifier = new RecordingNotifier();
     await opsGapScheduled(controller(GAP_CHECK_CRON), env, undefined, {
       notifier,
-      check: async () => ({ ok: true, series: [], chain: { ok: true, checked: 3, allocationsChecked: 0, headHash: 'x', breaks: [] } }),
+      check: async () => ({ ok: true, series: [], chain: { ok: true, checked: 3, allocationsChecked: 0, headHash: 'x', headHashes: {}, breaks: [] } }),
     });
     expect(notifier.sent).toEqual([]);
     const rows = await all(env.DB, "SELECT * FROM audit_log WHERE action = 'ops.gap_check' ORDER BY id DESC LIMIT 1");
@@ -41,7 +41,7 @@ describe('opsGapScheduled (runs/R14-ops.md: Slack alert on any gap or hash-chain
       check: async () => ({
         ok: false,
         series: [{ seriesId: 'PR', docType: 'PR', ok: false, count: 3, problems: [2] }],
-        chain: { ok: true, checked: 3, allocationsChecked: 0, headHash: 'x', breaks: [] },
+        chain: { ok: true, checked: 3, allocationsChecked: 0, headHash: 'x', headHashes: {}, breaks: [] },
       }),
     });
     expect(notifier.sent).toHaveLength(1);
@@ -57,7 +57,7 @@ describe('opsGapScheduled (runs/R14-ops.md: Slack alert on any gap or hash-chain
       check: async () => ({
         ok: false,
         series: [],
-        chain: { ok: false, checked: 5, allocationsChecked: 0, headHash: 'x', breaks: [{ seq: 4, documentId: 9, reason: 'content_changed' }] },
+        chain: { ok: false, checked: 5, allocationsChecked: 0, headHash: 'x', headHashes: {}, breaks: [{ seq: 4, documentId: 9, reason: 'content_changed' }] },
       }),
     });
     expect(notifier.sent).toHaveLength(1);

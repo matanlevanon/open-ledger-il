@@ -36,6 +36,9 @@ export interface DocRow {
   cancelled_at: string | null;
   cancel_reason: string | null;
   created_by: number | null;
+  /** R24: the business the document belongs to, and the brand it prints. */
+  business_id: number;
+  brand_id: number | null;
   version: number;
   created_at: string;
   updated_at: string;
@@ -115,15 +118,16 @@ export interface LoadedDraft {
   meta: MetaRow | null;
 }
 
-export async function getDoc(db: D1Database, id: number): Promise<DocRow> {
-  const row = await first<DocRow>(db, 'SELECT * FROM documents WHERE id = ?', id);
+/** R24: a document of another business reads as not found, so no route can reach across. */
+export async function getDoc(db: D1Database, id: number, businessId: number): Promise<DocRow> {
+  const row = await first<DocRow>(db, 'SELECT * FROM documents WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('Document', id);
   return row;
 }
 
-export async function loadFull(db: D1Database, id: number): Promise<LoadedDraft> {
+export async function loadFull(db: D1Database, id: number, businessId: number): Promise<LoadedDraft> {
   const [doc, lines, payments, meta] = await Promise.all([
-    getDoc(db, id),
+    getDoc(db, id, businessId),
     all<LineRow>(db, 'SELECT * FROM document_lines WHERE document_id = ? ORDER BY position', id),
     all<PaymentRow>(
       db,

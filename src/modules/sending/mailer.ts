@@ -13,6 +13,8 @@ export interface OutboundEmail {
   /** Blind copies. Omitted from the provider call when empty. */
   bcc?: string[];
   subject: string;
+  /** R24: the display name in From, the brand or business. The address stays the configured sender. */
+  fromName?: string;
   html: string;
   text: string;
   attachments?: EmailAttachment[];
@@ -26,6 +28,13 @@ export interface Mailer {
   send(email: OutboundEmail): Promise<SentEmail>;
 }
 
+
+/** "Name <address>" with the name replaced, quotes and angle brackets dropped from the new name. */
+export function withDisplayName(from: string, name: string): string {
+  const address = /<([^>]+)>/.exec(from)?.[1] ?? from.trim();
+  const clean = name.replace(/["<>]/g, '').trim();
+  return clean ? `${clean} <${address}>` : from;
+}
 
 function base64(bytes: Uint8Array): string {
   let str = '';
@@ -48,7 +57,7 @@ export class ResendMailer implements Mailer {
       method: 'POST',
       headers: { Authorization: `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: this.from,
+        from: email.fromName ? withDisplayName(this.from, email.fromName) : this.from,
         to: [email.to],
         ...(email.cc && email.cc.length > 0 ? { cc: email.cc } : {}),
         ...(email.bcc && email.bcc.length > 0 ? { bcc: email.bcc } : {}),

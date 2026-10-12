@@ -40,11 +40,13 @@ export interface CeilingRow {
 export const THRESHOLD_KEYS = ['allocation'] as const;
 export type ThresholdKey = (typeof THRESHOLD_KEYS)[number] | (string & {});
 
-export async function legalModeOn(db: D1Database, date: string): Promise<LegalModeRow> {
+/** The legal mode of one business on a date (R24: legal_modes is per business). */
+export async function legalModeOn(db: D1Database, date: string, businessId: number): Promise<LegalModeRow> {
   assertDate(date);
   const row = await first<LegalModeRow>(
     db,
-    'SELECT id, mode, effective_from, confirmed_at FROM legal_modes WHERE effective_from <= ? ORDER BY effective_from DESC LIMIT 1',
+    'SELECT id, mode, effective_from, confirmed_at FROM legal_modes WHERE business_id = ? AND effective_from <= ? ORDER BY effective_from DESC LIMIT 1',
+    businessId,
     date,
   );
   if (!row) throw new ConfigError(`No legal mode is set for ${date}.`);
@@ -90,9 +92,9 @@ export interface ConfigSnapshot {
 }
 
 /** Everything in force on one date, in one object. */
-export async function configOn(db: D1Database, date: string): Promise<ConfigSnapshot> {
+export async function configOn(db: D1Database, date: string, businessId: number): Promise<ConfigSnapshot> {
   const [legalMode, vatRate, ceiling, thresholdRows] = await Promise.all([
-    legalModeOn(db, date),
+    legalModeOn(db, date, businessId),
     vatRateOn(db, date),
     ceilingFor(db, date),
     all<ThresholdRow>(

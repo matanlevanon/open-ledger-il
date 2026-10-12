@@ -33,7 +33,7 @@ interface ExpenseSqlRow {
   category_name: string | null;
 }
 
-export async function expenseDetail(db: D1Database, from: string, to: string): Promise<ExpenseDetailRow[]> {
+export async function expenseDetail(db: D1Database, from: string, to: string, businessId: number): Promise<ExpenseDetailRow[]> {
   const rows = await all<ExpenseSqlRow>(
     db,
     `SELECT e.id, e.document_date, e.currency, e.amount_minor, e.amount_ils_minor,
@@ -41,8 +41,9 @@ export async function expenseDetail(db: D1Database, from: string, to: string): P
      FROM expenses e
      LEFT JOIN suppliers s ON s.id = e.supplier_id
      LEFT JOIN expense_categories c ON c.id = e.category_id
-     WHERE ${COUNTED_STATUS} AND e.document_date BETWEEN ? AND ?
+     WHERE e.business_id = ? AND ${COUNTED_STATUS} AND e.document_date BETWEEN ? AND ?
      ORDER BY e.document_date, e.id`,
+    businessId,
     from,
     to,
   );
@@ -126,8 +127,8 @@ export function summarizeExpenses(rows: ExpenseDetailRow[]): Omit<ExpenseReport,
   };
 }
 
-export async function expenseReport(db: D1Database, from: string, to: string): Promise<ExpenseReport> {
-  const rows = await expenseDetail(db, from, to);
+export async function expenseReport(db: D1Database, from: string, to: string, businessId: number): Promise<ExpenseReport> {
+  const rows = await expenseDetail(db, from, to, businessId);
   return { from, to, rows, ...summarizeExpenses(rows) };
 }
 
@@ -137,13 +138,14 @@ export interface ExpenseFileForPeriod {
   filename: string;
 }
 
-export async function expenseFilesForPeriod(db: D1Database, from: string, to: string): Promise<ExpenseFileForPeriod[]> {
+export async function expenseFilesForPeriod(db: D1Database, from: string, to: string, businessId: number): Promise<ExpenseFileForPeriod[]> {
   const rows = await all<{ r2_key: string; filename: string }>(
     db,
     `SELECT f.r2_key, f.filename
      FROM expenses e JOIN expense_files f ON f.id = e.file_id
-     WHERE ${COUNTED_STATUS} AND e.document_date BETWEEN ? AND ?
+     WHERE e.business_id = ? AND ${COUNTED_STATUS} AND e.document_date BETWEEN ? AND ?
      ORDER BY e.document_date, e.id`,
+    businessId,
     from,
     to,
   );

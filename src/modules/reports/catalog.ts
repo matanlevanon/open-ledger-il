@@ -7,6 +7,8 @@ import {
   type AgingBucket,
   EXPENSE_ROWS_SQL,
   INCOME_ROWS_SQL,
+  expenseParams,
+  incomeParams,
   type OpenItem,
   PAYMENT_REQUEST_TYPES,
   PROFORMA_TYPES,
@@ -77,6 +79,8 @@ export interface ReportParams {
   to: string;
   today: string;
   filters: Record<string, string>;
+  /** R24: every report runs for one business. No report mixes two tax IDs. */
+  businessId: number;
 }
 
 interface ReportDef {
@@ -183,7 +187,7 @@ export const REPORTS: Record<string, ReportDef> = {
       { key: 'openIls', header: 'Open ILS', kind: 'ils', total: true },
     ],
     async rows(db, p) {
-      const items = await openItems(db, p.today);
+      const items = await openItems(db, p.today, p.businessId);
       const byClient = new Map<string, { name: string; count: number; open: Record<string, number>; openIls: number }>();
       for (const i of items) {
         const key = String(i.clientId ?? 'none');
@@ -215,15 +219,16 @@ export const REPORTS: Record<string, ReportDef> = {
     ],
     async rows(db, p) {
       const [paid, items, unpaidImported] = await Promise.all([
-        incomeByClient(db, p.from, p.to),
-        openItems(db, p.today),
+        incomeByClient(db, p.businessId, p.from, p.to),
+        openItems(db, p.today, p.businessId),
         all<{ client_id: number | null; name_en: string | null; name_he: string | null; name_text: string; ils: number | null }>(
           db,
           `SELECT x.client_id, c.name_en, c.name_he, x.client_name_text AS name_text, SUM(${ILS_SQL('x.total_minor', 'x.currency', 'x.total_ils_minor')}) AS ils
            FROM external_documents x LEFT JOIN clients c ON c.id = x.client_id
-           WHERE x.paid_status = 'unpaid' AND ${externalKindSql('x.doc_type')} IN ('demand', 'invoice') AND x.issue_date BETWEEN ? AND ?
+           WHERE x.business_id = ? AND x.paid_status = 'unpaid' AND ${externalKindSql('x.doc_type')} IN ('demand', 'invoice') AND x.issue_date BETWEEN ? AND ?
              AND NOT EXISTS (SELECT 1 FROM external_document_receipts r JOIN documents d ON d.id = r.document_id WHERE r.external_id = x.id AND d.status = 'final')
            GROUP BY x.client_id, CASE WHEN x.client_id IS NULL THEN x.client_name_text END`,
+          p.businessId,
           p.from,
           p.to,
         ),
@@ -275,8 +280,8 @@ export const REPORTS: Record<string, ReportDef> = {
       const statuses = status === 'all' ? ['draft', 'final', 'cancelled'] : status === 'issued' ? ['final', 'cancelled'] : [status];
       if (!statuses.every((s) => ['draft', 'final', 'cancelled'].includes(s))) throw new ValidationError('status must be issued, final, cancelled, draft or all.');
       const clientId = idFilter(f.clientId, 'clientId');
-      const where = [`d.status IN (${statuses.map(() => '?').join(',')})`, 'd.date BETWEEN ? AND ?'];
-      const args: (string | number)[] = [...statuses, p.from, p.to];
+      const where = ['d.business_id = ?', `d.status IN (${statuses.map(() => '?').join(',')})`, 'd.date BETWEEN ? AND ?'];
+      const args: (string | number)[] = [p.businessId, ...statuses, p.from, p.to];
       const docTypes = types?.filter((t) => t !== 'imported');
       if (docTypes) {
         where.push(docTypes.length ? `d.type IN (${docTypes.map(() => '?').join(',')})` : '0');
@@ -340,8 +345,8 @@ export const REPORTS: Record<string, ReportDef> = {
 
       const wantsImported = (!types || types.includes('imported')) && !f.service && (!f.method || f.method === 'imported') && statuses.includes('final');
       if (wantsImported) {
-        const xWhere = ['x.issue_date BETWEEN ? AND ?'];
-        const xArgs: (string | number)[] = [p.from, p.to];
+        const xWhere = ['x.business_id = ?', 'x.issue_date BETWEEN ? AND ?'];
+        const xArgs: (string | number)[] = [p.businessId, p.from, p.to];
         if (clientId === 'none') xWhere.push('x.client_id IS NULL');
         else if (clientId !== undefined) {
           xWhere.push('x.client_id = ?');
@@ -391,7 +396,7 @@ export const REPORTS: Record<string, ReportDef> = {
       { key: 'ils', header: 'Amount ILS', kind: 'ils', total: true },
     ],
     async rows(db, p) {
-      const b = await incomeByService(db, p.from, p.to);
+      const b = await incomeByService(db, p.businessId, p.from, p.to);
       return shareRows(b.rows, (r) => report('all-documents', { service: r.key, from: p.from, to: p.to }), (r) => ({ quantity: r.quantityMilli ?? 0 }));
     },
   },
@@ -411,15 +416,17 @@ export const REPORTS: Record<string, ReportDef> = {
            pm.display_name AS name, p.method, p.currency, COUNT(*) AS n, SUM(p.amount_minor) AS amount,
            SUM(${ILS_SQL('p.amount_minor', 'p.currency', 'p.amount_ils_minor')}) AS ils
          FROM payments p JOIN documents d ON d.id = p.document_id LEFT JOIN payment_methods pm ON pm.id = p.method_id
-         WHERE d.status = 'final' AND p.paid_on BETWEEN ? AND ?
+         WHERE d.business_id = ? AND d.status = 'final' AND p.paid_on BETWEEN ? AND ?
          GROUP BY key, p.currency
          UNION ALL
          SELECT 'imported', NULL, 'imported', x.currency, COUNT(*), SUM(${externalSignSql('x.doc_type')} * x.total_minor),
            SUM(${externalSignSql('x.doc_type')} * ${ILS_SQL('x.total_minor', 'x.currency', 'x.total_ils_minor')})
-         FROM external_documents x WHERE ${externalIsCashSql('x.doc_type')} AND x.issue_date BETWEEN ? AND ?
+         FROM external_documents x WHERE x.business_id = ? AND ${externalIsCashSql('x.doc_type')} AND x.issue_date BETWEEN ? AND ?
          GROUP BY x.currency`,
+        p.businessId,
         p.from,
         p.to,
+        p.businessId,
         p.from,
         p.to,
       );
@@ -441,7 +448,7 @@ export const REPORTS: Record<string, ReportDef> = {
     title: 'Open pro formas',
     columns: OPEN_ITEM_COLUMNS,
     async rows(db, p) {
-      return openItemRows(await openItems(db, p.today), p, PROFORMA_TYPES);
+      return openItemRows(await openItems(db, p.today, p.businessId), p, PROFORMA_TYPES);
     },
   },
 
@@ -449,7 +456,7 @@ export const REPORTS: Record<string, ReportDef> = {
     title: 'Open payment requests',
     columns: OPEN_ITEM_COLUMNS,
     async rows(db, p) {
-      return openItemRows(await openItems(db, p.today), p, PAYMENT_REQUEST_TYPES);
+      return openItemRows(await openItems(db, p.today, p.businessId), p, PAYMENT_REQUEST_TYPES);
     },
   },
 
@@ -457,7 +464,7 @@ export const REPORTS: Record<string, ReportDef> = {
     title: 'Aged receivables',
     columns: OPEN_ITEM_COLUMNS,
     async rows(db, p) {
-      return openItemRows(await openItems(db, p.today), p);
+      return openItemRows(await openItems(db, p.today, p.businessId), p);
     },
   },
 
@@ -498,9 +505,10 @@ export const REPORTS: Record<string, ReportDef> = {
          LEFT JOIN document_meta m ON m.document_id = d.id
          LEFT JOIN document_links l ON l.target_id = d.id AND l.kind = 'credit'
          LEFT JOIN documents s ON s.id = l.source_id
-         WHERE d.status = 'final' AND dt.kind IN ('credit', 'credit_invoice') AND d.date BETWEEN ? AND ?
+         WHERE d.business_id = ? AND d.status = 'final' AND dt.kind IN ('credit', 'credit_invoice') AND d.date BETWEEN ? AND ?
          GROUP BY d.id
          ORDER BY d.date, d.id`,
+        p.businessId,
         p.from,
         p.to,
       );
@@ -534,8 +542,7 @@ export const REPORTS: Record<string, ReportDef> = {
         db,
         `SELECT supplier_id, supplier_name, currency, COUNT(*) AS n, SUM(amount_minor) AS amount, SUM(ils_minor) AS ils
          FROM (${EXPENSE_ROWS_SQL}) GROUP BY supplier_id, currency`,
-        p.from,
-        p.to,
+        ...expenseParams(p.businessId, p.from, p.to),
       );
       const map = new Map<string, ShareRow>();
       for (const r of rows) {
@@ -560,7 +567,7 @@ export const REPORTS: Record<string, ReportDef> = {
       { key: 'ils', header: 'Amount ILS', kind: 'ils', total: true },
     ],
     async rows(db, p) {
-      const b = await expensesByCategory(db, p.from, p.to);
+      const b = await expensesByCategory(db, p.businessId, p.from, p.to);
       return shareRows(b.rows, (r) => report('expense-items', { categoryId: r.key.slice(9), from: p.from, to: p.to }));
     },
   },
@@ -578,8 +585,7 @@ export const REPORTS: Record<string, ReportDef> = {
       const rows = await all<{ month: string; is_fixed: number | null; ils: number | null }>(
         db,
         `SELECT strftime('%Y-%m', date) AS month, is_fixed, SUM(ils_minor) AS ils FROM (${EXPENSE_ROWS_SQL}) GROUP BY month, is_fixed`,
-        p.from,
-        p.to,
+        ...expenseParams(p.businessId, p.from, p.to),
       );
       return monthsBetween(p.from, p.to).map((month) => {
         const pick = (v: number | null) => rows.find((r) => r.month === month && r.is_fixed === v)?.ils ?? 0;
@@ -626,8 +632,7 @@ export const REPORTS: Record<string, ReportDef> = {
       const rows = await all<{ id: number; date: string; supplier_name: string | null; category_name: string | null; is_fixed: number | null; currency: string; amount_minor: number; ils_minor: number | null }>(
         db,
         `SELECT * FROM (${EXPENSE_ROWS_SQL}) ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY date, id`,
-        p.from,
-        p.to,
+        ...expenseParams(p.businessId, p.from, p.to),
         ...args,
       );
       return rows.map((r) => ({
@@ -656,7 +661,7 @@ export const REPORTS: Record<string, ReportDef> = {
       { key: 'net', header: 'Net change ILS', kind: 'ils', total: true },
     ],
     async rows(db, p) {
-      return (await cashFlowByMonth(db, p.from, p.to)).map((m) => ({
+      return (await cashFlowByMonth(db, p.from, p.to, p.businessId)).map((m) => ({
         key: m.month,
         cells: { month: m.month, inflow: m.inflowIlsMinor, importedInflow: m.importedInflowIlsMinor, outflow: m.outflowIlsMinor, net: m.netIlsMinor },
         link: report('all-documents', { from: `${m.month}-01`, to: monthEnd(m.month) }),
@@ -676,17 +681,13 @@ export const REPORTS: Record<string, ReportDef> = {
         all<{ year: string; imported: number; ils: number | null }>(
           db,
           `SELECT strftime('%Y', date) AS year, imported, SUM(ils_minor) AS ils FROM (${INCOME_ROWS_SQL}) GROUP BY year, imported`,
-          p.from,
-          p.to,
-          p.from,
-          p.to,
+          ...incomeParams(p.businessId, p.from, p.to),
         ),
         all<{ year: string; category_id: number | null; category_name: string | null; ils: number | null }>(
           db,
           `SELECT strftime('%Y', date) AS year, category_id, category_name, SUM(ils_minor) AS ils FROM (${EXPENSE_ROWS_SQL})
            GROUP BY year, category_id ORDER BY year, category_name`,
-          p.from,
-          p.to,
+          ...expenseParams(p.businessId, p.from, p.to),
         ),
       ]);
       const years = [...new Set([...income.map((r) => r.year), ...expenses.map((r) => r.year)])].sort();

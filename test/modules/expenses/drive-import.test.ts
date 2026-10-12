@@ -162,9 +162,9 @@ describe('R22: no Drive folder until the owner saves one', () => {
   });
 
   it('reads the index sheet title pattern from a setting, default Expense index YYYY-MM', async () => {
-    expect(await getIndexTitlePattern(env.DB)).toBe('Expense index YYYY-MM');
+    expect(await getIndexTitlePattern(env.DB, 1)).toBe('Expense index YYYY-MM');
     await setIndexTitlePattern(env.DB, 'Receipts YYYY-MM', SYSTEM_ACTOR);
-    expect(await getIndexTitlePattern(env.DB)).toBe('Receipts YYYY-MM');
+    expect(await getIndexTitlePattern(env.DB, 1)).toBe('Receipts YYYY-MM');
     await setIndexTitlePattern(env.DB, 'Expense index YYYY-MM', SYSTEM_ACTOR);
   });
 });

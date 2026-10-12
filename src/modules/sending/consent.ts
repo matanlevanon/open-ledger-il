@@ -1,5 +1,6 @@
 import { all, first, run, stmt } from '../../core/db';
 import { businessDisplayName } from './settings';
+import { businessOfClient } from '../businesses/service';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import type { Env } from '../../env';
 import { clientDisplayName } from '../clients/display';
@@ -74,15 +75,17 @@ export async function requestConsent(
   mailer: Mailer,
   clientId: number,
   baseUrl: string,
+  businessId: number,
 ): Promise<RequestConsentResult> {
   const client = await loadClient(db, clientId);
+  if ((await businessOfClient(db, clientId)) !== businessId) throw new NotFoundError('Client', clientId);
   if (!client.email) throw new ValidationError('This client has no email address on file.');
 
   const exp = expiresAt(CONSENT_LINK_TTL_SECONDS);
   const token = await signSendToken(env, { kind: 'consent', clientId, exp });
   const acceptUrl = `${baseUrl}/api/sending/public/consent/${token}`;
   const clientName = clientDisplayName(client, 'en');
-  const businessName = await businessDisplayName(db);
+  const businessName = await businessDisplayName(db, businessId);
 
   let providerMessageId: string | null = null;
   let status: 'sent' | 'failed' = 'sent';
@@ -91,6 +94,7 @@ export async function requestConsent(
     const result = await mailer.send({
       to: client.email,
       subject: 'Please confirm you can receive documents by email',
+      fromName: businessName,
       html: consentEmailHtml(clientName, acceptUrl, escapeName(businessName)),
       text: consentEmailText(clientName, acceptUrl, businessName),
     });

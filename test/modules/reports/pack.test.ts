@@ -42,7 +42,7 @@ describe('buildAccountantPack: PDF summary, XLSX detail, ZIP of expense files (d
     await run(db(), `INSERT INTO user_features (user_id, feature, enabled) VALUES (?, 'monthly_pack', 1)`, userId);
 
     const mailer = new FakeMailer();
-    const result = await buildAccountantPack(env, '2026-10', { mailer, meterDate: '2026-10-31' });
+    const result = await buildAccountantPack(env, '2026-10', 1, { mailer, meterDate: '2026-10-31' });
 
     expect(result.incomeTotalIlsMinor).toBe(100000);
     expect(result.expenseTotalIlsMinor).toBe(20000);
@@ -70,7 +70,7 @@ describe('buildAccountantPack: PDF summary, XLSX detail, ZIP of expense files (d
     // disappear); turn its switch off so this test starts from "nobody subscribed".
     await run(db(), `UPDATE user_features SET enabled = 0 WHERE feature = 'monthly_pack'`);
     const mailer = new FakeMailer();
-    const result = await buildAccountantPack(env, '2027-05', { mailer, meterDate: '2027-05-31' });
+    const result = await buildAccountantPack(env, '2027-05', 1, { mailer, meterDate: '2027-05-31' });
     expect(result.emailedTo).toEqual([]);
     expect(result.expenseFileCount).toBe(0);
     expect(mailer.sent).toEqual([]);
@@ -78,8 +78,8 @@ describe('buildAccountantPack: PDF summary, XLSX detail, ZIP of expense files (d
 
   it('overwrites the same period on a second run rather than accumulating rows', async () => {
     const mailer = new FakeMailer();
-    await buildAccountantPack(env, '2027-06', { mailer, meterDate: '2027-06-30' });
-    await buildAccountantPack(env, '2027-06', { mailer, meterDate: '2027-06-30' });
+    await buildAccountantPack(env, '2027-06', 1, { mailer, meterDate: '2027-06-30' });
+    await buildAccountantPack(env, '2027-06', 1, { mailer, meterDate: '2027-06-30' });
     const rows = await db().prepare('SELECT id FROM accountant_packs WHERE period = ?').bind('2027-06').all();
     expect(rows.results).toHaveLength(1);
   });
@@ -92,7 +92,7 @@ describe('buildAccountantPack: PDF summary, XLSX detail, ZIP of expense files (d
     await finalizeDocument(db(), receipt, { actor: OWNER_ACTOR });
 
     const mailer = new FakeMailer();
-    const result = await buildAccountantPack(env, '2027-07', { mailer, meterDate: '2027-07-31' });
+    const result = await buildAccountantPack(env, '2027-07', 1, { mailer, meterDate: '2027-07-31' });
 
     const xlsxObject = await env.FILES.get(result.xlsxKey);
     const xlsxBytes = new Uint8Array(await xlsxObject!.arrayBuffer());

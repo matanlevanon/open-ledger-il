@@ -1,4 +1,4 @@
-import { first } from './db';
+import { readBusinessSetting } from './business';
 import { DomainError } from './errors';
 
 /**
@@ -12,9 +12,9 @@ import { DomainError } from './errors';
  */
 export const ISSUING_KEY = 'documents.issuing';
 
-export async function issuingEnabled(db: D1Database): Promise<boolean> {
-  const row = await first<{ value: string }>(db, 'SELECT value FROM settings WHERE key = ?', ISSUING_KEY);
-  return row?.value !== 'off';
+/** R24: per business. A new business issues until its owner turns it off, whatever business 1 says. */
+export async function issuingEnabled(db: D1Database, businessId: number): Promise<boolean> {
+  return (await readBusinessSetting(db, businessId, ISSUING_KEY, false)) !== 'off';
 }
 
 export class IssuingOffError extends DomainError {
@@ -24,6 +24,6 @@ export class IssuingOffError extends DomainError {
 }
 
 /** Every service call that creates or changes a document runs this first. */
-export async function assertIssuing(db: D1Database): Promise<void> {
-  if (!(await issuingEnabled(db))) throw new IssuingOffError();
+export async function assertIssuing(db: D1Database, businessId: number): Promise<void> {
+  if (!(await issuingEnabled(db, businessId))) throw new IssuingOffError();
 }

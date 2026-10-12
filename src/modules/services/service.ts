@@ -1,4 +1,4 @@
-import { type AuditActor, auditStatement } from '../../core/audit';
+import { type AuditActor, auditStatement, actorBiz } from '../../core/audit';
 import { nowIso, stmt, transaction } from '../../core/db';
 import { ValidationError } from '../../core/errors';
 import { getService, listServices } from './repo';
@@ -12,8 +12,8 @@ export async function createService(db: D1Database, actor: AuditActor, input: Se
     stmt(
       db,
       `INSERT INTO items (name_en, name_he, description_en, description_he, unit_price_minor, currency,
-         default_quantity_milli, unit, vat_treatment, active, sort_order)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM items))`,
+         default_quantity_milli, unit, vat_treatment, active, sort_order, business_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM items WHERE business_id = ?), ?)`,
       input.nameEn,
       input.nameHe ?? null,
       input.descriptionEn ?? null,
@@ -24,6 +24,8 @@ export async function createService(db: D1Database, actor: AuditActor, input: Se
       input.unit,
       input.vatTreatment,
       input.active,
+      actorBiz(actor),
+      actorBiz(actor),
     ),
     auditStatement(db, actor, 'service.create', 'service', null, { nameEn: input.nameEn }),
   ]);
@@ -31,7 +33,7 @@ export async function createService(db: D1Database, actor: AuditActor, input: Se
 }
 
 export async function updateService(db: D1Database, actor: AuditActor, id: number, patch: ServicePatch): Promise<void> {
-  const existing = await getService(db, id);
+  const existing = await getService(db, id, actorBiz(actor));
   await transaction(db, [
     stmt(
       db,
@@ -55,7 +57,7 @@ export async function updateService(db: D1Database, actor: AuditActor, id: numbe
 }
 
 export async function setActive(db: D1Database, actor: AuditActor, id: number, active: boolean): Promise<void> {
-  await getService(db, id);
+  await getService(db, id, actorBiz(actor));
   await transaction(db, [
     stmt(db, 'UPDATE items SET active = ?, updated_at = ? WHERE id = ?', active, nowIso(), id),
     auditStatement(db, actor, active ? 'service.activate' : 'service.archive', 'service', id),
@@ -64,7 +66,7 @@ export async function setActive(db: D1Database, actor: AuditActor, id: number, a
 
 /** Reassigns sort_order 0..n-1 in the order given. Every existing id must be present, once. */
 export async function reorder(db: D1Database, actor: AuditActor, ids: number[]): Promise<void> {
-  const existing = await listServices(db);
+  const existing = await listServices(db, actorBiz(actor));
   const existingIds = new Set(existing.map((r) => r.id));
   if (ids.length !== existing.length || !ids.every((id) => existingIds.has(id)) || new Set(ids).size !== ids.length) {
     throw new ValidationError('Send every service id exactly once.');

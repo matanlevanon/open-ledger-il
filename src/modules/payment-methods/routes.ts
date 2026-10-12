@@ -1,5 +1,6 @@
 import { type Context, Hono } from 'hono';
 import { actorFrom } from '../../core/audit';
+import { businessIdOf } from '../../core/business';
 import { requireFeature, requireRole } from '../../core/auth';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import type { ModuleDef } from '../../core/module';
@@ -14,8 +15,8 @@ function toApi(row: PaymentMethodRow) {
   return { ...row, details: JSON.parse(row.details) as Record<string, unknown> };
 }
 
-async function listApi(db: D1Database) {
-  return (await listPaymentMethods(db)).map(toApi);
+async function listApi(db: D1Database, businessId: number) {
+  return (await listPaymentMethods(db, businessId)).map(toApi);
 }
 
 function num(c: Context<AppEnv>): number {
@@ -42,37 +43,37 @@ export function createPaymentMethodsModule(): ModuleDef {
 
   r.get('/', requireFeature('income_documents'), async (c) => {
     const activeOnly = c.req.query('active') === '1';
-    const rows = activeOnly ? await listPaymentMethods(c.env.DB, true) : await listPaymentMethods(c.env.DB);
+    const rows = await listPaymentMethods(c.env.DB, businessIdOf(c), activeOnly);
     return c.json({ paymentMethods: rows.map(toApi) });
   });
 
   r.post('/', requireRole('owner'), async (c) => {
     const input = paymentMethodInput.parse(await body(c));
     await createPaymentMethod(c.env.DB, actorFrom(c), input);
-    return c.json({ paymentMethods: await listApi(c.env.DB) }, 201);
+    return c.json({ paymentMethods: await listApi(c.env.DB, businessIdOf(c)) }, 201);
   });
 
   r.patch('/:id', requireRole('owner'), async (c) => {
     const id = num(c);
     const patch = paymentMethodPatch.parse(await body(c));
     await updatePaymentMethod(c.env.DB, actorFrom(c), id, patch);
-    return c.json({ paymentMethods: await listApi(c.env.DB) });
+    return c.json({ paymentMethods: await listApi(c.env.DB, businessIdOf(c)) });
   });
 
   r.post('/:id/activate', requireRole('owner'), async (c) => {
     await setActive(c.env.DB, actorFrom(c), num(c), true);
-    return c.json({ paymentMethods: await listApi(c.env.DB) });
+    return c.json({ paymentMethods: await listApi(c.env.DB, businessIdOf(c)) });
   });
 
   r.post('/:id/deactivate', requireRole('owner'), async (c) => {
     await setActive(c.env.DB, actorFrom(c), num(c), false);
-    return c.json({ paymentMethods: await listApi(c.env.DB) });
+    return c.json({ paymentMethods: await listApi(c.env.DB, businessIdOf(c)) });
   });
 
   r.put('/reorder', requireRole('owner'), async (c) => {
     const { ids } = reorderInput.parse(await body(c));
     await reorder(c.env.DB, actorFrom(c), ids);
-    return c.json({ paymentMethods: await listApi(c.env.DB) });
+    return c.json({ paymentMethods: await listApi(c.env.DB, businessIdOf(c)) });
   });
 
   return { name: 'payment-methods', basePath: '/payment-methods', routes: r };

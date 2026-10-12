@@ -47,7 +47,10 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
         features: user.features,
         theme: user.theme,
         locale: user.locale,
-        issuing: await issuingEnabled(c.env.DB),
+        issuing: await issuingEnabled(c.env.DB, user.businessId),
+        // R24: the business this session acts on, and every business the person may open.
+        businessId: user.businessId,
+        businesses: user.businesses,
       },
     });
   });

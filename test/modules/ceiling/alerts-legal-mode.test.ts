@@ -20,7 +20,7 @@ describe('evaluateCeilingAlerts: no-op after the switch to עוסק מורשה',
     await finalizeDocument(db(), receipt, { actor: OWNER_ACTOR });
 
     const notifier = new RecordingNotifier();
-    expect(await evaluateCeilingAlerts(db(), '2026-10-06', notifier)).toEqual([]);
+    expect(await evaluateCeilingAlerts(db(), '2026-10-06', notifier, 1)).toEqual([]);
     expect(notifier.sent).toEqual([]);
   });
 });

@@ -16,7 +16,13 @@ import { ForbiddenError, UnauthorizedError } from './errors';
  * without the header signs in as that email. Production never bypasses.
  */
 
-export type Role = 'owner' | 'accountant';
+export type Role = 'owner' | 'assistant' | 'accountant';
+
+/**
+ * R24 Phase B (R23 task 6): an assistant issues and sends documents, keeps clients and expenses.
+ * No Settings, numbering, users, legal-mode switch or ITA connection, no reports or exports.
+ */
+export const ASSISTANT_FEATURES = ['issue_documents', 'quotes', 'income_documents', 'clients', 'expenses', 'notes'] as const;
 
 /** Switches an owner can grant an accountant. Defaults from docs/accountant-access.md. */
 export const DEFAULT_ACCOUNTANT_FEATURES = {
@@ -54,6 +60,10 @@ export interface AuthUser {
   /** R16 tasks 15/16: null until the person picks one; the client falls back to system/English. */
   theme: ThemePreference | null;
   locale: LocalePreference | null;
+  /** R24: the business this request acts on. Every query is scoped by it. */
+  businessId: number;
+  /** R24: every business this person may open, with the role there. */
+  businesses: { id: number; role: Role }[];
 }
 
 interface UserRow {
@@ -111,8 +121,9 @@ async function emailFromAccessJwt(token: string, env: Env, options: AuthOptions)
   }
 }
 
-async function loadFeatures(db: D1Database, user: UserRow): Promise<Feature[]> {
-  if (user.role === 'owner') return [...FEATURES];
+async function loadFeatures(db: D1Database, user: UserRow, role: Role): Promise<Feature[]> {
+  if (role === 'owner') return [...FEATURES];
+  if (role === 'assistant') return [...ASSISTANT_FEATURES];
   const rows = await all<{ feature: string; enabled: number }>(
     db,
     'SELECT feature, enabled FROM user_features WHERE user_id = ?',
@@ -130,7 +141,16 @@ async function bootstrapOwner(db: D1Database, env: Env, email: string): Promise<
     stmt(
       db,
       `INSERT INTO users (email, role) SELECT ?, 'owner'
-       WHERE NOT EXISTS (SELECT 1 FROM users WHERE role = 'owner')`,
+       WHERE NOT EXISTS (SELECT 1 FROM user_businesses WHERE role = 'owner') AND NOT EXISTS (SELECT 1 FROM users WHERE email = ?)`,
+      email,
+      email,
+    ),
+    // R24: the bootstrap owner owns business 1.
+    stmt(
+      db,
+      `INSERT INTO user_businesses (user_id, business_id, role)
+       SELECT id, 1, 'owner' FROM users WHERE email = ?
+         AND NOT EXISTS (SELECT 1 FROM user_businesses WHERE role = 'owner')`,
       email,
     ),
     auditStatement(db, { ...SYSTEM_ACTOR, email }, 'user.bootstrap_owner', 'user', email),
@@ -153,7 +173,8 @@ export function authenticate(options: AuthOptions = {}): MiddlewareHandler<AppEn
     }
 
     let user = await first<UserRow>(env.DB, 'SELECT * FROM users WHERE email = ?', email);
-    if (!user) user = await bootstrapOwner(env.DB, env, email);
+    const grantsOf = (u: UserRow) => businessGrants(env.DB, u.id, (options.today ?? todayIsrael)());
+    if (!user || (await grantsOf(user)).length === 0) user = (await bootstrapOwner(env.DB, env, email)) ?? user;
     if (!user) throw new ForbiddenError('This account has no access to Open Ledger IL.');
     if (user.active !== 1) throw new ForbiddenError('This account is disabled.');
     const today = (options.today ?? todayIsrael)();
@@ -161,25 +182,65 @@ export function authenticate(options: AuthOptions = {}): MiddlewareHandler<AppEn
       throw new ForbiddenError('Access for this account has ended.');
     }
 
+    // R24: the business comes from X-Business-Id, checked against this person's grants before
+    // anything is read or written. Without the header, the first business they may open.
+    const grants = await grantsOf(user);
+    if (grants.length === 0) throw new ForbiddenError('This account has no access to any business.');
+    // The header wins and is checked strictly. The web app also sets a cookie, so a plain link or a
+    // new tab opens the same business. A cookie for a business no longer open to this person falls
+    // back to the first one instead of locking them out.
+    const header = c.req.header('X-Business-Id');
+    let grant = grants[0]!;
+    if (header !== undefined && header !== '') {
+      const id = Number(header);
+      const match = grants.find((g) => g.id === id);
+      if (!Number.isSafeInteger(id) || !match) throw new ForbiddenError('This account has no access to that business.');
+      grant = match;
+    } else {
+      const fromCookie = Number(businessCookie(c.req.header('Cookie')));
+      grant = grants.find((g) => g.id === fromCookie) ?? grant;
+    }
+
     c.set('user', {
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role,
-      features: await loadFeatures(env.DB, user),
+      role: grant.role,
+      features: await loadFeatures(env.DB, user, grant.role),
       theme: user.theme,
       locale: user.locale,
+      businessId: grant.id,
+      businesses: grants,
     });
 
     await next();
 
-    if (user.role === 'accountant') {
+    if (grant.role === 'accountant') {
       await auditAs(env.DB, actorFrom(c), 'request', 'route', c.req.path, {
         method: c.req.method,
         status: c.res.status,
       });
     }
   };
+}
+
+/** The `ledger_business` cookie the web app sets when the person switches business. */
+export function businessCookie(header: string | undefined): string | undefined {
+  const match = /(?:^|;\s*)ledger_business=(\d+)/.exec(header ?? '');
+  return match?.[1];
+}
+
+/** The businesses a person may open, with the role in each. Ended accountant access is left out. */
+export async function businessGrants(db: D1Database, userId: number, today: string): Promise<{ id: number; role: Role }[]> {
+  const rows = await all<{ business_id: number; role: Role }>(
+    db,
+    `SELECT business_id, role FROM user_businesses
+      WHERE user_id = ? AND (ends_at IS NULL OR ends_at >= ?)
+      ORDER BY business_id`,
+    userId,
+    today,
+  );
+  return rows.map((r) => ({ id: r.business_id, role: r.role }));
 }
 
 function currentUser(c: Parameters<MiddlewareHandler<AppEnv>>[0]): AuthUser {
@@ -204,6 +265,7 @@ export function requireRole(...roles: Role[]): RoleMiddleware {
 /** Owners pass. Accountants pass only for an enabled, non owner-only feature. */
 export function hasFeature(user: AuthUser, feature: Feature): boolean {
   if (user.role === 'owner') return true;
+  if (user.role === 'assistant') return (ASSISTANT_FEATURES as readonly string[]).includes(feature);
   if ((OWNER_ONLY_FEATURES as readonly string[]).includes(feature)) return false;
   return user.features.includes(feature);
 }
@@ -213,6 +275,19 @@ export function requireFeature(feature: Feature): FeatureMiddleware {
   const mw: MiddlewareHandler<AppEnv> = async (c, next) => {
     const user = currentUser(c);
     if (!hasFeature(user, feature)) throw new ForbiddenError();
+    await next();
+  };
+  return Object.assign(mw, { feature });
+}
+
+/**
+ * R24: a route for a feature that an assistant also reaches, such as the dashboard. Self-declaring
+ * like requireFeature (src/modules/access/route-guard.ts reads `.feature`).
+ */
+export function requireFeatureOrAssistant(feature: Feature): FeatureMiddleware {
+  const mw: MiddlewareHandler<AppEnv> = async (c, next) => {
+    const user = currentUser(c);
+    if (user.role !== 'assistant' && !hasFeature(user, feature)) throw new ForbiddenError();
     await next();
   };
   return Object.assign(mw, { feature });

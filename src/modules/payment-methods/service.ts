@@ -1,4 +1,4 @@
-import { type AuditActor, auditStatement } from '../../core/audit';
+import { type AuditActor, auditStatement, actorBiz } from '../../core/audit';
 import { nowIso, stmt, transaction } from '../../core/db';
 import { ConflictError, NotFoundError, ValidationError } from '../../core/errors';
 import { getPaymentMethod, listPaymentMethods, type PaymentMethodRow } from './repo';
@@ -11,13 +11,15 @@ export async function createPaymentMethod(db: D1Database, actor: AuditActor, inp
   const results = await transaction(db, [
     stmt(
       db,
-      `INSERT INTO payment_methods (display_name, type, currency, details, active, sort_order)
-       VALUES (?, ?, ?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM payment_methods))`,
+      `INSERT INTO payment_methods (display_name, type, currency, details, active, sort_order, business_id)
+       VALUES (?, ?, ?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM payment_methods WHERE business_id = ?), ?)`,
       input.displayName,
       input.type,
       input.currency ?? null,
       JSON.stringify(input.details),
       input.active,
+      actorBiz(actor),
+      actorBiz(actor),
     ),
     auditStatement(db, actor, 'payment_method.create', 'payment_method', null, { displayName: input.displayName, type: input.type }),
   ]);
@@ -30,7 +32,7 @@ function coerceDetails(type: string, details: unknown): string {
 }
 
 export async function updatePaymentMethod(db: D1Database, actor: AuditActor, id: number, patch: PaymentMethodPatch): Promise<void> {
-  const existing = await getPaymentMethod(db, id);
+  const existing = await getPaymentMethod(db, id, actorBiz(actor));
   const type = patch.type ?? existing.type;
   const details = patch.details !== undefined ? coerceDetails(type, patch.details) : patch.type !== undefined ? coerceDetails(type, JSON.parse(existing.details)) : existing.details;
   await transaction(db, [
@@ -50,7 +52,7 @@ export async function updatePaymentMethod(db: D1Database, actor: AuditActor, id:
 }
 
 export async function setActive(db: D1Database, actor: AuditActor, id: number, active: boolean): Promise<void> {
-  await getPaymentMethod(db, id);
+  await getPaymentMethod(db, id, actorBiz(actor));
   await transaction(db, [
     stmt(db, 'UPDATE payment_methods SET active = ?, updated_at = ? WHERE id = ?', active, nowIso(), id),
     auditStatement(db, actor, active ? 'payment_method.activate' : 'payment_method.deactivate', 'payment_method', id),
@@ -59,7 +61,7 @@ export async function setActive(db: D1Database, actor: AuditActor, id: number, a
 
 /** Reassigns sort_order 0..n-1 in the order given. Every existing id must be present, once. */
 export async function reorder(db: D1Database, actor: AuditActor, ids: number[]): Promise<void> {
-  const existing = await listPaymentMethods(db);
+  const existing = await listPaymentMethods(db, actorBiz(actor));
   const existingIds = new Set(existing.map((r) => r.id));
   if (ids.length !== existing.length || !ids.every((id) => existingIds.has(id)) || new Set(ids).size !== ids.length) {
     throw new ValidationError('Send every payment method id exactly once.');
@@ -82,9 +84,9 @@ export function parseMethodIds(raw: string | null | undefined): number[] {
 }
 
 /** Every id must exist; inactive is allowed (a document already using a method that was since deactivated stays valid). */
-export async function assertMethodIdsExist(db: D1Database, ids: number[]): Promise<void> {
+export async function assertMethodIdsExist(db: D1Database, ids: number[], businessId: number): Promise<void> {
   for (const id of ids) {
-    const exists = await getPaymentMethod(db, id).catch(() => null);
+    const exists = await getPaymentMethod(db, id, businessId).catch(() => null);
     if (!exists) throw new ConflictError('payment_method_not_found', `Payment method ${id} does not exist.`);
   }
 }

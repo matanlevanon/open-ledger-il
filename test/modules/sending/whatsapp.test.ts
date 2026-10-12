@@ -22,6 +22,7 @@ function deps() {
     files: env.FILES,
     env: { ...env, SIGNING_KEY_PEM: identity.keyPem, SIGNING_CERT_PEM: identity.certPem },
     mailer: new FakeMailer(),
+    businessId: 1,
     engine: new FakeSignablePdfEngine(),
     baseUrl: 'https://ledger.test',
   } as Parameters<typeof createWhatsAppLink>[0];

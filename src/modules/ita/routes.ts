@@ -1,4 +1,6 @@
-import { Hono } from 'hono';
+import { type Context, Hono } from 'hono';
+import { businessIdOf } from '../../core/business';
+import { getDoc } from '../documents/repo';
 import { z } from 'zod';
 import { actorFrom, audit } from '../../core/audit';
 import { requireFeature } from '../../core/auth';
@@ -40,7 +42,14 @@ function documentId(raw: string): number {
 export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const env = (c: { env: AppEnv['Bindings'] }) => c.env as ItaEnv;
-  const service = (c: { env: AppEnv['Bindings'] }) => new ItaAllocationService(env(c), deps);
+  // R24 B6: each business has its own ITA login and allocation queue.
+  const service = (c: Context<AppEnv>) => new ItaAllocationService(env(c), deps, businessIdOf(c));
+  /** A document id from the path, refused unless it belongs to the current business. */
+  const ownDocument = async (c: Context<AppEnv>) => {
+    const id = documentId(c.req.param('documentId') ?? '');
+    await getDoc(c.env.DB, id, businessIdOf(c));
+    return id;
+  };
   // Where the Tax Authority calls leave from: the relay, or this Worker's data center.
   const origin = (e: ItaEnv, raw: Request) =>
     (e.ITA_BROKER_URL ?? '').trim()
@@ -143,8 +152,9 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     } catch (err) {
       const row = await first<{ status_reason: string | null }>(
         c.env.DB,
-        'SELECT status_reason FROM ita_tokens WHERE environment = ?',
+        'SELECT status_reason FROM ita_tokens WHERE environment = ? AND business_id = ?',
         s.tokens.environment,
+        s.businessId,
       );
       const reason = row?.status_reason ?? (err instanceof Error ? err.message : 'The renewal failed.');
       await audit(c, 'ita.refresh.failed', 'ita', s.tokens.environment, { reason, from: where });
@@ -160,12 +170,13 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     const url = s.tokens.authorizeUrl(state, redirectUri);
     await run(
       c.env.DB,
-      'INSERT INTO ita_oauth_states (state, environment, redirect_uri, user_id, expires_at) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO ita_oauth_states (state, environment, redirect_uri, user_id, expires_at, business_id) VALUES (?, ?, ?, ?, ?, ?)',
       state,
       s.tokens.environment,
       redirectUri,
       c.get('user').id,
       new Date(deps.now().getTime() + STATE_TTL_MS).toISOString(),
+      s.businessId,
     );
     await audit(c, 'ita.connect.start', 'ita', s.tokens.environment);
     return c.redirect(url, 302);
@@ -173,17 +184,21 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
 
   /** The ITA sends the browser back here with a one-time code. */
   app.get('/callback', async (c) => {
-    const s = service(c);
     const state = c.req.query('state') ?? '';
     const code = c.req.query('code') ?? '';
     const back = (result: string) => c.redirect(`/ita?${result}`, 302);
-    const saved = await first<{ environment: string; redirect_uri: string; expires_at: string }>(
+    const saved = await first<{ environment: string; redirect_uri: string; expires_at: string; business_id: number }>(
       c.env.DB,
-      'SELECT environment, redirect_uri, expires_at FROM ita_oauth_states WHERE state = ?',
+      'SELECT environment, redirect_uri, expires_at, business_id FROM ita_oauth_states WHERE state = ?',
       state,
     );
     if (saved) await run(c.env.DB, 'DELETE FROM ita_oauth_states WHERE state = ?', state);
-    if (!saved || saved.expires_at < deps.now().toISOString() || saved.environment !== s.tokens.environment) {
+    // R24 B6: the state, not the request, names the business. The token goes to that business only,
+    // and only when the person signing in is its owner.
+    const businessId = saved?.business_id ?? businessIdOf(c);
+    const s = new ItaAllocationService(env(c), deps, businessId);
+    const ownsIt = c.get('user').businesses.some((b) => b.id === businessId && b.role === 'owner');
+    if (!saved || !ownsIt || saved.expires_at < deps.now().toISOString() || saved.environment !== s.tokens.environment) {
       await audit(c, 'ita.connect.failed', 'ita', s.tokens.environment, { reason: 'state' });
       return back('error=state');
     }
@@ -215,9 +230,12 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
       c.env.DB,
       `SELECT document_id, invoice_id, status, attempts, first_attempt_at, last_attempt_at, next_attempt_at, deadline_at,
               last_error_code, last_error_message, decision, decision_at, replacement_document_id, source
-       FROM ita_allocations WHERE environment = ? AND status IN ('pending', 'stalled', 'failed', 'refused', 'decided')
+       FROM ita_allocations
+       WHERE environment = ? AND status IN ('pending', 'stalled', 'failed', 'refused', 'decided')
+         AND document_id IN (SELECT id FROM documents WHERE business_id = ?)
        ORDER BY updated_at DESC LIMIT 200`,
       s.tokens.environment,
+      s.businessId,
     );
     const withDoc = async (r: (typeof rows)[number]) => {
       const d = await s.docs.get(r.document_id);
@@ -261,10 +279,11 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
        FROM documents d
        LEFT JOIN clients cl ON cl.id = d.client_id
        LEFT JOIN ita_allocations a ON a.document_id = d.id
-       WHERE d.allocation_number IS NULL AND d.status NOT IN ('draft', 'cancelled') AND d.vat_amount_minor > 0
+       WHERE d.business_id = ? AND d.allocation_number IS NULL AND d.status NOT IN ('draft', 'cancelled') AND d.vat_amount_minor > 0
          AND COALESCE(cl.foreign_resident, 0) = 0
          AND (d.type IN (${ALLOCATION_DOC_TYPES.map(() => '?').join(', ')}) OR a.id IS NOT NULL)
        ORDER BY d.date DESC LIMIT 500`,
+      s.businessId,
       ...ALLOCATION_DOC_TYPES,
     );
     const withoutNumbers = [];
@@ -280,12 +299,15 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
       without_numbers: withoutNumbers,
       links: { web_app: ITA_WEB_APP_URL, hearing: ITA_SERVICE_PAGE_URL },
       mode: itaManualMode(env(c)) ? 'manual' : 'api',
-      business_vat_number: ((env(c).ITA_VAT_NUMBER ?? env(c).OWNER_TAX_ID) || '').trim() || null,
+      business_vat_number:
+        s.businessId === 1
+          ? ((env(c).ITA_VAT_NUMBER ?? env(c).OWNER_TAX_ID) || '').trim() || null
+          : ((await first<{ tax_id: string | null }>(c.env.DB, 'SELECT tax_id FROM businesses WHERE id = ?', s.businessId))?.tax_id ?? null),
     });
   });
 
   app.get('/allocations/:documentId', async (c) => {
-    const id = documentId(c.req.param('documentId'));
+    const id = await ownDocument(c);
     const s = service(c);
     const row = await s.row(id);
     const attempts = row
@@ -296,13 +318,13 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
 
   /** Request now, or retry after an outage, a fixed client VAT number or a won hearing. */
   app.post('/allocations/:documentId/request', async (c) => {
-    const id = documentId(c.req.param('documentId'));
+    const id = await ownDocument(c);
     const result = await service(c).request(id, actorFrom(c));
     return c.json({ result });
   });
 
   app.post('/allocations/:documentId/decision', async (c) => {
-    const id = documentId(c.req.param('documentId'));
+    const id = await ownDocument(c);
     const { choice } = decisionSchema.parse(await c.req.json());
     const result = await service(c).decide(id, choice, actorFrom(c));
     return c.json({ result });
@@ -310,7 +332,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
 
   /** A number from the ITA web app, typed in by hand. The source is recorded. */
   app.post('/allocations/:documentId/manual', async (c) => {
-    const id = documentId(c.req.param('documentId'));
+    const id = await ownDocument(c);
     const body = manualSchema.parse(await c.req.json());
     const result = await service(c).enterManual(id, body.confirmation_number, body.source_note, actorFrom(c));
     return c.json({ result });
@@ -318,14 +340,14 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
 
   app.post('/buyer/details', async (c) => {
     const body = detailsSchema.parse(await c.req.json());
-    const result = await supplierInvoiceDetails(env(c), deps, body);
+    const result = await supplierInvoiceDetails(env(c), deps, body, businessIdOf(c));
     await audit(c, 'ita.buyer.details', 'supplier', body.supplier_vat_number, { found: result.found });
     return c.json({ result });
   });
 
   app.post('/buyer/confirmation-number', async (c) => {
     const body = confirmationSchema.parse(await c.req.json());
-    const result = await supplierConfirmationNumber(env(c), deps, body);
+    const result = await supplierConfirmationNumber(env(c), deps, body, businessIdOf(c));
     await audit(c, 'ita.buyer.confirmation_number', 'supplier', body.supplier_vat_number, { found: result.found });
     return c.json({ result });
   });

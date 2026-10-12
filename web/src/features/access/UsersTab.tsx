@@ -6,11 +6,12 @@ import { InviteForm } from './InviteForm';
 
 const ROLE_LABEL_KEYS: Record<AccessUser['role'], MessageKey> = {
   owner: 'access.role.owner',
+  assistant: 'access.role.assistant',
   accountant: 'access.role.accountant',
 };
 
 function statusLabelKey(user: AccessUser): MessageKey {
-  if (user.role === 'owner') return 'access.status.owner';
+  if (user.role === 'owner' || user.role === 'assistant') return 'access.status.owner';
   if (!user.active) return 'access.status.disabled';
   if (user.accessEndsOn && user.accessEndsOn < new Date().toISOString().slice(0, 10)) return 'access.status.expired';
   return 'access.status.active';
@@ -21,6 +22,8 @@ export function UsersTab() {
   const [forbidden, setForbidden] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [inviting, setInviting] = useState(false);
+  // R23 task 7: the app cannot add an email to Cloudflare Access. This line says where to.
+  const [accessNote, setAccessNote] = useState<string | null>(null);
   const t = useT();
 
   const load = () =>
@@ -54,12 +57,31 @@ export function UsersTab() {
 
   const revoke = async (user: AccessUser) => {
     if (!window.confirm(t('access.users.revokeConfirm', { email: user.email }))) return;
-    await revokeAccountant(user.id);
+    try {
+      await revokeAccountant(user.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('access.users.errorFallback'));
+      return;
+    }
     await load();
+  };
+
+  const changeRole = async (user: AccessUser, role: AccessUser['role']) => {
+    try {
+      await updateAccountant(user.id, { role });
+      await load();
+    } catch (err) {
+      window.alert(err instanceof Error ? err.message : t('access.users.errorFallback'));
+    }
   };
 
   return (
     <div className="flex flex-col gap-4">
+      {accessNote && (
+        <p role="status" className="rounded-md border border-line bg-surface p-3 text-sm text-ink" data-testid="access-note">
+          {accessNote}
+        </p>
+      )}
       <table className="w-full text-start text-sm">
         <caption className="sr-only">{t('access.users.caption')}</caption>
         <thead>
@@ -78,7 +100,20 @@ export function UsersTab() {
             <tr key={user.id} className="border-t border-line align-top">
               <td className="py-2">{user.email}</td>
               <td>{user.name ?? t('access.users.noneFallback')}</td>
-              <td>{t(ROLE_LABEL_KEYS[user.role])}</td>
+              <td>
+                <select
+                  aria-label={t('access.users.roleFor', { email: user.email })}
+                  value={user.role}
+                  onChange={(e) => void changeRole(user, e.target.value as AccessUser['role'])}
+                  className="rounded-md border border-line bg-canvas px-1 py-0.5 text-sm"
+                >
+                  {(['owner', 'assistant', 'accountant'] as const).map((r) => (
+                    <option key={r} value={r}>
+                      {t(ROLE_LABEL_KEYS[r])}
+                    </option>
+                  ))}
+                </select>
+              </td>
               <td>{t(statusLabelKey(user))}</td>
               <td className="ltr-nums">{user.accessEndsOn ?? t('access.users.noneFallback')}</td>
               <td>
@@ -94,7 +129,7 @@ export function UsersTab() {
                 )}
               </td>
               <td>
-                {user.role === 'accountant' && (
+                {(
                   <button
                     type="button"
                     onClick={() => revoke(user)}
@@ -113,7 +148,8 @@ export function UsersTab() {
         <InviteForm
           onCancel={() => setInviting(false)}
           onInvite={async (input) => {
-            await inviteAccountant(input);
+            const res = await inviteAccountant(input);
+            setAccessNote(res.accessNote ? `${input.email}: ${res.accessNote}` : null);
             setInviting(false);
             await load();
           }}

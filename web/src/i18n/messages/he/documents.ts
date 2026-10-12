@@ -67,6 +67,7 @@ export const documents: Record<keyof typeof en, string> = {
   'documents.editor.currencyLabel': 'מטבע',
   'documents.editor.dateLabel': 'תאריך',
   'documents.editor.dueDateLabel': 'תאריך פירעון',
+  'documents.editor.brandLabel': 'מותג',
   'documents.editor.clientCopyLabel': 'עותק ללקוח',
   'documents.editor.langEnglish': 'אנגלית',
   'documents.editor.langBilingual': 'עברית',
@@ -426,6 +427,9 @@ export const documents: Record<keyof typeof en, string> = {
 
   'clients.page.newDocument': 'מסמך חדש',
   'clients.page.edit': 'עריכה',
+  'clients.page.copyToBusiness': 'העתקה לעסק',
+  'clients.page.copyTarget': 'העסק שאליו מעתיקים את הלקוח',
+  'clients.page.copied': 'הועתק. העותק הוא לקוח נפרד בעסק ההוא.',
   'clients.page.activeSwitch': 'פעיל',
   'clients.page.active': 'פעיל',
   'clients.page.notActive': 'לא פעיל',

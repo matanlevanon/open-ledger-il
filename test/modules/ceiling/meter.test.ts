@@ -6,7 +6,7 @@ import { OWNER_ACTOR, db, makeDraft } from '../../helpers';
 /** runs/R08-reports.md, "Tests": meter math with open requests. */
 describe('ceilingMeter: turnover to date plus open payment requests', () => {
   it('reads the seeded 2026 ceiling with zero turnover on a fresh ledger', async () => {
-    const meter = await ceilingMeter(db(), '2026-10-06');
+    const meter = await ceilingMeter(db(), '2026-10-06', 1);
     expect(meter).toEqual({
       year: 2026,
       currency: 'ILS',
@@ -24,7 +24,7 @@ describe('ceilingMeter: turnover to date plus open payment requests', () => {
     const request = await makeDraft({ seriesId: 'PR', totalMinor: 50000 });
     await finalizeDocument(db(), request, { actor: OWNER_ACTOR });
 
-    const meter = await ceilingMeter(db(), '2026-10-06');
+    const meter = await ceilingMeter(db(), '2026-10-06', 1);
     expect(meter?.turnoverMinor).toBe(100000);
     expect(meter?.openRequestsMinor).toBe(50000);
     expect(meter?.currentMinor).toBe(150000);
@@ -33,7 +33,7 @@ describe('ceilingMeter: turnover to date plus open payment requests', () => {
   it('closing an open request into a paid receipt moves the money from open to turnover, without double counting', async () => {
     const request = await makeDraft({ seriesId: '300', totalMinor: 20000 });
     await finalizeDocument(db(), request, { actor: OWNER_ACTOR });
-    const before = await ceilingMeter(db(), '2026-10-06');
+    const before = await ceilingMeter(db(), '2026-10-06', 1);
 
     const receipt = await makeDraft({ seriesId: '400', totalMinor: 20000 });
     await finalizeDocument(db(), receipt, { actor: OWNER_ACTOR });
@@ -42,17 +42,17 @@ describe('ceilingMeter: turnover to date plus open payment requests', () => {
       .bind(request, receipt)
       .run();
 
-    const after = await ceilingMeter(db(), '2026-10-06');
+    const after = await ceilingMeter(db(), '2026-10-06', 1);
     expect(after!.currentMinor).toBe(before!.currentMinor); // 20,000 left open requests, 20,000 joined turnover
     expect(after!.openRequestsMinor).toBe(before!.openRequestsMinor - 20000);
     expect(after!.turnoverMinor).toBe(before!.turnoverMinor + 20000);
   });
 
   it('subtracts a credit receipt from turnover', async () => {
-    const before = (await ceilingMeter(db(), '2026-10-06'))!.turnoverMinor;
+    const before = (await ceilingMeter(db(), '2026-10-06', 1))!.turnoverMinor;
     const credit = await makeDraft({ seriesId: '405', totalMinor: -40000 });
     await finalizeDocument(db(), credit, { actor: OWNER_ACTOR });
-    const after = (await ceilingMeter(db(), '2026-10-06'))!.turnoverMinor;
+    const after = (await ceilingMeter(db(), '2026-10-06', 1))!.turnoverMinor;
     expect(after - before).toBe(-40000);
   });
 
@@ -63,12 +63,12 @@ describe('ceilingMeter: turnover to date plus open payment requests', () => {
   });
 
   it('answers null for a year with no ceiling row', async () => {
-    expect(await ceilingMeter(db(), '2099-01-01')).toBeNull();
+    expect(await ceilingMeter(db(), '2099-01-01', 1)).toBeNull();
   });
 
   /** R17 task 7: a document uploaded from another system counts toward the year's turnover too. */
   it('adds an uploaded external document to turnover', async () => {
-    const before = (await ceilingMeter(db(), '2026-10-06'))!.turnoverMinor;
+    const before = (await ceilingMeter(db(), '2026-10-06', 1))!.turnoverMinor;
     await db()
       .prepare(
         `INSERT INTO external_documents (source, original_number, doc_type, issue_date, client_name_text, currency,
@@ -76,7 +76,7 @@ describe('ceilingMeter: turnover to date plus open payment requests', () => {
          VALUES ('sumit', 'meter-test-1', 'Tax invoice', '2026-10-06', 'Old Client', 'ILS', 6000, 0, 6000, 6000, 'paid', 'k', 'h')`,
       )
       .run();
-    const after = (await ceilingMeter(db(), '2026-10-06'))!.turnoverMinor;
+    const after = (await ceilingMeter(db(), '2026-10-06', 1))!.turnoverMinor;
     expect(after - before).toBe(6000);
   });
 });

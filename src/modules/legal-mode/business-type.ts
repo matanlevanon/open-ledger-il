@@ -3,8 +3,8 @@ import { convert } from '../../core/money';
 import type { Env } from '../../env';
 
 /**
- * R24 Phase A: the business type. Every read of `entity_type` goes through this file, so Phase B
- * moves it from business_profile to businesses in one place.
+ * R24: the business type. Every read of `entity_type` goes through this file. Phase B moved it from
+ * business_profile to `businesses`: each business has its own type, legal modes and VAT setting.
  */
 export const ENTITY_TYPES = ['osek_patur', 'osek_murshe', 'company'] as const;
 export type EntityType = (typeof ENTITY_TYPES)[number];
@@ -19,29 +19,29 @@ export function isEntityType(value: unknown): value is EntityType {
   return typeof value === 'string' && (ENTITY_TYPES as readonly string[]).includes(value);
 }
 
-export async function getEntityType(db: D1Database): Promise<EntityType> {
-  const row = await first<{ entity_type: string }>(db, 'SELECT entity_type FROM business_profile WHERE id = 1');
+export async function getEntityType(db: D1Database, businessId: number): Promise<EntityType> {
+  const row = await first<{ entity_type: string }>(db, 'SELECT entity_type FROM businesses WHERE id = ?', businessId);
   return isEntityType(row?.entity_type) ? row.entity_type : 'osek_patur';
 }
 
-export async function getVatReporting(db: D1Database): Promise<VatReporting> {
-  const row = await first<{ vat_reporting: string }>(db, 'SELECT vat_reporting FROM business_profile WHERE id = 1');
+export async function getVatReporting(db: D1Database, businessId: number): Promise<VatReporting> {
+  const row = await first<{ vat_reporting: string }>(db, 'SELECT vat_reporting FROM businesses WHERE id = ?', businessId);
   return row?.vat_reporting === 'monthly' ? 'monthly' : 'bimonthly';
 }
 
 /** A fresh Ledger has no final document yet. `registered` and start-company need one. */
-export async function isFreshLedger(db: D1Database): Promise<boolean> {
-  return !(await first<{ seq: number }>(db, 'SELECT seq FROM finalizations LIMIT 1'));
+export async function isFreshLedger(db: D1Database, businessId: number): Promise<boolean> {
+  return !(await first<{ seq: number }>(db, 'SELECT seq FROM finalizations WHERE business_id = ? LIMIT 1', businessId));
 }
 
 /** The מורשה row, when the Ledger has switched. */
-export async function mursheRow(db: D1Database): Promise<{ effective_from: string; note: string | null } | null> {
-  return first(db, "SELECT effective_from, note FROM legal_modes WHERE mode = 'murshe' ORDER BY effective_from LIMIT 1");
+export async function mursheRow(db: D1Database, businessId: number): Promise<{ effective_from: string; note: string | null } | null> {
+  return first(db, "SELECT effective_from, note FROM legal_modes WHERE mode = 'murshe' AND business_id = ? ORDER BY effective_from LIMIT 1", businessId);
 }
 
 /** Setup is incomplete while a required business field is empty. Same fields as the first-run setup screen. */
-export async function setupIncomplete(db: D1Database): Promise<boolean> {
-  const row = await first<Record<string, string | null>>(db, 'SELECT name_en, name_he, tax_id, address_en FROM business_profile WHERE id = 1');
+export async function setupIncomplete(db: D1Database, businessId: number): Promise<boolean> {
+  const row = await first<Record<string, string | null>>(db, 'SELECT name_en, name_he, tax_id, address_en FROM businesses WHERE id = ?', businessId);
   return ['name_en', 'name_he', 'tax_id', 'address_en'].some((f) => !row?.[f]?.trim());
 }
 
@@ -49,12 +49,24 @@ export async function setupIncomplete(db: D1Database): Promise<boolean> {
  * The installer's preselection for the first-run Business type step. Read only while setup is
  * incomplete and the Ledger is still פטור. After that it is ignored. Never written to the database.
  */
-export async function setupBusinessType(env: Env): Promise<EntityType | null> {
+export async function setupBusinessType(env: Env, businessId: number): Promise<EntityType | null> {
+  // The installer sets up business 1 only. A business added later picks its type in the app.
+  if (businessId !== 1) return null;
   const wanted = env.SETUP_BUSINESS_TYPE?.trim();
   if (!isEntityType(wanted)) return null;
-  if (!(await setupIncomplete(env.DB))) return null;
-  if ((await getEntityType(env.DB)) !== 'osek_patur') return null;
+  if (!(await setupIncomplete(env.DB, businessId))) return null;
+  if ((await getEntityType(env.DB, businessId)) !== 'osek_patur') return null;
   return wanted;
+}
+
+/**
+ * R24 B3, one place for the rule: a person has one עוסק file (פטור or מורשה) and any number of
+ * companies. So a Ledger with an osek business already offers only a company. Not yet confirmed
+ * by the accountant (docs/open-questions.md A16): change it here and nowhere else.
+ */
+export async function allowedNewBusinessTypes(db: D1Database): Promise<EntityType[]> {
+  const osek = await first<{ id: number }>(db, "SELECT id FROM businesses WHERE entity_type IN ('osek_patur', 'osek_murshe') LIMIT 1");
+  return osek ? ['company'] : ['osek_patur', 'osek_murshe', 'company'];
 }
 
 /**
@@ -76,13 +88,13 @@ export interface BusinessTypeStatus {
   setupBusinessType: EntityType | null;
 }
 
-export async function businessTypeStatus(env: Env, today: string): Promise<BusinessTypeStatus> {
+export async function businessTypeStatus(env: Env, today: string, businessId: number): Promise<BusinessTypeStatus> {
   const [entityType, fresh, murshe, vatReporting, setup] = await Promise.all([
-    getEntityType(env.DB),
-    isFreshLedger(env.DB),
-    mursheRow(env.DB),
-    getVatReporting(env.DB),
-    setupBusinessType(env),
+    getEntityType(env.DB, businessId),
+    isFreshLedger(env.DB, businessId),
+    mursheRow(env.DB, businessId),
+    getVatReporting(env.DB, businessId),
+    setupBusinessType(env, businessId),
   ]);
   return {
     entityType,
@@ -148,12 +160,17 @@ const toIls = (amountMinor: number, currency: string, rate: string | null): numb
  * Output VAT of final tax documents in the period minus reclaimable input VAT of expenses dated
  * in it, in ILS minor units. A foreign amount converts at the rate stored on its row.
  */
-export async function vatDueIn(db: D1Database, period: { from: string; to: string }): Promise<{ outputMinor: number; inputMinor: number; amountMinor: number }> {
+export async function vatDueIn(
+  db: D1Database,
+  period: { from: string; to: string },
+  businessId: number,
+): Promise<{ outputMinor: number; inputMinor: number; amountMinor: number }> {
   const [docs, expenses] = await Promise.all([
     all<{ vat_amount_minor: number; currency: string; fx_rate: string | null }>(
       db,
       `SELECT vat_amount_minor, currency, fx_rate FROM documents
-        WHERE status = 'final' AND type IN (${OUTPUT_VAT_TYPES.map(() => '?').join(',')}) AND date BETWEEN ? AND ?`,
+        WHERE business_id = ? AND status = 'final' AND type IN (${OUTPUT_VAT_TYPES.map(() => '?').join(',')}) AND date BETWEEN ? AND ?`,
+      businessId,
       ...OUTPUT_VAT_TYPES,
       period.from,
       period.to,
@@ -161,8 +178,9 @@ export async function vatDueIn(db: D1Database, period: { from: string; to: strin
     all<{ vat_amount_minor: number; currency: string; fx_rate: string | null }>(
       db,
       `SELECT vat_amount_minor, currency, fx_rate FROM expenses
-        WHERE input_vat_reclaimable = 1 AND status NOT IN ('not_expense', 'duplicate', 'returned')
+        WHERE business_id = ? AND input_vat_reclaimable = 1 AND status NOT IN ('not_expense', 'duplicate', 'returned')
           AND document_date BETWEEN ? AND ?`,
+      businessId,
       period.from,
       period.to,
     ),

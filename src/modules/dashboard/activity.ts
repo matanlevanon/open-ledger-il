@@ -23,7 +23,7 @@ export interface ActivityItem {
 export const ACTIVITY_DEFAULT_LIMIT = 15;
 export const ACTIVITY_MAX_LIMIT = 50;
 
-export async function recentActivity(db: D1Database, limit = ACTIVITY_DEFAULT_LIMIT): Promise<ActivityItem[]> {
+export async function recentActivity(db: D1Database, limit: number, businessId: number): Promise<ActivityItem[]> {
   const n = Math.min(Math.max(1, Math.trunc(limit) || ACTIVITY_DEFAULT_LIMIT), ACTIVITY_MAX_LIMIT);
   return all<ActivityItem>(
     db,
@@ -32,12 +32,16 @@ export async function recentActivity(db: D1Database, limit = ACTIVITY_DEFAULT_LI
               d.number AS number, d.status AS status, c.name_en AS name, c.name_he AS nameHe,
               d.currency AS currency, d.total_minor AS amountMinor
          FROM documents d LEFT JOIN clients c ON c.id = d.client_id
+        WHERE d.business_id = ?
        UNION ALL
        SELECT 'expense', e.id, e.created_at, NULL, NULL, e.status, s.name, NULL, e.currency, e.amount_minor
          FROM expenses e LEFT JOIN suppliers s ON s.id = e.supplier_id
+        WHERE e.business_id = ?
      )
      ORDER BY at DESC, kind, id DESC
      LIMIT ?`,
+    businessId,
+    businessId,
     n,
   );
 }

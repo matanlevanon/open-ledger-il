@@ -33,11 +33,11 @@ describe('evaluateCeilingAlerts: each threshold fires once per year (runs/R08-re
     await receipt(AT_70);
     const notifier = new RecordingNotifier();
 
-    const first = await evaluateCeilingAlerts(db(), '2026-10-06', notifier);
+    const first = await evaluateCeilingAlerts(db(), '2026-10-06', notifier, 1);
     expect(first.map((a) => a.thresholdPct)).toEqual([70]);
     expect(notifier.sent).toHaveLength(1);
 
-    const second = await evaluateCeilingAlerts(db(), '2026-10-06', notifier);
+    const second = await evaluateCeilingAlerts(db(), '2026-10-06', notifier, 1);
     expect(second).toEqual([]);
     expect(notifier.sent).toHaveLength(1);
 
@@ -50,16 +50,16 @@ describe('evaluateCeilingAlerts: each threshold fires once per year (runs/R08-re
     const notifier = new RecordingNotifier();
 
     await receipt(AT_85 - AT_70); // turnover now exactly 85%
-    expect((await evaluateCeilingAlerts(db(), '2026-10-06', notifier)).map((a) => a.thresholdPct)).toEqual([85]);
+    expect((await evaluateCeilingAlerts(db(), '2026-10-06', notifier, 1)).map((a) => a.thresholdPct)).toEqual([85]);
 
     await receipt(AT_100 - AT_85); // turnover now exactly 100%, crossing 95 and 100 together
-    expect((await evaluateCeilingAlerts(db(), '2026-10-06', notifier)).map((a) => a.thresholdPct)).toEqual([95, 100]);
+    expect((await evaluateCeilingAlerts(db(), '2026-10-06', notifier, 1)).map((a) => a.thresholdPct)).toEqual([95, 100]);
 
     expect(notifier.sent).toHaveLength(3);
 
     // Every threshold has now fired for 2026. A further call, even well past the ceiling, fires nothing new.
     await receipt(1000000);
-    expect(await evaluateCeilingAlerts(db(), '2026-10-06', notifier)).toEqual([]);
+    expect(await evaluateCeilingAlerts(db(), '2026-10-06', notifier, 1)).toEqual([]);
     expect(notifier.sent).toHaveLength(3);
   });
 });

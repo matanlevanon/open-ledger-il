@@ -22,8 +22,9 @@ export const logRoutes = new Hono<AppEnv>();
 
 logRoutes.get('/', requireRole('owner'), async (c) => {
   const query = accessLogQuerySchema.parse(c.req.query());
-  const conditions: string[] = [];
-  const params: SqlValue[] = [];
+  // R24: the access log of the current business only.
+  const conditions: string[] = ['business_id = ?'];
+  const params: SqlValue[] = [c.get('user').businessId];
 
   if (query.before !== undefined) {
     conditions.push('id < ?');
@@ -38,7 +39,7 @@ logRoutes.get('/', requireRole('owner'), async (c) => {
     params.push(query.action);
   }
 
-  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  const where = `WHERE ${conditions.join(' AND ')}`;
   const rows = await all<AuditLogRow>(
     c.env.DB,
     `SELECT id, at, user_id, user_email, role, action, entity, entity_id, details, ip, user_agent

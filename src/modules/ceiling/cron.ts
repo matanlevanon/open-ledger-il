@@ -1,3 +1,4 @@
+import { listBusinessIds } from '../../core/business';
 import { todayIsrael } from '../../core/db';
 import type { Env } from '../../env';
 import { slackNotifier } from '../ita/notify';
@@ -12,5 +13,7 @@ export const CEILING_ALERT_CRON = '0 7 * * *';
 
 export async function ceilingScheduled(controller: ScheduledController, env: Env, _ctx?: ExecutionContext): Promise<void> {
   if (controller.cron !== CEILING_ALERT_CRON) return;
-  await evaluateCeilingAlerts(env.DB, todayIsrael(), slackNotifier(env.SLACK_WEBHOOK_URL, (input, init) => fetch(input, init)));
+  // R24: each business has its own turnover and legal mode. Only a פטור business has a ceiling.
+  const notifier = slackNotifier(env.SLACK_WEBHOOK_URL, (input, init) => fetch(input, init));
+  for (const businessId of await listBusinessIds(env.DB)) await evaluateCeilingAlerts(env.DB, todayIsrael(), notifier, businessId);
 }

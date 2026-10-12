@@ -1,5 +1,6 @@
 import type { Context } from 'hono';
 import { Hono } from 'hono';
+import { businessIdOf } from '../../core/business';
 import { actorFrom } from '../../core/audit';
 import { requireRole } from '../../core/auth';
 import { NotFoundError, ValidationError } from '../../core/errors';
@@ -30,7 +31,7 @@ export function createImportRoutes(resolveUploadDeps: (env: AppEnv['Bindings']) 
   const app = new Hono<AppEnv>();
   app.use('*', requireRole('owner'));
 
-  app.get('/series', async (c) => c.json({ series: await service.listSeries(c.env.DB) }));
+  app.get('/series', async (c) => c.json({ series: await service.listSeries(c.env.DB, businessIdOf(c)) }));
 
   app.post('/series/:id/start', async (c) => {
     const input = setSeriesStartSchema.parse(await c.req.json());
@@ -45,7 +46,7 @@ export function createImportRoutes(resolveUploadDeps: (env: AppEnv['Bindings']) 
       source,
       limit: q.limit ? Number(q.limit) : undefined,
       offset: q.offset ? Number(q.offset) : undefined,
-    });
+    }, businessIdOf(c));
     return c.json({ history });
   });
 
@@ -125,7 +126,9 @@ export function createImportRoutes(resolveUploadDeps: (env: AppEnv['Bindings']) 
   /** The original PDF of a filed past document, shown inline. */
   app.get('/external-documents/:id/file', async (c) => {
     const id = Number(c.req.param('id'));
-    const row = await c.env.DB.prepare('SELECT r2_key, original_number FROM external_documents WHERE id = ?').bind(id).first<{ r2_key: string; original_number: string }>();
+    const row = await c.env.DB.prepare('SELECT r2_key, original_number FROM external_documents WHERE id = ? AND business_id = ?')
+      .bind(id, businessIdOf(c))
+      .first<{ r2_key: string; original_number: string }>();
     if (!row) throw new NotFoundError('Document', id);
     const object = await c.env.FILES.get(row.r2_key);
     if (!object) throw new NotFoundError('Document file', id);
@@ -140,7 +143,7 @@ export function createImportRoutes(resolveUploadDeps: (env: AppEnv['Bindings']) 
       clientId: q.clientId ? Number(q.clientId) : undefined,
       from: q.from,
       to: q.to,
-    });
+    }, businessIdOf(c));
     return c.json({ documents });
   });
 

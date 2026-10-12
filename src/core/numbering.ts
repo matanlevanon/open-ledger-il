@@ -129,7 +129,9 @@ export async function finalizeDocument(db: D1Database, documentId: number, optio
     }
     const seriesId = String(doc.series_id);
     const number = await nextNumber(db, seriesId);
-    const head = await first<{ hash: string }>(db, 'SELECT hash FROM finalizations ORDER BY seq DESC LIMIT 1');
+    // R24: the chain is per business. The document's business picks the head.
+    const businessId = Number(doc.business_id ?? 1);
+    const head = await first<{ hash: string }>(db, 'SELECT hash FROM finalizations WHERE business_id = ? ORDER BY seq DESC LIMIT 1', businessId);
     const prevHash = head?.hash ?? GENESIS_HASH;
     const finalizedAt = nowIso();
     const record = buildDocumentRecord(
@@ -145,8 +147,8 @@ export async function finalizeDocument(db: D1Database, documentId: number, optio
       await transaction(db, [
         stmt(
           db,
-          `INSERT INTO finalizations (document_id, series_id, number, doc_version, prev_hash, hash, finalized_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO finalizations (document_id, series_id, number, doc_version, prev_hash, hash, finalized_at, business_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           documentId,
           seriesId,
           number,
@@ -154,6 +156,7 @@ export async function finalizeDocument(db: D1Database, documentId: number, optio
           prevHash,
           hash,
           finalizedAt,
+          businessId,
         ),
         stmt(
           db,

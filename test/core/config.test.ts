@@ -6,7 +6,7 @@ import { db } from '../helpers';
 
 describe('config: legal values come from effective-dated rows', () => {
   it('reads the seeded values', async () => {
-    expect((await legalModeOn(db(), '2026-10-01')).mode).toBe('patur');
+    expect((await legalModeOn(db(), '2026-10-01', 1)).mode).toBe('patur');
     expect((await vatRateOn(db(), '2026-10-01')).rate_bp).toBe(1800);
     expect((await thresholdOn(db(), 'allocation', '2026-10-01'))?.amount_minor).toBe(500000);
     expect((await ceilingFor(db(), '2026-10-01'))?.amount_minor).toBe(12283300);
@@ -14,7 +14,7 @@ describe('config: legal values come from effective-dated rows', () => {
 
   it('applies nothing before the first effective date', async () => {
     await expect(vatRateOn(db(), '2024-12-31')).rejects.toBeInstanceOf(ConfigError);
-    await expect(legalModeOn(db(), '2019-12-31')).rejects.toBeInstanceOf(ConfigError);
+    await expect(legalModeOn(db(), '2019-12-31', 1)).rejects.toBeInstanceOf(ConfigError);
     expect(await thresholdOn(db(), 'allocation', '2026-05-31')).toBeNull();
     expect(await ceilingFor(db(), '2027-03-01')).toBeNull();
   });
@@ -33,17 +33,17 @@ describe('config: legal values come from effective-dated rows', () => {
     });
 
     it('switches on the effective date, not before', async () => {
-      expect((await legalModeOn(db(), '2030-07-14')).mode).toBe('patur');
-      expect((await legalModeOn(db(), '2030-07-15')).mode).toBe('murshe');
+      expect((await legalModeOn(db(), '2030-07-14', 1)).mode).toBe('patur');
+      expect((await legalModeOn(db(), '2030-07-15', 1)).mode).toBe('murshe');
       expect((await vatRateOn(db(), '2029-12-31')).rate_bp).toBe(1800);
       expect((await vatRateOn(db(), '2030-01-01')).rate_bp).toBe(1900);
     });
 
     it('builds a snapshot for one date', async () => {
-      const early = await configOn(db(), '2026-10-01');
+      const early = await configOn(db(), '2026-10-01', 1);
       expect(early.legalMode.mode).toBe('patur');
       expect(early.thresholds.allocation?.amount_minor).toBe(500000);
-      const late = await configOn(db(), '2030-08-01');
+      const late = await configOn(db(), '2030-08-01', 1);
       expect(late.legalMode.mode).toBe('murshe');
       expect(late.vatRate.rate_bp).toBe(1900);
       expect(late.thresholds.allocation?.amount_minor).toBe(250000);

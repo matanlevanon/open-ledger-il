@@ -6,6 +6,7 @@ import { displayNumber } from '../documents/types';
 import { isConsentGranted } from './consent';
 import type { Mailer } from './mailer';
 import { businessDisplayName, paymentLinkSettings, reminderSettings } from './settings';
+import { listBusinessIds } from '../../core/business';
 import { reminderEmailHtml, reminderEmailText } from './templates';
 
 function toUtcDays(date: string): number {
@@ -22,6 +23,8 @@ export interface ReminderDeps {
   db: D1Database;
   mailer: Mailer;
   today: string;
+  /** R24: reminders run per business, under its own settings and sender name. */
+  businessId: number;
 }
 
 export interface ReminderRunResult {
@@ -36,15 +39,15 @@ export interface ReminderRunResult {
  * so a reminder fires once even if the cron runs more than once on the same day.
  */
 export async function runReminders(deps: ReminderDeps): Promise<ReminderRunResult> {
-  const { db, mailer, today } = deps;
-  const settings = await reminderSettings(db);
+  const { db, mailer, today, businessId } = deps;
+  const settings = await reminderSettings(db, businessId);
   let sent = 0;
   let skipped = 0;
   if (!settings.enabled) return { sent, skipped };
 
-  const demands = (await openDemands(db)).filter((d) => d.due_date !== null && d.client_id !== null);
-  const links = await paymentLinkSettings(db);
-  const businessName = await businessDisplayName(db);
+  const demands = (await openDemands(db, businessId)).filter((d) => d.due_date !== null && d.client_id !== null);
+  const links = await paymentLinkSettings(db, businessId);
+  const businessName = await businessDisplayName(db, businessId);
 
   for (const demand of demands) {
     const delta = daysUntil(today, demand.due_date!);
@@ -95,6 +98,7 @@ export async function runReminders(deps: ReminderDeps): Promise<ReminderRunResul
       const result = await mailer.send({
         to: client.email,
         subject: number ? `Reminder: ${number}` : 'Payment reminder',
+        fromName: businessName,
         html: reminderEmailHtml(clientName, number, direction, links, businessName),
         text: reminderEmailText(clientName, number, direction, links, businessName),
       });
@@ -126,5 +130,11 @@ export async function runReminders(deps: ReminderDeps): Promise<ReminderRunResul
 export const REMINDERS_CRON = '0 7 * * *';
 
 export async function runRemindersCron(env: Env, mailer: Mailer, today: string): Promise<ReminderRunResult> {
-  return runReminders({ db: env.DB, mailer, today });
+  const total: ReminderRunResult = { sent: 0, skipped: 0 };
+  for (const businessId of await listBusinessIds(env.DB)) {
+    const r = await runReminders({ db: env.DB, mailer, today, businessId });
+    total.sent += r.sent;
+    total.skipped += r.skipped;
+  }
+  return total;
 }

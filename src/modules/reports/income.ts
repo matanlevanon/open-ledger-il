@@ -58,13 +58,14 @@ interface ExternalIncomeSqlRow {
  * R17 task 7: uploaded documents count as income for their issue date, labeled by source.
  * Only receipts, invoices and credits. A quote, payment request or pro forma is paid by a receipt.
  */
-async function externalIncomeDetail(db: D1Database, from: string, to: string): Promise<IncomeDetailRow[]> {
+async function externalIncomeDetail(db: D1Database, from: string, to: string, businessId: number): Promise<IncomeDetailRow[]> {
   const rows = await all<ExternalIncomeSqlRow>(
     db,
     `SELECT id, issue_date, source, original_number, client_id, client_name_text, currency,
        ${externalSignSql('doc_type')} * total_minor AS total_minor, ${externalSignSql('doc_type')} * total_ils_minor AS total_ils_minor
-     FROM external_documents WHERE issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('doc_type')}
+     FROM external_documents WHERE business_id = ? AND issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('doc_type')}
      ORDER BY issue_date, id`,
+    businessId,
     from,
     to,
   );
@@ -83,7 +84,7 @@ async function externalIncomeDetail(db: D1Database, from: string, to: string): P
   }));
 }
 
-export async function incomeDetail(db: D1Database, from: string, to: string): Promise<IncomeDetailRow[]> {
+export async function incomeDetail(db: D1Database, from: string, to: string, businessId: number): Promise<IncomeDetailRow[]> {
   const placeholders = INCOME_KINDS.map(() => '?').join(',');
   const [rows, externalRows] = await Promise.all([
     all<IncomeSqlRow>(
@@ -95,13 +96,14 @@ export async function incomeDetail(db: D1Database, from: string, to: string): Pr
      FROM documents d
      JOIN document_types dt ON dt.code = d.type
      LEFT JOIN clients c ON c.id = d.client_id
-     WHERE d.status = 'final' AND dt.kind IN (${placeholders}) AND d.date BETWEEN ? AND ?
+     WHERE d.business_id = ? AND d.status = 'final' AND dt.kind IN (${placeholders}) AND d.date BETWEEN ? AND ?
      ORDER BY d.date, d.id`,
+      businessId,
       ...INCOME_KINDS,
       from,
       to,
     ),
-    externalIncomeDetail(db, from, to),
+    externalIncomeDetail(db, from, to, businessId),
   ]);
   const detail = rows.map((r) => ({
     documentId: r.id,
@@ -185,7 +187,7 @@ export function summarizeIncome(rows: IncomeDetailRow[]): Omit<IncomeReport, 'fr
   };
 }
 
-export async function incomeReport(db: D1Database, from: string, to: string): Promise<IncomeReport> {
-  const rows = await incomeDetail(db, from, to);
+export async function incomeReport(db: D1Database, from: string, to: string, businessId: number): Promise<IncomeReport> {
+  const rows = await incomeDetail(db, from, to, businessId);
   return { from, to, rows, ...summarizeIncome(rows) };
 }

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import type { MessageKey } from '../../i18n';
 import { useT } from '../../i18n';
 import { BackupsTab } from './BackupsTab';
+import { BrandsTab } from './BrandsTab';
+import { BusinessesTab } from './BusinessesTab';
 import { BusinessTab } from './BusinessTab';
 import { DashboardTab } from './DashboardTab';
 import { ExpensesTab } from './ExpensesTab';
@@ -15,10 +17,12 @@ import { SignatureTab } from './SignatureTab';
 import { TaxTab } from './TaxTab';
 import { UpdatesTab } from './UpdatesTab';
 
-type Tab = 'business' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
+type Tab = 'business' | 'businesses' | 'brands' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
 
 const TABS: [Tab, MessageKey][] = [
   ['business', 'settings.tabs.business'],
+  ['businesses', 'settings.tabs.businesses'],
+  ['brands', 'settings.tabs.brands'],
   ['issuing', 'settings.tabs.issuing'],
   ['email', 'settings.tabs.email'],
   ['numbering', 'settings.tabs.numbering'],
@@ -71,6 +75,8 @@ export function SettingsPage() {
 
       <div className="mt-6 rounded-card border border-line bg-canvas p-4 shadow-card">
         {tab === 'business' && <BusinessTab />}
+        {tab === 'businesses' && <BusinessesTab startAdding={new URLSearchParams(window.location.search).get('add') === '1'} />}
+        {tab === 'brands' && <BrandsTab />}
         {tab === 'issuing' && <IssuingTab />}
         {tab === 'email' && <EmailTab />}
         {tab === 'numbering' && <NumberingTab />}

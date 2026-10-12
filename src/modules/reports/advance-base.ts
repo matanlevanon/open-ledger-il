@@ -19,14 +19,15 @@ export interface AdvanceBaseReport {
   totalIlsMinor: number;
 }
 
-export async function advanceBaseReport(db: D1Database, from: string, to: string): Promise<AdvanceBaseReport> {
+export async function advanceBaseReport(db: D1Database, from: string, to: string, businessId: number): Promise<AdvanceBaseReport> {
   const rows = await all<{ month: string; total_minor: number | null }>(
     db,
     `SELECT strftime('%Y-%m', p.paid_on) AS month,
        SUM(COALESCE(p.amount_ils_minor, CASE WHEN p.currency = 'ILS' THEN p.amount_minor ELSE NULL END)) AS total_minor
      FROM payments p JOIN documents d ON d.id = p.document_id
-     WHERE d.status = 'final' AND p.paid_on BETWEEN ? AND ?
+     WHERE d.business_id = ? AND d.status = 'final' AND p.paid_on BETWEEN ? AND ?
      GROUP BY month ORDER BY month`,
+    businessId,
     from,
     to,
   );

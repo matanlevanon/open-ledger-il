@@ -17,9 +17,10 @@ import type { Env } from '../../env';
 export async function resolveSigningIdentity(
   db: D1Database,
   env: Pick<Env, 'SIGNING_KEY_PEM' | 'SIGNING_CERT_PEM'>,
+  businessId: number,
   options: { require?: boolean } = {},
 ): Promise<SigningIdentity | null> {
-  const mode = await signatureMode(db);
+  const mode = await signatureMode(db, businessId);
   if (mode === 'none') return null;
   const { SIGNING_KEY_PEM, SIGNING_CERT_PEM } = env;
   if (!SIGNING_KEY_PEM || !SIGNING_CERT_PEM) {

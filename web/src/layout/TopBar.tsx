@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { Me } from '../api/client';
 import { usePreferences } from '../app/preferences';
 import { useT } from '../i18n';
+import { BusinessSwitcher } from './BusinessSwitcher';
 import defaultLogo from '../brand/default-logo.svg';
 import defaultLogoDark from '../brand/default-logo-dark.svg';
 import makerLogoDark from '../brand/maker-logo-dark.svg';
@@ -89,6 +90,7 @@ export function TopBar({ me, error, onMenu }: TopBarProps) {
 
         {me ? (
           <>
+            <BusinessSwitcher />
             <span className="hidden text-ink sm:inline">{me.name ?? me.email}</span>
             <span className="hidden rounded-full bg-canvas px-2 py-0.5 text-xs font-semibold capitalize text-brand sm:inline" data-testid="role-chip">
               {me.role}

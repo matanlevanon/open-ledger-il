@@ -55,7 +55,7 @@ async function body(c: Context<AppEnv>): Promise<unknown> {
 export function documentRoutes(services: ServiceFactory): Hono<AppEnv> {
   const r = new Hono<AppEnv>();
   const ctx = (c: Context<AppEnv>): Ctx => ({ db: c.env.DB, actor: actorFrom(c), user: c.get('user'), services: services(c.env) });
-  const view = async (c: Context<AppEnv>, id: number) => documentView(c.env.DB, id, services(c.env).today());
+  const view = async (c: Context<AppEnv>, id: number) => documentView(c.env.DB, id, services(c.env).today(), c.get('user').businessId);
 
   r.get('/types', requireFeature('income_documents'), async (c) => c.json({ types: await listTypes(c.env.DB) }));
 
@@ -71,7 +71,7 @@ export function documentRoutes(services: ServiceFactory): Hono<AppEnv> {
 
   r.get('/:id', requireFeature('income_documents'), async (c) => {
     const id = idParam(c);
-    assertCanSeeType(c.get('user'), (await getDoc(c.env.DB, id)).type);
+    assertCanSeeType(c.get('user'), (await getDoc(c.env.DB, id, c.get('user').businessId)).type);
     return c.json(await view(c, id));
   });
 

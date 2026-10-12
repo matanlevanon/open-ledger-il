@@ -16,10 +16,12 @@ export interface AccessUser {
   id: number;
   email: string;
   name: string | null;
-  role: 'owner' | 'accountant';
+  role: 'owner' | 'assistant' | 'accountant';
   active: boolean;
   accessEndsOn: string | null;
   features: AccessFeatures | null;
+  /** R24: every business this person may open. Absent on an older Worker. */
+  businesses?: { id: number; role: 'owner' | 'assistant' | 'accountant' }[];
 }
 
 export interface AccessLogEntry {
@@ -48,23 +50,27 @@ async function send<T>(path: string, method: string, body?: unknown): Promise<T>
   return (await res.json()) as T;
 }
 
-export function fetchUsers(): Promise<{ users: AccessUser[] }> {
+export function fetchUsers(): Promise<{ users: AccessUser[]; accessNote?: string }> {
   return apiGet('/access/users');
 }
 
 export interface InviteAccountantInput {
   email: string;
   name?: string;
-  accessEndsOn: string;
+  /** R24: owner, assistant or accountant. Absent: accountant. */
+  role?: 'owner' | 'assistant' | 'accountant';
+  /** Only an accountant has an end date. */
+  accessEndsOn?: string;
   features?: Partial<AccessFeatures>;
 }
 
-export function inviteAccountant(input: InviteAccountantInput): Promise<{ user: AccessUser }> {
+export function inviteAccountant(input: InviteAccountantInput): Promise<{ user: AccessUser; accessNote?: string }> {
   return send('/access/users', 'POST', input);
 }
 
 export interface UpdateAccountantInput {
   name?: string | null;
+  role?: 'owner' | 'assistant' | 'accountant';
   accessEndsOn?: string;
   features?: Partial<AccessFeatures>;
 }

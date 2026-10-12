@@ -34,8 +34,8 @@ export const access: Record<keyof typeof en, string> = {
   'access.users.colFeatures': 'הרשאות',
   'access.users.noneFallback': 'ללא',
   'access.users.revoke': 'ביטול גישה',
-  'access.users.revokeConfirm': 'לבטל את הגישה של {email}? פעולה זו מוחקת את החשבון שלו לאלתר.',
-  'access.users.inviteAccountant': 'הזמנת רואה חשבון',
+  'access.users.revokeConfirm': 'להסיר את {email} מהעסק הזה? מי שלא נשאר לו אף עסק מאבד את החשבון.',
+  'access.users.inviteAccountant': 'הזמנת אדם',
 
   // Status labels (statusLabel())
   'access.status.owner': 'בעלים',
@@ -59,7 +59,7 @@ export const access: Record<keyof typeof en, string> = {
   'access.feature.notes': 'הערות',
 
   // InviteForm.tsx
-  'access.invite.ariaLabel': 'הזמנת רואה חשבון',
+  'access.invite.ariaLabel': 'הזמנת אדם',
   'access.invite.emailLabel': 'דוא"ל',
   'access.invite.nameLabel': 'שם',
   'access.invite.accessEndsOnLabel': 'תוקף הגישה עד',
@@ -68,4 +68,10 @@ export const access: Record<keyof typeof en, string> = {
   'access.invite.inviting': 'שולח הזמנה',
   'access.invite.sendInvite': 'שליחת הזמנה',
   'access.invite.cancel': 'ביטול',
+  'access.role.assistant': 'עוזר',
+  'access.invite.roleLabel': 'תפקיד',
+  'access.roleHint.owner': 'הכול, כולל הגדרות, משתמשים ומספור.',
+  'access.roleHint.assistant': 'לקוחות, הצעות מחיר, דרישות תשלום, קבלות, שליחה והוצאות. בלי הגדרות, מספור, משתמשים או רשות המסים.',
+  'access.roleHint.accountant': 'קורא את מה שהמתגים מאפשרים, עד תאריך הסיום.',
+  'access.users.roleFor': 'התפקיד של {email}',
 };

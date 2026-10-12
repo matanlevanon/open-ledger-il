@@ -1,5 +1,6 @@
 import type { AuditActor } from '../../core/audit';
-import { auditAs, auditStatement } from '../../core/audit';
+import { readBusinessSetting, settingKey } from '../../core/business';
+import { auditAs, auditStatement, actorBiz } from '../../core/audit';
 import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
 import { NotFoundError } from '../../core/errors';
 import { type Currency, assertCurrency, formatMinor, parseMajor } from '../../core/money';
@@ -31,21 +32,23 @@ export interface Deps {
 // Suppliers and categories
 // ---------------------------------------------------------------------------
 
-export async function listSuppliers(db: D1Database): Promise<SupplierRow[]> {
-  return all<SupplierRow>(db, 'SELECT * FROM suppliers ORDER BY name');
+/** R24: suppliers, files and expenses belong to one business. Categories are shared. */
+export async function listSuppliers(db: D1Database, businessId: number): Promise<SupplierRow[]> {
+  return all<SupplierRow>(db, 'SELECT * FROM suppliers WHERE business_id = ? ORDER BY name', businessId);
 }
 
 export async function createSupplier(db: D1Database, input: SupplierInput, actor: AuditActor): Promise<SupplierRow> {
   const { lastRowId } = await run(
     db,
-    `INSERT INTO suppliers (name, tax_id, country, default_category_id, default_currency, notes)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO suppliers (name, tax_id, country, default_category_id, default_currency, notes, business_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
     input.name,
     input.taxId ?? null,
     input.country ?? 'IL',
     input.defaultCategoryId ?? null,
     input.defaultCurrency ?? 'ILS',
     input.notes ?? null,
+    actorBiz(actor),
   );
   const row = (await first<SupplierRow>(db, 'SELECT * FROM suppliers WHERE id = ?', lastRowId))!;
   await auditAs(db, actor, 'supplier.create', 'supplier', lastRowId, { name: input.name });
@@ -53,7 +56,7 @@ export async function createSupplier(db: D1Database, input: SupplierInput, actor
 }
 
 export async function updateSupplier(db: D1Database, id: number, input: Partial<SupplierInput>, actor: AuditActor): Promise<SupplierRow> {
-  const existing = await first<SupplierRow>(db, 'SELECT * FROM suppliers WHERE id = ?', id);
+  const existing = await first<SupplierRow>(db, 'SELECT * FROM suppliers WHERE id = ? AND business_id = ?', id, actorBiz(actor));
   if (!existing) throw new NotFoundError('Supplier', id);
   await transaction(db, [
     stmt(
@@ -122,10 +125,15 @@ export async function updateCategory(
 async function resolveSupplier(db: D1Database, extracted: ExtractedExpense, actor: AuditActor): Promise<number> {
   const taxId = extracted.supplierId?.trim() || null;
   if (taxId) {
-    const byTax = await first<{ id: number }>(db, 'SELECT id FROM suppliers WHERE tax_id = ?', taxId);
+    const byTax = await first<{ id: number }>(db, 'SELECT id FROM suppliers WHERE tax_id = ? AND business_id = ?', taxId, actorBiz(actor));
     if (byTax) return byTax.id;
   }
-  const byName = await first<{ id: number }>(db, 'SELECT id FROM suppliers WHERE name = ? COLLATE NOCASE', extracted.supplierName);
+  const byName = await first<{ id: number }>(
+    db,
+    'SELECT id FROM suppliers WHERE name = ? COLLATE NOCASE AND business_id = ?',
+    extracted.supplierName,
+    actorBiz(actor),
+  );
   if (byName) return byName.id;
   const created = await createSupplier(
     db,
@@ -146,13 +154,14 @@ export interface DuplicateCheck {
 
 async function checkDuplicate(
   db: D1Database,
-  args: { fileSha256: string; fileId: number; supplierId: number; documentNumber: string | null },
+  args: { fileSha256: string; fileId: number; supplierId: number; documentNumber: string | null; businessId: number },
 ): Promise<DuplicateCheck> {
   const byHash = await first<{ expense_id: number | null }>(
     db,
-    `SELECT expense_id FROM expense_files WHERE sha256 = ? AND id != ? AND expense_id IS NOT NULL ORDER BY id LIMIT 1`,
+    `SELECT expense_id FROM expense_files WHERE sha256 = ? AND id != ? AND expense_id IS NOT NULL AND business_id = ? ORDER BY id LIMIT 1`,
     args.fileSha256,
     args.fileId,
+    args.businessId,
   );
   if (byHash?.expense_id) return { duplicateOfId: byHash.expense_id, reason: 'Same file already recorded' };
 
@@ -183,7 +192,7 @@ export interface IngestInput {
 /** Stores the file in R2, records it, and returns null when a Drive file was already ingested. */
 async function recordFile(env: Env, input: IngestInput, actor: AuditActor): Promise<ExpenseFileRow | null> {
   if (input.driveFileId) {
-    const already = await first<{ id: number }>(env.DB, 'SELECT id FROM expense_files WHERE drive_file_id = ?', input.driveFileId);
+    const already = await first<{ id: number }>(env.DB, 'SELECT id FROM expense_files WHERE drive_file_id = ? AND business_id = ?', input.driveFileId, actorBiz(actor));
     if (already) return null;
   }
   const sha256 = await sha256Hex(input.bytes);
@@ -191,8 +200,8 @@ async function recordFile(env: Env, input: IngestInput, actor: AuditActor): Prom
   await storeFile(env, key, input.bytes, input.contentType);
   const { lastRowId } = await run(
     env.DB,
-    `INSERT INTO expense_files (source, drive_file_id, r2_key, filename, content_type, size_bytes, sha256)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO expense_files (source, drive_file_id, r2_key, filename, content_type, size_bytes, sha256, business_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     input.source,
     input.driveFileId ?? null,
     key,
@@ -200,6 +209,7 @@ async function recordFile(env: Env, input: IngestInput, actor: AuditActor): Prom
     input.contentType,
     input.bytes.byteLength,
     sha256,
+    actorBiz(actor),
   );
   await auditAs(env.DB, actor, 'expense_file.ingest', 'expense_file', lastRowId, {
     source: input.source,
@@ -222,6 +232,7 @@ async function createExpenseFromExtraction(env: Env, deps: Deps, file: ExpenseFi
     fileId: file.id,
     supplierId,
     documentNumber: extracted.documentNumber ?? null,
+    businessId: actorBiz(actor),
   });
   const status: ExpenseStatus = duplicate.duplicateOfId ? 'duplicate' : 'new';
 
@@ -232,8 +243,8 @@ async function createExpenseFromExtraction(env: Env, deps: Deps, file: ExpenseFi
     `INSERT INTO expenses (
        file_id, supplier_id, category_id, status, status_reason, duplicate_of_id,
        document_number, document_date, document_type, currency, amount_minor, vat_amount_minor,
-       amount_ils_minor, fx_rate, fx_rate_date, fx_source, extracted_json
-     ) VALUES (?, ?, (SELECT default_category_id FROM suppliers WHERE id = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       amount_ils_minor, fx_rate, fx_rate_date, fx_source, extracted_json, business_id
+     ) VALUES (?, ?, (SELECT default_category_id FROM suppliers WHERE id = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     file.id,
     supplierId,
     supplierId,
@@ -251,6 +262,7 @@ async function createExpenseFromExtraction(env: Env, deps: Deps, file: ExpenseFi
     ils.fxRateDate,
     ils.fxSource,
     JSON.stringify(extracted),
+    actorBiz(actor),
   );
   await transaction(env.DB, [
     stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id),
@@ -273,11 +285,10 @@ export async function ingestFile(env: Env, deps: Deps, input: IngestInput, actor
 }
 
 const DRIVE_ROOT_SETTING_KEY = 'expenses.drive_root_folder_id';
-
 /** The Drive folder id that holds the `YYYY-MM` month folders, or null until the owner sets it. */
-export async function getDriveRootFolder(db: D1Database): Promise<string | null> {
-  const row = await first<{ value: string }>(db, 'SELECT value FROM settings WHERE key = ?', DRIVE_ROOT_SETTING_KEY);
-  return row?.value ?? null;
+/** R24: each business has its own Drive folder. */
+export async function getDriveRootFolder(db: D1Database, businessId: number): Promise<string | null> {
+  return readBusinessSetting(db, businessId, DRIVE_ROOT_SETTING_KEY, false);
 }
 
 export async function setDriveRootFolder(db: D1Database, folderId: string, actor: AuditActor): Promise<void> {
@@ -286,7 +297,7 @@ export async function setDriveRootFolder(db: D1Database, folderId: string, actor
       db,
       `INSERT INTO settings (key, value) VALUES (?, ?)
        ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = ?`,
-      DRIVE_ROOT_SETTING_KEY,
+      settingKey(actorBiz(actor), DRIVE_ROOT_SETTING_KEY),
       folderId,
       nowIso(),
     ),
@@ -298,14 +309,14 @@ export async function setDriveRootFolder(db: D1Database, folderId: string, actor
 // Review: status transitions and edits
 // ---------------------------------------------------------------------------
 
-export async function getExpense(db: D1Database, id: number): Promise<ExpenseRow> {
-  const row = await first<ExpenseRow>(db, 'SELECT * FROM expenses WHERE id = ?', id);
+export async function getExpense(db: D1Database, id: number, businessId: number): Promise<ExpenseRow> {
+  const row = await first<ExpenseRow>(db, 'SELECT * FROM expenses WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('Expense', id);
   return row;
 }
 
-export async function getExpenseFile(db: D1Database, id: number): Promise<ExpenseFileRow> {
-  const row = await first<ExpenseFileRow>(db, 'SELECT * FROM expense_files WHERE id = ?', id);
+export async function getExpenseFile(db: D1Database, id: number, businessId: number): Promise<ExpenseFileRow> {
+  const row = await first<ExpenseFileRow>(db, 'SELECT * FROM expense_files WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('File', id);
   return row;
 }
@@ -320,9 +331,9 @@ export interface ListFilter {
   offset?: number;
 }
 
-export async function listExpenses(db: D1Database, filter: ListFilter): Promise<ExpenseRow[]> {
-  const clauses: string[] = [];
-  const params: (string | number)[] = [];
+export async function listExpenses(db: D1Database, filter: ListFilter, businessId: number): Promise<ExpenseRow[]> {
+  const clauses: string[] = ['e.business_id = ?'];
+  const params: (string | number)[] = [businessId];
   if (filter.status) {
     clauses.push('e.status = ?');
     params.push(filter.status);
@@ -351,16 +362,17 @@ export async function listExpenses(db: D1Database, filter: ListFilter): Promise<
 }
 
 /** The next expense awaiting review, for the review screen's auto-advance. */
-export async function nextForReview(db: D1Database, excludeId?: number): Promise<ExpenseRow | null> {
+export async function nextForReview(db: D1Database, businessId: number, excludeId?: number): Promise<ExpenseRow | null> {
   return first<ExpenseRow>(
     db,
-    `SELECT * FROM expenses WHERE status = 'new' AND id != ? ORDER BY document_date, id LIMIT 1`,
+    `SELECT * FROM expenses WHERE business_id = ? AND status = 'new' AND id != ? ORDER BY document_date, id LIMIT 1`,
+    businessId,
     excludeId ?? 0,
   );
 }
 
 export async function setStatus(db: D1Database, id: number, update: StatusUpdate, actor: AuditActor): Promise<ExpenseRow> {
-  await getExpense(db, id);
+  await getExpense(db, id, actorBiz(actor));
   const reason = update.status === 'returned' ? update.reason! : (update.reason ?? null);
   await transaction(db, [
     stmt(
@@ -375,12 +387,16 @@ export async function setStatus(db: D1Database, id: number, update: StatusUpdate
     ),
     auditStatement(db, actor, 'expense.status', 'expense', id, { status: update.status, reason }),
   ]);
-  return getExpense(db, id);
+  return getExpense(db, id, actorBiz(actor));
 }
 
 /** Full edit, owner only (runs/R09-accountant.md restricts the accountant to status, category and notes). */
 export async function updateExpense(db: D1Database, deps: Pick<Deps, 'fx'>, id: number, update: ExpenseUpdate, actor: AuditActor): Promise<ExpenseRow> {
-  const existing = await getExpense(db, id);
+  const existing = await getExpense(db, id, actorBiz(actor));
+  if (update.supplierId) {
+    const own = await first<{ id: number }>(db, 'SELECT id FROM suppliers WHERE id = ? AND business_id = ?', update.supplierId, actorBiz(actor));
+    if (!own) throw new NotFoundError('Supplier', update.supplierId);
+  }
   const currency = assertCurrency(update.currency ?? existing.currency);
   const amountMinor = update.amount !== undefined ? parseMajor(update.amount, currency) : existing.amount_minor;
   const vatAmountMinor =
@@ -420,7 +436,7 @@ export async function updateExpense(db: D1Database, deps: Pick<Deps, 'fx'>, id: 
     ),
     auditStatement(db, actor, 'expense.update', 'expense', id, update),
   ]);
-  return getExpense(db, id);
+  return getExpense(db, id, actorBiz(actor));
 }
 
 export async function updateExpenseCategoryAndNotes(
@@ -429,7 +445,7 @@ export async function updateExpenseCategoryAndNotes(
   update: { categoryId?: number | null; notes?: string | null },
   actor: AuditActor,
 ): Promise<ExpenseRow> {
-  const existing = await getExpense(db, id);
+  const existing = await getExpense(db, id, actorBiz(actor));
   await transaction(db, [
     stmt(
       db,
@@ -441,7 +457,7 @@ export async function updateExpenseCategoryAndNotes(
     ),
     auditStatement(db, actor, 'expense.update', 'expense', id, update),
   ]);
-  return getExpense(db, id);
+  return getExpense(db, id, actorBiz(actor));
 }
 
 export function formatAmount(minor: number, currency: string): string {

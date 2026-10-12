@@ -1,4 +1,5 @@
 import { type Context, Hono } from 'hono';
+import { listBusinessIds } from '../../core/business';
 import { z } from 'zod';
 import { type AuditActor, actorFrom } from '../../core/audit';
 import { type AuthUser, FEATURES, requireFeature } from '../../core/auth';
@@ -48,9 +49,9 @@ export interface RecurringModuleOptions {
 }
 
 function defaultSend(env: Env, baseUrl: string): SendFn {
-  return async (documentId, actor) => {
+  return async (documentId, actor, businessId) => {
     if (!env.MAIL_API_KEY) throw new Error('MAIL_API_KEY is not set. Outgoing email is unavailable.');
-    await sendDocumentEmail({ db: env.DB, files: env.FILES, env, mailer: new ResendMailer(env.MAIL_API_KEY), baseUrl }, { documentId, actor });
+    await sendDocumentEmail({ db: env.DB, files: env.FILES, env, mailer: new ResendMailer(env.MAIL_API_KEY), baseUrl, businessId }, { documentId, actor });
   };
 }
 
@@ -92,15 +93,27 @@ function idParam(c: Context<AppEnv>): number {
   return v;
 }
 
-/** The documents Ctx for the cron: acts as the first active owner, audited as the recurring job. */
-async function cronCtx(env: Env, options: RecurringModuleOptions): Promise<Ctx | null> {
+/** The documents Ctx for the cron in one business: acts as its first active owner, audited as the recurring job. */
+async function cronCtx(env: Env, options: RecurringModuleOptions, businessId: number): Promise<Ctx | null> {
   const owner = await first<{ id: number; email: string; name: string | null }>(
     env.DB,
-    "SELECT id, email, name FROM users WHERE role = 'owner' AND active = 1 ORDER BY id LIMIT 1",
+    `SELECT u.id, u.email, u.name FROM users u JOIN user_businesses ub ON ub.user_id = u.id AND ub.business_id = ? AND ub.role = 'owner'
+      WHERE u.active = 1 ORDER BY u.id LIMIT 1`,
+    businessId,
   );
   if (!owner) return null;
-  const user: AuthUser = { id: owner.id, email: owner.email, name: owner.name, role: 'owner', features: [...FEATURES], theme: null, locale: null };
-  const actor: AuditActor = { userId: owner.id, email: owner.email, role: 'system:recurring', ip: null, userAgent: null };
+  const user: AuthUser = {
+    id: owner.id,
+    email: owner.email,
+    name: owner.name,
+    role: 'owner',
+    features: [...FEATURES],
+    theme: null,
+    locale: null,
+    businessId,
+    businesses: [{ id: businessId, role: 'owner' }],
+  };
+  const actor: AuditActor = { userId: owner.id, email: owner.email, role: 'system:recurring', ip: null, userAgent: null, businessId };
   return { db: env.DB, actor, user, services: buildDocumentsServices(options.documentsOptions ?? {}, env) };
 }
 
@@ -115,7 +128,10 @@ export function createRecurringModule(options: RecurringModuleOptions = {}): Mod
     services: buildDocumentsServices(options.documentsOptions ?? {}, c.env),
   });
   const send = (c: Context<AppEnv>) => sendFor(c.env, c.env.PUBLIC_APP_URL || new URL(c.req.url).origin);
-  const state = async (c: Context<AppEnv>) => ({ schedules: await listSchedules(c.env.DB), runs: await listRuns(c.env.DB) });
+  const state = async (c: Context<AppEnv>) => ({
+    schedules: await listSchedules(c.env.DB, c.get('user').businessId),
+    runs: await listRuns(c.env.DB, c.get('user').businessId),
+  });
 
   r.get('/', requireFeature('issue_documents'), async (c) => c.json(await state(c)));
 
@@ -152,9 +168,12 @@ export function createRecurringModule(options: RecurringModuleOptions = {}): Mod
     crons: [RECURRING_CRON],
     async scheduled(controller, env) {
       if (controller.cron !== RECURRING_CRON) return;
-      const c = await cronCtx(env, options);
-      if (!c) return;
-      await runDue(c, sendFor(env, env.PUBLIC_APP_URL ?? ''), pendingSlack(env, env.PUBLIC_APP_URL ?? ''));
+      // R24: each business runs its own schedules, as its own owner.
+      for (const businessId of await listBusinessIds(env.DB)) {
+        const c = await cronCtx(env, options, businessId);
+        if (!c) continue;
+        await runDue(c, sendFor(env, env.PUBLIC_APP_URL ?? ''), pendingSlack(env, env.PUBLIC_APP_URL ?? ''));
+      }
     },
   };
 }

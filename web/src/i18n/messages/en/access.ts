@@ -36,8 +36,8 @@ export const access = {
   'access.users.colFeatures': 'Features',
   'access.users.noneFallback': 'None',
   'access.users.revoke': 'Revoke',
-  'access.users.revokeConfirm': 'Revoke access for {email}? This deletes their account at once.',
-  'access.users.inviteAccountant': 'Invite accountant',
+  'access.users.revokeConfirm': 'Remove {email} from this business? Someone left with no business loses the account.',
+  'access.users.inviteAccountant': 'Invite someone',
 
   // Status labels (statusLabel())
   'access.status.owner': 'Owner',
@@ -61,7 +61,7 @@ export const access = {
   'access.feature.notes': 'Notes',
 
   // InviteForm.tsx
-  'access.invite.ariaLabel': 'Invite accountant',
+  'access.invite.ariaLabel': 'Invite someone',
   'access.invite.emailLabel': 'Email',
   'access.invite.nameLabel': 'Name',
   'access.invite.accessEndsOnLabel': 'Access ends on',
@@ -70,4 +70,10 @@ export const access = {
   'access.invite.inviting': 'Inviting',
   'access.invite.sendInvite': 'Send invite',
   'access.invite.cancel': 'Cancel',
+  'access.role.assistant': 'Assistant',
+  'access.invite.roleLabel': 'Role',
+  'access.roleHint.owner': 'Everything, including Settings, users and numbering.',
+  'access.roleHint.assistant': 'Clients, quotes, payment requests, receipts, sending and expenses. No Settings, numbering, users or Tax Authority.',
+  'access.roleHint.accountant': 'Reads what the switches allow, until the end date.',
+  'access.users.roleFor': 'Role of {email}',
 };

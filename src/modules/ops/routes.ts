@@ -1,5 +1,6 @@
 import { type Context, Hono } from 'hono';
 import { actorFrom } from '../../core/audit';
+import { businessIdOf } from '../../core/business';
 import { requireFeature } from '../../core/auth';
 import { all, nowIso, todayIsrael } from '../../core/db';
 import { issuingEnabled } from '../../core/issuing';
@@ -59,7 +60,8 @@ async function storeImage(c: Context<AppEnv>, kind: 'logo' | 'signature'): Promi
   const ext = IMAGE_EXTENSIONS[file.type];
   if (!ext) throw new ValidationError('Upload a PNG, JPEG, WebP or SVG image.');
   if (file.size > MAX_IMAGE_BYTES) throw new ValidationError('The image is larger than 2 MB.');
-  const key = `business/${kind}-${Date.now()}.${ext}`;
+  // R24: business 1 keeps its keys. Another business stores under business/<id>/.
+  const key = businessIdOf(c) === 1 ? `business/${kind}-${Date.now()}.${ext}` : `business/${businessIdOf(c)}/${kind}-${Date.now()}.${ext}`;
   await c.env.FILES.put(key, await file.arrayBuffer(), { httpMetadata: { contentType: file.type } });
   return key;
 }
@@ -79,7 +81,7 @@ export function opsRoutes(): Hono<AppEnv> {
   const r = new Hono<AppEnv>();
   r.use('*', requireFeature('settings'));
 
-  r.get('/business', async (c) => c.json({ business: await getBusinessProfile(c.env.DB) }));
+  r.get('/business', async (c) => c.json({ business: await getBusinessProfile(c.env.DB, businessIdOf(c)) }));
 
   r.put('/business', async (c) => {
     const input = businessPatch.parse(await jsonBody(c));
@@ -88,11 +90,11 @@ export function opsRoutes(): Hono<AppEnv> {
   });
 
   r.get('/business/setup', async (c) => {
-    const missing = await missingBusinessFields(c.env.DB);
+    const missing = await missingBusinessFields(c.env.DB, businessIdOf(c));
     return c.json({ complete: missing.length === 0, missing });
   });
 
-  r.get('/business/logo', async (c) => serveImage(c, (await getBusinessProfile(c.env.DB)).logo_r2_key, 'Logo'));
+  r.get('/business/logo', async (c) => serveImage(c, (await getBusinessProfile(c.env.DB, businessIdOf(c))).logo_r2_key, 'Logo'));
 
   r.post('/business/logo', async (c) => {
     const key = await storeImage(c, 'logo');
@@ -105,7 +107,7 @@ export function opsRoutes(): Hono<AppEnv> {
     return c.json({ logoR2Key: null });
   });
 
-  r.get('/business/signature', async (c) => serveImage(c, (await getBusinessProfile(c.env.DB)).signature_r2_key, 'Signature'));
+  r.get('/business/signature', async (c) => serveImage(c, (await getBusinessProfile(c.env.DB, businessIdOf(c))).signature_r2_key, 'Signature'));
 
   r.post('/business/signature', async (c) => {
     const key = await storeImage(c, 'signature');
@@ -118,12 +120,14 @@ export function opsRoutes(): Hono<AppEnv> {
     return c.json({ signatureR2Key: null });
   });
 
-  r.get('/series', async (c) => c.json({ series: await listSeries(c.env.DB) }));
+  r.get('/series', async (c) => c.json({ series: await listSeries(c.env.DB, businessIdOf(c)) }));
 
   r.put('/series/:id/start-number', async (c) => {
     const input = startNumberInput.parse(await jsonBody(c));
+    const own = (await listSeries(c.env.DB, businessIdOf(c))) as { id: string }[];
+    if (!own.some((s) => s.id === c.req.param('id'))) throw new NotFoundError('Series', c.req.param('id'));
     await setStartNumber(c.env.DB, c.req.param('id'), input.startNumber, actorFrom(c));
-    return c.json({ series: await listSeries(c.env.DB) });
+    return c.json({ series: await listSeries(c.env.DB, businessIdOf(c)) });
   });
 
   r.get('/ceilings', async (c) => c.json({ ceilings: await listCeilings(c.env.DB) }));
@@ -142,16 +146,16 @@ export function opsRoutes(): Hono<AppEnv> {
     return c.json({ vatRates: await listVatRates(c.env.DB) }, 201);
   });
 
-  r.get('/issuing', async (c) => c.json({ enabled: await issuingEnabled(c.env.DB) }));
+  r.get('/issuing', async (c) => c.json({ enabled: await issuingEnabled(c.env.DB, businessIdOf(c)) }));
 
   r.put('/issuing', async (c) => {
     const input = issuingInput.parse(await jsonBody(c));
-    const skipped = input.enabled ? await skipMissedRuns(c.env.DB, todayIsrael()) : 0;
+    const skipped = input.enabled ? await skipMissedRuns(c.env.DB, todayIsrael(), businessIdOf(c)) : 0;
     await setIssuing(c.env.DB, actorFrom(c), input.enabled, skipped);
     return c.json({ enabled: input.enabled });
   });
 
-  r.get('/signature-mode', async (c) => c.json({ mode: await getSignatureMode(c.env.DB) }));
+  r.get('/signature-mode', async (c) => c.json({ mode: await getSignatureMode(c.env.DB, businessIdOf(c)) }));
 
   r.put('/signature-mode', async (c) => {
     const input = signatureModeInput.parse(await jsonBody(c));

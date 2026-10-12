@@ -32,7 +32,7 @@ describe('clientLedgersReport', () => {
     await finalizeWithClient('400', 100000, acme);
     await finalizeWithClient('400', 50000, beta);
 
-    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31');
+    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31', 1);
     expect(report.clients.map((c) => c.clientName)).toEqual(['Acme Ltd', 'Beta Co']);
     const acmeRow = report.clients.find((c) => c.clientName === 'Acme Ltd')!;
     expect(acmeRow.ledger.entries).toHaveLength(1);
@@ -43,7 +43,7 @@ describe('clientLedgersReport', () => {
     const client = await makeClient('Ils Co');
     await finalizeWithClient('400', 100000, client); // ILS: both balances move together
 
-    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31');
+    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31', 1);
     const row = report.clients.find((c) => c.clientName === 'Ils Co')!;
     expect(row.ledger.entries[0]).toMatchObject({ balance_minor: 100000, balance_ils_minor: 100000 });
     expect(row.closingIlsMinor).toBe(100000);
@@ -53,7 +53,7 @@ describe('clientLedgersReport', () => {
     const client = await makeClient('Foreign Co');
     await finalizeWithClient('PR', 50000, client, { currency: 'USD' }); // no total_ils_minor: not yet shown in ILS
 
-    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31');
+    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31', 1);
     const row = report.clients.find((c) => c.clientName === 'Foreign Co')!;
     expect(row.ledger.entries[0]).toMatchObject({ currency: 'USD', debit_minor: 50000, balance_minor: 50000 });
     expect(row.ledger.entries[0]!.debit_ils_minor).toBeNull();
@@ -64,21 +64,21 @@ describe('clientLedgersReport', () => {
     const client = await makeClient('Fixed Rate Co');
     await finalizeWithClient('400', 50000, client, { currency: 'USD', totalIlsMinor: 185000 });
 
-    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31');
+    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31', 1);
     const row = report.clients.find((c) => c.clientName === 'Fixed Rate Co')!;
     expect(row.ledger.entries[0]).toMatchObject({ currency: 'USD', debit_minor: 50000, debit_ils_minor: 185000, balance_ils_minor: 185000 });
   });
 
   it('excludes a client with no bookkeeping activity in the period', async () => {
     await makeClient('Quiet Co');
-    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31');
+    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31', 1);
     expect(report.clients.some((c) => c.clientName === 'Quiet Co')).toBe(false);
   });
 
   it('excludes quotes: not bookkeeping, same rule as clientLedger itself', async () => {
     const client = await makeClient('Quote Only Co');
     await finalizeWithClient('QT', 40000, client);
-    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31');
+    const report = await clientLedgersReport(db(), '2026-10-01', '2026-10-31', 1);
     expect(report.clients.some((c) => c.clientName === 'Quote Only Co')).toBe(false);
   });
 });

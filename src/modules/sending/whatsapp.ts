@@ -21,6 +21,8 @@ export interface WhatsAppLinkDeps {
   mailer: Mailer;
   engine?: PdfEngine;
   baseUrl: string;
+  /** R24: the business of the request. */
+  businessId: number;
 }
 
 export type WhatsAppLinkResult = { status: 'ready'; url: string; message: string; waUrl: string | null; expiresAt: string };
@@ -33,8 +35,8 @@ export type WhatsAppLinkResult = { status: 'ready'; url: string; message: string
  * A client with no granted consent blocks with a typed `consent_required` error (R16 task 2).
  */
 export async function createWhatsAppLink(deps: WhatsAppLinkDeps, documentId: number, actor: SendActor): Promise<WhatsAppLinkResult> {
-  const { db, files, env, baseUrl } = deps;
-  const doc = await getDoc(db, documentId);
+  const { db, files, env, baseUrl, businessId } = deps;
+  const doc = await getDoc(db, documentId, businessId);
   if (doc.status !== 'final') throw new ValidationError('Finalize the document before you send it.');
   if (doc.client_id === null) throw new ValidationError('This document has no client to send to.');
 
@@ -54,7 +56,7 @@ export async function createWhatsAppLink(deps: WhatsAppLinkDeps, documentId: num
   }
 
   const engine = deps.engine ?? engineFor(env);
-  const signing = await resolveSigningIdentity(db, env, { require: true });
+  const signing = await resolveSigningIdentity(db, env, businessId, { require: true });
   const options = { ownerTaxId: env.OWNER_TAX_ID ?? null, files: env.FILES };
   await renderAndStore(db, files, engine, doc.id, 'client', options, signing);
   await renderAndStore(db, files, engine, doc.id, 'filed', options, signing);

@@ -43,7 +43,7 @@ describe('expenseReport: expenses by month, category and supplier (runs/R08-repo
     await makeExpense({ supplierId: supplier, categoryKey: 'software', documentDate: '2026-11-05', amountMinor: 12000 });
     await makeExpense({ supplierId: supplier, categoryKey: 'software', documentDate: '2026-11-20', amountMinor: 8000, status: 'new' });
 
-    const report = await expenseReport(db(), '2026-11-01', '2026-11-30');
+    const report = await expenseReport(db(), '2026-11-01', '2026-11-30', 1);
     expect(report.rows).toHaveLength(2);
     expect(report.totalIlsMinor).toBe(20000);
     expect(report.byMonth).toEqual([{ month: '2026-11', totalIlsMinor: 20000 }]);
@@ -56,7 +56,7 @@ describe('expenseReport: expenses by month, category and supplier (runs/R08-repo
     await makeExpense({ documentDate: '2026-11-06', amountMinor: 6000, status: 'duplicate' });
     await makeExpense({ documentDate: '2026-11-06', amountMinor: 7000, status: 'returned' });
 
-    const report = await expenseReport(db(), '2026-11-06', '2026-11-06');
+    const report = await expenseReport(db(), '2026-11-06', '2026-11-06', 1);
     expect(report.rows).toHaveLength(0);
   });
 
@@ -70,7 +70,7 @@ describe('expenseReport: expenses by month, category and supplier (runs/R08-repo
     );
     await makeExpense({ documentDate: '2026-12-01', amountMinor: 4000, fileId });
 
-    const files = await expenseFilesForPeriod(db(), '2026-12-01', '2026-12-31');
+    const files = await expenseFilesForPeriod(db(), '2026-12-01', '2026-12-31', 1);
     expect(files).toEqual([{ r2Key: 'expenses/abc.pdf', filename: 'invoice.pdf' }]);
   });
 });

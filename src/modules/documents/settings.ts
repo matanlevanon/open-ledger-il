@@ -1,18 +1,16 @@
-import { first } from '../../core/db';
+import { readBusinessSetting } from '../../core/business';
 
-async function setting(db: D1Database, key: string): Promise<string | null> {
-  const row = await first<{ value: string }>(db, 'SELECT value FROM settings WHERE key = ?', key);
-  return row?.value ?? null;
-}
+/** R24: a business's own value wins, else the shared one. */
+const setting = (db: D1Database, businessId: number, key: string) => readBusinessSetting(db, businessId, key);
 
 /** Days a document may be dated before today without the owner's override. Seeded in 0100. */
-export async function backdateDays(db: D1Database): Promise<number> {
-  const n = Number(await setting(db, 'documents.backdate_days'));
+export async function backdateDays(db: D1Database, businessId: number): Promise<number> {
+  const n = Number(await setting(db, businessId, 'documents.backdate_days'));
   return Number.isSafeInteger(n) && n >= 0 ? n : 3;
 }
 
-export async function quotesEditableUntilConverted(db: D1Database): Promise<boolean> {
-  return (await setting(db, 'documents.qt_pr_editable_until_converted')) !== 'false';
+export async function quotesEditableUntilConverted(db: D1Database, businessId: number): Promise<boolean> {
+  return (await setting(db, businessId, 'documents.qt_pr_editable_until_converted')) !== 'false';
 }
 
 export type SignatureMode = 'secured' | 'none';
@@ -21,6 +19,6 @@ export type SignatureMode = 'secured' | 'none';
  * Signature mode, owned by R03 (key `signature_mode`). Documents are signed with a secured
  * signature by default (instruction 18ב), so a missing setting reads as `secured`.
  */
-export async function signatureMode(db: D1Database): Promise<SignatureMode> {
-  return (await setting(db, 'signature_mode')) === 'none' ? 'none' : 'secured';
+export async function signatureMode(db: D1Database, businessId: number): Promise<SignatureMode> {
+  return (await setting(db, businessId, 'signature_mode')) === 'none' ? 'none' : 'secured';
 }

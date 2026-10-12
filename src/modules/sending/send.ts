@@ -25,6 +25,8 @@ export interface SendDeps {
   engine?: PdfEngine;
   /** Origin used to build the consent link, e.g. "https://ledger.example.com". */
   baseUrl: string;
+  /** R24: the business of the request. A document of another business reads as not found. */
+  businessId: number;
 }
 
 export interface SendActor {
@@ -48,13 +50,13 @@ export interface SendEmailInput {
 }
 
 /** The To and CC a send would use by default, to prefill the send form. */
-export async function sendDefaults(db: D1Database, documentId: number): Promise<{ to: string | null; cc: string[]; bcc: string[] }> {
-  const doc = await getDoc(db, documentId);
+export async function sendDefaults(db: D1Database, documentId: number, businessId: number): Promise<{ to: string | null; cc: string[]; bcc: string[] }> {
+  const doc = await getDoc(db, documentId, businessId);
   const client =
     doc.client_id === null ? null : await first<{ email: string | null; cc_emails: string | null }>(db, 'SELECT email, cc_emails FROM clients WHERE id = ?', doc.client_id);
   const to = client?.email ?? null;
   const cc = finalCc(to ?? '', splitCc(client?.cc_emails));
-  const bcc = finalCc(to ?? '', splitCc(await ccSetting(db))).filter((a) => !cc.some((c) => c.toLowerCase() === a.toLowerCase()));
+  const bcc = finalCc(to ?? '', splitCc(await ccSetting(db, businessId))).filter((a) => !cc.some((c) => c.toLowerCase() === a.toLowerCase()));
   return { to, cc, bcc };
 }
 
@@ -85,8 +87,8 @@ async function isDemand(db: D1Database, type: string): Promise<boolean> {
  * function silently emailing a request on the caller's behalf.
  */
 export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): Promise<SendEmailResult> {
-  const { db, files, env, mailer, baseUrl } = deps;
-  const doc = await getDoc(db, input.documentId);
+  const { db, files, env, mailer, baseUrl, businessId } = deps;
+  const doc = await getDoc(db, input.documentId, businessId);
   if (doc.status !== 'final') throw new ValidationError('Finalize the document before you send it.');
   if (doc.client_id === null) throw new ValidationError('This document has no client to send to.');
 
@@ -115,20 +117,21 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
   if (!to) throw new ValidationError('This client has no email address on file. Provide one.');
   // CC: the client's copy list. BCC: the account list in Settings > Email, so the client never sees it.
   const cc = input.cc != null ? finalCc(to, input.cc) : finalCc(to, splitCc(client?.cc_emails));
-  const bcc = (input.bcc != null ? finalCc(to, input.bcc) : finalCc(to, splitCc(await ccSetting(db)))).filter(
+  const bcc = (input.bcc != null ? finalCc(to, input.bcc) : finalCc(to, splitCc(await ccSetting(db, businessId)))).filter(
     (a) => !cc.some((c) => c.toLowerCase() === a.toLowerCase()),
   );
 
   const engine = deps.engine ?? engineFor(env);
-  const signing = await resolveSigningIdentity(db, env, { require: true });
+  const signing = await resolveSigningIdentity(db, env, businessId, { require: true });
   const options = { ownerTaxId: env.OWNER_TAX_ID ?? null, files: env.FILES };
   const clientPdf = await renderAndStore(db, files, engine, doc.id, 'client', options, signing);
   await renderAndStore(db, files, engine, doc.id, 'filed', options, signing);
 
-  const links = (await isDemand(db, doc.type)) ? await paymentLinkSettings(db) : { stripe: null, paypal: null };
+  const links = (await isDemand(db, doc.type)) ? await paymentLinkSettings(db, businessId) : { stripe: null, paypal: null };
   const number = displayNumber(doc.type, doc.number);
   const clientName = client ? clientDisplayName(client, 'en') : '';
-  const businessName = await businessDisplayName(db);
+  // R24: the email goes out under the document's brand, over its business.
+  const businessName = await businessDisplayName(db, businessId, doc.brand_id);
 
   let messageId: string | null = null;
   let status: 'sent' | 'failed' = 'sent';
@@ -139,6 +142,7 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
       cc,
       bcc,
       subject: number ? `${number} from ${businessName}` : `Your document from ${businessName}`,
+      fromName: businessName,
       html: documentEmailHtml(clientName, number, links, input.message ?? null, businessName),
       text: documentEmailText(clientName, number, links, input.message ?? null, businessName),
       attachments: [{ filename: `${number ?? doc.id}.pdf`, content: clientPdf.bytes, contentType: 'application/pdf' }],

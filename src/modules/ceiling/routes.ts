@@ -18,7 +18,7 @@ export function ceilingRoutes(): Hono<AppEnv> {
 
   r.get('/meter', requireFeature('reports'), async (c) => {
     const date = c.req.query('date') ?? todayIsrael();
-    const meter = await ceilingMeter(c.env.DB, date);
+    const meter = await ceilingMeter(c.env.DB, date, c.get('user').businessId);
     if (!meter) return c.json({ meter: null });
     return c.json({ meter: { ...meter, percent: meterPercent(meter) } });
   });

@@ -19,7 +19,7 @@ describe('consent flow', () => {
 
   it('emails a consent request with a link and records a requested row', async () => {
     const clientId = await insertSendingClient({ email: 'consent-target@example.com' });
-    const result = await requestConsent(db(), env, mailer, clientId, 'https://ledger.test');
+    const result = await requestConsent(db(), env, mailer, clientId, 'https://ledger.test', 1);
 
     expect(mailer.sent).toHaveLength(1);
     expect(mailer.sent[0]!.to).toBe('consent-target@example.com');
@@ -31,13 +31,13 @@ describe('consent flow', () => {
 
   it('refuses to request consent for a client with no email', async () => {
     const clientId = await insertSendingClient({ email: null });
-    await expect(requestConsent(db(), env, mailer, clientId, 'https://ledger.test')).rejects.toThrow(/email/);
+    await expect(requestConsent(db(), env, mailer, clientId, 'https://ledger.test', 1)).rejects.toThrow(/email/);
   });
 
   /** R19: a Hebrew-only client (no nameEn) still gets a real greeting, not a blank one. */
   it('greets a Hebrew-only client by their Hebrew name in the consent request email', async () => {
     const clientId = await insertSendingClient({ nameEn: '', nameHe: 'לקוח עברי בע"מ', email: 'hebrew-only@example.com' });
-    await requestConsent(db(), env, mailer, clientId, 'https://ledger.test');
+    await requestConsent(db(), env, mailer, clientId, 'https://ledger.test', 1);
     expect(mailer.sent[0]!.text).toContain('לקוח עברי בע"מ');
   });
 

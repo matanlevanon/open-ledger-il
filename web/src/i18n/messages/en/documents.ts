@@ -71,6 +71,7 @@ export const documents = {
   'documents.editor.currencyLabel': 'Currency',
   'documents.editor.dateLabel': 'Date',
   'documents.editor.dueDateLabel': 'Due date',
+  'documents.editor.brandLabel': 'Brand',
   'documents.editor.clientCopyLabel': 'Client copy',
   'documents.editor.langEnglish': 'English',
   'documents.editor.langBilingual': 'Hebrew',
@@ -430,6 +431,9 @@ export const documents = {
 
   'clients.page.newDocument': 'New document',
   'clients.page.edit': 'Edit',
+  'clients.page.copyToBusiness': 'Copy to business',
+  'clients.page.copyTarget': 'Business to copy this client to',
+  'clients.page.copied': 'Copied. The copy is a separate client in that business.',
   'clients.page.activeSwitch': 'Active',
   'clients.page.active': 'Active',
   'clients.page.notActive': 'Not active',

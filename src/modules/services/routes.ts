@@ -1,4 +1,5 @@
 import { type Context, Hono } from 'hono';
+import { businessIdOf } from '../../core/business';
 import { actorFrom } from '../../core/audit';
 import { requireFeature, requireRole } from '../../core/auth';
 import { NotFoundError, ValidationError } from '../../core/errors';
@@ -32,36 +33,36 @@ export function createServicesModule(): ModuleDef {
 
   r.get('/', requireFeature('income_documents'), async (c) => {
     const activeOnly = c.req.query('active') === '1';
-    return c.json({ services: activeOnly ? await listServices(c.env.DB, true) : await listServices(c.env.DB) });
+    return c.json({ services: await listServices(c.env.DB, businessIdOf(c), activeOnly) });
   });
 
   r.post('/', requireRole('owner'), async (c) => {
     const input = serviceInput.parse(await body(c));
     await createService(c.env.DB, actorFrom(c), input);
-    return c.json({ services: await listServices(c.env.DB) }, 201);
+    return c.json({ services: await listServices(c.env.DB, businessIdOf(c)) }, 201);
   });
 
   r.patch('/:id', requireRole('owner'), async (c) => {
     const id = num(c);
     const patch = servicePatch.parse(await body(c));
     await updateService(c.env.DB, actorFrom(c), id, patch);
-    return c.json({ services: await listServices(c.env.DB) });
+    return c.json({ services: await listServices(c.env.DB, businessIdOf(c)) });
   });
 
   r.post('/:id/activate', requireRole('owner'), async (c) => {
     await setActive(c.env.DB, actorFrom(c), num(c), true);
-    return c.json({ services: await listServices(c.env.DB) });
+    return c.json({ services: await listServices(c.env.DB, businessIdOf(c)) });
   });
 
   r.post('/:id/archive', requireRole('owner'), async (c) => {
     await setActive(c.env.DB, actorFrom(c), num(c), false);
-    return c.json({ services: await listServices(c.env.DB) });
+    return c.json({ services: await listServices(c.env.DB, businessIdOf(c)) });
   });
 
   r.put('/reorder', requireRole('owner'), async (c) => {
     const { ids } = reorderInput.parse(await body(c));
     await reorder(c.env.DB, actorFrom(c), ids);
-    return c.json({ services: await listServices(c.env.DB) });
+    return c.json({ services: await listServices(c.env.DB, businessIdOf(c)) });
   });
 
   return { name: 'services', basePath: '/services', routes: r };

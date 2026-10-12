@@ -27,18 +27,20 @@ function safeName(value: string): string {
   return value.replace(/[^\p{L}\p{N}._ -]/gu, '').trim() || 'file';
 }
 
-export async function buildDocumentsZip(env: Env, from: string, to: string): Promise<DocumentsZipResult> {
+export async function buildDocumentsZip(env: Env, from: string, to: string, businessId: number): Promise<DocumentsZipResult> {
   const docs = await all<{ id: number; date: string; type: string; series_id: string; number: number; status: string }>(
     env.DB,
     `SELECT id, date, type, series_id, number, status FROM documents
-     WHERE number IS NOT NULL AND status IN ('final', 'cancelled') AND date BETWEEN ? AND ?
+     WHERE business_id = ? AND number IS NOT NULL AND status IN ('final', 'cancelled') AND date BETWEEN ? AND ?
      ORDER BY date, id`,
+    businessId,
     from,
     to,
   );
   const external = await all<{ id: number; source: string; original_number: string; issue_date: string; r2_key: string }>(
     env.DB,
-    'SELECT id, source, original_number, issue_date, r2_key FROM external_documents WHERE issue_date BETWEEN ? AND ? ORDER BY issue_date, id',
+    'SELECT id, source, original_number, issue_date, r2_key FROM external_documents WHERE business_id = ? AND issue_date BETWEEN ? AND ? ORDER BY issue_date, id',
+    businessId,
     from,
     to,
   );

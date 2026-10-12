@@ -18,8 +18,8 @@ export interface ProfitLossReport {
 }
 
 /** Income minus expenses, in ILS, by document date. Not a VAT report: that ships with R11's tax invoices. */
-export async function profitLossReport(db: D1Database, from: string, to: string): Promise<ProfitLossReport> {
-  const [income, expenses] = await Promise.all([incomeReport(db, from, to), expenseReport(db, from, to)]);
+export async function profitLossReport(db: D1Database, from: string, to: string, businessId: number): Promise<ProfitLossReport> {
+  const [income, expenses] = await Promise.all([incomeReport(db, from, to, businessId), expenseReport(db, from, to, businessId)]);
 
   const months = new Map<string, ProfitLossMonth>();
   for (const m of income.byMonth) {

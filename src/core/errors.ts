@@ -74,7 +74,7 @@ export class ConsentRequiredError extends DomainError {
 
 /**
  * Codes raised by D1 triggers with RAISE(ABORT, '<code>').
- * Keep in sync with migrations/0001_core.sql, 0002_integrity.sql and 2410_business_type_lock.sql.
+ * Keep in sync with migrations/0001_core.sql, 0002_integrity.sql, 2410, 2425 and 2430.
  */
 const TRIGGER_CODES: Record<string, () => DomainError> = {
   immutable_document: () => new ImmutableError(),
@@ -101,6 +101,10 @@ const TRIGGER_CODES: Record<string, () => DomainError> = {
   // R24, migrations/2410_business_type_lock.sql: פטור to מורשה is one way.
   legal_mode_locked: () => new DomainError('legal_mode_locked', 'The legal mode history never changes and never returns to עוסק פטור.', 409),
   entity_type_locked: () => new DomainError('entity_type_locked', 'The business type cannot change this way. It never returns to עוסק פטור.', 409),
+  // R24 Phase B, migrations/2425 and 2430: data of one business never crosses to another.
+  business_mismatch: () => new DomainError('business_mismatch', 'This belongs to another business.', 409),
+  business_locked: () => new DomainError('business_locked', 'A business is never deleted.', 409),
+  brand_in_use: () => new DomainError('brand_in_use', 'A brand is never deleted. Turn it off instead.', 409),
 };
 
 /** Maps a D1 trigger error to a typed domain error. Returns the input when no code matches. */

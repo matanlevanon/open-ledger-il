@@ -20,17 +20,17 @@ export interface CeilingMeterResult {
 }
 
 /** Null when the year has no ceiling row yet (Settings, not seeded automatically). */
-export async function ceilingMeter(db: D1Database, date: string): Promise<CeilingMeterResult | null> {
+export async function ceilingMeter(db: D1Database, date: string, businessId: number): Promise<CeilingMeterResult | null> {
   const year = Number(date.slice(0, 4));
   const yearStart = `${year}-01-01`;
   const yearEnd = `${year}-12-31`;
 
-  const [ceiling, legalMode, demands] = await Promise.all([ceilingFor(db, date), legalModeOn(db, date), openDemands(db)]);
+  const [ceiling, legalMode, demands] = await Promise.all([ceilingFor(db, date), legalModeOn(db, date, businessId), openDemands(db, businessId)]);
   if (!ceiling) return null;
 
   const [issuedTurnoverMinor, externalMinor, openRequestsMinor] = await Promise.all([
-    turnoverIls(db, yearStart, yearEnd),
-    uploadService.externalTurnoverIls(db, yearStart, yearEnd),
+    turnoverIls(db, yearStart, yearEnd, businessId),
+    uploadService.externalTurnoverIls(db, yearStart, yearEnd, businessId),
     openRequestsIls(db, demands, yearStart, yearEnd, date),
   ]);
   // R17 task 7: a document uploaded from another system already counts toward the year's

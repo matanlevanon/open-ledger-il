@@ -6,6 +6,7 @@ import { ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import type { DocumentsModuleOptions } from '../documents';
 import { ceilingMeter } from '../ceiling';
+import { businessIdOf } from '../../core/business';
 import { businessTypeStatus } from './business-type';
 import { startCompanyInput, switchInput, vatReportingInput } from './schemas';
 import type { SwitchDeps, SwitchResult } from './service';
@@ -38,15 +39,15 @@ export function legalModeRoutes(deps: LegalModeRoutesDeps): Hono<AppEnv> {
   const r = new Hono<AppEnv>();
   r.use('*', requireFeature('settings'));
 
-  r.get('/status', async (c) => c.json(await businessTypeStatus(c.env, todayIsrael())));
+  r.get('/status', async (c) => c.json(await businessTypeStatus(c.env, todayIsrael(), businessIdOf(c))));
 
   r.put('/vat-reporting', async (c) => {
     const { vatReporting } = vatReportingInput.parse(await body(c));
     await transaction(c.env.DB, [
-      stmt(c.env.DB, 'UPDATE business_profile SET vat_reporting = ? WHERE id = 1', vatReporting),
-      auditStatement(c.env.DB, actorFrom(c), 'business.vat_reporting_set', 'business_profile', 1, { vatReporting }),
+      stmt(c.env.DB, 'UPDATE businesses SET vat_reporting = ? WHERE id = ?', vatReporting, businessIdOf(c)),
+      auditStatement(c.env.DB, actorFrom(c), 'business.vat_reporting_set', 'business', businessIdOf(c), { vatReporting }),
     ]);
-    return c.json(await businessTypeStatus(c.env, todayIsrael()));
+    return c.json(await businessTypeStatus(c.env, todayIsrael(), businessIdOf(c)));
   });
 
   r.post('/switch', async (c) => {
@@ -58,11 +59,11 @@ export function legalModeRoutes(deps: LegalModeRoutesDeps): Hono<AppEnv> {
     assertDate(effectiveDate, 'effectiveDate');
     if (effectiveDate < today) throw new ValidationError('The effective date cannot be in the past.');
 
-    const meter = await ceilingMeter(c.env.DB, today);
+    const meter = await ceilingMeter(c.env.DB, today, businessIdOf(c));
     const result = await switchToMurshe(
       c.env,
       { documentsOptions: deps.documentsOptions, itaConnectionCheck: deps.itaConnectionCheck },
-      { kind: input.kind, effectiveDate, reason: input.reason ?? null, repriceDrafts: input.repriceDrafts, target: 'osek_murshe' },
+      { kind: input.kind, effectiveDate, reason: input.reason ?? null, repriceDrafts: input.repriceDrafts, target: 'osek_murshe', businessId: businessIdOf(c) },
       c.get('user'),
       actorFrom(c),
     );
@@ -76,7 +77,7 @@ export function legalModeRoutes(deps: LegalModeRoutesDeps): Hono<AppEnv> {
     const result = await switchToMurshe(
       c.env,
       { documentsOptions: deps.documentsOptions, itaConnectionCheck: deps.itaConnectionCheck },
-      { kind: 'registered', effectiveDate: today, reason: input.reason ?? null, repriceDrafts: false, target: 'company' },
+      { kind: 'registered', effectiveDate: today, reason: input.reason ?? null, repriceDrafts: false, target: 'company', businessId: businessIdOf(c) },
       c.get('user'),
       actorFrom(c),
     );

@@ -1,4 +1,5 @@
 import { type Context, Hono } from 'hono';
+import { businessIdOf } from '../../core/business';
 import { audit } from '../../core/audit';
 import { requireFeature } from '../../core/auth';
 import { assertDate, run, todayIsrael } from '../../core/db';
@@ -45,8 +46,8 @@ function base64(bytes: Uint8Array): string {
 async function logRun(c: Context<AppEnv>, kind: 'unified_file' | 'pcn874', report: ValidationReport, extra: Record<string, unknown> = {}): Promise<void> {
   await run(
     c.env.DB,
-    `INSERT INTO export_runs (kind, period_from, period_to, record_count, total_ils_minor, series_summary, warnings, layout_status, generated_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO export_runs (kind, period_from, period_to, record_count, total_ils_minor, series_summary, warnings, layout_status, generated_by, business_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     kind,
     report.from,
     report.to,
@@ -56,6 +57,7 @@ async function logRun(c: Context<AppEnv>, kind: 'unified_file' | 'pcn874', repor
     JSON.stringify(report.warnings),
     report.layoutStatus,
     c.get('user').id,
+    businessIdOf(c),
   );
   await audit(c, `exports.${kind}.generate`, 'export_run', `${report.from}:${report.to}`, {
     recordCount: report.totalRecords,
@@ -71,7 +73,7 @@ export function exportsRoutes(): Hono<AppEnv> {
   /** The unified file as a zip download: OPENFRMT/<vat>.<yy>/<MMDDhhmm>/INI.TXT and BKMVDATA.zip. */
   r.get('/unified-file', requireFeature('unified_file'), async (c) => {
     const { from, to } = dateRange(c);
-    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c) });
+    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c), businessId: businessIdOf(c) });
     await logRun(c, 'unified_file', result.report, { mainId: result.summary.mainId, path: result.summary.path });
     return download(result.zip, zipName(result), 'application/zip');
   });
@@ -82,36 +84,36 @@ export function exportsRoutes(): Hono<AppEnv> {
    */
   r.post('/unified-file/run', requireFeature('unified_file'), async (c) => {
     const { from, to } = dateRange(c);
-    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c) });
+    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c), businessId: businessIdOf(c) });
     await logRun(c, 'unified_file', result.report, { mainId: result.summary.mainId, path: result.summary.path });
     return c.json({ filename: zipName(result), zipBase64: base64(result.zip), summary: result.summary, report: result.report });
   });
 
   /** The business the export dialog shows before a run. */
-  r.get('/unified-file/business', requireFeature('unified_file'), async (c) => c.json(await businessIdentity(c.env)));
+  r.get('/unified-file/business', requireFeature('unified_file'), async (c) => c.json(await businessIdentity(c.env, businessIdOf(c))));
 
   /** The section 2.6 report and the counts for a period, without logging an export. */
   r.get('/unified-file/report', requireFeature('unified_file'), async (c) => {
     const { from, to } = dateRange(c);
-    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c) });
+    const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c), businessId: businessIdOf(c) });
     return c.json({ ...result.report, summary: result.summary });
   });
 
   r.get('/pcn874', requireFeature('pcn874'), async (c) => {
     const { from, to } = dateRange(c);
-    const result = await buildPcn874(c.env, from, to);
+    const result = await buildPcn874(c.env, from, to, businessIdOf(c));
     await logRun(c, 'pcn874', result.report);
     return download(result.text, `pcn874-${from}-to-${to}.txt`, 'text/plain');
   });
 
   r.get('/pcn874/report', requireFeature('pcn874'), async (c) => {
     const { from, to } = dateRange(c);
-    const result = await buildPcn874(c.env, from, to);
+    const result = await buildPcn874(c.env, from, to, businessIdOf(c));
     return c.json(result.report);
   });
 
   r.get('/runs', requireFeature('unified_file'), async (c) => {
-    const rows = await c.env.DB.prepare('SELECT * FROM export_runs ORDER BY generated_at DESC LIMIT 50').all();
+    const rows = await c.env.DB.prepare('SELECT * FROM export_runs WHERE business_id = ? ORDER BY generated_at DESC LIMIT 50').bind(businessIdOf(c)).all();
     return c.json({ runs: rows.results });
   });
 

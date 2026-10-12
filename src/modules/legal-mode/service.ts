@@ -12,6 +12,7 @@ import {
   listOpenFinalPaymentRequests,
   repriceOpenDraftsForSwitch,
 } from '../documents';
+import { seriesIdFor } from '../../core/business';
 import { REGISTERED_NOTE, getEntityType, isFreshLedger } from './business-type';
 
 /**
@@ -57,6 +58,8 @@ export interface SwitchOptions {
   repriceDrafts: boolean;
   /** The business type the switch records. `company` comes only from start-company. */
   target: 'osek_murshe' | 'company';
+  /** R24 Phase B: the business that switches. Its own series, legal modes and tasks. */
+  businessId: number;
 }
 
 function addDays(date: string, days: number): string {
@@ -73,7 +76,7 @@ export interface SwitchDeps {
    * until src/modules/index.ts wires the real ITA token status. Never fails the switch itself:
    * the connection can always be fixed later from the ITA screen.
    */
-  itaConnectionCheck?: (env: Env) => Promise<{ connected: boolean }>;
+  itaConnectionCheck?: (env: Env, businessId: number) => Promise<{ connected: boolean }>;
 }
 
 /**
@@ -92,11 +95,11 @@ export async function switchToMurshe(
   actor: AuditActor,
 ): Promise<SwitchResult> {
   const db = env.DB;
-  const { kind, effectiveDate, reason, repriceDrafts, target } = opts;
-  const already = await first<{ id: number }>(db, "SELECT id FROM legal_modes WHERE mode = 'murshe' LIMIT 1");
+  const { kind, effectiveDate, reason, repriceDrafts, target, businessId } = opts;
+  const already = await first<{ id: number }>(db, "SELECT id FROM legal_modes WHERE mode = 'murshe' AND business_id = ? LIMIT 1", businessId);
   if (already) throw new ConflictError('already_murshe', 'The switch to עוסק מורשה is already confirmed. It cannot run twice.');
-  if ((await getEntityType(db)) !== 'osek_patur') throw new ConflictError('already_murshe', 'This business is not עוסק פטור. There is nothing to switch.');
-  if ((kind === 'registered' || target === 'company') && !(await isFreshLedger(db))) {
+  if ((await getEntityType(db, businessId)) !== 'osek_patur') throw new ConflictError('already_murshe', 'This business is not עוסק פטור. There is nothing to switch.');
+  if ((kind === 'registered' || target === 'company') && !(await isFreshLedger(db, businessId))) {
     throw new ConflictError(
       'ledger_not_fresh',
       target === 'company'
@@ -107,47 +110,56 @@ export async function switchToMurshe(
 
   const now = nowIso();
   const vatOfficeTaskDueAt = kind === 'becoming' ? addDays(effectiveDate, VAT_OFFICE_NOTICE_DAYS) : null;
-  const seriesOpened = [...MURSHE_SERIES_TYPES, MURSHE_RECEIPT_SERIES];
+  const seriesOpened = [...MURSHE_SERIES_TYPES, MURSHE_RECEIPT_SERIES].map((id) => seriesIdFor(businessId, id));
+  const paturReceiptSeries = seriesIdFor(businessId, PATUR_RECEIPT_SERIES);
+  const mursheReceiptSeries = seriesIdFor(businessId, MURSHE_RECEIPT_SERIES);
   const note = kind === 'registered' ? REGISTERED_NOTE : reason;
 
   await transaction(db, [
     stmt(
       db,
-      'INSERT INTO legal_modes (mode, effective_from, confirmed_at, confirmed_by, note) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO legal_modes (business_id, mode, effective_from, confirmed_at, confirmed_by, note) VALUES (?, ?, ?, ?, ?, ?)',
+      businessId,
       'murshe',
       effectiveDate,
       now,
       user.id,
       note,
     ),
-    stmt(db, 'UPDATE business_profile SET entity_type = ? WHERE id = 1', target),
-    stmt(db, "UPDATE series SET closed_at = ? WHERE id = ? AND closed_at IS NULL", now, PATUR_RECEIPT_SERIES),
-    stmt(
-      db,
-      `INSERT INTO series (id, doc_type, name_en, name_he, legal_mode)
-       SELECT code, code, name_en, name_he, 'murshe' FROM document_types
-       WHERE code IN (${MURSHE_SERIES_TYPES.map(() => '?').join(',')})
-         AND NOT EXISTS (SELECT 1 FROM series WHERE series.id = document_types.code)`,
-      ...MURSHE_SERIES_TYPES,
+    stmt(db, 'UPDATE businesses SET entity_type = ? WHERE id = ?', target, businessId),
+    stmt(db, 'UPDATE series SET closed_at = ? WHERE id = ? AND closed_at IS NULL', now, paturReceiptSeries),
+    ...MURSHE_SERIES_TYPES.map((code) =>
+      stmt(
+        db,
+        `INSERT INTO series (id, doc_type, name_en, name_he, legal_mode, business_id)
+         SELECT ?, code, name_en, name_he, 'murshe', ? FROM document_types
+         WHERE code = ? AND NOT EXISTS (SELECT 1 FROM series WHERE id = ?)`,
+        seriesIdFor(businessId, code),
+        businessId,
+        code,
+        seriesIdFor(businessId, code),
+      ),
     ),
     stmt(
       db,
-      `INSERT INTO series (id, doc_type, name_en, name_he, legal_mode)
-       SELECT ?, code, name_en, name_he, 'murshe' FROM document_types WHERE code = ?
+      `INSERT INTO series (id, doc_type, name_en, name_he, legal_mode, business_id)
+       SELECT ?, code, name_en, name_he, 'murshe', ? FROM document_types WHERE code = ?
          AND NOT EXISTS (SELECT 1 FROM series WHERE id = ?)`,
-      MURSHE_RECEIPT_SERIES,
+      mursheReceiptSeries,
+      businessId,
       PATUR_RECEIPT_SERIES,
-      MURSHE_RECEIPT_SERIES,
+      mursheReceiptSeries,
     ),
     stmt(db, `UPDATE document_types SET enabled = 1 WHERE code IN (${MURSHE_SERIES_TYPES.map(() => '?').join(',')})`, ...MURSHE_SERIES_TYPES),
     ...(vatOfficeTaskDueAt
       ? [
           stmt(
             db,
-            `INSERT INTO tasks (kind, title, due_at, alert_at) VALUES ('vat_office_notice', ?, ?, ?)`,
+            `INSERT INTO tasks (kind, title, due_at, alert_at, business_id) VALUES ('vat_office_notice', ?, ?, ?, ?)`,
             'Notify the VAT office of the switch to עוסק מורשה',
             vatOfficeTaskDueAt,
             addDays(vatOfficeTaskDueAt, -5),
+            businessId,
           ),
         ]
       : []),
@@ -157,14 +169,14 @@ export async function switchToMurshe(
       effectiveDate,
       reason,
       note,
-      seriesClosed: [PATUR_RECEIPT_SERIES],
+      seriesClosed: [paturReceiptSeries],
       seriesOpened,
     }),
   ]);
 
   if (deps.itaConnectionCheck) {
     try {
-      const { connected } = await deps.itaConnectionCheck(env);
+      const { connected } = await deps.itaConnectionCheck(env, businessId);
       await auditAs(db, actor, 'legal_mode.ita_connection_check', 'legal_mode', effectiveDate, { connected });
     } catch {
       // The switch itself already committed. A check that can't run (ITA module not
@@ -173,7 +185,7 @@ export async function switchToMurshe(
     }
   }
 
-  const openPaymentRequests = await listOpenFinalPaymentRequests(db);
+  const openPaymentRequests = await listOpenFinalPaymentRequests(db, businessId);
 
   let repricedDrafts: number[] = [];
   if (repriceDrafts) {
@@ -187,7 +199,7 @@ export async function switchToMurshe(
   return {
     effectiveDate,
     seriesOpened,
-    seriesClosed: [PATUR_RECEIPT_SERIES],
+    seriesClosed: [paturReceiptSeries],
     openPaymentRequests,
     repricedDrafts,
     vatOfficeTaskDueAt,

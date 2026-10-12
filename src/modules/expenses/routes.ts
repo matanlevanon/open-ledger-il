@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { businessIdOf } from '../../core/business';
 import { readerStatus } from '../ai';
 import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
@@ -54,25 +55,25 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
     const q = c.req.query();
     const status = isStatus(q.status) ? q.status : undefined;
     const parsed = listQuerySchema.parse(q);
-    const rows = await service.listExpenses(c.env.DB, { status, ...parsed });
+    const rows = await service.listExpenses(c.env.DB, { status, ...parsed }, businessIdOf(c));
     return c.json({ expenses: rows });
   });
 
   app.get('/next', async (c) => {
     const exclude = c.req.query('excludeId');
-    const row = await service.nextForReview(c.env.DB, exclude ? idParam(exclude) : undefined);
+    const row = await service.nextForReview(c.env.DB, businessIdOf(c), exclude ? idParam(exclude) : undefined);
     return c.json({ expense: row });
   });
 
-  app.get('/suppliers', async (c) => c.json({ suppliers: await service.listSuppliers(c.env.DB) }));
+  app.get('/suppliers', async (c) => c.json({ suppliers: await service.listSuppliers(c.env.DB, businessIdOf(c)) }));
 
-  app.post('/suppliers', requireRole('owner'), async (c) => {
+  app.post('/suppliers', requireRole('owner', 'assistant'), async (c) => {
     const input = SupplierInputSchema.parse(await c.req.json());
     const supplier = await service.createSupplier(c.env.DB, input, actorFrom(c));
     return c.json({ supplier }, 201);
   });
 
-  app.patch('/suppliers/:id', requireRole('owner'), async (c) => {
+  app.patch('/suppliers/:id', requireRole('owner', 'assistant'), async (c) => {
     const input = SupplierInputSchema.partial().parse(await c.req.json());
     const supplier = await service.updateSupplier(c.env.DB, idParam(c.req.param('id')), input, actorFrom(c));
     return c.json({ supplier });
@@ -95,7 +96,7 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
   // docs/accountant-access.md: the accountant's Expenses rights are "view files, set status,
   // set category" only. Creating a new expense record/file is an owner action, same as the
   // Drive ingest route below.
-  app.post('/upload', requireRole('owner'), async (c) => {
+  app.post('/upload', requireRole('owner', 'assistant'), async (c) => {
     const form = await c.req.formData();
     const file = form.get('file');
     if (!(file instanceof File)) throw new ValidationError('Attach a file under the "file" field.');
@@ -110,7 +111,7 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
   });
 
   app.get('/settings/drive-root-folder', requireRole('owner'), async (c) =>
-    c.json({ folderId: await service.getDriveRootFolder(c.env.DB) }),
+    c.json({ folderId: await service.getDriveRootFolder(c.env.DB, businessIdOf(c)) }),
   );
 
   app.put('/settings/drive-root-folder', requireRole('owner'), async (c) => {
@@ -122,11 +123,11 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
   // R20: the Settings > Expenses tab reads this in one call.
   app.get('/settings/drive', requireRole('owner'), async (c) =>
     c.json({
-      folderId: await driveImport.effectiveDriveRoot(c.env.DB),
-      folderIdSaved: (await service.getDriveRootFolder(c.env.DB)) !== null,
-      indexTitlePattern: await driveImport.getIndexTitlePattern(c.env.DB),
-      dailySync: await driveImport.getDailySync(c.env.DB),
-      runs: await driveImport.listImportRuns(c.env.DB),
+      folderId: await driveImport.effectiveDriveRoot(c.env.DB, businessIdOf(c)),
+      folderIdSaved: (await service.getDriveRootFolder(c.env.DB, businessIdOf(c))) !== null,
+      indexTitlePattern: await driveImport.getIndexTitlePattern(c.env.DB, businessIdOf(c)),
+      dailySync: await driveImport.getDailySync(c.env.DB, businessIdOf(c)),
+      runs: await driveImport.listImportRuns(c.env.DB, businessIdOf(c)),
       // R24: who reads documents and whether its key is set. Never the key.
       reader: readerStatus(c.env),
     }),
@@ -144,7 +145,7 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
     return c.json({ indexTitlePattern: pattern });
   });
 
-  app.get('/import/runs', requireRole('owner'), async (c) => c.json({ runs: await driveImport.listImportRuns(c.env.DB) }));
+  app.get('/import/runs', requireRole('owner'), async (c) => c.json({ runs: await driveImport.listImportRuns(c.env.DB, businessIdOf(c)) }));
 
   // Import month button. Works whether the daily sync is on or off. Defaults to this month.
   app.post('/import/month', requireRole('owner'), async (c) => {
@@ -156,7 +157,7 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
 
   app.get('/files/:id/download', async (c) => {
     const fileId = idParam(c.req.param('id'));
-    const file = await service.getExpenseFile(c.env.DB, fileId);
+    const file = await service.getExpenseFile(c.env.DB, fileId, businessIdOf(c));
     const object = await readFile(c.env, file.r2_key);
     if (!object) throw new NotFoundError('File', fileId);
     return new Response(object.body, {
@@ -164,9 +165,9 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
     });
   });
 
-  app.get('/:id', async (c) => c.json({ expense: await service.getExpense(c.env.DB, idParam(c.req.param('id'))) }));
+  app.get('/:id', async (c) => c.json({ expense: await service.getExpense(c.env.DB, idParam(c.req.param('id')), businessIdOf(c)) }));
 
-  app.patch('/:id', requireRole('owner'), async (c) => {
+  app.patch('/:id', requireRole('owner', 'assistant'), async (c) => {
     const deps = resolveDeps(c.env);
     const input = ExpenseUpdateSchema.parse(await c.req.json());
     const expense = await service.updateExpense(c.env.DB, deps, idParam(c.req.param('id')), input, actorFrom(c));

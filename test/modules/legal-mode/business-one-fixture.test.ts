@@ -28,22 +28,28 @@ describe('business 1 across the R24 migrations', () => {
       scratch().prepare("INSERT INTO legal_modes (mode, effective_from, note) VALUES ('murshe', '2026-09-01', 'crossed the ceiling')"),
       scratch().prepare("INSERT INTO clients (name_en, country) VALUES ('Client One', 'IL')"),
     ]);
-    const profileColumns = 'id, name_en, name_he, address_en, address_he, email, phone, website, bank_details, logo_r2_key, tax_id, updated_at';
-    const tables: [string, string][] = [
-      ['business_profile', profileColumns],
-      ['legal_modes', '*'],
-      ['series', '*'],
-      ['clients', '*'],
-      ['vat_rates', '*'],
-      ['ceilings', '*'],
-    ];
-    const was = await Promise.all(tables.map(([t, c]) => snapshot(t, c)));
+    // Every table that holds business 1, read through the columns it had before R24.
+    const tables = ['business_profile', 'legal_modes', 'series', 'clients', 'documents', 'finalizations', 'vat_rates', 'ceilings', 'settings', 'users'];
+    const columnsBefore: Record<string, string> = {};
+    for (const t of tables) {
+      const cols = (await scratch().prepare(`PRAGMA table_info(${t})`).all<{ name: string }>()).results.map((c) => c.name);
+      columnsBefore[t] = cols.join(', ');
+    }
+    const was = await Promise.all(tables.map((t) => snapshot(t, columnsBefore[t]!)));
 
     await applyD1Migrations(scratch(), r24);
 
-    const now = await Promise.all(tables.map(([t, c]) => snapshot(t, c)));
+    const now = await Promise.all(tables.map((t) => snapshot(t, columnsBefore[t]!)));
     expect(now).toEqual(was);
     const added = await scratch().prepare('SELECT entity_type, vat_reporting FROM business_profile WHERE id = 1').first();
     expect(added).toEqual({ entity_type: 'osek_murshe', vat_reporting: 'bimonthly' });
+    // Phase B: every existing row is business 1, with one default brand and the users' old roles.
+    for (const t of ['legal_modes', 'series', 'clients', 'documents', 'finalizations']) {
+      const other = await scratch().prepare(`SELECT COUNT(*) AS n FROM ${t} WHERE business_id IS NOT 1`).first<{ n: number }>();
+      expect(other?.n).toBe(0);
+    }
+    expect(await scratch().prepare('SELECT business_id, is_default, name_en FROM brands').all().then((r) => r.results)).toEqual([
+      { business_id: 1, is_default: 1, name_en: '' },
+    ]);
   });
 });

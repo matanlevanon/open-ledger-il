@@ -1,4 +1,5 @@
-import { type AuditActor, auditAs, auditStatement } from '../../core/audit';
+import { type AuditActor, auditAs, auditStatement, actorBiz } from '../../core/audit';
+import { readBusinessSetting, settingKey } from '../../core/business';
 import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
 import { ConfigError, ValidationError } from '../../core/errors';
 import { type Currency, HOME_CURRENCY, assertCurrency, isCurrency, parseMajor } from '../../core/money';
@@ -178,14 +179,13 @@ export function extractionShowsSelf(extracted: ExtractedExpense, identity: Busin
 // ---------------------------------------------------------------------------
 
 /** The saved root folder, or null until the owner saves one in Settings > Expenses. */
-export async function effectiveDriveRoot(db: D1Database): Promise<string | null> {
-  return service.getDriveRootFolder(db);
+export async function effectiveDriveRoot(db: D1Database, businessId: number): Promise<string | null> {
+  return service.getDriveRootFolder(db, businessId);
 }
 
 /** The saved index sheet title pattern, or `Expense index YYYY-MM`. */
-export async function getIndexTitlePattern(db: D1Database): Promise<string> {
-  const row = await first<{ value: string }>(db, 'SELECT value FROM settings WHERE key = ?', INDEX_TITLE_SETTING_KEY);
-  return row?.value?.trim() || DEFAULT_INDEX_TITLE_PATTERN;
+export async function getIndexTitlePattern(db: D1Database, businessId: number): Promise<string> {
+  return (await readBusinessSetting(db, businessId, INDEX_TITLE_SETTING_KEY))?.trim() || DEFAULT_INDEX_TITLE_PATTERN;
 }
 
 export async function setIndexTitlePattern(db: D1Database, pattern: string, actor: AuditActor): Promise<void> {
@@ -194,7 +194,7 @@ export async function setIndexTitlePattern(db: D1Database, pattern: string, acto
       db,
       `INSERT INTO settings (key, value) VALUES (?, ?)
        ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = ?`,
-      INDEX_TITLE_SETTING_KEY,
+      settingKey(actorBiz(actor), INDEX_TITLE_SETTING_KEY),
       pattern,
       nowIso(),
     ),
@@ -202,9 +202,8 @@ export async function setIndexTitlePattern(db: D1Database, pattern: string, acto
   ]);
 }
 
-export async function getDailySync(db: D1Database): Promise<boolean> {
-  const row = await first<{ value: string }>(db, 'SELECT value FROM settings WHERE key = ?', DAILY_SYNC_SETTING_KEY);
-  return row?.value === '1';
+export async function getDailySync(db: D1Database, businessId: number): Promise<boolean> {
+  return (await readBusinessSetting(db, businessId, DAILY_SYNC_SETTING_KEY, false)) === '1';
 }
 
 export async function setDailySync(db: D1Database, enabled: boolean, actor: AuditActor): Promise<void> {
@@ -213,7 +212,7 @@ export async function setDailySync(db: D1Database, enabled: boolean, actor: Audi
       db,
       `INSERT INTO settings (key, value) VALUES (?, ?)
        ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = ?`,
-      DAILY_SYNC_SETTING_KEY,
+      settingKey(actorBiz(actor), DAILY_SYNC_SETTING_KEY),
       enabled ? '1' : '0',
       nowIso(),
     ),
@@ -252,8 +251,12 @@ export function normalizeSupplierName(name: string): string {
 }
 
 /** Every supplier that is the same business: same tax id, or the same name once normalized. */
-async function matchingSupplierIds(db: D1Database, name: string, taxId: string | null): Promise<number[]> {
-  const suppliers = await all<{ id: number; name: string; tax_id: string | null }>(db, 'SELECT id, name, tax_id FROM suppliers ORDER BY id');
+async function matchingSupplierIds(db: D1Database, name: string, taxId: string | null, businessId: number): Promise<number[]> {
+  const suppliers = await all<{ id: number; name: string; tax_id: string | null }>(
+    db,
+    'SELECT id, name, tax_id FROM suppliers WHERE business_id = ? ORDER BY id',
+    businessId,
+  );
   const wanted = normalizeSupplierName(name);
   const tax = taxId?.trim() || null;
   return suppliers
@@ -261,16 +264,22 @@ async function matchingSupplierIds(db: D1Database, name: string, taxId: string |
     .map((s) => s.id);
 }
 
-async function matchByDriveFile(db: D1Database, driveFileId: string): Promise<Match | null> {
-  const row = await first<{ expense_id: number | null }>(db, 'SELECT expense_id FROM expense_files WHERE drive_file_id = ?', driveFileId);
+async function matchByDriveFile(db: D1Database, driveFileId: string, businessId: number): Promise<Match | null> {
+  const row = await first<{ expense_id: number | null }>(
+    db,
+    'SELECT expense_id FROM expense_files WHERE drive_file_id = ? AND business_id = ?',
+    driveFileId,
+    businessId,
+  );
   return row ? { reason: 'drive_file', expenseId: row.expense_id } : null;
 }
 
-async function matchByHash(db: D1Database, sha256: string): Promise<Match | null> {
+async function matchByHash(db: D1Database, sha256: string, businessId: number): Promise<Match | null> {
   const row = await first<{ expense_id: number }>(
     db,
-    'SELECT expense_id FROM expense_files WHERE sha256 = ? AND expense_id IS NOT NULL ORDER BY id LIMIT 1',
+    'SELECT expense_id FROM expense_files WHERE sha256 = ? AND expense_id IS NOT NULL AND business_id = ? ORDER BY id LIMIT 1',
     sha256,
+    businessId,
   );
   return row ? { reason: 'file_hash', expenseId: row.expense_id } : null;
 }
@@ -348,14 +357,15 @@ async function storeDriveFile(env: Env, file: DriveFile, bytes: ArrayBuffer, sha
   await storeFile(env, key, bytes, file.mimeType);
   const { lastRowId } = await run(
     env.DB,
-    `INSERT INTO expense_files (source, drive_file_id, r2_key, filename, content_type, size_bytes, sha256)
-     VALUES ('drive', ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO expense_files (source, drive_file_id, r2_key, filename, content_type, size_bytes, sha256, business_id)
+     VALUES ('drive', ?, ?, ?, ?, ?, ?, ?)`,
     file.id,
     key,
     file.name,
     file.mimeType,
     bytes.byteLength,
     sha256,
+    actorBiz(actor),
   );
   await auditAs(env.DB, actor, 'expense_file.ingest', 'expense_file', lastRowId, { source: 'drive', filename: file.name });
   return lastRowId;
@@ -383,8 +393,8 @@ async function insertExpense(db: D1Database, e: NewExpense, actor: AuditActor): 
     db,
     `INSERT INTO expenses (
        file_id, supplier_id, category_id, status, document_number, document_date, document_type, currency,
-       amount_minor, vat_amount_minor, amount_ils_minor, fx_rate, fx_rate_date, fx_source, is_fixed, notes, extracted_json
-     ) VALUES (?, ?, COALESCE(?, (SELECT default_category_id FROM suppliers WHERE id = ?)), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       amount_minor, vat_amount_minor, amount_ils_minor, fx_rate, fx_rate_date, fx_source, is_fixed, notes, extracted_json, business_id
+     ) VALUES (?, ?, COALESCE(?, (SELECT default_category_id FROM suppliers WHERE id = ?)), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     e.fileId,
     e.supplierId,
     e.categoryId,
@@ -403,6 +413,7 @@ async function insertExpense(db: D1Database, e: NewExpense, actor: AuditActor): 
     e.isFixed === null ? null : e.isFixed ? 1 : 0,
     e.notes,
     JSON.stringify(e.sourceJson),
+    actorBiz(actor),
   );
   const statements = [auditStatement(db, actor, 'expense.create', 'expense', lastRowId, { status: e.status, supplierId: e.supplierId, source: 'drive_import' })];
   if (e.fileId !== null) statements.unshift(stmt(db, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, e.fileId));
@@ -471,7 +482,7 @@ async function importSheetRow(
   const ref = `Row ${row.rowNumber}: ${c.supplier}${c.documentNumber ? ` ${c.documentNumber}` : ''}`;
   const driveFileId = driveFileIdFromUrl(c.link);
   if (driveFileId) {
-    const hit = await matchByDriveFile(env.DB, driveFileId);
+    const hit = await matchByDriveFile(env.DB, driveFileId, actorBiz(actor));
     if (hit) return skip(summary, ref, hit);
   }
 
@@ -487,7 +498,7 @@ async function importSheetRow(
   const taxId = c.supplierTaxId || null;
   const documentNumber = c.documentNumber || null;
 
-  const supplierIds = await matchingSupplierIds(env.DB, c.supplier, taxId);
+  const supplierIds = await matchingSupplierIds(env.DB, c.supplier, taxId, actorBiz(actor));
   const byNumber = await matchBySupplierNumber(env.DB, supplierIds, documentNumber);
   if (byNumber) return skip(summary, ref, byNumber);
   const ils = await convertToIls(deps.fx, currency, date, amountMinor);
@@ -498,7 +509,7 @@ async function importSheetRow(
   if (driveFileId) {
     const bytes = await deps.drive.downloadFile(driveFileId);
     const sha256 = await sha256Hex(bytes);
-    const byHash = await matchByHash(env.DB, sha256);
+    const byHash = await matchByHash(env.DB, sha256, actorBiz(actor));
     if (byHash) return skip(summary, ref, byHash);
     const meta = folderFiles.get(driveFileId) ?? {
       id: driveFileId,
@@ -545,13 +556,13 @@ async function importFolderFile(
   summary: Working,
 ): Promise<void> {
   const ref = f.name;
-  const hit = await matchByDriveFile(env.DB, f.id);
+  const hit = await matchByDriveFile(env.DB, f.id, actorBiz(actor));
   if (hit) return skip(summary, ref, hit);
   if (filenameShowsSelf(f.name, identity)) return skip(summary, ref, { reason: 'issued_by_self', expenseId: null });
 
   const bytes = await deps.drive.downloadFile(f.id);
   const sha256 = await sha256Hex(bytes);
-  const byHash = await matchByHash(env.DB, sha256);
+  const byHash = await matchByHash(env.DB, sha256, actorBiz(actor));
   if (byHash) return skip(summary, ref, byHash);
 
   const extracted = await deps.extractor.extract({ bytes, contentType: f.mimeType, filename: f.name });
@@ -565,7 +576,7 @@ async function importFolderFile(
   const documentNumber = extracted.documentNumber ?? null;
   const taxId = extracted.supplierId?.trim() || null;
 
-  const supplierIds = await matchingSupplierIds(env.DB, extracted.supplierName, taxId);
+  const supplierIds = await matchingSupplierIds(env.DB, extracted.supplierName, taxId, actorBiz(actor));
   const byNumber = await matchBySupplierNumber(env.DB, supplierIds, documentNumber);
   if (byNumber) return skip(summary, ref, byNumber);
   const ils = await convertToIls(deps.fx, currency, date, amountMinor);
@@ -599,9 +610,9 @@ async function importFolderFile(
 }
 
 async function runMonth(env: Env, deps: Deps, yearMonth: string, actor: AuditActor, summary: Working): Promise<void> {
-  const root = await effectiveDriveRoot(env.DB);
+  const root = await effectiveDriveRoot(env.DB, actorBiz(actor));
   if (!root) throw new ConfigError('Set the Google Drive folder id in Settings > Expenses first.');
-  const title = indexSheetTitle(yearMonth, await getIndexTitlePattern(env.DB));
+  const title = indexSheetTitle(yearMonth, await getIndexTitlePattern(env.DB, actorBiz(actor)));
   const [sheetId, monthFolderId] = await Promise.all([
     deps.drive.findIndexSheet(root, yearMonth, title),
     deps.drive.findMonthFolder(root, yearMonth),
@@ -685,8 +696,8 @@ export async function importMonth(env: Env, deps: Deps, yearMonth: string, trigg
     env.DB,
     `INSERT INTO drive_import_runs (
        year_month, trigger, source, started_at, finished_at, files_seen, created,
-       skipped_duplicate, skipped_not_expense, skipped_issued_by_self, errors, details_json
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       skipped_duplicate, skipped_not_expense, skipped_issued_by_self, errors, details_json, business_id
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     yearMonth,
     trigger,
     summary.source,
@@ -699,6 +710,7 @@ export async function importMonth(env: Env, deps: Deps, yearMonth: string, trigg
     summary.skippedIssuedBySelf,
     summary.errors,
     JSON.stringify(details),
+    actorBiz(actor),
   );
   await auditAs(env.DB, actor, 'expenses.drive_import', 'drive_import_run', lastRowId, {
     yearMonth,
@@ -726,8 +738,8 @@ interface RunRow {
   details_json: string;
 }
 
-export async function listImportRuns(db: D1Database, limit = 20): Promise<ImportSummary[]> {
-  const rows = await all<RunRow>(db, 'SELECT * FROM drive_import_runs ORDER BY id DESC LIMIT ?', limit);
+export async function listImportRuns(db: D1Database, businessId: number, limit = 20): Promise<ImportSummary[]> {
+  const rows = await all<RunRow>(db, 'SELECT * FROM drive_import_runs WHERE business_id = ? ORDER BY id DESC LIMIT ?', businessId, limit);
   return rows.map((r) => {
     const d = JSON.parse(r.details_json) as Pick<ImportSummary, 'statusCounts' | 'createdIds' | 'skips' | 'errorList'>;
     return {
@@ -768,7 +780,7 @@ export const DRIVE_DAILY_CRON = '0 7 * * *';
 
 /** The daily job. Does nothing while the switch is off. Each month is logged as its own run. */
 export async function runDailyDriveImport(env: Env, deps: Deps, today: string, actor: AuditActor): Promise<ImportSummary[]> {
-  if (!(await getDailySync(env.DB))) return [];
+  if (!(await getDailySync(env.DB, actorBiz(actor)))) return [];
   const out: ImportSummary[] = [];
   for (const month of dailyMonths(today)) out.push(await importMonth(env, deps, month, 'daily', actor));
   return out;

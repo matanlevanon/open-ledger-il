@@ -80,7 +80,7 @@ export function BottomNav({ role, features, onMore }: BottomNavProps) {
   const can = (feature?: string) => role === 'owner' || !feature || features.includes(feature);
   const visible = ITEMS.filter((i) => can(i.feature));
   const [first, second, ...rest] = visible;
-  const showNew = role === 'owner';
+  const showNew = role === 'owner' || features.includes('issue_documents');
 
   const link = (i: Item) => (
     <NavLink key={i.to} to={i.to} end={i.end} className={itemClass}>

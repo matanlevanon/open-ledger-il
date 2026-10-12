@@ -1,6 +1,6 @@
 import { type AuditActor, auditStatement } from '../../core/audit';
 import { first, stmt, transaction } from '../../core/db';
-import { ConflictError, DomainError, NotFoundError, ValidationError } from '../../core/errors';
+import { ConflictError, DomainError, NotFoundError, ValidationError, ConfigError } from '../../core/errors';
 import { ItaClient } from './client';
 import {
   type ItaEnv,
@@ -8,6 +8,7 @@ import {
   type ItaPath,
   ITA_PATHS,
   ITA_SERVICE_PAGE_URL,
+  type ItaIdentity,
   itaIdentity,
   itaManualMode,
 } from './config';
@@ -124,10 +125,37 @@ export class ItaAllocationService implements AllocationService {
   constructor(
     private readonly env: ItaEnv,
     private readonly deps: ItaDeps,
+    /** R24 B6: the business whose ITA login and VAT number this service uses. */
+    readonly businessId: number = 1,
   ) {
-    this.tokens = new ItaTokenStore(env, deps);
+    this.tokens = new ItaTokenStore(env, deps, businessId);
     this.client = new ItaClient(env, this.tokens, deps);
     this.docs = deps.documents(env);
+  }
+
+  /** The same service for another business. */
+  forBusiness(businessId: number): ItaAllocationService {
+    return businessId === this.businessId ? this : new ItaAllocationService(this.env, this.deps, businessId);
+  }
+
+  /** The business a document belongs to. A document of another business goes through that business's login. */
+  private async businessOf(documentId: number): Promise<number> {
+    const row = await first<{ business_id: number }>(this.db, 'SELECT business_id FROM documents WHERE id = ?', documentId);
+    return row?.business_id ?? this.businessId;
+  }
+
+  /**
+   * The VAT number and user id sent with every call. Business 1 reads the secrets, as before. Another
+   * business sends its own tax id. The user id stays the owner's ID number: a company signs in with
+   * the user code of a person authorized for it (docs/ita.md).
+   */
+  private async identity(): Promise<ItaIdentity> {
+    const base = itaIdentity(this.env);
+    if (this.businessId === 1) return base;
+    const row = await first<{ tax_id: string | null }>(this.db, 'SELECT tax_id FROM businesses WHERE id = ?', this.businessId);
+    const vatNumber = (row?.tax_id ?? '').trim();
+    if (!/^\d{9}$/.test(vatNumber)) throw new ConfigError('Set the tax id of this business in Settings > Business.');
+    return { ...base, vatNumber, accountingSoftwareNumber: base.accountingSoftwareNumber };
   }
 
   private get db() {
@@ -232,11 +260,13 @@ export class ItaAllocationService implements AllocationService {
     }
     const row = await this.ensureRow(doc);
     const action = (await this.isProformaConversion(doc, row)) ? 4 : undefined;
-    const body = buildApprovalBody(doc, itaIdentity(this.env), { invoiceId: row.invoice_id, action });
+    const body = buildApprovalBody(doc, await this.identity(), { invoiceId: row.invoice_id, action });
     return { doc, row, body, source: row.decision === 'further_objection' ? 'after_hearing' : 'api' };
   }
 
   async request(documentId: number, actor: AuditActor): Promise<AllocationResult> {
+    const owner = await this.businessOf(documentId);
+    if (owner !== this.businessId) return this.forBusiness(owner).request(documentId, actor);
     if (itaManualMode(this.env)) return this.queueForWebApp(documentId, actor);
     const prepared = await this.prepare(documentId);
     if (!('body' in prepared)) return prepared;
@@ -278,6 +308,17 @@ export class ItaAllocationService implements AllocationService {
 
   /** One MultiApproval call for many documents. Used by the retry queue. */
   async requestMany(documentIds: number[], actor: AuditActor): Promise<AllocationResult[]> {
+    // R24: one MultiApproval call per business, each under its own login and VAT number.
+    const byBusiness = new Map<number, number[]>();
+    for (const id of documentIds) {
+      const owner = await this.businessOf(id);
+      byBusiness.set(owner, [...(byBusiness.get(owner) ?? []), id]);
+    }
+    if (byBusiness.size > 1 || (byBusiness.size === 1 && !byBusiness.has(this.businessId))) {
+      const out: AllocationResult[] = [];
+      for (const [owner, ids] of byBusiness) out.push(...(await this.forBusiness(owner).requestMany(ids, actor)));
+      return out;
+    }
     const ready: Prepared[] = [];
     const results: AllocationResult[] = [];
     const seen = new Set<string>();
@@ -305,7 +346,7 @@ export class ItaAllocationService implements AllocationService {
     if (ready.length === 0) return results;
     const body = buildMultiApprovalBody(
       ready.map((p) => p.body),
-      itaIdentity(this.env),
+      await this.identity(),
       ready.map((p) => p.doc),
     );
     const multi = multiApprovalOutcome(await this.client.post(ITA_PATHS.multiApproval, body));
@@ -449,6 +490,8 @@ export class ItaAllocationService implements AllocationService {
 
   /** One of the four choices after a refusal (spec §2.2.2 and §4). */
   async decide(documentId: number, choice: RefusalChoice, actor: AuditActor): Promise<AllocationResult> {
+    const owner = await this.businessOf(documentId);
+    if (owner !== this.businessId) return this.forBusiness(owner).decide(documentId, choice, actor);
     if (!REFUSAL_CHOICES.includes(choice)) throw new ValidationError('Pick one of the four choices.');
     const row = await this.row(documentId);
     if (!row) throw new NotFoundError('Allocation for document', documentId);
@@ -463,7 +506,7 @@ export class ItaAllocationService implements AllocationService {
 
     const path =
       choice === 'cancel' ? ITA_PATHS.decisionCancel : choice === 'continue' ? ITA_PATHS.decisionContinue : ITA_PATHS.decisionFurtherObjection;
-    const out = decisionOutcome(await this.client.post(path, buildDecisionBody(row.invoice_id, itaIdentity(this.env))));
+    const out = decisionOutcome(await this.client.post(path, buildDecisionBody(row.invoice_id, await this.identity())));
     const now = this.now();
     const failMessage = out.kind === 'accepted' ? '' : out.message;
     if (out.kind !== 'accepted') {
@@ -518,7 +561,7 @@ export class ItaAllocationService implements AllocationService {
     if (!replacement) throw new NotFoundError('Document', replacementId);
     if (replacement.vatAmountMinor !== 0) throw new ValidationError('A reverse-charge invoice has zero VAT.');
 
-    const body = buildApprovalBody(replacement, itaIdentity(this.env), { invoiceId: row.invoice_id, action: 3 });
+    const body = buildApprovalBody(replacement, await this.identity(), { invoiceId: row.invoice_id, action: 3 });
     const outcome = approvalOutcome(await this.client.post(ITA_PATHS.approval, body));
     const now = this.now();
     if (outcome.kind !== 'approved') {
@@ -561,6 +604,8 @@ export class ItaAllocationService implements AllocationService {
 
   /** A number requested by hand in the ITA web app (docs/israel-invoices-api.md §8). */
   async enterManual(documentId: number, confirmationNumber: string, note: string, actor: AuditActor): Promise<AllocationResult> {
+    const owner = await this.businessOf(documentId);
+    if (owner !== this.businessId) return this.forBusiness(owner).enterManual(documentId, confirmationNumber, note, actor);
     const number = confirmationNumber.replace(/[\s-]/g, '');
     if (!/^\d{9,30}$/.test(number)) throw new ValidationError('An allocation number has 9 to 30 digits.');
     const doc = await this.docs.get(documentId);
@@ -599,6 +644,6 @@ export class ItaAllocationService implements AllocationService {
   }
 }
 
-export function createAllocationService(env: ItaEnv, deps: ItaDeps = defaultDeps()): ItaAllocationService {
-  return new ItaAllocationService(env, deps);
+export function createAllocationService(env: ItaEnv, deps: ItaDeps = defaultDeps(), businessId = 1): ItaAllocationService {
+  return new ItaAllocationService(env, deps, businessId);
 }

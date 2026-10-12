@@ -1,9 +1,9 @@
 import type { AuditActor } from '../../core/audit';
-import { auditAs } from '../../core/audit';
+import { auditAs, actorBiz } from '../../core/audit';
 import { all, assertDate, first, run } from '../../core/db';
 import { setStartNumber, type SeriesRow } from '../../core/numbering';
 import { CURRENCY_CODES, type Currency, assertCurrency, parseMajor } from '../../core/money';
-import { ValidationError } from '../../core/errors';
+import { NotFoundError, ValidationError } from '../../core/errors';
 import { parseCsv, toRecords } from './csv';
 import { decodeCsvText } from './encoding';
 import { guessCustomerMapping, guessInvoiceMapping } from './mapping';
@@ -18,11 +18,12 @@ function decodeText(bytes: ArrayBuffer): string {
 async function createBatch(db: D1Database, kind: ImportKind, filename: string, mapping: unknown, actor: AuditActor): Promise<number> {
   const { lastRowId } = await run(
     db,
-    'INSERT INTO import_batches (kind, filename, mapping_json, created_by) VALUES (?, ?, ?, ?)',
+    'INSERT INTO import_batches (kind, filename, mapping_json, created_by, business_id) VALUES (?, ?, ?, ?, ?)',
     kind,
     filename,
     mapping === undefined ? null : JSON.stringify(mapping),
     actor.userId,
+    actorBiz(actor),
   );
   return lastRowId;
 }
@@ -123,8 +124,8 @@ async function upsertClientFromRow(
   };
 
   const existing = email
-    ? await first<{ id: number }>(db, 'SELECT id FROM clients WHERE email = ? COLLATE NOCASE', email)
-    : await first<{ id: number }>(db, 'SELECT id FROM clients WHERE name_en = ? COLLATE NOCASE', nameEn);
+    ? await first<{ id: number }>(db, 'SELECT id FROM clients WHERE email = ? COLLATE NOCASE AND business_id = ?', email, actorBiz(actor))
+    : await first<{ id: number }>(db, 'SELECT id FROM clients WHERE name_en = ? COLLATE NOCASE AND business_id = ?', nameEn, actorBiz(actor));
 
   if (existing) {
     const set = Object.entries(mapped).filter(([, v]) => v !== null);
@@ -143,8 +144,8 @@ async function upsertClientFromRow(
 
   const { lastRowId } = await run(
     db,
-    `INSERT INTO clients (name_en, name_he, company_id, vat_number, country, currency, email, phone, address_en, city, postal_code, notes)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO clients (name_en, name_he, company_id, vat_number, country, currency, email, phone, address_en, city, postal_code, notes, business_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     mapped.name_en,
     mapped.name_he,
     mapped.company_id,
@@ -157,6 +158,7 @@ async function upsertClientFromRow(
     mapped.city,
     mapped.postal_code,
     mapped.notes,
+    actorBiz(actor),
   );
   await auditAs(db, actor, 'client.import_create', 'client', lastRowId, { nameEn });
   summary.created++;
@@ -191,13 +193,14 @@ export async function commitWaveCustomers(
 async function insertHistoryRow(
   db: D1Database,
   row: Omit<HistoryRow, 'id' | 'created_at' | 'decoded'> & { decoded?: number },
+  businessId: number,
 ): Promise<boolean> {
   const { changes } = await run(
     db,
     `INSERT INTO history (
        import_batch_id, source, source_kind, external_id, client_id, client_name,
-       doc_type, doc_number, doc_date, currency, amount_minor, status, raw_line, raw_json, decoded, decode_note
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       doc_type, doc_number, doc_date, currency, amount_minor, status, raw_line, raw_json, decoded, decode_note, business_id
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT (source, source_kind, external_id) WHERE external_id IS NOT NULL DO NOTHING`,
     row.import_batch_id,
     row.source,
@@ -215,6 +218,7 @@ async function insertHistoryRow(
     row.raw_json,
     row.decoded ?? 1,
     row.decode_note,
+    businessId,
   );
   return changes > 0;
 }
@@ -283,7 +287,9 @@ export async function commitWaveInvoices(
       }
     }
     const clientName = invoiceField(record, useMapping, 'clientName');
-    const client = clientName ? await first<{ id: number }>(db, 'SELECT id FROM clients WHERE name_en = ? COLLATE NOCASE', clientName) : null;
+    const client = clientName
+      ? await first<{ id: number }>(db, 'SELECT id FROM clients WHERE name_en = ? COLLATE NOCASE AND business_id = ?', clientName, actorBiz(actor))
+      : null;
 
     const inserted = await insertHistoryRow(db, {
       import_batch_id: batchId,
@@ -301,7 +307,7 @@ export async function commitWaveInvoices(
       raw_line: null,
       raw_json: JSON.stringify(record),
       decode_note: null,
-    });
+    }, actorBiz(actor));
     if (inserted) summary.created++;
     else summary.skipped++;
   }
@@ -362,7 +368,7 @@ export async function commitSumitUnified(db: D1Database, actor: AuditActor, zipB
       raw_json: JSON.stringify({ lineNumber: record.lineNumber, recordType: record.recordType }),
       decoded: 0,
       decode_note: DECODE_STUB_NOTE,
-    });
+    }, actorBiz(actor));
     if (inserted) summary.created++;
     else summary.skipped++;
   }
@@ -374,8 +380,8 @@ export async function commitSumitUnified(db: D1Database, actor: AuditActor, zipB
 // Series starting numbers (runs/R10-import.md: "owner confirmation required")
 // ---------------------------------------------------------------------------
 
-export async function listSeries(db: D1Database): Promise<SeriesRow[]> {
-  return all<SeriesRow>(db, 'SELECT * FROM series ORDER BY doc_type');
+export async function listSeries(db: D1Database, businessId: number): Promise<SeriesRow[]> {
+  return all<SeriesRow>(db, 'SELECT * FROM series WHERE business_id = ? ORDER BY doc_type', businessId);
 }
 
 export async function confirmSeriesStart(
@@ -385,6 +391,8 @@ export async function confirmSeriesStart(
   startNumber: number,
   note: string | null,
 ): Promise<SeriesRow> {
+  const own = await first<{ id: string }>(db, 'SELECT id FROM series WHERE id = ? AND business_id = ?', seriesId, actorBiz(actor));
+  if (!own) throw new NotFoundError('Series', seriesId);
   await setStartNumber(db, seriesId, startNumber, actor);
   await auditAs(db, actor, 'import.series_start_confirmed', 'series', seriesId, { startNumber, note });
   return first<SeriesRow>(db, 'SELECT * FROM series WHERE id = ?', seriesId) as Promise<SeriesRow>;
@@ -393,9 +401,10 @@ export async function confirmSeriesStart(
 export async function listHistory(
   db: D1Database,
   filter: { source?: 'wave' | 'sumit'; limit?: number; offset?: number },
+  businessId: number,
 ): Promise<HistoryRow[]> {
-  const where = filter.source ? 'WHERE source = ?' : '';
-  const params = filter.source ? [filter.source] : [];
+  const where = filter.source ? 'WHERE business_id = ? AND source = ?' : 'WHERE business_id = ?';
+  const params: (string | number)[] = filter.source ? [businessId, filter.source] : [businessId];
   const limit = Math.min(Math.max(filter.limit ?? 50, 1), 500);
   const offset = Math.max(filter.offset ?? 0, 0);
   return all<HistoryRow>(db, `SELECT * FROM history ${where} ORDER BY id DESC LIMIT ? OFFSET ?`, ...params, limit, offset);

@@ -1,4 +1,5 @@
 import { type Context, Hono } from 'hono';
+import { businessIdOf } from '../../core/business';
 import { requireFeature, requireRole } from '../../core/auth';
 import { assertDate, first, todayIsrael } from '../../core/db';
 import { NotFoundError, ValidationError } from '../../core/errors';
@@ -57,7 +58,7 @@ function reportParams(c: Context<AppEnv>, today: string) {
     const v = c.req.query(key);
     if (v !== undefined && v !== '') filters[key] = v;
   }
-  return { from, to, today, filters };
+  return { from, to, today, filters, businessId: businessIdOf(c) };
 }
 
 function reportId(c: Context<AppEnv>): string {
@@ -77,17 +78,17 @@ export function reportsRoutes(options: { today?: () => string } = {}): Hono<AppE
 
   r.get('/income', async (c) => {
     const { from, to } = dateRange(c);
-    return c.json(await incomeReport(c.env.DB, from, to));
+    return c.json(await incomeReport(c.env.DB, from, to, businessIdOf(c)));
   });
   r.get('/income.csv', async (c) => {
     const { from, to } = dateRange(c);
-    return download(c, incomeCsv(await incomeReport(c.env.DB, from, to)), `income-${from}-to-${to}.csv`, 'text/csv');
+    return download(c, incomeCsv(await incomeReport(c.env.DB, from, to, businessIdOf(c))), `income-${from}-to-${to}.csv`, 'text/csv');
   });
   r.get('/income.xlsx', async (c) => {
     const { from, to } = dateRange(c);
     return download(
       c,
-      incomeXlsx(await incomeReport(c.env.DB, from, to)),
+      incomeXlsx(await incomeReport(c.env.DB, from, to, businessIdOf(c))),
       `income-${from}-to-${to}.xlsx`,
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     );
@@ -95,17 +96,17 @@ export function reportsRoutes(options: { today?: () => string } = {}): Hono<AppE
 
   r.get('/expenses', async (c) => {
     const { from, to } = dateRange(c);
-    return c.json(await expenseReport(c.env.DB, from, to));
+    return c.json(await expenseReport(c.env.DB, from, to, businessIdOf(c)));
   });
   r.get('/expenses.csv', async (c) => {
     const { from, to } = dateRange(c);
-    return download(c, expenseCsv(await expenseReport(c.env.DB, from, to)), `expenses-${from}-to-${to}.csv`, 'text/csv');
+    return download(c, expenseCsv(await expenseReport(c.env.DB, from, to, businessIdOf(c))), `expenses-${from}-to-${to}.csv`, 'text/csv');
   });
   r.get('/expenses.xlsx', async (c) => {
     const { from, to } = dateRange(c);
     return download(
       c,
-      expenseXlsx(await expenseReport(c.env.DB, from, to)),
+      expenseXlsx(await expenseReport(c.env.DB, from, to, businessIdOf(c))),
       `expenses-${from}-to-${to}.xlsx`,
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     );
@@ -113,16 +114,16 @@ export function reportsRoutes(options: { today?: () => string } = {}): Hono<AppE
 
   r.get('/profit-loss', async (c) => {
     const { from, to } = dateRange(c);
-    return c.json(await profitLossReport(c.env.DB, from, to));
+    return c.json(await profitLossReport(c.env.DB, from, to, businessIdOf(c)));
   });
   r.get('/profit-loss.csv', async (c) => {
     const { from, to } = dateRange(c);
-    return download(c, profitLossCsv(await profitLossReport(c.env.DB, from, to)), `profit-loss-${from}-to-${to}.csv`, 'text/csv');
+    return download(c, profitLossCsv(await profitLossReport(c.env.DB, from, to, businessIdOf(c))), `profit-loss-${from}-to-${to}.csv`, 'text/csv');
   });
 
   r.get('/profit-loss.xlsx', async (c) => {
     const { from, to } = dateRange(c);
-    return download(c, buildXlsx([profitLossSheet(await profitLossReport(c.env.DB, from, to))]), `profit-loss-${from}-to-${to}.xlsx`, XLSX_TYPE);
+    return download(c, buildXlsx([profitLossSheet(await profitLossReport(c.env.DB, from, to, businessIdOf(c)))]), `profit-loss-${from}-to-${to}.xlsx`, XLSX_TYPE);
   });
 
   // R21 report catalog: one shape for every report, JSON plus CSV and XLSX exports.
@@ -141,17 +142,17 @@ export function reportsRoutes(options: { today?: () => string } = {}): Hono<AppE
   // Download documents for a period: filed PDFs are income documents, so this also needs that feature.
   r.get('/documents.zip', requireFeature('income_documents'), async (c) => {
     const { from, to } = dateRange(c);
-    const zip = await buildDocumentsZip(c.env, from, to);
+    const zip = await buildDocumentsZip(c.env, from, to, businessIdOf(c));
     return download(c, zip.bytes, `documents-${from}-to-${to}.zip`, 'application/zip');
   });
 
   r.get('/advance-base', async (c) => {
     const { from, to } = dateRange(c);
-    return c.json(await advanceBaseReport(c.env.DB, from, to));
+    return c.json(await advanceBaseReport(c.env.DB, from, to, businessIdOf(c)));
   });
   r.get('/advance-base.csv', async (c) => {
     const { from, to } = dateRange(c);
-    return download(c, advanceBaseCsv(await advanceBaseReport(c.env.DB, from, to)), `advance-base-${from}-to-${to}.csv`, 'text/csv');
+    return download(c, advanceBaseCsv(await advanceBaseReport(c.env.DB, from, to, businessIdOf(c))), `advance-base-${from}-to-${to}.csv`, 'text/csv');
   });
 
   // Client ledgers (תוספת ה׳, R16 task 11): every document and payment per client, running
@@ -160,24 +161,24 @@ export function reportsRoutes(options: { today?: () => string } = {}): Hono<AppE
   // already audited by authenticate() (CLAUDE.md rule 6), the same as the rest of this module.
   r.get('/client-ledgers', async (c) => {
     const { from, to } = dateRange(c);
-    return c.json(await clientLedgersReport(c.env.DB, from, to));
+    return c.json(await clientLedgersReport(c.env.DB, from, to, businessIdOf(c)));
   });
   r.get('/client-ledgers.csv', async (c) => {
     const { from, to } = dateRange(c);
-    return download(c, clientLedgersCsv(await clientLedgersReport(c.env.DB, from, to)), `client-ledgers-${from}-to-${to}.csv`, 'text/csv');
+    return download(c, clientLedgersCsv(await clientLedgersReport(c.env.DB, from, to, businessIdOf(c))), `client-ledgers-${from}-to-${to}.csv`, 'text/csv');
   });
   r.get('/client-ledgers.xlsx', async (c) => {
     const { from, to } = dateRange(c);
     return download(
       c,
-      buildXlsx([clientLedgersSheet(await clientLedgersReport(c.env.DB, from, to))]),
+      buildXlsx([clientLedgersSheet(await clientLedgersReport(c.env.DB, from, to, businessIdOf(c)))]),
       `client-ledgers-${from}-to-${to}.xlsx`,
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     );
   });
 
   r.get('/packs', requireFeature('monthly_pack'), async (c) => {
-    const rows = await c.env.DB.prepare('SELECT * FROM accountant_packs ORDER BY period DESC').all<AccountantPackRow>();
+    const rows = await c.env.DB.prepare('SELECT * FROM accountant_packs WHERE business_id = ? ORDER BY period DESC').bind(businessIdOf(c)).all<AccountantPackRow>();
     return c.json({ packs: rows.results });
   });
 
@@ -187,7 +188,7 @@ export function reportsRoutes(options: { today?: () => string } = {}): Hono<AppE
     const body = (await c.req.json().catch(() => ({}))) as { period?: string };
     const period = body.period ?? todayIsrael().slice(0, 7);
     if (!/^\d{4}-\d{2}$/.test(period)) throw new ValidationError('period must be YYYY-MM.');
-    const result = await buildAccountantPack(c.env, period);
+    const result = await buildAccountantPack(c.env, period, businessIdOf(c));
     return c.json({ pack: result }, 201);
   });
 
@@ -195,7 +196,7 @@ export function reportsRoutes(options: { today?: () => string } = {}): Hono<AppE
     const id = Number(c.req.param('id'));
     const file = c.req.param('file') as PackFile;
     if (!(file in PACK_FILES)) throw new ValidationError('file must be pdf, xlsx or zip.');
-    const pack = await first<AccountantPackRow>(c.env.DB, 'SELECT * FROM accountant_packs WHERE id = ?', id);
+    const pack = await first<AccountantPackRow>(c.env.DB, 'SELECT * FROM accountant_packs WHERE id = ? AND business_id = ?', id, businessIdOf(c));
     if (!pack) throw new NotFoundError('Accountant pack', id);
     const key = pack[PACK_FILES[file]];
     const { path } = await signDownloadUrl(c.env, key, 'monthly_pack');

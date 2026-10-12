@@ -6,6 +6,9 @@ import { NotFoundError, ValidationError } from '../../core/errors';
 import type { AppEnv, Env } from '../../env';
 import { clientDisplayName } from '../clients/display';
 import { getDoc } from '../documents/repo';
+import { businessOfClient, businessOfDocument } from '../businesses/service';
+import { getClient } from '../clients/service';
+import { businessIdOf } from '../../core/business';
 import { allocationGate } from '../ita';
 import { r2Key } from '../pdf';
 import { acceptConsent, consentHistory, consentState, requestConsent, revokeConsent } from './consent';
@@ -14,7 +17,7 @@ import type { Mailer } from './mailer';
 import { MAX_CC, ccListText } from './cc';
 import { businessDisplayName, ccSetting, paymentLinkSettings, reminderSettings, setCcSetting, setPaymentLinkSettings, setReminderSettings } from './settings';
 import { sendDefaults, sendDocumentEmail } from './send';
-import { shareDoc, sharePageHtml, verifyShareCode } from './share-page';
+import { senderName, shareDoc, sharePageHtml, verifyShareCode } from './share-page';
 import { verifySendToken } from './tokens';
 import { createWhatsAppLink } from './whatsapp';
 
@@ -96,7 +99,7 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
     const input = sendEmailInput.parse(await body(c));
     const user = c.get('user');
     const result = await sendDocumentEmail(
-      { db: c.env.DB, files: c.env.FILES, env: c.env, mailer: resolveMailer(c.env), baseUrl: baseUrl(c) },
+      { db: c.env.DB, files: c.env.FILES, env: c.env, mailer: resolveMailer(c.env), baseUrl: baseUrl(c), businessId: businessIdOf(c) },
       { documentId: id, actor: { userId: user.id, email: user.email }, to: input.to, cc: input.cc, bcc: input.bcc, message: input.message },
     );
     return c.json(result);
@@ -104,14 +107,14 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
 
   app.get('/documents/:id/send-defaults', requireFeature('issue_documents'), async (c) => {
     const id = idParam(c.req.param('id'));
-    return c.json(await sendDefaults(c.env.DB, id));
+    return c.json(await sendDefaults(c.env.DB, id, businessIdOf(c)));
   });
 
   app.post('/documents/:id/whatsapp-link', requireFeature('issue_documents'), async (c) => {
     const id = idParam(c.req.param('id'));
     const user = c.get('user');
     const result = await createWhatsAppLink(
-      { db: c.env.DB, files: c.env.FILES, env: c.env, mailer: resolveMailer(c.env), baseUrl: baseUrl(c) },
+      { db: c.env.DB, files: c.env.FILES, env: c.env, mailer: resolveMailer(c.env), baseUrl: baseUrl(c), businessId: businessIdOf(c) },
       id,
       { userId: user.id, email: user.email },
     );
@@ -120,56 +123,60 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
 
   app.get('/documents/:id/log', requireFeature('income_documents'), async (c) => {
     const id = idParam(c.req.param('id'));
-    await getDoc(c.env.DB, id);
+    await getDoc(c.env.DB, id, businessIdOf(c));
     const rows = await all(c.env.DB, 'SELECT * FROM send_log WHERE document_id = ? ORDER BY id DESC', id);
     return c.json({ log: rows });
   });
 
   app.get('/clients/:id/log', requireFeature('income_documents'), async (c) => {
     const id = idParam(c.req.param('id'));
+    await getClient(c.env.DB, id, businessIdOf(c));
     const rows = await all(c.env.DB, 'SELECT * FROM send_log WHERE client_id = ? ORDER BY id DESC', id);
     return c.json({ log: rows });
   });
 
   app.get('/clients/:id/consent', requireFeature('income_documents'), async (c) => {
     const id = idParam(c.req.param('id'));
+    await getClient(c.env.DB, id, businessIdOf(c));
     const [state, history] = await Promise.all([consentState(c.env.DB, id), consentHistory(c.env.DB, id)]);
     return c.json({ ...state, history });
   });
 
   app.post('/clients/:id/consent/request', requireFeature('issue_documents'), async (c) => {
     const id = idParam(c.req.param('id'));
-    const result = await requestConsent(c.env.DB, c.env, resolveMailer(c.env), id, baseUrl(c));
+    const result = await requestConsent(c.env.DB, c.env, resolveMailer(c.env), id, baseUrl(c), businessIdOf(c));
     return c.json(result);
   });
 
   app.post('/clients/:id/consent/revoke', requireFeature('issue_documents'), async (c) => {
     const id = idParam(c.req.param('id'));
+    await getClient(c.env.DB, id, businessIdOf(c));
     await revokeConsent(c.env.DB, id);
     return c.json({ ok: true });
   });
 
   app.get('/settings', requireFeature('settings'), async (c) => {
-    const [reminders, links, cc] = await Promise.all([reminderSettings(c.env.DB), paymentLinkSettings(c.env.DB), ccSetting(c.env.DB)]);
+    const b = businessIdOf(c);
+    const [reminders, links, cc] = await Promise.all([reminderSettings(c.env.DB, b), paymentLinkSettings(c.env.DB, b), ccSetting(c.env.DB, b)]);
     return c.json({ reminders, paymentLinks: links, cc });
   });
 
   app.put('/settings/cc', requireFeature('settings'), async (c) => {
     const input = ccSettingInput.parse(await body(c));
-    await setCcSetting(c.env.DB, input.cc ?? null);
-    return c.json({ cc: await ccSetting(c.env.DB) });
+    await setCcSetting(c.env.DB, businessIdOf(c), input.cc ?? null);
+    return c.json({ cc: await ccSetting(c.env.DB, businessIdOf(c)) });
   });
 
   app.put('/settings/reminders', requireFeature('settings'), async (c) => {
     const input = reminderSettingsInput.parse(await body(c));
-    await setReminderSettings(c.env.DB, input);
-    return c.json(await reminderSettings(c.env.DB));
+    await setReminderSettings(c.env.DB, businessIdOf(c), input);
+    return c.json(await reminderSettings(c.env.DB, businessIdOf(c)));
   });
 
   app.put('/settings/payment-links', requireFeature('settings'), async (c) => {
     const input = paymentLinksInput.parse(await body(c));
-    await setPaymentLinkSettings(c.env.DB, { stripe: input.stripe ?? undefined, paypal: input.paypal ?? undefined });
-    return c.json(await paymentLinkSettings(c.env.DB));
+    await setPaymentLinkSettings(c.env.DB, businessIdOf(c), { stripe: input.stripe ?? undefined, paypal: input.paypal ?? undefined });
+    return c.json(await paymentLinkSettings(c.env.DB, businessIdOf(c)));
   });
 
   // ---------------------------------------------------------------------------
@@ -187,7 +194,7 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
       payload.clientId,
     );
     if (!client) throw new NotFoundError('Client', payload.clientId);
-    return c.html(consentAcceptPage(clientDisplayName(client, 'en'), c.req.param('token'), await businessDisplayName(c.env.DB)));
+    return c.html(consentAcceptPage(clientDisplayName(client, 'en'), c.req.param('token'), await businessDisplayName(c.env.DB, await businessOfClient(c.env.DB, payload.clientId))));
   });
 
   app.post(
@@ -197,7 +204,7 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
       const payload = await verifySendToken(c.env, c.req.param('token'));
       if (payload.kind !== 'consent') throw new NotFoundError('Link');
       await acceptConsent(c.env.DB, { clientId: payload.clientId, ip: ip(c), userAgent: userAgent(c) });
-      return c.html(consentAcceptedPage(await businessDisplayName(c.env.DB)));
+      return c.html(consentAcceptedPage(await businessDisplayName(c.env.DB, await businessOfClient(c.env.DB, payload.clientId))));
     },
   );
 
@@ -222,9 +229,11 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
     return new Response(object.body, { headers });
   });
 
-  app.get('/public/logo', declareManualAuth('public business logo for share link previews'), async (c) => {
-    const row = await first<{ logo_r2_key: string | null }>(c.env.DB, 'SELECT logo_r2_key FROM business_profile WHERE id = 1');
-    const object = row?.logo_r2_key ? await c.env.FILES.get(row.logo_r2_key) : null;
+  // R24: the logo of the shared document's brand, behind the same signed code as the page.
+  app.get('/public/d/:code/logo', declareManualAuth('public brand logo for one signed share link'), async (c) => {
+    const documentId = await verifyShareCode(c.env, c.req.param('code'));
+    const doc = await shareDoc(c.env.DB, documentId);
+    const object = doc.logoR2Key ? await c.env.FILES.get(doc.logoR2Key) : null;
     if (!object) throw new NotFoundError('logo');
     const headers = new Headers();
     object.writeHttpMetadata(headers);
@@ -235,7 +244,7 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
   app.get('/public/share/:token', declareManualAuth('public link, token carries its own signature and expiry'), async (c) => {
     const payload = await verifySendToken(c.env, c.req.param('token'));
     if (payload.kind !== 'share') throw new NotFoundError('Link');
-    const doc = await getDoc(c.env.DB, payload.documentId);
+    const doc = await getDoc(c.env.DB, payload.documentId, await businessOfDocument(c.env.DB, payload.documentId));
     // Defense in depth: re-check CLAUDE.md rule 3 at delivery time, not only when the link was made.
     const gate = await allocationGate(c.env.DB, doc.id);
     if (!gate.allowed || doc.number === null) throw new NotFoundError('Document');

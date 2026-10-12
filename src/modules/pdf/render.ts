@@ -55,7 +55,12 @@ function headerHtml(doc: RenderDocument): string {
   const tagline = business.taglineEn ?? business.taglineHe;
   const businessAddress = business.addressEn ? esc(business.addressEn) : null;
   const row1 = [
-    business.taxId ? `<span class="icon-item">${ICONS.id}${esc(LABELS.en.businessId)}: ${esc(business.taxId)}</span>` : '',
+    business.taxId
+      ? `<span class="icon-item">${ICONS.id}${
+          // R24: a brand prints its own name above. The legal name stands next to the tax id.
+          business.legalNameEn && business.legalNameEn !== business.nameEn ? `${esc(business.legalNameEn)}, ` : ''
+        }${esc(LABELS.en.businessId)}: ${esc(business.taxId)}</span>`
+      : '',
     business.email ? `<span class="icon-item">${ICONS.email}${esc(business.email)}</span>` : '',
     business.phone ? `<span class="icon-item">${ICONS.phone}${esc(business.phone)}</span>` : '',
   ]

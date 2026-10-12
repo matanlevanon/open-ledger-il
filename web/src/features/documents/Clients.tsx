@@ -7,6 +7,8 @@ import { DocumentTable } from './DocumentList';
 import { TYPE_NAME_KEYS } from './Editor';
 import { CURRENCIES, newDocumentPath, offeredDocumentTypes, totalsText } from './format';
 import { LedgerView } from './Ledger';
+import { type BusinessList, fetchBusinesses } from '../../api/businesses';
+import { apiSend } from './api';
 import { Card, ErrorNote, Loading, PageTitle, btnPrimary, btnSecondary, errorText, input, label, useLoad } from './ui';
 
 function todayDate(): string {
@@ -339,6 +341,51 @@ const TABS: { key: 'overview' | 'ledger' | 'documents'; label: MessageKey }[] = 
   { key: 'documents', label: 'clients.page.tabDocuments' },
 ];
 
+/**
+ * R24 B5: copies this client into another business. One client at a time, never automatic.
+ * Shows only when the person can issue in another business.
+ */
+export function CopyToBusiness({ clientId, load = fetchBusinesses }: { clientId: number; load?: () => Promise<BusinessList> }) {
+  const t = useT();
+  const [data, setData] = useState<BusinessList | null>(null);
+  const [target, setTarget] = useState<number | null>(null);
+  const [note, setNote] = useState<string | null>(null);
+  useEffect(() => {
+    load().then(setData).catch(() => setData(null));
+  }, [load]);
+  const others = (data?.businesses ?? []).filter((b) => b.id !== data?.current && b.role !== 'accountant');
+  if (others.length === 0) return null;
+  const copy = async () => {
+    const businessId = target ?? others[0]!.id;
+    try {
+      await apiSend('POST', `/clients/${clientId}/copy-to-business`, { businessId });
+      setNote(t('clients.page.copied'));
+    } catch (e) {
+      setNote(errorText(e, t));
+    }
+  };
+  return (
+    <span className="flex items-center gap-1">
+      <select
+        aria-label={t('clients.page.copyTarget')}
+        className="rounded-md border border-line bg-canvas px-2 py-1.5 text-sm"
+        value={target ?? others[0]!.id}
+        onChange={(e) => setTarget(Number(e.target.value))}
+      >
+        {others.map((b) => (
+          <option key={b.id} value={b.id}>
+            {b.nameEn || b.nameHe}
+          </option>
+        ))}
+      </select>
+      <button type="button" className={btnSecondary} onClick={() => void copy()}>
+        {t('clients.page.copyToBusiness')}
+      </button>
+      {note && <span role="status" className="text-xs text-muted">{note}</span>}
+    </span>
+  );
+}
+
 export function ClientPage() {
   const t = useT();
   const issuing = useIssuing();
@@ -413,6 +460,7 @@ export function ClientPage() {
             <Link to={`/clients/${c.id}/edit`} className={btnSecondary}>
               {t('clients.page.edit')}
             </Link>
+            <CopyToBusiness clientId={c.id} />
             <button
               type="button"
               role="switch"

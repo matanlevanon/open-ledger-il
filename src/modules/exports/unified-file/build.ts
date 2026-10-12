@@ -6,6 +6,7 @@ import { type ItaEnv, itaIdentity } from '../../ita/config';
 import { encodeIso88598 } from '../encoding';
 import type { ValidationReport } from '../types';
 import { pendingAllocationCount, seriesSummaryForPeriod } from '../validation';
+import { baseSeriesId } from '../../../core/business';
 import {
   A000_FIELDS,
   A100_FIELDS,
@@ -66,7 +67,9 @@ export const SERIES_PREFIX: Record<string, string> = {
 };
 
 /** The number written in fields 1204, 1257 and 1304 for a document of this series. */
-export function fileDocNumber(seriesId: string, specCode: number, number: number): string {
+export function fileDocNumber(rawSeriesId: string, specCode: number, number: number): string {
+  // R24: a business's own series ('b2-400') numbers like its base series ('400').
+  const seriesId = baseSeriesId(rawSeriesId);
   if (seriesId === String(specCode)) return String(number);
   const prefix = SERIES_PREFIX[seriesId] ?? seriesId.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 5);
   return `${prefix || 'S'}${number}`;
@@ -245,6 +248,8 @@ export interface BuildOptions {
   now?: Date;
   /** 15-digit main id. Default random. */
   mainId?: string;
+  /** R24 B7: the business the file is for. One file never mixes two tax IDs. Default business 1. */
+  businessId?: number;
 }
 
 const toIls = (minor: number, currency: string, rate: string | null): number => (currency === 'ILS' || !rate ? minor : convert(minor, rate));
@@ -323,8 +328,8 @@ export function softwareInfo(env: Env): SoftwareInfo {
   };
 }
 
-async function business(env: Env, warnings: string[]): Promise<{ vat: string; name: string; street: string }> {
-  const p = await env.DB.prepare('SELECT name_en, name_he, address_en, address_he, tax_id FROM business_profile WHERE id = 1').first<{
+async function business(env: Env, warnings: string[], businessId: number): Promise<{ vat: string; name: string; street: string }> {
+  const p = await env.DB.prepare('SELECT name_en, name_he, address_en, address_he, tax_id FROM businesses WHERE id = ?').bind(businessId).first<{
     name_en: string;
     name_he: string;
     address_en: string | null;
@@ -332,7 +337,7 @@ async function business(env: Env, warnings: string[]): Promise<{ vat: string; na
     tax_id: string | null;
   }>();
   let vat = (p?.tax_id ?? '').replace(/\D/g, '');
-  if (!vat) {
+  if (!vat && businessId === 1) {
     try {
       vat = itaIdentity(env as ItaEnv).vatNumber.replace(/\D/g, '');
     } catch {
@@ -347,7 +352,7 @@ async function business(env: Env, warnings: string[]): Promise<{ vat: string; na
   };
 }
 
-async function loadDocs(db: D1Database, from: string, to: string): Promise<DocRow[]> {
+async function loadDocs(db: D1Database, from: string, to: string, businessId: number): Promise<DocRow[]> {
   const types = Object.keys(SPEC_CODE);
   return all<DocRow>(
     db,
@@ -360,9 +365,10 @@ async function loadDocs(db: D1Database, from: string, to: string): Promise<DocRo
      FROM documents d
      LEFT JOIN clients c ON c.id = d.client_id
      LEFT JOIN users u ON u.id = d.created_by
-     WHERE d.type IN (${types.map(() => '?').join(',')})
+     WHERE d.business_id = ? AND d.type IN (${types.map(() => '?').join(',')})
        AND d.number IS NOT NULL AND d.status IN ('final', 'cancelled') AND d.date BETWEEN ? AND ?
      ORDER BY d.date, d.series_id, d.number`,
+    businessId,
     ...types,
     from,
     to,
@@ -407,14 +413,15 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
   const software = softwareInfo(env);
   if (!software.registrationNumber) warnings.push('No software registration number yet. The registration field in INI.TXT reads 00000000 until the Tax Authority issues one.');
 
-  const biz = await business(env, warnings);
+  const businessId = options.businessId ?? 1;
+  const biz = await business(env, warnings, businessId);
   // The producer is the business itself when no separate software house is configured.
   if (!software.producerVat) software.producerVat = biz.vat;
   const folder = `${biz.vat.slice(0, 8)}.${at.yyyy.slice(2)}`;
   const stamp = `${at.mm}${at.dd}${at.hh}${at.mi}`;
   const path = `${drive}:\\OPENFRMT\\${folder}\\${stamp}`;
 
-  const docs = await loadDocs(db, from, to);
+  const docs = await loadDocs(db, from, to, businessId);
   const ids = docs.map((d) => d.id);
   const lines = await byDocument<LineRow>(
     db,
@@ -706,7 +713,7 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
   const dir = `OPENFRMT/${folder}/${stamp}`;
   const zip = zipSync({ [`${dir}/INI.TXT`]: ini.bytes, [`${dir}/BKMVDATA.zip`]: innerZip }, { level: 0 });
 
-  const pending = await pendingAllocationCount(db, from, to);
+  const pending = await pendingAllocationCount(db, from, to, businessId);
   if (pending > 0) warnings.push(`${pending} tax invoice(s) dated in this period still wait for an ITA allocation number and are not in the file.`);
 
   const summary: OpenFormatSummary = {
@@ -730,7 +737,7 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
     recordCounts: counts,
     totalRecords,
     totalIlsMinor,
-    series: await seriesSummaryForPeriod(db, from, to),
+    series: await seriesSummaryForPeriod(db, from, to, businessId),
     warnings,
     layoutStatus: 'verified',
   };
@@ -739,8 +746,8 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
 }
 
 /** The business the file is for, shown in the export dialog before a run (appendix 4). */
-export async function businessIdentity(env: Env): Promise<{ vatNumber: string; name: string; warnings: string[] }> {
+export async function businessIdentity(env: Env, businessId = 1): Promise<{ vatNumber: string; name: string; warnings: string[] }> {
   const warnings: string[] = [];
-  const b = await business(env, warnings);
+  const b = await business(env, warnings, businessId);
   return { vatNumber: b.vat, name: b.name, warnings };
 }

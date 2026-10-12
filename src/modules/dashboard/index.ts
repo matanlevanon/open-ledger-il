@@ -1,7 +1,8 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom, auditStatement } from '../../core/audit';
-import { requireFeature, requireRole } from '../../core/auth';
+import { businessIdOf, readBusinessSetting, settingKey } from '../../core/business';
+import { requireFeature, requireFeatureOrAssistant, requireRole } from '../../core/auth';
 import { ceilingFor, legalModeOn } from '../../core/config';
 import { assertDate, first, nowIso, stmt, todayIsrael, transaction } from '../../core/db';
 import { ValidationError } from '../../core/errors';
@@ -172,13 +173,14 @@ export async function openRequestsIls(db: D1Database, demands: OpenDemand[], yea
  * Final, non-cancelled turnover in ILS for a date range. Exported for `src/modules/ceiling`.
  * A credit (405, 330) is stored with a negative total, so a plain SUM subtracts it.
  */
-export async function turnoverIls(db: D1Database, yearStart: string, yearEnd: string): Promise<number> {
+export async function turnoverIls(db: D1Database, yearStart: string, yearEnd: string, businessId: number): Promise<number> {
   const placeholders = INCOME_TYPES.map(() => '?').join(',');
   const row = await first<{ total: number | null }>(
     db,
     `SELECT SUM(${ILS_AMOUNT('total_minor', 'currency', 'total_ils_minor')}) as total
      FROM documents
-     WHERE status = 'final' AND type IN (${placeholders}) AND date BETWEEN ? AND ?`,
+     WHERE business_id = ? AND status = 'final' AND type IN (${placeholders}) AND date BETWEEN ? AND ?`,
+    businessId,
     ...INCOME_TYPES,
     yearStart,
     yearEnd,
@@ -191,24 +193,29 @@ export interface DashboardRequest {
   ranges?: Partial<Record<PeriodCard, Range>>;
 }
 
-export async function buildDashboard(db: D1Database, today: string, request: DashboardRequest = {}): Promise<DashboardData> {
+export async function buildDashboard(db: D1Database, today: string, businessId: number, request: DashboardRequest = {}): Promise<DashboardData> {
   const year = Number(today.slice(0, 4));
   const yearStart = `${year}-01-01`;
   const yearEnd = `${year}-12-31`;
   const wanted = new Set<DashboardCard>(request.cards ?? DASHBOARD_CARDS);
   const range = (card: PeriodCard) => request.ranges?.[card] ?? defaultRange(card, today);
 
-  const [legalMode, demands, entityType, murshe] = await Promise.all([legalModeOn(db, today), openDemands(db), getEntityType(db), mursheRow(db)]);
+  const [legalMode, demands, entityType, murshe] = await Promise.all([
+    legalModeOn(db, today, businessId),
+    openDemands(db, businessId),
+    getEntityType(db, businessId),
+    mursheRow(db, businessId),
+  ]);
   const showCeiling = showsCeiling(entityType, murshe, today);
   const vatApplicable = entityType !== 'osek_patur';
   const needsItems = wanted.has('overdue') || wanted.has('aging');
 
   const [ceiling, turnover, external, openRequests, items] = await Promise.all([
     ceilingFor(db, today),
-    turnoverIls(db, yearStart, yearEnd),
-    uploadService.externalTurnoverIls(db, yearStart, yearEnd),
+    turnoverIls(db, yearStart, yearEnd, businessId),
+    uploadService.externalTurnoverIls(db, yearStart, yearEnd, businessId),
     openRequestsIls(db, demands, yearStart, yearEnd, today),
-    needsItems ? openItems(db, today, demands) : Promise.resolve([] as OpenItem[]),
+    needsItems ? openItems(db, today, businessId, demands) : Promise.resolve([] as OpenItem[]),
   ]);
 
   const cards: DashboardCards = {};
@@ -228,15 +235,15 @@ export async function buildDashboard(db: D1Database, today: string, request: Das
   });
   job('cashFlow', async () => {
     const r = range('cashFlow');
-    cards.cashFlow = { ...r, months: await cashFlowByMonth(db, r.from, r.to) };
+    cards.cashFlow = { ...r, months: await cashFlowByMonth(db, r.from, r.to, businessId) };
   });
   job('profitLoss', async () => {
     const r = range('profitLoss');
-    cards.profitLoss = { ...r, months: await profitLossByMonth(db, r.from, r.to) };
+    cards.profitLoss = { ...r, months: await profitLossByMonth(db, r.from, r.to, businessId) };
   });
   job('incomeByMonth', async () => {
     const r = range('incomeByMonth');
-    const months = await incomeByMonth(db, r.from, r.to);
+    const months = await incomeByMonth(db, r.from, r.to, businessId);
     cards.incomeByMonth = {
       ...r,
       months,
@@ -246,18 +253,18 @@ export async function buildDashboard(db: D1Database, today: string, request: Das
   });
   job('topClients', async () => {
     const r = range('topClients');
-    cards.topClients = { ...r, ...(await incomeByClient(db, r.from, r.to, TOP_LIMIT)) };
+    cards.topClients = { ...r, ...(await incomeByClient(db, businessId, r.from, r.to, TOP_LIMIT)) };
   });
   job('topServices', async () => {
     const r = range('topServices');
-    cards.topServices = { ...r, ...(await incomeByService(db, r.from, r.to, TOP_LIMIT)) };
+    cards.topServices = { ...r, ...(await incomeByService(db, businessId, r.from, r.to, TOP_LIMIT)) };
   });
   job('expenseCategories', async () => {
     const r = range('expenseCategories');
-    cards.expenseCategories = { ...r, ...(await expensesByCategory(db, r.from, r.to, TOP_LIMIT)) };
+    cards.expenseCategories = { ...r, ...(await expensesByCategory(db, businessId, r.from, r.to, TOP_LIMIT)) };
   });
   job('yearComparison', async () => {
-    cards.yearComparison = await yearComparison(db, today);
+    cards.yearComparison = await yearComparison(db, today, businessId);
   });
   job('aging', async () => {
     cards.aging = { buckets: agingSummary(items) };
@@ -267,9 +274,9 @@ export async function buildDashboard(db: D1Database, today: string, request: Das
   // R24: output VAT minus input VAT for the period that holds today. Dated due day, CLAUDE.md rule 4.
   let vatDue: DashboardData['vatDue'] = { applicable: false, amountMinor: 0, currency: 'ILS', period: null, outputMinor: 0, inputMinor: 0 };
   if (vatApplicable) {
-    const reporting = await getVatReporting(db);
+    const reporting = await getVatReporting(db, businessId);
     const period = vatPeriodOn(today, reporting, await vatReportDueDayOn(db, today));
-    vatDue = { applicable: true, currency: 'ILS', period: { ...period, reporting }, ...(await vatDueIn(db, period)) };
+    vatDue = { applicable: true, currency: 'ILS', period: { ...period, reporting }, ...(await vatDueIn(db, period, businessId)) };
   }
 
   return {
@@ -349,11 +356,11 @@ export function normalizeLayout(stored: LayoutEntry[] | null): LayoutEntry[] {
   return out;
 }
 
-export async function getDashboardLayout(db: D1Database): Promise<LayoutEntry[]> {
-  const row = await first<{ value: string }>(db, 'SELECT value FROM settings WHERE key = ?', DASHBOARD_LAYOUT_KEY);
-  if (!row) return normalizeLayout(null);
+export async function getDashboardLayout(db: D1Database, businessId: number): Promise<LayoutEntry[]> {
+  const value = await readBusinessSetting(db, businessId, DASHBOARD_LAYOUT_KEY, false);
+  if (!value) return normalizeLayout(null);
   try {
-    const parsed = layoutSchema.safeParse({ cards: JSON.parse(row.value) });
+    const parsed = layoutSchema.safeParse({ cards: JSON.parse(value) });
     return normalizeLayout(parsed.success ? parsed.data.cards : null);
   } catch {
     return normalizeLayout(null);
@@ -364,8 +371,8 @@ export async function getDashboardLayout(db: D1Database): Promise<LayoutEntry[]>
  * R24: cards that do not apply to this business type. Customize hides them too. The ceiling card
  * belongs to עוסק פטור (and the year of the switch), the VAT card to עוסק מורשה and a company.
  */
-export async function unavailableCards(db: D1Database, today: string): Promise<DashboardCard[]> {
-  const [entityType, murshe] = await Promise.all([getEntityType(db), mursheRow(db)]);
+export async function unavailableCards(db: D1Database, today: string, businessId: number): Promise<DashboardCard[]> {
+  const [entityType, murshe] = await Promise.all([getEntityType(db, businessId), mursheRow(db, businessId)]);
   const out: DashboardCard[] = [];
   if (!showsCeiling(entityType, murshe, today)) out.push('ceiling');
   if (entityType === 'osek_patur') out.push('vat');
@@ -382,20 +389,24 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
   const routes = new Hono<AppEnv>();
   // Without `cards`, the stored layout picks the visible cards and rides along in the answer,
   // so the page renders from this one call.
-  routes.get('/', requireFeature('reports'), async (c) => {
+  routes.get('/', requireFeatureOrAssistant('reports'), async (c) => {
     const request = parseDashboardQuery(c.req.query());
-    if (request.cards) return c.json(await buildDashboard(c.env.DB, today(), request));
-    const layout = await getDashboardLayout(c.env.DB);
+    const businessId = businessIdOf(c);
+    if (request.cards) return c.json(await buildDashboard(c.env.DB, today(), businessId, request));
+    const layout = await getDashboardLayout(c.env.DB, businessId);
     const cards = layout.filter((e) => e.visible).map((e) => e.id);
-    return c.json({ ...(await buildDashboard(c.env.DB, today(), { ...request, cards })), layout });
+    return c.json({ ...(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards })), layout });
   });
   // Phone Quick page: the latest documents and expenses, newest first.
-  routes.get('/activity', requireFeature('reports'), async (c) => {
+  routes.get('/activity', requireFeatureOrAssistant('reports'), async (c) => {
     const limit = Number(c.req.query('limit') ?? ACTIVITY_DEFAULT_LIMIT);
-    return c.json({ items: await recentActivity(c.env.DB, limit) });
+    return c.json({ items: await recentActivity(c.env.DB, limit, businessIdOf(c)) });
   });
-  routes.get('/layout', requireFeature('reports'), async (c) => {
-    return c.json({ cards: await getDashboardLayout(c.env.DB), unavailable: await unavailableCards(c.env.DB, today()) });
+  routes.get('/layout', requireFeatureOrAssistant('reports'), async (c) => {
+    return c.json({
+      cards: await getDashboardLayout(c.env.DB, businessIdOf(c)),
+      unavailable: await unavailableCards(c.env.DB, today(), businessIdOf(c)),
+    });
   });
   // Settings > Dashboard. Owner only, like every other setting.
   routes.put('/layout', requireRole('owner'), async (c) => {
@@ -410,7 +421,7 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
         c.env.DB,
         `INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?)
          ON CONFLICT (key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
-        DASHBOARD_LAYOUT_KEY,
+        settingKey(businessIdOf(c), DASHBOARD_LAYOUT_KEY),
         JSON.stringify(cards),
         nowIso(),
       ),

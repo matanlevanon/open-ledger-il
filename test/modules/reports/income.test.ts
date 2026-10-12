@@ -21,7 +21,7 @@ describe('incomeReport: income by month, client and currency (runs/R08-reports.m
     const client = await makeClient('Acme Ltd');
     await finalizeWithClient('400', 100000, client);
 
-    const report = await incomeReport(db(), '2026-10-01', '2026-10-31');
+    const report = await incomeReport(db(), '2026-10-01', '2026-10-31', 1);
     expect(report.rows).toHaveLength(1);
     expect(report.rows[0]).toMatchObject({ clientName: 'Acme Ltd', currency: 'ILS', amountMinor: 100000, amountIlsMinor: 100000 });
     expect(report.byMonth).toEqual([{ month: '2026-10', totalIlsMinor: 100000 }]);
@@ -35,7 +35,7 @@ describe('incomeReport: income by month, client and currency (runs/R08-reports.m
     await finalizeWithClient('400', 50000, client);
     await finalizeWithClient('405', -20000, client);
 
-    const report = await incomeReport(db(), '2026-10-01', '2026-10-31');
+    const report = await incomeReport(db(), '2026-10-01', '2026-10-31', 1);
     const beta = report.byClient.find((c) => c.clientName === 'Beta Co');
     expect(beta?.totalIlsMinor).toBe(30000);
   });
@@ -44,7 +44,7 @@ describe('incomeReport: income by month, client and currency (runs/R08-reports.m
     const client = await makeClient('Gamma Inc');
     await finalizeWithClient('PR', 999999, client);
 
-    const report = await incomeReport(db(), '2026-10-01', '2026-10-31');
+    const report = await incomeReport(db(), '2026-10-01', '2026-10-31', 1);
     expect(report.rows.some((r) => r.clientName === 'Gamma Inc')).toBe(false);
   });
 
@@ -52,7 +52,7 @@ describe('incomeReport: income by month, client and currency (runs/R08-reports.m
     const client = await makeClient('Delta LLC');
     await finalizeWithClient('400', 70000, client);
 
-    const report = await incomeReport(db(), '2020-01-01', '2020-01-31');
+    const report = await incomeReport(db(), '2020-01-01', '2020-01-31', 1);
     expect(report.rows.some((r) => r.clientName === 'Delta LLC')).toBe(false);
   });
 
@@ -64,7 +64,7 @@ describe('incomeReport: income by month, client and currency (runs/R08-reports.m
          amount_before_vat_minor, vat_amount_minor, total_minor, total_ils_minor, paid_status, r2_key, sha256)
        VALUES ('wave', 'income-test-1', 'Invoice', '2026-10-15', 'Old System Client', 'ILS', 5000, 0, 5000, 5000, 'paid', 'k', 'h')`,
     );
-    const report = await incomeReport(db(), '2026-10-01', '2026-10-31');
+    const report = await incomeReport(db(), '2026-10-01', '2026-10-31', 1);
     const row = report.rows.find((r) => r.clientName === 'Old System Client');
     expect(row).toMatchObject({ typeNameEn: 'Issued in wave', externalSource: 'wave', amountMinor: 5000, amountIlsMinor: 5000 });
     expect(report.totalIlsMinor).toBeGreaterThanOrEqual(5000);
@@ -79,7 +79,7 @@ describe('incomeReport: income by month, client and currency (runs/R08-reports.m
               ('sumit', 'income-pr-1', 'דרישת תשלום', '2026-11-15', 'Double Co', 'ILS', 7000, 0, 7000, 7000, 'paid', 'k', 'h'),
               ('sumit', 'income-ir-1', 'Invoice/Receipt', '2026-11-20', 'Double Co', 'ILS', 7000, 0, 7000, 7000, 'paid', 'k', 'h')`,
     );
-    const report = await incomeReport(db(), '2026-11-01', '2026-11-30');
+    const report = await incomeReport(db(), '2026-11-01', '2026-11-30', 1);
     const rows = report.rows.filter((r) => r.clientName === 'Double Co');
     expect(rows.map((r) => r.displayNumber)).toEqual(['income-ir-1']);
   });

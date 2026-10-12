@@ -196,8 +196,8 @@ describe('auth: roles and features', () => {
   it('exposes the declared feature on the middleware', () => {
     expect(requireFeature('reports').feature).toBe('reports');
     expect(requireRole('owner').roles).toEqual(['owner']);
-    expect(hasFeature({ id: 1, email: 'a', name: null, role: 'accountant', features: ['reports'], theme: null, locale: null }, 'reports')).toBe(true);
-    expect(hasFeature({ id: 1, email: 'a', name: null, role: 'accountant', features: ['reports'], theme: null, locale: null }, 'ita')).toBe(false);
+    expect(hasFeature({ id: 1, email: 'a', name: null, role: 'accountant', features: ['reports'], theme: null, locale: null, businessId: 1, businesses: [{ id: 1, role: 'accountant' }] }, 'reports')).toBe(true);
+    expect(hasFeature({ id: 1, email: 'a', name: null, role: 'accountant', features: ['reports'], theme: null, locale: null, businessId: 1, businesses: [{ id: 1, role: 'accountant' }] }, 'ita')).toBe(false);
   });
 });
 

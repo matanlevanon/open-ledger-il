@@ -15,21 +15,38 @@ import { type Ctx, createDraft, finalize, recordPayment } from '../documents/ser
 import { displayNumber } from '../documents/types';
 import { boiRateSource } from '../fx';
 
-/** MCP acts as the owner. It has no per-request signed-in user, only the bearer token. */
-export const MCP_USER: AuthUser = { id: 0, email: 'mcp', name: 'MCP client', role: 'owner', features: [...FEATURES], theme: null, locale: null };
+/** MCP acts as the owner of one business. It has no per-request signed-in user, only the bearer token. */
+export function mcpUser(businessId: number): AuthUser {
+  return {
+    id: 0,
+    email: 'mcp',
+    name: 'MCP client',
+    role: 'owner',
+    features: [...FEATURES],
+    theme: null,
+    locale: null,
+    businessId,
+    businesses: [{ id: businessId, role: 'owner' }],
+  };
+}
+
+/** Business 1 unless the call names another with the X-Business-Id header. */
+export const MCP_USER: AuthUser = mcpUser(1);
 
 export interface McpEnv {
   db: D1Database;
   actor: AuditActor;
   today?: () => string;
+  /** R24: the business every tool reads and writes. */
+  businessId: number;
 }
 
 function ctxOf(env: McpEnv): Ctx {
   const today = env.today ?? (() => todayIsrael());
   return {
     db: env.db,
-    actor: env.actor,
-    user: MCP_USER,
+    actor: { ...env.actor, businessId: env.businessId },
+    user: mcpUser(env.businessId),
     services: { fx: boiRateSource(env.db), ceiling: passThroughCeilingGuard, today, allocation: passThroughAllocationRequester },
   };
 }
@@ -98,15 +115,16 @@ const incomeReportInput = z.object({ from: dateString, to: dateString });
 const INCOME_TYPES = ['400', '405', '305', '320', '330'];
 
 /** A credit (405, 330) is stored with a negative total, so a plain SUM nets it against the sale. */
-async function incomeReport(db: D1Database, from: string, to: string) {
+async function incomeReport(db: D1Database, from: string, to: string, businessId: number) {
   const ilsAmount = `COALESCE(total_ils_minor, CASE WHEN currency = 'ILS' THEN total_minor ELSE NULL END)`;
   const rows = await all<{ currency: string; count: number; total_minor: number; total_ils_minor: number | null }>(
     db,
     `SELECT currency, COUNT(*) AS count, SUM(total_minor) AS total_minor, SUM(${ilsAmount}) AS total_ils_minor
      FROM documents
-     WHERE status = 'final' AND type IN (${INCOME_TYPES.map(() => '?').join(',')}) AND date BETWEEN ? AND ?
+     WHERE business_id = ? AND status = 'final' AND type IN (${INCOME_TYPES.map(() => '?').join(',')}) AND date BETWEEN ? AND ?
      GROUP BY currency
      ORDER BY currency`,
+    businessId,
     ...INCOME_TYPES,
     from,
     to,
@@ -132,7 +150,7 @@ export const MCP_TOOLS: McpTool[] = [
     async handler(env, args) {
       const input = listClientsInput.parse(args ?? {});
       const today = (env.today ?? (() => todayIsrael()))();
-      const rows = await listClients(env.db, { q: input.query, active: input.includeInactive ? 'all' : '1' }, today);
+      const rows = await listClients(env.db, { q: input.query, active: input.includeInactive ? 'all' : '1' }, today, env.businessId);
       return rows.map((r) => ({ id: r.id, nameEn: r.name_en, nameHe: r.name_he, currency: r.currency, balances: r.balances, overdue: r.overdue }));
     },
   },
@@ -146,8 +164,8 @@ export const MCP_TOOLS: McpTool[] = [
     },
     async handler(env, args) {
       const input = clientBalanceInput.parse(args);
-      const client = await getClient(env.db, input.clientId);
-      const balances = (await clientBalances(env.db)).get(input.clientId) ?? {};
+      const client = await getClient(env.db, input.clientId, env.businessId);
+      const balances = (await clientBalances(env.db, env.businessId)).get(input.clientId) ?? {};
       return { clientId: client.id, nameEn: client.name_en, nameHe: client.name_he, currency: client.currency, balances };
     },
   },
@@ -183,7 +201,7 @@ export const MCP_TOOLS: McpTool[] = [
       const input = draftInput.parse(args);
       const ctx = ctxOf(env);
       const id = await createDraft(ctx, input);
-      const doc = await getDoc(env.db, id);
+      const doc = await getDoc(env.db, id, env.businessId);
       return { documentId: id, type: doc.type, status: doc.status, currency: doc.currency, totalMinor: doc.total_minor };
     },
   },
@@ -203,7 +221,7 @@ export const MCP_TOOLS: McpTool[] = [
       const input = finalizeDocumentInput.parse(args);
       const ctx = ctxOf(env);
       const outcome = await finalize(ctx, input.documentId, { backdateReason: input.backdateReason });
-      const doc = await getDoc(env.db, input.documentId);
+      const doc = await getDoc(env.db, input.documentId, env.businessId);
       return { documentId: input.documentId, number: outcome.number, displayNumber: displayNumber(doc.type, outcome.number), alreadyFinal: outcome.alreadyFinal };
     },
   },
@@ -261,7 +279,7 @@ export const MCP_TOOLS: McpTool[] = [
     async handler(env, args) {
       const input = incomeReportInput.parse(args);
       if (input.from > input.to) throw new ValidationError('"from" must be on or before "to".');
-      return incomeReport(env.db, input.from, input.to);
+      return incomeReport(env.db, input.from, input.to, env.businessId);
     },
   },
   {
@@ -270,7 +288,7 @@ export const MCP_TOOLS: McpTool[] = [
     inputSchema: { type: 'object', properties: {} },
     async handler(env) {
       const today = (env.today ?? (() => todayIsrael()))();
-      const [legalMode, dashboard] = await Promise.all([legalModeOn(env.db, today), buildDashboard(env.db, today)]);
+      const [legalMode, dashboard] = await Promise.all([legalModeOn(env.db, today, env.businessId), buildDashboard(env.db, today, env.businessId)]);
       return { legalMode: legalMode.mode, effectiveFrom: legalMode.effective_from, ceiling: dashboard.ceiling };
     },
   },

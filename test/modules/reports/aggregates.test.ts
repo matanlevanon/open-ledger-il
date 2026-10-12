@@ -37,13 +37,13 @@ let categoryId: number;
 let baseline: { income: number; imported: number; cashIn: number; cashImported: number; out: number; expenses: number; turnover: number };
 
 async function monthIncome() {
-  return (await incomeByMonth(db(), FROM, TO)).find((m) => m.month === MONTH)!;
+  return (await incomeByMonth(db(), FROM, TO, 1)).find((m) => m.month === MONTH)!;
 }
 
 beforeAll(async () => {
   const income = await monthIncome();
-  const cash = (await cashFlowByMonth(db(), FROM, TO)).find((m) => m.month === MONTH)!;
-  const pl = (await profitLossByMonth(db(), FROM, TO)).find((m) => m.month === MONTH)!;
+  const cash = (await cashFlowByMonth(db(), FROM, TO, 1)).find((m) => m.month === MONTH)!;
+  const pl = (await profitLossByMonth(db(), FROM, TO, 1)).find((m) => m.month === MONTH)!;
   baseline = {
     income: income.issuedIlsMinor,
     imported: income.importedIlsMinor,
@@ -51,7 +51,7 @@ beforeAll(async () => {
     cashImported: cash.importedInflowIlsMinor,
     out: cash.outflowIlsMinor,
     expenses: pl.expensesIlsMinor,
-    turnover: await turnoverIls(db(), '2026-01-01', '2026-12-31'),
+    turnover: await turnoverIls(db(), '2026-01-01', '2026-12-31', 1),
   };
 
   ilsClient = await makeClient({ nameEn: 'R21 ILS Client' });
@@ -99,12 +99,12 @@ describe('R21 aggregates', () => {
   });
 
   it('a real credit lowers turnover for the ceiling (credits reduce income)', async () => {
-    const after = await turnoverIls(db(), '2026-01-01', '2026-12-31');
+    const after = await turnoverIls(db(), '2026-01-01', '2026-12-31', 1);
     expect(after - baseline.turnover).toBe(80000 + usdIls);
   });
 
   it('the R08 income report agrees: credits reduce income once', async () => {
-    const report = await incomeReport(db(), FROM, TO);
+    const report = await incomeReport(db(), FROM, TO, 1);
     const ils = report.byClient.find((c) => c.clientName === 'R21 ILS Client');
     expect(ils?.totalIlsMinor).toBe(80000 + 5000);
   });
@@ -116,7 +116,7 @@ describe('R21 aggregates', () => {
   });
 
   it('income by client merges issued and imported, keeps the original currency, and groups an unmatched import by name', async () => {
-    const b = await incomeByClient(db(), FROM, TO);
+    const b = await incomeByClient(db(), 1, FROM, TO);
     const ils = b.rows.find((r) => r.key === `client:${ilsClient}`)!;
     expect(ils.ilsMinor).toBe(85000);
     expect(ils.imported).toBe(false);
@@ -128,7 +128,7 @@ describe('R21 aggregates', () => {
   });
 
   it('income by service reads document lines in ILS and counts quantity', async () => {
-    const b = await incomeByService(db(), FROM, TO);
+    const b = await incomeByService(db(), 1, FROM, TO);
     const workshop = b.rows.find((r) => r.nameEn === 'R21 Workshop')!;
     expect(workshop.ilsMinor).toBe(usdIls);
     expect(workshop.byCurrency).toEqual({ USD: 50000 });
@@ -136,7 +136,7 @@ describe('R21 aggregates', () => {
   });
 
   it('cash flow counts payments in, paid imports, and expenses out below zero', async () => {
-    const m = (await cashFlowByMonth(db(), FROM, TO)).find((x) => x.month === MONTH)!;
+    const m = (await cashFlowByMonth(db(), FROM, TO, 1)).find((x) => x.month === MONTH)!;
     // The credit refunds 200.00, the cancelled receipt's payment does not count.
     expect(m.inflowIlsMinor - baseline.cashIn).toBe(100000 - 20000 + usdIls);
     expect(m.importedInflowIlsMinor - baseline.cashImported).toBe(5000);
@@ -145,15 +145,15 @@ describe('R21 aggregates', () => {
   });
 
   it('expenses by category counts new and filed, labels no category Uncategorized, and skips duplicates', async () => {
-    const b = await expensesByCategory(db(), FROM, TO);
+    const b = await expensesByCategory(db(), 1, FROM, TO);
     expect(b.rows.find((r) => r.key === `category:${categoryId}`)?.ilsMinor).toBe(20000);
     expect(b.rows.find((r) => r.key === 'category:none')?.nameEn).toBe('Uncategorized');
-    const pl = (await profitLossByMonth(db(), FROM, TO)).find((m) => m.month === MONTH)!;
+    const pl = (await profitLossByMonth(db(), FROM, TO, 1)).find((m) => m.month === MONTH)!;
     expect(pl.expensesIlsMinor - baseline.expenses).toBe(23700);
   });
 
   it('year comparison splits the previous year, the same period last year and this year to date', async () => {
-    const y = await yearComparison(db(), '2026-10-31');
+    const y = await yearComparison(db(), '2026-10-31', 1);
     expect(y.previousYear).toMatchObject({ from: '2025-01-01', to: '2025-12-31' });
     expect(y.samePeriodLastYear).toMatchObject({ from: '2025-01-01', to: '2025-10-31' });
     expect(y.yearToDate.from).toBe('2026-01-01');
@@ -163,7 +163,7 @@ describe('R21 aggregates', () => {
 
   it('open items age a payment request past its due date into the right bucket', async () => {
     const pr = await issue('PR', { clientId: usdClient, lines: [line(10000)], dueDate: '2026-10-06' });
-    const items = await openItems(db(), '2026-11-20');
+    const items = await openItems(db(), '2026-11-20', 1);
     const item = items.find((i) => i.documentId === pr.document.id)!;
     expect(item).toMatchObject({ currency: 'USD', remainingMinor: 10000, daysOverdue: 45, bucket: '31-60', clientNameEn: 'R21 USD Client' });
   });

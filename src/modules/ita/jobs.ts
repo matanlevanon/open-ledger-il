@@ -109,8 +109,8 @@ export function reminderStage(daysSinceLogin: number): number {
  * earlier of the consent count or 3 months), so a nightly renewal proves little and adds a daily
  * chance to fail. The short-lived access token is renewed when a call needs it.
  */
-export async function runTokenCheck(env: ItaEnv, deps: ItaDeps): Promise<TokenCheckResult> {
-  const service = new ItaAllocationService(env, deps);
+export async function runTokenCheck(env: ItaEnv, deps: ItaDeps, businessId = 1): Promise<TokenCheckResult> {
+  const service = new ItaAllocationService(env, deps, businessId);
   const tokens = service.tokens;
   const notifier = deps.notifier(env);
   const status = await tokens.status();
@@ -139,4 +139,12 @@ export async function runTokenCheck(env: ItaEnv, deps: ItaDeps): Promise<TokenCh
     if (reminded) await tokens.markReminderSent();
   }
   return { status: status.status, refreshed: false, reminded };
+}
+
+/** R24 B6: the daily token check for every business that has an ITA login. */
+export async function runTokenChecks(env: ItaEnv, deps: ItaDeps): Promise<TokenCheckResult[]> {
+  const rows = await all<{ business_id: number }>(env.DB, 'SELECT DISTINCT business_id FROM ita_tokens WHERE environment = ? ORDER BY business_id', itaEnvironment(env));
+  const out: TokenCheckResult[] = [];
+  for (const r of rows) out.push(await runTokenCheck(env, deps, r.business_id));
+  return out;
 }

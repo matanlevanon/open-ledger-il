@@ -43,6 +43,31 @@ export const updateAccountantSchema = z
   });
 export type UpdateAccountantInput = z.infer<typeof updateAccountantSchema>;
 
+/**
+ * R24 Phase B: add a person with a role on one or more businesses. Without a role, an accountant,
+ * which needs an access end date. Owners and assistants have none.
+ */
+export const addUserSchema = z.object({
+  email,
+  name,
+  role: z.enum(['owner', 'assistant', 'accountant']).optional(),
+  businessIds: z.array(z.number().int().positive()).min(1).max(50).optional(),
+  accessEndsOn: dateString.optional(),
+  features: featureMap.optional(),
+});
+export type AddUserInput = z.infer<typeof addUserSchema>;
+
+export const updateUserSchema = z
+  .object({
+    name,
+    role: z.enum(['owner', 'assistant', 'accountant']).optional(),
+    accessEndsOn: dateString.optional(),
+    features: featureMap.optional(),
+  })
+  .refine((v) => v.name !== undefined || v.role !== undefined || v.accessEndsOn !== undefined || v.features !== undefined, {
+    message: 'Nothing to update.',
+  });
+
 export const accessLogQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(200).default(50),
   before: z.coerce.number().int().min(1).optional(),

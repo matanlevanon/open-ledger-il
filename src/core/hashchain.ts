@@ -6,7 +6,7 @@ import { all, first } from './db';
  * hash = SHA-256( canonicalJson({ prev_hash, record }) ), hex encoded.
  * `record` is the frozen content of the document (fields in HASHED_DOCUMENT_FIELDS, its lines
  * and its payments). `prev_hash` is the hash of the document finalized just before, or
- * GENESIS_HASH for the first one. The chain is global and follows `finalizations.seq`.
+ * GENESIS_HASH for the first one. R24: one chain per business, each in `finalizations.seq` order.
  */
 
 export const GENESIS_HASH = '0'.repeat(64);
@@ -197,7 +197,10 @@ export interface ChainReport {
   checked: number;
   /** Rows read from allocation_records. 0 on a source that predates or omits that table (for example a pre-R11 export). */
   allocationsChecked: number;
+  /** The hash of the last finalization, of any business. */
   headHash: string;
+  /** R24: the chain head of each business. Each business has its own chain. */
+  headHashes: Record<number, string>;
   breaks: ChainBreak[];
 }
 
@@ -206,7 +209,7 @@ async function tableExists(db: D1Database, name: string): Promise<boolean> {
   return row !== null;
 }
 
-type FinalizationRow = { seq: number; document_id: number; prev_hash: string; hash: string };
+type FinalizationRow = { seq: number; document_id: number; prev_hash: string; hash: string; business_id?: number };
 type AllocationRecordRow = { id: number; document_id: number; document_hash: string; allocation_number: string; hash: string };
 
 /**
@@ -255,8 +258,12 @@ async function verifyAllocationRecordsFrom(source: ChainSource, breaks: ChainBre
 async function verifyChainFrom(source: ChainSource): Promise<ChainReport> {
   const rows = await source.finalizations();
   const breaks: ChainBreak[] = [];
-  let expectedPrev = GENESIS_HASH;
+  // R24: one chain per business. prev_hash is the previous finalization of the same business.
+  const heads: Record<number, string> = {};
+  let lastHash = GENESIS_HASH;
   for (const f of rows) {
+    const business = f.business_id ?? 1;
+    const expectedPrev = heads[business] ?? GENESIS_HASH;
     if (f.prev_hash !== expectedPrev) {
       breaks.push({ seq: f.seq, documentId: f.document_id, reason: 'prev_hash_mismatch' });
     }
@@ -272,15 +279,16 @@ async function verifyChainFrom(source: ChainSource): Promise<ChainReport> {
         breaks.push({ seq: f.seq, documentId: f.document_id, reason: 'content_changed' });
       }
     }
-    expectedPrev = f.hash;
+    heads[business] = f.hash;
+    lastHash = f.hash;
   }
   const allocationsChecked = await verifyAllocationRecordsFrom(source, breaks);
-  return { ok: breaks.length === 0, checked: rows.length, allocationsChecked, headHash: expectedPrev, breaks };
+  return { ok: breaks.length === 0, checked: rows.length, allocationsChecked, headHash: lastHash, headHashes: heads, breaks };
 }
 
 function d1Source(db: D1Database): ChainSource {
   return {
-    finalizations: () => all<FinalizationRow>(db, 'SELECT seq, document_id, prev_hash, hash FROM finalizations ORDER BY seq'),
+    finalizations: () => all<FinalizationRow>(db, 'SELECT seq, document_id, prev_hash, hash, business_id FROM finalizations ORDER BY seq'),
     loadDocument: (documentId) => loadDocument(db, documentId),
     allocationRecords: async () => {
       if (!(await tableExists(db, 'allocation_records'))) return null;
@@ -307,7 +315,13 @@ function tablesSource(tables: ChainTables): ChainSource {
   return {
     finalizations: async () =>
       [...(tables.finalizations ?? [])]
-        .map((f) => ({ seq: Number(f.seq), document_id: Number(f.document_id), prev_hash: String(f.prev_hash), hash: String(f.hash) }))
+        .map((f) => ({
+          seq: Number(f.seq),
+          document_id: Number(f.document_id),
+          prev_hash: String(f.prev_hash),
+          hash: String(f.hash),
+          business_id: f.business_id === undefined || f.business_id === null ? 1 : Number(f.business_id),
+        }))
         .sort((a, b) => a.seq - b.seq),
     loadDocument: async (documentId) => {
       const row = documentsById.get(documentId);

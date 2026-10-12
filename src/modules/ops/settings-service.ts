@@ -1,5 +1,6 @@
 import type { AuditActor } from '../../core/audit';
-import { auditStatement } from '../../core/audit';
+import { actorBiz, auditStatement } from '../../core/audit';
+import { readBusinessSetting, settingKey } from '../../core/business';
 import { all, first, nowIso, stmt, transaction } from '../../core/db';
 import { ISSUING_KEY } from '../../core/issuing';
 import { ConflictError, DomainError, NotFoundError } from '../../core/errors';
@@ -25,8 +26,9 @@ export interface BusinessProfileRow {
   updated_at: string;
 }
 
-export async function getBusinessProfile(db: D1Database): Promise<BusinessProfileRow> {
-  const row = await first<BusinessProfileRow>(db, 'SELECT * FROM business_profile WHERE id = 1');
+/** R24: Settings > Business edits the current business. */
+export async function getBusinessProfile(db: D1Database, businessId: number): Promise<BusinessProfileRow> {
+  const row = await first<BusinessProfileRow>(db, 'SELECT * FROM businesses WHERE id = ?', businessId);
   if (!row) throw new NotFoundError('Business profile');
   return row;
 }
@@ -57,27 +59,28 @@ export async function updateBusinessProfile(
     await transaction(db, [
       stmt(
         db,
-        `UPDATE business_profile SET ${set.map(([, col]) => `${col} = ?`).join(', ')}, updated_at = ? WHERE id = 1`,
+        `UPDATE businesses SET ${set.map(([, col]) => `${col} = ?`).join(', ')}, updated_at = ? WHERE id = ?`,
         ...set.map(([key]) => (patch[key] as string | null) ?? null),
         nowIso(),
+        actorBiz(actor),
       ),
-      auditStatement(db, actor, 'ops.business_update', 'business_profile', 1, { fields: set.map(([, col]) => col) }),
+      auditStatement(db, actor, 'ops.business_update', 'business', actorBiz(actor), { fields: set.map(([, col]) => col) }),
     ]);
   }
-  return getBusinessProfile(db);
+  return getBusinessProfile(db, actorBiz(actor));
 }
 
 export async function setBusinessLogo(db: D1Database, actor: AuditActor, r2Key: string | null): Promise<void> {
   await transaction(db, [
-    stmt(db, 'UPDATE business_profile SET logo_r2_key = ?, updated_at = ? WHERE id = 1', r2Key, nowIso()),
-    auditStatement(db, actor, 'ops.business_logo_update', 'business_profile', 1, { key: r2Key }),
+    stmt(db, 'UPDATE businesses SET logo_r2_key = ?, updated_at = ? WHERE id = ?', r2Key, nowIso(), actorBiz(actor)),
+    auditStatement(db, actor, 'ops.business_logo_update', 'business', actorBiz(actor), { key: r2Key }),
   ]);
 }
 
 export async function setSignatureImage(db: D1Database, actor: AuditActor, r2Key: string | null): Promise<void> {
   await transaction(db, [
-    stmt(db, 'UPDATE business_profile SET signature_r2_key = ?, updated_at = ? WHERE id = 1', r2Key, nowIso()),
-    auditStatement(db, actor, 'ops.signature_image_update', 'business_profile', 1, { key: r2Key }),
+    stmt(db, 'UPDATE businesses SET signature_r2_key = ?, updated_at = ? WHERE id = ?', r2Key, nowIso(), actorBiz(actor)),
+    auditStatement(db, actor, 'ops.signature_image_update', 'business', actorBiz(actor), { key: r2Key }),
   ]);
 }
 
@@ -89,14 +92,14 @@ export async function setSignatureImage(db: D1Database, actor: AuditActor, r2Key
 export const REQUIRED_BUSINESS_FIELDS = ['name_en', 'name_he', 'tax_id', 'address_en'] as const;
 
 /** The required business fields that are still empty. An empty list means setup is done. */
-export async function missingBusinessFields(db: D1Database): Promise<string[]> {
-  const row = await first<Record<string, string | null>>(db, 'SELECT name_en, name_he, tax_id, address_en FROM business_profile WHERE id = 1');
+export async function missingBusinessFields(db: D1Database, businessId: number): Promise<string[]> {
+  const row = await first<Record<string, string | null>>(db, 'SELECT name_en, name_he, tax_id, address_en FROM businesses WHERE id = ?', businessId);
   return REQUIRED_BUSINESS_FIELDS.filter((f) => !row?.[f]?.trim());
 }
 
 /** Refuses to create a document until the business profile is filled in (first-run setup). */
-export async function assertBusinessReady(db: D1Database): Promise<void> {
-  const missing = await missingBusinessFields(db);
+export async function assertBusinessReady(db: D1Database, businessId: number): Promise<void> {
+  const missing = await missingBusinessFields(db, businessId);
   if (missing.length > 0) {
     throw new DomainError('business_profile_incomplete', 'Fill in Settings > Business before you create a document.', 409, { missing });
   }
@@ -110,13 +113,14 @@ export async function assertBusinessReady(db: D1Database): Promise<void> {
  * Series for Settings > Numbering. Hides series whose document type is disabled, so a retired type
  * (PF, replaced by 300 as the pro forma) never shows as a second "Pro Forma Invoice" row.
  */
-export async function listSeries(db: D1Database) {
+export async function listSeries(db: D1Database, businessId: number) {
   return all(
     db,
     `SELECT s.id, s.doc_type, s.name_en, s.name_he, s.legal_mode, s.start_number, s.next_number, s.started_at, s.closed_at
        FROM series s LEFT JOIN document_types dt ON dt.code = s.doc_type
-      WHERE dt.enabled IS NULL OR dt.enabled = 1
+      WHERE s.business_id = ? AND (dt.enabled IS NULL OR dt.enabled = 1)
       ORDER BY s.doc_type`,
+    businessId,
   );
 }
 
@@ -164,17 +168,17 @@ export async function addVatRate(db: D1Database, actor: AuditActor, input: VatRa
 // Signature mode
 // ---------------------------------------------------------------------------
 
-export async function getSignatureMode(db: D1Database): Promise<'secured' | 'none'> {
-  const row = await first<{ value: string }>(db, 'SELECT value FROM settings WHERE key = ?', 'signature_mode');
-  return row?.value === 'none' ? 'none' : 'secured';
+export async function getSignatureMode(db: D1Database, businessId: number): Promise<'secured' | 'none'> {
+  return (await readBusinessSetting(db, businessId, 'signature_mode')) === 'none' ? 'none' : 'secured';
 }
 
 export async function setSignatureMode(db: D1Database, actor: AuditActor, mode: 'secured' | 'none'): Promise<void> {
   await transaction(db, [
     stmt(
       db,
-      `INSERT INTO settings (key, value, updated_at) VALUES ('signature_mode', ?, ?)
+      `INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?)
        ON CONFLICT (key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
+      settingKey(actorBiz(actor), 'signature_mode'),
       mode,
       nowIso(),
     ),
@@ -192,7 +196,7 @@ export async function setIssuing(db: D1Database, actor: AuditActor, enabled: boo
       db,
       `INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?)
        ON CONFLICT (key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
-      ISSUING_KEY,
+      settingKey(actorBiz(actor), ISSUING_KEY),
       enabled ? 'on' : 'off',
       nowIso(),
     ),

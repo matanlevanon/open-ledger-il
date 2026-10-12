@@ -29,7 +29,7 @@ describe('runReminders', () => {
     const noConsent = await insertSendingClient({ email: 'no-consent@example.com' });
     await finalizedRequest(noConsent, '2026-11-13');
 
-    const result = await runReminders({ db: db(), mailer, today: TODAY });
+    const result = await runReminders({ db: db(), mailer, today: TODAY , businessId: 1 });
     expect(result.sent).toBe(1);
 
     expect(mailer.sent).toHaveLength(1);
@@ -47,7 +47,7 @@ describe('runReminders', () => {
     await acceptConsent(db(), { clientId, ip: null, userAgent: null });
     await finalizedRequest(clientId, '2026-11-07'); // 3 days overdue
 
-    const result = await runReminders({ db: db(), mailer, today: TODAY });
+    const result = await runReminders({ db: db(), mailer, today: TODAY , businessId: 1 });
     expect(result.sent).toBe(1);
     expect(mailer.sent[0]!.subject).toMatch(/Reminder/);
     expect(mailer.sent[0]!.html).toMatch(/overdue/i);
@@ -58,7 +58,7 @@ describe('runReminders', () => {
     await acceptConsent(db(), { clientId, ip: null, userAgent: null });
     await finalizedRequest(clientId, '2026-11-15'); // 5 days out, not in the default [3] before list
 
-    const result = await runReminders({ db: db(), mailer, today: TODAY });
+    const result = await runReminders({ db: db(), mailer, today: TODAY , businessId: 1 });
     expect(result.sent).toBe(0);
     expect(mailer.sent).toHaveLength(0);
   });
@@ -68,8 +68,8 @@ describe('runReminders', () => {
     await acceptConsent(db(), { clientId, ip: null, userAgent: null });
     await finalizedRequest(clientId, '2026-11-13');
 
-    const first = await runReminders({ db: db(), mailer, today: TODAY });
-    const second = await runReminders({ db: db(), mailer, today: TODAY });
+    const first = await runReminders({ db: db(), mailer, today: TODAY , businessId: 1 });
+    const second = await runReminders({ db: db(), mailer, today: TODAY , businessId: 1 });
 
     expect(first.sent).toBe(1);
     expect(second.sent).toBe(0);
@@ -82,7 +82,7 @@ describe('runReminders', () => {
     const id = await insertPaymentRequest(clientId, { date: '2026-10-01' });
     await finalizeDocument(db(), id, { actor: OWNER_ACTOR });
 
-    const result = await runReminders({ db: db(), mailer, today: TODAY });
+    const result = await runReminders({ db: db(), mailer, today: TODAY , businessId: 1 });
     expect(result.sent).toBe(0);
     expect(mailer.sent).toHaveLength(0);
   });

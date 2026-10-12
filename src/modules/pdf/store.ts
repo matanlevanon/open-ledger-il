@@ -1,4 +1,5 @@
 import { first, run } from '../../core/db';
+import { printedIdentity } from '../businesses/service';
 import { ConfigError, ConflictError, DomainError, NotFoundError, ValidationError } from '../../core/errors';
 import { loadDocument } from '../../core/hashchain';
 import { assertCurrency } from '../../core/money';
@@ -95,22 +96,29 @@ async function fetchClient(db: D1Database, clientId: number | null): Promise<Ren
   };
 }
 
-async function fetchBusiness(db: D1Database, taxId: string | null, files: R2Bucket | null | undefined) {
-  const row = await first<BusinessRow>(db, 'SELECT * FROM business_profile WHERE id = 1');
+/**
+ * R24: the header of a document prints its brand over its business (src/modules/businesses).
+ * The tax id and the legal name always come from the business. Business 1's default brand is
+ * empty, so its documents print exactly what they printed before brands.
+ */
+async function fetchBusiness(db: D1Database, businessId: number, brandId: number | null, taxId: string | null, files: R2Bucket | null | undefined) {
+  const row = await first<BusinessRow>(db, 'SELECT * FROM businesses WHERE id = ?', businessId);
   if (!row) throw new ConfigError('Business profile is not set up.');
+  const identity = await printedIdentity(db, businessId, brandId);
   return {
-    nameEn: row.name_en,
-    nameHe: row.name_he,
-    taglineEn: row.tagline_en,
-    taglineHe: row.tagline_he,
-    addressEn: row.address_en,
-    addressHe: row.address_he,
-    email: row.email,
-    phone: row.phone,
-    website: row.website,
+    nameEn: identity.nameEn,
+    nameHe: identity.nameHe,
+    taglineEn: identity.taglineEn,
+    taglineHe: identity.taglineHe,
+    addressEn: identity.addressEn,
+    addressHe: identity.addressHe,
+    email: identity.email,
+    phone: identity.phone,
+    website: identity.website,
     bankDetails: row.bank_details,
-    taxId: row.tax_id?.trim() || taxId,
-    logoDataUri: await imageDataUri(files, row.logo_r2_key),
+    taxId: row.tax_id?.trim() || (businessId === 1 ? taxId : null),
+    legalNameEn: row.name_en,
+    logoDataUri: await imageDataUri(files, identity.logoR2Key),
     signatureDataUri: await imageDataUri(files, row.signature_r2_key),
   };
 }
@@ -143,10 +151,10 @@ function toRenderPaymentMethod(row: { display_name: string; type: string; detail
 }
 
 /** Resolves a document or business's `payment_method_ids` JSON column into full catalog rows, in the order given. */
-async function fetchPaymentMethods(db: D1Database, rawIds: string | null): Promise<RenderPaymentMethod[]> {
+async function fetchPaymentMethods(db: D1Database, rawIds: string | null, businessId: number): Promise<RenderPaymentMethod[]> {
   const ids = parseMethodIds(rawIds);
   if (ids.length === 0) return [];
-  const rows = await getPaymentMethods(db, ids);
+  const rows = await getPaymentMethods(db, ids, businessId);
   const byId = new Map(rows.map((r) => [r.id, r]));
   return ids.map((id) => byId.get(id)).filter((r) => r !== undefined).map(toRenderPaymentMethod);
 }
@@ -171,13 +179,15 @@ export async function loadRenderDocument(
 
   const meta = await first<{ source_id: number | null }>(db, 'SELECT source_id FROM document_meta WHERE document_id = ?', documentId);
 
+  const businessId = Number(row.business_id ?? 1);
+  const brandId = row.brand_id === null || row.brand_id === undefined ? null : Number(row.brand_id);
   const [client, series, business, kind, source, paymentMethods] = await Promise.all([
     fetchClient(db, row.client_id === null || row.client_id === undefined ? null : Number(row.client_id)),
     fetchSeries(db, String(row.series_id)),
-    fetchBusiness(db, options.ownerTaxId, options.files),
+    fetchBusiness(db, businessId, brandId, options.ownerTaxId, options.files),
     fetchKind(db, String(row.type)),
     fetchSource(db, meta?.source_id ?? null),
-    fetchPaymentMethods(db, (row.payment_method_ids as string | null) ?? null),
+    fetchPaymentMethods(db, (row.payment_method_ids as string | null) ?? null, businessId),
   ]);
 
   const legalMode = row.legal_mode === 'murshe' ? 'murshe' : 'patur';
@@ -190,7 +200,7 @@ export async function loadRenderDocument(
   const paymentRows = loaded.payments as unknown as { method_id: number | null }[];
   const paymentMethodIds = [...new Set(paymentRows.map((p) => p.method_id).filter((id): id is number => id !== null))];
   const paymentMethodById = new Map(
-    (await getPaymentMethods(db, paymentMethodIds)).map((r) => [r.id, toRenderPaymentMethod(r)]),
+    (await getPaymentMethods(db, paymentMethodIds, businessId)).map((r) => [r.id, toRenderPaymentMethod(r)]),
   );
 
   return {

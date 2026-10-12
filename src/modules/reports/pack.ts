@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts } from 'pdf-lib';
+import { r2Prefix } from '../../core/business';
 import { zipSync } from 'fflate';
 import { all, run } from '../../core/db';
 import type { Env } from '../../env';
@@ -82,12 +83,15 @@ interface AccountantRecipient {
   email: string;
 }
 
-async function packRecipients(db: D1Database): Promise<AccountantRecipient[]> {
+/** R24: the accountants of this business with the monthly pack switched on. */
+async function packRecipients(db: D1Database, businessId: number): Promise<AccountantRecipient[]> {
   return all<AccountantRecipient>(
     db,
     `SELECT u.email FROM users u
      JOIN user_features f ON f.user_id = u.id AND f.feature = 'monthly_pack' AND f.enabled = 1
-     WHERE u.role = 'accountant' AND u.active = 1`,
+     JOIN user_businesses ub ON ub.user_id = u.id AND ub.business_id = ? AND ub.role = 'accountant'
+     WHERE u.active = 1`,
+    businessId,
   );
 }
 
@@ -116,16 +120,16 @@ export interface AccountantPackDeps {
  * accountant with the `monthly_pack` feature on. Safe to call again for the same period: R2 keys
  * and the `accountant_packs` row are both keyed by `period` and overwrite in place.
  */
-export async function buildAccountantPack(env: Env, period: string, deps: AccountantPackDeps = {}): Promise<AccountantPackResult> {
+export async function buildAccountantPack(env: Env, period: string, businessId: number, deps: AccountantPackDeps = {}): Promise<AccountantPackResult> {
   const { from, to } = monthRange(period);
   const [income, expenses, pl, files, clientLedgers] = await Promise.all([
-    incomeReport(env.DB, from, to),
-    expenseReport(env.DB, from, to),
-    profitLossReport(env.DB, from, to),
-    expenseFilesForPeriod(env.DB, from, to),
-    clientLedgersReport(env.DB, from, to),
+    incomeReport(env.DB, from, to, businessId),
+    expenseReport(env.DB, from, to, businessId),
+    profitLossReport(env.DB, from, to, businessId),
+    expenseFilesForPeriod(env.DB, from, to, businessId),
+    clientLedgersReport(env.DB, from, to, businessId),
   ]);
-  const meter = await ceilingMeter(env.DB, deps.meterDate ?? to);
+  const meter = await ceilingMeter(env.DB, deps.meterDate ?? to, businessId);
   const meterPct = meter ? meterPercent(meter) : null;
 
   const [pdfBytes, zipBytes] = await Promise.all([buildSummaryPdf(period, pl, meterPct, files.length), buildExpenseZip(env, files)]);
@@ -134,9 +138,10 @@ export async function buildAccountantPack(env: Env, period: string, deps: Accoun
   // Each run gets its own folder, so a rebuilt pack never overwrites an earlier one (write-once,
   // the files bucket refuses overwrites). The table row points at the latest run.
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const pdfKey = `accountant-packs/${period}/${stamp}/summary.pdf`;
-  const xlsxKey = `accountant-packs/${period}/${stamp}/detail.xlsx`;
-  const zipKey = `accountant-packs/${period}/${stamp}/expense-files.zip`;
+  const prefix = `${r2Prefix(businessId)}accountant-packs/${period}/${stamp}`;
+  const pdfKey = `${prefix}/summary.pdf`;
+  const xlsxKey = `${prefix}/detail.xlsx`;
+  const zipKey = `${prefix}/expense-files.zip`;
   await Promise.all([
     env.FILES.put(pdfKey, pdfBytes, { httpMetadata: { contentType: 'application/pdf' } }),
     env.FILES.put(xlsxKey, xlsxBytes, { httpMetadata: { contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } }),
@@ -145,9 +150,9 @@ export async function buildAccountantPack(env: Env, period: string, deps: Accoun
 
   await run(
     env.DB,
-    `INSERT INTO accountant_packs (period, pdf_key, xlsx_key, zip_key, expense_file_count, income_total_ils_minor, expense_total_ils_minor)
-     VALUES (?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT (period) DO UPDATE SET
+    `INSERT INTO accountant_packs (period, pdf_key, xlsx_key, zip_key, expense_file_count, income_total_ils_minor, expense_total_ils_minor, business_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT (business_id, period) DO UPDATE SET
        pdf_key = excluded.pdf_key, xlsx_key = excluded.xlsx_key, zip_key = excluded.zip_key,
        expense_file_count = excluded.expense_file_count, income_total_ils_minor = excluded.income_total_ils_minor,
        expense_total_ils_minor = excluded.expense_total_ils_minor,
@@ -159,9 +164,10 @@ export async function buildAccountantPack(env: Env, period: string, deps: Accoun
     files.length,
     income.totalIlsMinor,
     expenses.totalIlsMinor,
+    businessId,
   );
 
-  const recipients = await packRecipients(env.DB);
+  const recipients = await packRecipients(env.DB, businessId);
   const emailedTo: string[] = [];
   let emailError: string | null = null;
 
@@ -190,10 +196,11 @@ export async function buildAccountantPack(env: Env, period: string, deps: Accoun
 
   await run(
     env.DB,
-    `UPDATE accountant_packs SET emailed_at = ?, email_error = ? WHERE period = ?`,
+    `UPDATE accountant_packs SET emailed_at = ?, email_error = ? WHERE period = ? AND business_id = ?`,
     emailedTo.length > 0 ? new Date().toISOString() : null,
     emailError,
     period,
+    businessId,
   );
 
   if (emailError) {

@@ -61,7 +61,7 @@ interface TaxInvoiceRow {
  * other type in that mode, so `modes = 'murshe'` is exactly that set and stays correct if R11 or a
  * later run adds one (310, 345: docs/israel-invoices-api.md section 1 names both as unused here).
  */
-async function loadTaxInvoices(db: D1Database, from: string, to: string): Promise<TaxInvoiceRow[]> {
+async function loadTaxInvoices(db: D1Database, from: string, to: string, businessId: number): Promise<TaxInvoiceRow[]> {
   return all<TaxInvoiceRow>(
     db,
     `SELECT d.id, d.type, d.number, d.date, d.currency, d.fx_rate, d.subtotal_minor, d.vat_amount_minor,
@@ -72,9 +72,10 @@ async function loadTaxInvoices(db: D1Database, from: string, to: string): Promis
      JOIN document_types dt ON dt.code = d.type
      LEFT JOIN clients c ON c.id = d.client_id
      LEFT JOIN ita_allocations a ON a.document_id = d.id AND a.status = 'approved'
-     WHERE dt.modes = 'murshe' AND dt.bookkeeping = 1 AND d.status = 'final' AND d.number IS NOT NULL
+     WHERE d.business_id = ? AND dt.modes = 'murshe' AND dt.bookkeeping = 1 AND d.status = 'final' AND d.number IS NOT NULL
        AND d.date BETWEEN ? AND ?
      ORDER BY d.series_id, d.number`,
+    businessId,
     from,
     to,
   );
@@ -115,11 +116,12 @@ export interface Pcn874Result {
   report: ValidationReport;
 }
 
-export async function buildPcn874(env: Env, from: string, to: string): Promise<Pcn874Result> {
+/** R24 B7: one business per file. Default business 1. */
+export async function buildPcn874(env: Env, from: string, to: string, businessId = 1): Promise<Pcn874Result> {
   const db = env.DB;
   const warnings: string[] = [STUB_NOTICE];
   const codes = await loadDocTypeCodes(db);
-  const invoices = await loadTaxInvoices(db, from, to);
+  const invoices = await loadTaxInvoices(db, from, to, businessId);
 
   const unconfirmedTypes = new Set<string>();
   const rows: string[] = [];
@@ -172,12 +174,12 @@ export async function buildPcn874(env: Env, from: string, to: string): Promise<P
   if (missingAllocation > 0) {
     warnings.push(`${missingAllocation} row(s) qualify for an ITA allocation number (docs/israel-invoices-api.md section 1) but do not have one yet.`);
   }
-  const pending = await pendingAllocationCount(db, from, to);
+  const pending = await pendingAllocationCount(db, from, to, businessId);
   if (pending > 0) {
     warnings.push(`${pending} tax-invoice-family document(s) dated in this period are still awaiting an ITA allocation decision (status awaiting_allocation, allocation_pending or allocation_refused) and are not included until they finalize (CLAUDE.md rule 3).`);
   }
 
-  const series = await seriesSummaryForPeriod(db, from, to);
+  const series = await seriesSummaryForPeriod(db, from, to, businessId);
   const report: ValidationReport = {
     from,
     to,

@@ -46,6 +46,9 @@ import { createRecurringModule } from './recurring';
 // Update check: Settings > Updates and a monthly check on the 1st.
 import { updatesModule } from './updates';
 
+// R24 Phase B: businesses, brands and Add business.
+import { createBusinessesModule } from './businesses';
+
 // R14 mcp: `mcpModule` mounts at the top-level `/mcp` path in src/index.ts, not under /api. It
 // authenticates with the MCP_TOKEN bearer secret, not Cloudflare Access, and owns no cron, so it
 // does not belong in this registry.
@@ -67,8 +70,8 @@ const legalModeModule = createLegalModeModule({
   documentsOptions: documentsServiceOptions,
   // docs/legal-requirements.md, "Switch from פטור to מורשה", point 4: "ITA connection check"
   // after the switch is confirmed. Reuses R12's own token status, never a second ITA client.
-  itaConnectionCheck: async (env) => {
-    const status = await createAllocationService(env as ItaEnv).tokens.status();
+  itaConnectionCheck: async (env, businessId) => {
+    const status = await createAllocationService(env as ItaEnv, undefined, businessId).tokens.status();
     return { connected: status.connected };
   },
 });
@@ -112,4 +115,6 @@ export const modules: ModuleDef[] = [
 
   createRecurringModule({ documentsOptions: documentsServiceOptions }),
   updatesModule,
+
+  createBusinessesModule(documentsServiceOptions),
 ];

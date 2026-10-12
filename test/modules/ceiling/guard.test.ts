@@ -16,7 +16,7 @@ class RecordingNotifier implements Notifier {
 
 async function crossingError(amountIls: number, date = '2026-10-06') {
   const guard = createCeilingGuard(db(), new RecordingNotifier());
-  return guard.check(amountIls, date).then(
+  return guard.check(amountIls, date, 1).then(
     () => null,
     (err: unknown) => err,
   );

@@ -2,7 +2,7 @@ import { type AuditActor, auditAs } from '../../core/audit';
 import { all, first, run } from '../../core/db';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import { issuingEnabled } from '../../core/issuing';
-import { type Ctx, deleteDraft, duplicateDocument, finalize, updateDraft } from '../documents/service';
+import { type Ctx, deleteDraft, duplicateDocument, finalize, updateDraft, bizOf } from '../documents/service';
 import { addDays } from '../fx/rates';
 
 /**
@@ -69,7 +69,7 @@ export interface RunView {
 }
 
 /** Emails a final document to its client. Throws when it cannot (no consent, no email, no mail key). */
-export type SendFn = (documentId: number, actor: { userId: number | null; email: string | null }) => Promise<void>;
+export type SendFn = (documentId: number, actor: { userId: number | null; email: string | null }, businessId: number) => Promise<void>;
 
 const pad = (n: number) => String(n).padStart(2, '0');
 const daysInMonth = (y: number, m: number) => new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -91,11 +91,12 @@ export function nextRunDate(date: string, frequency: Frequency, anchorDay: numbe
   return `${ny}-${pad(nm)}-${pad(Math.min(anchorDay, daysInMonth(ny, nm)))}`;
 }
 
-async function templateOf(db: D1Database, documentId: number) {
+async function templateOf(db: D1Database, documentId: number, businessId: number) {
   const doc = await first<{ id: number; status: string; kind: string; name_en: string }>(
     db,
-    `SELECT d.id, d.status, dt.kind, dt.name_en FROM documents d JOIN document_types dt ON dt.code = d.type WHERE d.id = ?`,
+    `SELECT d.id, d.status, dt.kind, dt.name_en FROM documents d JOIN document_types dt ON dt.code = d.type WHERE d.id = ? AND d.business_id = ?`,
     documentId,
+    businessId,
   );
   if (!doc) throw new NotFoundError('Document', documentId);
   if (!(RECURRING_KINDS as readonly string[]).includes(doc.kind)) {
@@ -118,14 +119,14 @@ export interface CreateScheduleInput {
 
 export async function createSchedule(ctx: Ctx, input: CreateScheduleInput): Promise<number> {
   const { db, actor } = ctx;
-  await templateOf(db, input.templateDocumentId);
+  await templateOf(db, input.templateDocumentId, bizOf(ctx));
   const today = ctx.services.today();
   if (input.startDate < today) throw new ValidationError('The first run date cannot be in the past.');
   if (input.endDate && input.endDate < input.startDate) throw new ValidationError('The end date is before the first run date.');
   const { lastRowId } = await run(
     db,
-    `INSERT INTO recurring_schedules (name, template_document_id, frequency, anchor_day, next_run_date, end_date, mode, send_email, due_days, created_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO recurring_schedules (name, template_document_id, frequency, anchor_day, next_run_date, end_date, mode, send_email, due_days, created_by, business_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     input.name?.trim() || null,
     input.templateDocumentId,
     input.frequency,
@@ -136,6 +137,7 @@ export async function createSchedule(ctx: Ctx, input: CreateScheduleInput): Prom
     input.sendEmail ? 1 : 0,
     input.dueDays ?? null,
     actor.userId,
+    bizOf(ctx),
   );
   await auditAs(db, actor, 'recurring.create', 'recurring_schedule', lastRowId, input);
   return lastRowId;
@@ -154,7 +156,7 @@ export interface UpdateScheduleInput {
 
 export async function updateSchedule(ctx: Ctx, id: number, patch: UpdateScheduleInput): Promise<void> {
   const { db, actor } = ctx;
-  const before = await first<ScheduleRow>(db, 'SELECT * FROM recurring_schedules WHERE id = ?', id);
+  const before = await first<ScheduleRow>(db, 'SELECT * FROM recurring_schedules WHERE id = ? AND business_id = ?', id, bizOf(ctx));
   if (!before) throw new NotFoundError('Recurring schedule', id);
   if (patch.nextRunDate && patch.nextRunDate < ctx.services.today()) throw new ValidationError('The next run date cannot be in the past.');
   const next = patch.nextRunDate ?? before.next_run_date;
@@ -178,7 +180,7 @@ export async function updateSchedule(ctx: Ctx, id: number, patch: UpdateSchedule
   await auditAs(db, actor, 'recurring.update', 'recurring_schedule', id, patch);
 }
 
-export async function listSchedules(db: D1Database): Promise<ScheduleView[]> {
+export async function listSchedules(db: D1Database, businessId: number): Promise<ScheduleView[]> {
   return all<ScheduleView>(
     db,
     `SELECT s.*, d.type AS template_type, d.number AS template_number, dt.name_en AS template_type_name_en, dt.name_he AS template_type_name_he,
@@ -187,11 +189,13 @@ export async function listSchedules(db: D1Database): Promise<ScheduleView[]> {
      JOIN documents d ON d.id = s.template_document_id
      JOIN document_types dt ON dt.code = d.type
      LEFT JOIN clients c ON c.id = d.client_id
+     WHERE s.business_id = ?
      ORDER BY s.active DESC, s.next_run_date, s.id`,
+    businessId,
   );
 }
 
-export async function listRuns(db: D1Database, limit = 50): Promise<RunView[]> {
+export async function listRuns(db: D1Database, businessId: number, limit = 50): Promise<RunView[]> {
   return all<RunView>(
     db,
     `SELECT r.id, r.schedule_id, s.name AS schedule_name, r.run_date, r.document_id, d.type AS document_type, d.number AS document_number,
@@ -201,7 +205,9 @@ export async function listRuns(db: D1Database, limit = 50): Promise<RunView[]> {
      JOIN recurring_schedules s ON s.id = r.schedule_id
      LEFT JOIN documents d ON d.id = r.document_id
      LEFT JOIN clients c ON c.id = d.client_id
+     WHERE s.business_id = ?
      ORDER BY (r.status = 'pending_approval') DESC, r.run_date DESC, r.id DESC LIMIT ?`,
+    businessId,
     limit,
   );
 }
@@ -225,7 +231,7 @@ async function issueAndSend(ctx: Ctx, runId: number, documentId: number, sendEma
   await setRun(ctx.db, runId, 'issued', null);
   if (!sendEmail) return;
   try {
-    await send(documentId, { userId: ctx.actor.userId, email: ctx.actor.email });
+    await send(documentId, { userId: ctx.actor.userId, email: ctx.actor.email }, bizOf(ctx));
     await setRun(ctx.db, runId, 'sent', null);
   } catch (err) {
     await setRun(ctx.db, runId, 'issued', `Issued, not sent: ${message(err)}`);
@@ -282,9 +288,14 @@ export interface RunDueResult {
  */
 export async function runDue(ctx: Ctx, send: SendFn, notify?: PendingNotifier): Promise<RunDueResult> {
   const { db } = ctx;
-  if (!(await issuingEnabled(db))) return { schedules: 0, runs: 0, issuingOff: true };
+  if (!(await issuingEnabled(db, bizOf(ctx)))) return { schedules: 0, runs: 0, issuingOff: true };
   const today = ctx.services.today();
-  const due = await all<ScheduleRow>(db, 'SELECT * FROM recurring_schedules WHERE active = 1 AND next_run_date <= ? ORDER BY next_run_date, id', today);
+  const due = await all<ScheduleRow>(
+    db,
+    'SELECT * FROM recurring_schedules WHERE business_id = ? AND active = 1 AND next_run_date <= ? ORDER BY next_run_date, id',
+    bizOf(ctx),
+    today,
+  );
   let runs = 0;
   for (const s of due) {
     let runDate = s.next_run_date;
@@ -306,11 +317,13 @@ export async function runDue(ctx: Ctx, send: SendFn, notify?: PendingNotifier): 
   return { schedules: due.length, runs };
 }
 
-async function pendingRun(db: D1Database, runId: number) {
+async function pendingRun(db: D1Database, runId: number, businessId: number) {
   const r = await first<{ id: number; document_id: number | null; status: string; send_email: number; due_days: number | null }>(
     db,
-    `SELECT r.id, r.document_id, r.status, s.send_email, s.due_days FROM recurring_runs r JOIN recurring_schedules s ON s.id = r.schedule_id WHERE r.id = ?`,
+    `SELECT r.id, r.document_id, r.status, s.send_email, s.due_days FROM recurring_runs r JOIN recurring_schedules s ON s.id = r.schedule_id
+      WHERE r.id = ? AND s.business_id = ?`,
     runId,
+    businessId,
   );
   if (!r) throw new NotFoundError('Recurring run', runId);
   if (r.status !== 'pending_approval' || r.document_id === null) throw new ValidationError('This run is not waiting for approval.');
@@ -319,7 +332,7 @@ async function pendingRun(db: D1Database, runId: number) {
 
 /** Approves a run waiting in `approve` mode: dates the draft today, finalizes it and sends it when the schedule says so. */
 export async function approveRun(ctx: Ctx, runId: number, send: SendFn): Promise<void> {
-  const r = await pendingRun(ctx.db, runId);
+  const r = await pendingRun(ctx.db, runId, bizOf(ctx));
   const today = ctx.services.today();
   const doc = await first<{ status: string; date: string }>(ctx.db, 'SELECT status, date FROM documents WHERE id = ?', r.document_id);
   if (!doc || doc.status !== 'draft') throw new ValidationError('The draft for this run is gone or already final.');
@@ -333,7 +346,7 @@ export async function approveRun(ctx: Ctx, runId: number, send: SendFn): Promise
 
 /** Skips a run waiting for approval and deletes its draft. The schedule carries on. */
 export async function skipRun(ctx: Ctx, runId: number): Promise<void> {
-  const r = await pendingRun(ctx.db, runId);
+  const r = await pendingRun(ctx.db, runId, bizOf(ctx));
   await run(ctx.db, `UPDATE recurring_runs SET status = 'skipped', document_id = NULL, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`, runId);
   const doc = await first<{ status: string }>(ctx.db, 'SELECT status FROM documents WHERE id = ?', r.document_id);
   if (doc?.status === 'draft') await deleteDraft(ctx, r.document_id);
@@ -345,8 +358,13 @@ export async function skipRun(ctx: Ctx, runId: number): Promise<void> {
  * turning issuing back on never issues a backlog of documents for the months it was off.
  * Answers how many schedules moved.
  */
-export async function skipMissedRuns(db: D1Database, today: string): Promise<number> {
-  const behind = await all<ScheduleRow>(db, 'SELECT * FROM recurring_schedules WHERE active = 1 AND next_run_date < ?', today);
+export async function skipMissedRuns(db: D1Database, today: string, businessId: number): Promise<number> {
+  const behind = await all<ScheduleRow>(
+    db,
+    'SELECT * FROM recurring_schedules WHERE business_id = ? AND active = 1 AND next_run_date < ?',
+    businessId,
+    today,
+  );
   for (const s of behind) {
     let next = s.next_run_date;
     for (let i = 0; i < 1000 && next < today; i += 1) next = nextRunDate(next, s.frequency, s.anchor_day);

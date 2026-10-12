@@ -69,6 +69,8 @@ export interface RenderBusiness {
   bankDetails: string | null;
   /** Business tax id (ת"ז or ח.פ) from Settings > Business, OWNER_TAX_ID secret as fallback. Printed on documents, never logged. */
   taxId: string | null;
+  /** R24: the business's legal name. Printed next to the tax id when the brand name differs. */
+  legalNameEn?: string | null;
   /** Uploaded logo as a data URI. Null prints the default wordmark. */
   logoDataUri?: string | null;
   /** Uploaded signature image as a data URI. Null prints no signature image. */

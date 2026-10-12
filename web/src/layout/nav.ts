@@ -78,8 +78,10 @@ export const CREATE_NEW_LABEL_KEYS: Record<string, MessageKey> = {
   '320': 'nav.createInvoiceReceipt',
 };
 
-export function canSee(item: { feature?: string }, role: 'owner' | 'accountant' | undefined, features: string[]): boolean {
-  if (role !== 'accountant') return true;
+export function canSee(item: { feature?: string; path?: string }, role: 'owner' | 'assistant' | 'accountant' | undefined, features: string[]): boolean {
+  if (role === 'owner' || role === undefined) return true;
+  // R24: an assistant sees the dashboard and the areas of its features, never Settings or Import.
+  if (role === 'assistant' && item.feature === undefined) return item.path === '/';
   return item.feature !== undefined && features.includes(item.feature);
 }
 

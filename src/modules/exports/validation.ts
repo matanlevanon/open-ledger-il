@@ -24,14 +24,15 @@ interface FinalizedRow {
  */
 const NUMBERED_STATUSES = ['final', 'cancelled', 'awaiting_allocation', 'allocation_pending', 'allocation_refused'];
 
-export async function seriesSummaryForPeriod(db: D1Database, from: string, to: string): Promise<SeriesSummary[]> {
+export async function seriesSummaryForPeriod(db: D1Database, from: string, to: string, businessId: number): Promise<SeriesSummary[]> {
   const placeholders = NUMBERED_STATUSES.map(() => '?').join(',');
   const rows = await all<FinalizedRow>(
     db,
     `SELECT d.series_id, d.type AS doc_type, d.number
      FROM documents d
-     WHERE d.number IS NOT NULL AND d.status IN (${placeholders}) AND d.date BETWEEN ? AND ?
+     WHERE d.business_id = ? AND d.number IS NOT NULL AND d.status IN (${placeholders}) AND d.date BETWEEN ? AND ?
      ORDER BY d.series_id, d.number`,
+    businessId,
     ...NUMBERED_STATUSES,
     from,
     to,
@@ -56,14 +57,15 @@ export async function seriesSummaryForPeriod(db: D1Database, from: string, to: s
  * counts these in its own record totals (CLAUDE.md rule 3), so a caller adds this to its
  * warnings rather than leaving a reviewer to wonder why a document they know about is missing.
  */
-export async function pendingAllocationCount(db: D1Database, from: string, to: string): Promise<number> {
+export async function pendingAllocationCount(db: D1Database, from: string, to: string, businessId: number): Promise<number> {
   const placeholders = ALLOCATION_PENDING_STATUSES.map(() => '?').join(',');
   const row = await first<{ n: number }>(
     db,
     `SELECT COUNT(*) AS n
      FROM documents d
      JOIN document_types dt ON dt.code = d.type
-     WHERE dt.modes = 'murshe' AND dt.bookkeeping = 1 AND d.status IN (${placeholders}) AND d.date BETWEEN ? AND ?`,
+     WHERE d.business_id = ? AND dt.modes = 'murshe' AND dt.bookkeeping = 1 AND d.status IN (${placeholders}) AND d.date BETWEEN ? AND ?`,
+    businessId,
     ...ALLOCATION_PENDING_STATUSES,
     from,
     to,

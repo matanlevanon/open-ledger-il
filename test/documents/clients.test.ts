@@ -385,12 +385,12 @@ describe('client ledger with imported past documents', () => {
         .bind(n, type, date, client)
         .run();
     await insert('9401', 'Pro Forma Invoice', '2026-09-01');
-    const open = (await openItems(env.DB, '2026-09-29')).filter((i) => i.imported && i.clientId === client);
+    const open = (await openItems(env.DB, '2026-09-29', 1)).filter((i) => i.imported && i.clientId === client);
     expect(open).toHaveLength(1);
     expect(open[0]).toMatchObject({ type: '300', displayNumber: '9401', remainingMinor: 30000, ilsMinor: 30000, daysOverdue: 28 });
 
     await insert('9402', 'Invoice/Receipt', '2026-09-10');
-    expect((await openItems(env.DB, '2026-09-29')).filter((i) => i.imported && i.clientId === client)).toHaveLength(0);
+    expect((await openItems(env.DB, '2026-09-29', 1)).filter((i) => i.imported && i.clientId === client)).toHaveLength(0);
   });
 
   it('pays off a demand marked paid on its own line when its receipt was never imported', async () => {

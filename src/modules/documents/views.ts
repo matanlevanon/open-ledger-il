@@ -110,8 +110,9 @@ export interface ListFilter {
 }
 
 export async function listDocuments(db: D1Database, user: AuthUser, filter: ListFilter, today: string) {
-  const where: string[] = [];
-  const params: (string | number)[] = [];
+  // R24: only the current business's documents.
+  const where: string[] = ['d.business_id = ?'];
+  const params: (string | number)[] = [user.businessId];
   if (!hasFeature(user, 'quotes')) where.push("d.type <> 'QT'");
   if (filter.tab === 'draft') where.push("d.status = 'draft'");
   if (filter.tab === 'unpaid') where.push("dt.kind = 'demand' AND d.status = 'final'");
@@ -136,11 +137,12 @@ export async function listDocuments(db: D1Database, user: AuthUser, filter: List
     where.push('d.date <= ?');
     params.push(filter.to);
   }
-  const sql = `${LIST_SELECT} ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
+  const sql = `${LIST_SELECT} WHERE ${where.join(' AND ')}
     ORDER BY d.date DESC, d.id DESC LIMIT ?`;
   const rows = await all<ListRow>(db, sql, ...params, filter.limit);
   const balances = await demandBalances(
     db,
+    user.businessId,
     rows.filter((r) => r.kind === 'demand' && r.status === 'final').map((r) => r.id),
   );
   let items = rows.map((r) => decorate(r, balances.get(r.id), today));
@@ -169,10 +171,10 @@ interface LinkView extends LinkRow {
   other_display_number: string | null;
 }
 
-export async function documentView(db: D1Database, id: number, today: string) {
-  const loaded = await loadFull(db, id);
+export async function documentView(db: D1Database, id: number, today: string, businessId: number) {
+  const loaded = await loadFull(db, id, businessId);
   const row = await first<ListRow>(db, `${LIST_SELECT} WHERE d.id = ?`, id);
-  const balances = row?.kind === 'demand' && row.status === 'final' ? await demandBalances(db, [id]) : new Map();
+  const balances = row?.kind === 'demand' && row.status === 'final' ? await demandBalances(db, businessId, [id]) : new Map();
   const [outgoing, incoming, events] = await Promise.all([
     all<LinkView>(
       db,
@@ -191,7 +193,7 @@ export async function documentView(db: D1Database, id: number, today: string) {
   const withLabel = (l: LinkView) => ({ ...l, other_display_number: displayNumber(l.other_type, l.other_number) });
   let source: { id: number; type: string; display_number: string | null; status: string } | null = null;
   if (loaded.meta?.source_id) {
-    const s = await first<DocRow>(db, 'SELECT * FROM documents WHERE id = ?', loaded.meta.source_id);
+    const s = await first<DocRow>(db, 'SELECT * FROM documents WHERE id = ? AND business_id = ?', loaded.meta.source_id, businessId);
     if (s) source = { id: s.id, type: s.type, display_number: displayNumber(s.type, s.number), status: s.status };
   }
 
@@ -199,7 +201,7 @@ export async function documentView(db: D1Database, id: number, today: string) {
   // method, into full catalog rows so the frontend and PDF need no second round trip.
   const methodIds = new Set(parseMethodIds(loaded.doc.payment_method_ids));
   for (const p of loaded.payments) if (p.method_id !== null) methodIds.add(p.method_id);
-  const methodRows = await getPaymentMethods(db, [...methodIds]);
+  const methodRows = await getPaymentMethods(db, [...methodIds], businessId);
   const methodById = new Map(methodRows.map((m) => [m.id, { ...m, details: JSON.parse(m.details) as Record<string, unknown> }]));
   const paymentMethods = parseMethodIds(loaded.doc.payment_method_ids)
     .map((mid) => methodById.get(mid))

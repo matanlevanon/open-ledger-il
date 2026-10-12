@@ -4,8 +4,8 @@
  * a CEILING_CROSSING error to stop the receipt. Here: the interface and a pass-through.
  */
 export interface CeilingGuard {
-  /** Throws to block the receipt. `amountIls` is the receipt's ILS total in agorot. */
-  check(amountIls: number, date: string): Promise<void>;
+  /** Throws to block the receipt. `amountIls` is the receipt's ILS total in agorot. R24: per business. */
+  check(amountIls: number, date: string, businessId: number): Promise<void>;
 }
 
 export const passThroughCeilingGuard: CeilingGuard = {

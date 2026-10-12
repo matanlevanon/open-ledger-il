@@ -1,6 +1,7 @@
 import type { ModuleDef } from '../../core/module';
 import type { Env } from '../../env';
-import { SYSTEM_ACTOR } from '../../core/audit';
+import { systemActorFor } from '../../core/audit';
+import { listBusinessIds } from '../../core/business';
 import { todayIsrael } from '../../core/db';
 import { GoogleDriveSource } from './drive';
 import { DRIVE_DAILY_CRON, runDailyDriveImport } from './drive-import';
@@ -34,7 +35,10 @@ export function createExpensesModule(resolveDeps: (env: Env) => Deps = defaultDe
     crons: [DRIVE_DAILY_CRON],
     async scheduled(controller, env) {
       if (controller.cron !== DRIVE_DAILY_CRON) return;
-      await runDailyDriveImport(env, resolveDeps(env), todayIsrael(), SYSTEM_ACTOR);
+      // R24: each business imports from its own Drive folder, when its daily sync is on.
+      for (const businessId of await listBusinessIds(env.DB)) {
+        await runDailyDriveImport(env, resolveDeps(env), todayIsrael(), systemActorFor(businessId));
+      }
     },
   };
 }

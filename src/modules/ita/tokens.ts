@@ -64,8 +64,15 @@ export class ItaTokenStore {
   constructor(
     private readonly env: ItaEnv,
     private readonly io: ClockAndFetch,
+    /** R24 B6: each business keeps its own ITA login. Business 1 is the login that existed before. */
+    readonly businessId: number = 1,
   ) {
     this.environment = itaEnvironment(env);
+  }
+
+  /** Encryption context. Business 1 keeps the one its stored tokens were sealed with. */
+  private aad(kind: 'access' | 'refresh'): string {
+    return this.businessId === 1 ? `${this.environment}:${kind}` : `${this.environment}:b${this.businessId}:${kind}`;
   }
 
   private get db() {
@@ -74,7 +81,7 @@ export class ItaTokenStore {
 
   /** The row for the current environment only. */
   private row(): Promise<TokenRow | null> {
-    return first<TokenRow>(this.db, 'SELECT * FROM ita_tokens WHERE environment = ?', this.environment);
+    return first<TokenRow>(this.db, 'SELECT * FROM ita_tokens WHERE environment = ? AND business_id = ?', this.environment, this.businessId);
   }
 
   private key() {
@@ -84,7 +91,7 @@ export class ItaTokenStore {
   /** A stored token that no longer decrypts (for example after ITA_TOKEN_KEY changed) needs a new login. */
   private async open(key: CryptoKey, stored: string, kind: 'access' | 'refresh'): Promise<string> {
     try {
-      return await decryptToken(key, stored, `${this.environment}:${kind}`);
+      return await decryptToken(key, stored, this.aad(kind));
     } catch {
       await this.markReconnect('The stored ITA token cannot be read with the current ITA_TOKEN_KEY.');
       throw new ItaReconnectError();
@@ -203,14 +210,14 @@ export class ItaTokenStore {
     const now = this.io.now();
     const key = await this.key();
     const refreshMs = (tokens.refresh_token_expires_in ?? 90 * 86_400) * 1000;
-    const refreshEnc = await encryptToken(key, tokens.refresh_token, `${this.environment}:refresh`);
-    const accessEnc = await encryptToken(key, tokens.access_token, `${this.environment}:access`);
+    const refreshEnc = await encryptToken(key, tokens.refresh_token, this.aad('refresh'));
+    const accessEnc = await encryptToken(key, tokens.access_token, this.aad('access'));
     await run(
       this.db,
       `INSERT INTO ita_tokens (environment, refresh_token_enc, refresh_expires_at, access_token_enc, access_expires_at,
-         login_at, relogin_due_at, last_refresh_at, rotation, status, status_reason, reminder_sent_at, connected_by, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, NULL, 0, 'active', NULL, NULL, ?, ?)
-       ON CONFLICT (environment) DO UPDATE SET
+         login_at, relogin_due_at, last_refresh_at, rotation, status, status_reason, reminder_sent_at, connected_by, updated_at, business_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, NULL, 0, 'active', NULL, NULL, ?, ?, ?)
+       ON CONFLICT (business_id, environment) DO UPDATE SET
          refresh_token_enc = excluded.refresh_token_enc, refresh_expires_at = excluded.refresh_expires_at,
          access_token_enc = excluded.access_token_enc, access_expires_at = excluded.access_expires_at,
          login_at = excluded.login_at, relogin_due_at = excluded.relogin_due_at, last_refresh_at = NULL,
@@ -225,6 +232,7 @@ export class ItaTokenStore {
       addMs(now, refreshMs),
       userId,
       now.toISOString(),
+      this.businessId,
     );
   }
 
@@ -283,15 +291,16 @@ export class ItaTokenStore {
       this.db,
       `UPDATE ita_tokens SET refresh_token_enc = ?, refresh_expires_at = ?, access_token_enc = ?, access_expires_at = ?,
          last_refresh_at = ?, rotation = rotation + 1, updated_at = ?
-       WHERE environment = ? AND rotation = ?`,
-      await encryptToken(key, tokens.refresh_token, `${this.environment}:refresh`),
+       WHERE environment = ? AND business_id = ? AND rotation = ?`,
+      await encryptToken(key, tokens.refresh_token, this.aad('refresh')),
       // The re-login date stays tied to the interactive login.
       refreshExpires < row.relogin_due_at ? refreshExpires : row.relogin_due_at,
-      await encryptToken(key, tokens.access_token, `${this.environment}:access`),
+      await encryptToken(key, tokens.access_token, this.aad('access')),
       addMs(now, tokens.expires_in * 1000),
       now.toISOString(),
       now.toISOString(),
       this.environment,
+      this.businessId,
       row.rotation,
     );
     return tokens.access_token;
@@ -301,20 +310,22 @@ export class ItaTokenStore {
     await run(
       this.db,
       `UPDATE ita_tokens SET status = 'reconnect_required', status_reason = ?, access_token_enc = NULL,
-         access_expires_at = NULL, updated_at = ? WHERE environment = ?`,
+         access_expires_at = NULL, updated_at = ? WHERE environment = ? AND business_id = ?`,
       reason,
       this.io.now().toISOString(),
       this.environment,
+      this.businessId,
     );
   }
 
   async markReminderSent(): Promise<void> {
     await run(
       this.db,
-      'UPDATE ita_tokens SET reminder_sent_at = ?, updated_at = ? WHERE environment = ?',
+      'UPDATE ita_tokens SET reminder_sent_at = ?, updated_at = ? WHERE environment = ? AND business_id = ?',
       this.io.now().toISOString(),
       this.io.now().toISOString(),
       this.environment,
+      this.businessId,
     );
   }
 

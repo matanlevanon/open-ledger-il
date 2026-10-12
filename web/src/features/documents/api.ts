@@ -146,6 +146,8 @@ export interface DocListItem {
   payment_instructions: string | null;
   payment_method_ids: string | null;
   lang_variant: 'en' | 'bilingual';
+  /** R24: the brand the document prints. Null: the business's default brand. */
+  brand_id?: number | null;
   cancel_reason: string | null;
   hash: string | null;
 }
@@ -280,6 +282,8 @@ export interface DraftInput {
   paymentInstructions?: string | null;
   paymentMethodIds?: number[];
   langVariant?: 'en' | 'bilingual';
+  /** R24: the brand this document prints. Absent: the business default. */
+  brandId?: number | null;
   lines?: LineInput[];
   payments?: PaymentInput[];
   showIls?: boolean;

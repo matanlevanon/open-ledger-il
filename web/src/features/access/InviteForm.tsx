@@ -3,8 +3,10 @@ import { useT } from '../../i18n';
 import type { AccessFeatures } from './api';
 import { DEFAULT_FEATURES, FEATURE_KEYS, FEATURE_LABEL_KEYS } from './features';
 
+type Role = 'owner' | 'assistant' | 'accountant';
+
 interface InviteFormProps {
-  onInvite: (input: { email: string; name?: string; accessEndsOn: string; features: AccessFeatures }) => Promise<void>;
+  onInvite: (input: { email: string; name?: string; role: Role; accessEndsOn?: string; features?: AccessFeatures }) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -16,6 +18,7 @@ function defaultEndDate(): string {
 
 export function InviteForm({ onInvite, onCancel }: InviteFormProps) {
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState<Role>('accountant');
   const [name, setName] = useState('');
   const [accessEndsOn, setAccessEndsOn] = useState(defaultEndDate());
   const [features, setFeatures] = useState<AccessFeatures>(DEFAULT_FEATURES);
@@ -28,7 +31,11 @@ export function InviteForm({ onInvite, onCancel }: InviteFormProps) {
     setError(null);
     setSaving(true);
     try {
-      await onInvite({ email, name: name.trim() || undefined, accessEndsOn, features });
+      await onInvite(
+        role === 'accountant'
+          ? { email, name: name.trim() || undefined, role, accessEndsOn, features }
+          : { email, name: name.trim() || undefined, role },
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : t('access.invite.errorFallback'));
     } finally {
@@ -54,6 +61,16 @@ export function InviteForm({ onInvite, onCancel }: InviteFormProps) {
           <input value={name} onChange={(e) => setName(e.target.value)} className="rounded-md border border-line bg-canvas px-2 py-1" />
         </label>
         <label className="flex flex-col gap-1 text-sm text-ink">
+          {t('access.invite.roleLabel')}
+          <select value={role} onChange={(e) => setRole(e.target.value as Role)} className="rounded-md border border-line bg-canvas px-2 py-1">
+            <option value="accountant">{t('access.role.accountant')}</option>
+            <option value="assistant">{t('access.role.assistant')}</option>
+            <option value="owner">{t('access.role.owner')}</option>
+          </select>
+          <span className="text-xs text-muted">{t(`access.roleHint.${role}`)}</span>
+        </label>
+        {role === 'accountant' && (
+        <label className="flex flex-col gap-1 text-sm text-ink">
           {t('access.invite.accessEndsOnLabel')}
           <input
             type="date"
@@ -64,8 +81,10 @@ export function InviteForm({ onInvite, onCancel }: InviteFormProps) {
             className="rounded-md border border-line bg-canvas px-2 py-1 ltr-nums"
           />
         </label>
+        )}
       </div>
 
+      {role === 'accountant' && (
       <fieldset className="mt-4">
         <legend className="text-sm font-semibold text-ink">{t('access.invite.featuresLegend')}</legend>
         <div className="mt-2 grid gap-2 sm:grid-cols-3">
@@ -81,6 +100,7 @@ export function InviteForm({ onInvite, onCancel }: InviteFormProps) {
           ))}
         </div>
       </fieldset>
+      )}
 
       {error && <p className="mt-3 text-sm text-danger">{error}</p>}
 

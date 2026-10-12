@@ -1,6 +1,6 @@
 import type { ModuleDef } from '../../core/module';
 import type { ItaEnv } from './config';
-import { ITA_CRONS, runRetryQueue, runTokenCheck } from './jobs';
+import { ITA_CRONS, runRetryQueue, runTokenChecks } from './jobs';
 import { itaRoutes } from './routes';
 import { type ItaDeps, defaultDeps } from './service';
 
@@ -14,7 +14,7 @@ export function createItaModule(overrides: Partial<ItaDeps> = {}): ModuleDef {
     crons: [ITA_CRONS.retryQueue, ITA_CRONS.tokenCheck],
     async scheduled(controller, env) {
       if (controller.cron === ITA_CRONS.retryQueue) await runRetryQueue(env as ItaEnv, deps);
-      if (controller.cron === ITA_CRONS.tokenCheck) await runTokenCheck(env as ItaEnv, deps);
+      if (controller.cron === ITA_CRONS.tokenCheck) await runTokenChecks(env as ItaEnv, deps);
     },
   };
 }

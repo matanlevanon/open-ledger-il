@@ -38,7 +38,7 @@ const DEMAND_SQL = `
         AND tt.kind IN ('demand', 'invoice', 'invoice_receipt')
     ) AS superseded
   FROM documents d JOIN document_types dt ON dt.code = d.type
-  WHERE dt.kind = 'demand' AND d.status = 'final'`;
+  WHERE dt.kind = 'demand' AND d.status = 'final' AND d.business_id = ?`;
 
 interface DemandSqlRow {
   id: number;
@@ -65,18 +65,18 @@ function toBalance(r: DemandSqlRow): DemandBalance {
   };
 }
 
-/** Balances of final demands. Pass ids to limit the query. */
-export async function demandBalances(db: D1Database, ids?: number[]): Promise<Map<number, DemandBalance>> {
+/** Balances of final demands of one business (R24). Pass ids to limit the query. */
+export async function demandBalances(db: D1Database, businessId: number, ids?: number[]): Promise<Map<number, DemandBalance>> {
   const out = new Map<number, DemandBalance>();
   if (ids && ids.length === 0) return out;
   const filter = ids ? ` AND d.id IN (${ids.map(() => '?').join(',')})` : '';
-  const rows = await all<DemandSqlRow>(db, DEMAND_SQL + filter, ...(ids ?? []));
+  const rows = await all<DemandSqlRow>(db, DEMAND_SQL + filter, businessId, ...(ids ?? []));
   for (const r of rows) out.set(r.id, toBalance(r));
   return out;
 }
 
-export async function demandBalance(db: D1Database, id: number): Promise<DemandBalance | null> {
-  return (await demandBalances(db, [id])).get(id) ?? null;
+export async function demandBalance(db: D1Database, id: number, businessId: number): Promise<DemandBalance | null> {
+  return (await demandBalances(db, businessId, [id])).get(id) ?? null;
 }
 
 export interface OpenDemand extends DemandBalance {
@@ -88,9 +88,9 @@ export interface OpenDemand extends DemandBalance {
 }
 
 /** Final demands with money still open, for one client or all. */
-export async function openDemands(db: D1Database, clientId?: number): Promise<OpenDemand[]> {
+export async function openDemands(db: D1Database, businessId: number, clientId?: number): Promise<OpenDemand[]> {
   const filter = clientId === undefined ? '' : ' AND d.client_id = ?';
-  const rows = await all<DemandSqlRow>(db, DEMAND_SQL + filter, ...(clientId === undefined ? [] : [clientId]));
+  const rows = await all<DemandSqlRow>(db, DEMAND_SQL + filter, businessId, ...(clientId === undefined ? [] : [clientId]));
   return rows
     .map((r) => ({ ...toBalance(r), client_id: r.client_id, date: r.date, due_date: r.due_date, fx_rate: r.fx_rate }))
     .filter((b) => b.remaining_minor > 0);
@@ -103,9 +103,9 @@ function add(totals: CurrencyTotals, currency: string, amount: number) {
 }
 
 /** Open balance per client per currency. */
-export async function clientBalances(db: D1Database): Promise<Map<number, CurrencyTotals>> {
+export async function clientBalances(db: D1Database, businessId: number): Promise<Map<number, CurrencyTotals>> {
   const out = new Map<number, CurrencyTotals>();
-  for (const d of await openDemands(db)) {
+  for (const d of await openDemands(db, businessId)) {
     if (d.client_id === null) continue;
     const totals = out.get(d.client_id) ?? {};
     add(totals, d.currency, d.remaining_minor);
@@ -281,13 +281,14 @@ export interface OpenImportedDemand {
  * imported receipt, not paid by a receipt issued here, and not marked paid. Same rules as the
  * client ledger.
  */
-export async function openImportedDemands(db: D1Database, clientId?: number): Promise<OpenImportedDemand[]> {
+export async function openImportedDemands(db: D1Database, businessId: number, clientId?: number): Promise<OpenImportedDemand[]> {
   const rows = await all<LedgerImportedRow & { client_id: number | null; client_name_en: string | null; client_name_he: string | null; client_name_text: string }>(
     db,
     `SELECT x.id, x.source, x.doc_type, x.original_number, x.issue_date, x.currency, x.total_minor, x.total_ils_minor, x.paid_status,
        x.client_id, c.name_en AS client_name_en, c.name_he AS client_name_he, x.client_name_text, ${IMPORTED_SETTLED_SQL} AS settled
      FROM external_documents x LEFT JOIN clients c ON c.id = x.client_id
-     ${clientId === undefined ? '' : 'WHERE x.client_id = ?'} ORDER BY x.issue_date, x.id`,
+     WHERE x.business_id = ? ${clientId === undefined ? '' : 'AND x.client_id = ?'} ORDER BY x.issue_date, x.id`,
+    businessId,
     ...(clientId === undefined ? [] : [clientId]),
   );
   const groups = new Map<string, typeof rows>();

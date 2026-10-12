@@ -6,7 +6,7 @@
  * tested before its API route ships.
  */
 
-export type Role = 'owner' | 'accountant';
+export type Role = 'owner' | 'assistant' | 'accountant';
 
 export interface Me {
   email: string;
@@ -18,6 +18,9 @@ export interface Me {
   locale: 'en' | 'he' | null;
   /** Whether this deployment issues documents. Missing reads as on. */
   issuing?: boolean;
+  /** R24: the business this session acts on, and every business the person may open. */
+  businessId?: number;
+  businesses?: { id: number; role: Role }[];
 }
 
 export interface ApiErrorBody {

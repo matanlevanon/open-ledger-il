@@ -63,21 +63,22 @@ async function documentIlsAmounts(db: D1Database, ids: number[]): Promise<Map<nu
 }
 
 /** Client ids with at least one bookkeeping document (final or cancelled, not a quote) dated in the period. */
-async function activeClientIds(db: D1Database, from: string, to: string): Promise<{ id: number; name: string }[]> {
+async function activeClientIds(db: D1Database, from: string, to: string, businessId: number): Promise<{ id: number; name: string }[]> {
   const rows = await all<{ id: number; name_en: string; name_he: string | null }>(
     db,
     `SELECT DISTINCT c.id, c.name_en, c.name_he
      FROM clients c JOIN documents d ON d.client_id = c.id
      JOIN document_types dt ON dt.code = d.type
-     WHERE d.status IN ('final', 'cancelled') AND dt.kind <> 'quote' AND d.date BETWEEN ? AND ?`,
+     WHERE c.business_id = ? AND d.status IN ('final', 'cancelled') AND dt.kind <> 'quote' AND d.date BETWEEN ? AND ?`,
+    businessId,
     from,
     to,
   );
   return rows.map((r) => ({ id: r.id, name: clientDisplayName(r, 'en') })).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function clientLedgersReport(db: D1Database, from: string, to: string): Promise<ClientLedgersReport> {
-  const clients = await activeClientIds(db, from, to);
+export async function clientLedgersReport(db: D1Database, from: string, to: string, businessId: number): Promise<ClientLedgersReport> {
+  const clients = await activeClientIds(db, from, to, businessId);
   const rows: ClientLedgerReportRow[] = [];
 
   for (const c of clients) {
@@ -107,7 +108,7 @@ export async function clientLedgersReport(db: D1Database, from: string, to: stri
       return { ...e, debit_ils_minor: debitIls, credit_ils_minor: creditIls, balance_ils_minor: runningIls };
     });
 
-    const externalDocuments = await uploadService.listExternalDocuments(db, { clientId: c.id, from, to });
+    const externalDocuments = await uploadService.listExternalDocuments(db, { clientId: c.id, from, to }, businessId);
     rows.push({ clientId: c.id, clientName: c.name, ledger: { ...ledger, entries }, closingIlsMinor: runningIls, externalDocuments });
   }
 

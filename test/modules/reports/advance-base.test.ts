@@ -12,7 +12,7 @@ describe('advanceBaseReport: cash-basis payments received, by month (runs/R08-re
     });
     await finalizeDocument(db(), receipt, { actor: OWNER_ACTOR });
 
-    const report = await advanceBaseReport(db(), '2026-10-01', '2026-10-31');
+    const report = await advanceBaseReport(db(), '2026-10-01', '2026-10-31', 1);
     expect(report.months).toEqual([{ month: '2026-10', totalIlsMinor: 80000 }]);
     expect(report.totalIlsMinor).toBe(80000);
   });
@@ -25,7 +25,7 @@ describe('advanceBaseReport: cash-basis payments received, by month (runs/R08-re
     });
     await finalizeDocument(db(), credit, { actor: OWNER_ACTOR });
 
-    const report = await advanceBaseReport(db(), '2026-10-01', '2026-10-31');
+    const report = await advanceBaseReport(db(), '2026-10-01', '2026-10-31', 1);
     expect(report.months.find((m) => m.month === '2026-10')?.totalIlsMinor).toBe(80000 - 30000);
   });
 
@@ -37,7 +37,7 @@ describe('advanceBaseReport: cash-basis payments received, by month (runs/R08-re
     });
     await finalizeDocument(db(), receipt, { actor: OWNER_ACTOR });
 
-    const report = await advanceBaseReport(db(), '2019-01-01', '2019-01-31');
+    const report = await advanceBaseReport(db(), '2019-01-01', '2019-01-31', 1);
     expect(report.months).toEqual([]);
     expect(report.totalIlsMinor).toBe(0);
   });

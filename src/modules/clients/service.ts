@@ -1,4 +1,4 @@
-import { type AuditActor, auditStatement } from '../../core/audit';
+import { type AuditActor, actorBiz, auditStatement } from '../../core/audit';
 import { all, first, nowIso, stmt, transaction, type SqlValue } from '../../core/db';
 import { ConflictError, NotFoundError, ValidationError } from '../../core/errors';
 import { clientBalances, openDemands } from '../documents/balances';
@@ -62,15 +62,16 @@ const COLUMNS: [keyof ClientInput, keyof ClientRow][] = [
   ['paymentInstructions', 'payment_instructions'],
 ];
 
-export async function getClient(db: D1Database, id: number): Promise<ClientRow> {
-  const row = await first<ClientRow>(db, 'SELECT * FROM clients WHERE id = ?', id);
+/** R24: a client of another business reads as not found. */
+export async function getClient(db: D1Database, id: number, businessId: number): Promise<ClientRow> {
+  const row = await first<ClientRow>(db, 'SELECT * FROM clients WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('Client', id);
   return row;
 }
 
-export async function listClients(db: D1Database, q: { q?: string; active: '0' | '1' | 'all' }, today: string) {
-  const where: string[] = [];
-  const params: string[] = [];
+export async function listClients(db: D1Database, q: { q?: string; active: '0' | '1' | 'all' }, today: string, businessId: number) {
+  const where: string[] = ['business_id = ?'];
+  const params: (string | number)[] = [businessId];
   if (q.active === '1') where.push('active = 1');
   if (q.active === '0') where.push('active = 0');
   if (q.q) {
@@ -83,13 +84,13 @@ export async function listClients(db: D1Database, q: { q?: string; active: '0' |
     // R19: a client may have only a Hebrew name; sort by the resolved display name (name_en,
     // falling back to name_he), not by name_en alone, so a Hebrew-only client is not stuck at
     // the top under an empty string.
-    `SELECT * FROM clients ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
+    `SELECT * FROM clients WHERE ${where.join(' AND ')}
      ORDER BY COALESCE(NULLIF(name_en, ''), name_he) COLLATE NOCASE`,
     ...params,
   );
-  const balances = await clientBalances(db);
+  const balances = await clientBalances(db, businessId);
   const overdue = new Map<number, Record<string, number>>();
-  for (const d of await openDemands(db)) {
+  for (const d of await openDemands(db, businessId)) {
     if (d.client_id === null || !d.due_date || d.due_date >= today) continue;
     const t = overdue.get(d.client_id) ?? {};
     t[d.currency] = (t[d.currency] ?? 0) + d.remaining_minor;
@@ -98,13 +99,13 @@ export async function listClients(db: D1Database, q: { q?: string; active: '0' |
   return rows.map((r) => ({ ...r, balances: balances.get(r.id) ?? {}, overdue: overdue.get(r.id) ?? {} }));
 }
 
-export async function clientDetail(db: D1Database, id: number) {
-  const client = await getClient(db, id);
+export async function clientDetail(db: D1Database, id: number, businessId: number) {
+  const client = await getClient(db, id, businessId);
   const contacts = await all<ContactRow>(db, 'SELECT * FROM client_contacts WHERE client_id = ? ORDER BY is_primary DESC, id', id);
-  const balances = (await clientBalances(db)).get(id) ?? {};
+  const balances = (await clientBalances(db, businessId)).get(id) ?? {};
   const consent = await manualConsentDetail(db, id);
   // R17 task 7: documents uploaded from another system (SUMIT, Wave, other), labeled by source.
-  const externalDocuments = await uploadService.listExternalDocuments(db, { clientId: id });
+  const externalDocuments = await uploadService.listExternalDocuments(db, { clientId: id }, businessId);
   return { client, contacts, balances, consent, externalDocuments };
 }
 
@@ -125,8 +126,8 @@ function columnValue(key: keyof ClientInput, value: SqlValue | boolean | undefin
 }
 
 export async function createClient(db: D1Database, actor: AuditActor, input: ClientInput, consent?: ConsentInput | null): Promise<number> {
-  const cols = COLUMNS.map(([, col]) => col);
-  const values = COLUMNS.map(([key]) => columnValue(key, input[key]));
+  const cols = [...COLUMNS.map(([, col]) => col), 'business_id'];
+  const values = [...COLUMNS.map(([key]) => columnValue(key, input[key])), actorBiz(actor)];
   const results = await transaction(db, [
     stmt(db, `INSERT INTO clients (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`, ...values),
     auditStatement(db, actor, 'client.create', 'client', null, { nameEn: input.nameEn }),
@@ -143,7 +144,7 @@ export async function updateClient(
   patch: ClientPatch,
   consent?: ConsentInput | null,
 ): Promise<void> {
-  const current = await getClient(db, id);
+  const current = await getClient(db, id, actorBiz(actor));
   const nextNameEn = patch.nameEn !== undefined ? patch.nameEn : current.name_en;
   const nextNameHe = patch.nameHe !== undefined ? patch.nameHe : current.name_he;
   if (!hasClientName({ nameEn: nextNameEn, nameHe: nextNameHe })) throw new ValidationError(NO_NAME_MESSAGE);
@@ -169,7 +170,7 @@ export async function updateClient(
  * client picker when creating a document, unless "Show inactive" is ticked.
  */
 export async function setActive(db: D1Database, actor: AuditActor, id: number, active: boolean): Promise<void> {
-  const client = await getClient(db, id);
+  const client = await getClient(db, id, actorBiz(actor));
   if (active === (client.active === 1)) {
     throw new ConflictError('no_change', active ? 'This client is already active.' : 'This client is already not active.');
   }
@@ -188,7 +189,7 @@ const CONTACT_COLUMNS: [keyof ContactInput, keyof ContactRow][] = [
 ];
 
 export async function addContact(db: D1Database, actor: AuditActor, clientId: number, input: ContactInput): Promise<number> {
-  await getClient(db, clientId);
+  await getClient(db, clientId, actorBiz(actor));
   const statements = [];
   if (input.isPrimary) statements.push(stmt(db, 'UPDATE client_contacts SET is_primary = 0 WHERE client_id = ?', clientId));
   statements.push(
@@ -222,6 +223,7 @@ export async function updateContact(
   contactId: number,
   patch: Partial<ContactInput>,
 ): Promise<void> {
+  await getClient(db, clientId, actorBiz(actor));
   await getContact(db, clientId, contactId);
   const set = CONTACT_COLUMNS.filter(([key]) => patch[key] !== undefined);
   if (set.length === 0) return;
@@ -239,9 +241,46 @@ export async function updateContact(
 }
 
 export async function removeContact(db: D1Database, actor: AuditActor, clientId: number, contactId: number): Promise<void> {
+  await getClient(db, clientId, actorBiz(actor));
   await getContact(db, clientId, contactId);
   await transaction(db, [
     stmt(db, 'DELETE FROM client_contacts WHERE id = ?', contactId),
     auditStatement(db, actor, 'client.contact_remove', 'client', clientId, { contactId }),
   ]);
+}
+
+/**
+ * R24 B5: copies one client into another business, on request, one client at a time. Nothing moves
+ * between businesses by itself. The copy is a new client with the same details and contacts, and
+ * no documents, consent or balance: those belong to the business that issued them.
+ */
+export async function copyClientToBusiness(db: D1Database, actor: AuditActor, id: number, targetBusinessId: number): Promise<number> {
+  const source = await getClient(db, id, actorBiz(actor));
+  if (targetBusinessId === actorBiz(actor)) throw new ConflictError('same_business', 'The client is already in this business.');
+  const cols = [...COLUMNS.map(([, col]) => col), 'business_id'];
+  const values = [...COLUMNS.map(([, col]) => source[col] as SqlValue), targetBusinessId];
+  const contacts = await all<ContactRow>(db, 'SELECT * FROM client_contacts WHERE client_id = ? ORDER BY id', id);
+  const [inserted] = await transaction(db, [
+    stmt(db, `INSERT INTO clients (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`, ...values),
+    auditStatement(db, actor, 'client.copy_to_business', 'client', id, { targetBusinessId }),
+  ]);
+  const copyId = inserted!.meta.last_row_id;
+  if (contacts.length > 0) {
+    await transaction(
+      db,
+      contacts.map((ct) =>
+        stmt(
+          db,
+          'INSERT INTO client_contacts (client_id, name, role, email, phone, is_primary) VALUES (?, ?, ?, ?, ?, ?)',
+          copyId,
+          ct.name,
+          ct.role,
+          ct.email,
+          ct.phone,
+          ct.is_primary,
+        ),
+      ),
+    );
+  }
+  return copyId;
 }

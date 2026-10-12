@@ -1,5 +1,7 @@
 import { type Context, Hono } from 'hono';
 import { requireFeature } from '../../core/auth';
+import { businessIdOf } from '../../core/business';
+import { getDoc } from '../documents/repo';
 import { ValidationError } from '../../core/errors';
 import type { ModuleDef } from '../../core/module';
 import type { AppEnv, Env } from '../../env';
@@ -21,6 +23,13 @@ function parseDocumentId(value: string): number {
   return id;
 }
 
+/** R24: the document id from the path, refused unless it belongs to the current business. */
+async function documentIdInBusiness(c: Context<AppEnv>): Promise<number> {
+  const id = parseDocumentId(c.req.param('id') ?? '');
+  await getDoc(c.env.DB, id, businessIdOf(c));
+  return id;
+}
+
 function engineFor(env: Env): PdfEngine {
   if (!env.BROWSER) throw new ValidationError('Browser Rendering is not configured (the BROWSER binding is missing).');
   return new BrowserRenderingPdfEngine(env.BROWSER);
@@ -30,21 +39,21 @@ const routes = new Hono<AppEnv>();
 
 /** Preview a document as HTML, for the web app's document page and editor. Drafts render too. */
 routes.get('/documents/:id', requireFeature('income_documents'), async (c) => {
-  const id = parseDocumentId(c.req.param('id'));
+  const id = await documentIdInBusiness(c);
   const variant = parseVariant(c.req.query('variant') ?? 'client');
   const doc = await loadRenderDocument(c.env.DB, id, variant, { ownerTaxId: c.env.OWNER_TAX_ID ?? null, files: c.env.FILES });
   // The badge follows what the stored PDF gets: signed only when a signing identity is configured.
-  const signed = doc.status !== 'draft' && (await resolveSigningIdentity(c.env.DB, c.env)) !== null;
+  const signed = doc.status !== 'draft' && (await resolveSigningIdentity(c.env.DB, c.env, businessIdOf(c))) !== null;
   const html = renderDocument({ ...doc, signed }, variant);
   return c.html(html);
 });
 
 /** Renders a finalized document to PDF, stores it in R2 and records its hash. Owner only. */
 routes.post('/documents/:id/pdf', requireFeature('issue_documents'), async (c) => {
-  const id = parseDocumentId(c.req.param('id'));
+  const id = await documentIdInBusiness(c);
   const variant = parseVariant(c.req.query('variant') ?? 'client');
   const engine = engineFor(c.env);
-  const signing = await resolveSigningIdentity(c.env.DB, c.env);
+  const signing = await resolveSigningIdentity(c.env.DB, c.env, businessIdOf(c));
   const result = await renderAndStore(c.env.DB, c.env.FILES, engine, id, variant, { ownerTaxId: c.env.OWNER_TAX_ID ?? null, files: c.env.FILES }, signing);
   return c.json({ key: result.key, sha256: result.sha256 });
 });
@@ -55,7 +64,7 @@ routes.post('/documents/:id/pdf', requireFeature('issue_documents'), async (c) =
  * re-renders from the current draft.
  */
 routes.get('/documents/:id/draft.pdf', requireFeature('income_documents'), async (c) => {
-  const id = parseDocumentId(c.req.param('id'));
+  const id = await documentIdInBusiness(c);
   const variant = parseVariant(c.req.query('variant') ?? 'client');
   const options = { ownerTaxId: c.env.OWNER_TAX_ID ?? null, files: c.env.FILES };
   // Check the document is still a draft before touching Browser Rendering, so a bad request
@@ -86,7 +95,7 @@ async function ensureStored(c: Context<AppEnv>, id: number, variant: RenderVaria
 
   if (!(await hasStoredPdf(c.env.DB, id, variant))) {
     const engine = engineFor(c.env);
-    const signing = await resolveSigningIdentity(c.env.DB, c.env, { require: true });
+    const signing = await resolveSigningIdentity(c.env.DB, c.env, businessIdOf(c), { require: true });
     await renderAndStore(c.env.DB, c.env.FILES, engine, id, variant, options, signing);
   } else {
     await assertClientCopyMayRelease(c.env.DB, id, variant);
@@ -96,7 +105,7 @@ async function ensureStored(c: Context<AppEnv>, id: number, variant: RenderVaria
 
 /** "View client copy" / "View filed copy": opens inline in a new tab, same as the draft preview. */
 routes.post('/documents/:id/view', requireFeature('issue_documents'), async (c) => {
-  const id = parseDocumentId(c.req.param('id'));
+  const id = await documentIdInBusiness(c);
   const variant = parseVariant(c.req.query('variant') ?? 'client');
   const { key } = await ensureStored(c, id, variant);
   const { path, expiresAt } = await signDownloadUrl(c.env, key, 'issue_documents', undefined, { disposition: 'inline' });
@@ -105,7 +114,7 @@ routes.post('/documents/:id/view', requireFeature('issue_documents'), async (c) 
 
 /** "Download" next to each view button (R17 task 3): saves as "<type>-<number>-<client>.pdf". */
 routes.post('/documents/:id/download', requireFeature('issue_documents'), async (c) => {
-  const id = parseDocumentId(c.req.param('id'));
+  const id = await documentIdInBusiness(c);
   const variant = parseVariant(c.req.query('variant') ?? 'client');
   const { doc, key } = await ensureStored(c, id, variant);
   const { path, expiresAt } = await signDownloadUrl(c.env, key, 'issue_documents', undefined, {

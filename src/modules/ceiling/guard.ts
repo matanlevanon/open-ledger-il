@@ -1,5 +1,5 @@
 import { env } from 'cloudflare:workers';
-import { SYSTEM_ACTOR, auditAs } from '../../core/audit';
+import { auditAs, systemActorFor } from '../../core/audit';
 import { ceilingFor, legalModeOn } from '../../core/config';
 import { DomainError } from '../../core/errors';
 import { assertCurrency, formatMinor } from '../../core/money';
@@ -47,10 +47,10 @@ export class CeilingCrossingError extends DomainError {
  */
 export function createCeilingGuard(db: D1Database, notifier: Notifier): CeilingGuard {
   return {
-    async check(amountIls, date) {
-      await evaluateCeilingAlerts(db, date, notifier);
+    async check(amountIls, date, businessId) {
+      await evaluateCeilingAlerts(db, date, notifier, businessId);
 
-      const legalMode = await legalModeOn(db, date);
+      const legalMode = await legalModeOn(db, date, businessId);
       if (legalMode.mode !== 'patur') return; // the ceiling only gates the עוסק פטור series
 
       const ceiling = await ceilingFor(db, date);
@@ -59,14 +59,14 @@ export function createCeilingGuard(db: D1Database, notifier: Notifier): CeilingG
       const year = Number(date.slice(0, 4));
       const yearStart = `${year}-01-01`;
       const yearEnd = `${year}-12-31`;
-      const turnoverMinor = await turnoverIls(db, yearStart, yearEnd);
+      const turnoverMinor = await turnoverIls(db, yearStart, yearEnd, businessId);
       const projected = turnoverMinor + amountIls;
       if (projected <= ceiling.amount_minor) return;
 
       // docs/legal-requirements.md, "Ceiling guard", point 5: "every alert, block and decision
       // writes to audit_log". This is the block itself; the owner's eventual choice (confirm
       // switch, issue smaller, cancel) is audited separately where each of those actions happens.
-      await auditAs(db, SYSTEM_ACTOR, 'ceiling.crossing_blocked', 'ceiling', String(year), {
+      await auditAs(db, systemActorFor(businessId), 'ceiling.crossing_blocked', 'ceiling', String(year), {
         turnoverMinor,
         amountMinor: amountIls,
         limitMinor: ceiling.amount_minor,
@@ -92,5 +92,6 @@ export function createCeilingGuard(db: D1Database, notifier: Notifier): CeilingG
  * hand a route handler (bindings are fixed for the Worker's lifetime, never per-request).
  */
 export const ceilingGuard: CeilingGuard = {
-  check: (amountIls, date) => createCeilingGuard(env.DB, slackNotifier(env.SLACK_WEBHOOK_URL, (input, init) => fetch(input, init))).check(amountIls, date),
+  check: (amountIls, date, businessId) =>
+    createCeilingGuard(env.DB, slackNotifier(env.SLACK_WEBHOOK_URL, (input, init) => fetch(input, init))).check(amountIls, date, businessId),
 };

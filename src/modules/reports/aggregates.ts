@@ -24,7 +24,7 @@ const INCOME_KINDS = "'receipt', 'credit', 'invoice', 'invoice_receipt', 'credit
 const ILS = (amount: string, currency: string, ils: string) => `COALESCE(${ils}, CASE WHEN ${currency} = 'ILS' THEN ${amount} END)`;
 
 /**
- * Income rows in a date range. Binds four parameters: from, to, from, to.
+ * Income rows of one business in a date range. Binds six parameters, `incomeParams(businessId, from, to)`.
  * Columns: date, client_id, name_en, name_he, name_text, currency, amount_minor, ils_minor, imported.
  */
 export const INCOME_ROWS_SQL = `
@@ -32,14 +32,17 @@ export const INCOME_ROWS_SQL = `
     d.currency AS currency, d.total_minor AS amount_minor, ${ILS('d.total_minor', 'd.currency', 'd.total_ils_minor')} AS ils_minor,
     0 AS imported
   FROM documents d JOIN document_types dt ON dt.code = d.type LEFT JOIN clients c ON c.id = d.client_id
-  WHERE d.status = 'final' AND dt.kind IN (${INCOME_KINDS}) AND d.date BETWEEN ? AND ?
+  WHERE d.business_id = ? AND d.status = 'final' AND dt.kind IN (${INCOME_KINDS}) AND d.date BETWEEN ? AND ?
   UNION ALL
   SELECT x.issue_date, x.client_id, c.name_en, c.name_he, x.client_name_text,
     x.currency, ${externalSignSql('x.doc_type')} * x.total_minor, ${externalSignSql('x.doc_type')} * ${ILS('x.total_minor', 'x.currency', 'x.total_ils_minor')}, 1
   FROM external_documents x LEFT JOIN clients c ON c.id = x.client_id
-  WHERE x.issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('x.doc_type')}`;
+  WHERE x.business_id = ? AND x.issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('x.doc_type')}`;
 
-/** Counted expenses in a date range. Binds two parameters: from, to. */
+/** The parameters INCOME_ROWS_SQL binds, in order (R24: scoped to one business). */
+export const incomeParams = (businessId: number, from: string, to: string) => [businessId, from, to, businessId, from, to];
+
+/** Counted expenses of one business in a date range. Binds three parameters, `expenseParams(businessId, from, to)`. */
 export const EXPENSE_ROWS_SQL = `
   SELECT e.id AS id, e.document_date AS date, e.currency AS currency, e.amount_minor AS amount_minor,
     ${ILS('e.amount_minor', 'e.currency', 'e.amount_ils_minor')} AS ils_minor,
@@ -48,7 +51,10 @@ export const EXPENSE_ROWS_SQL = `
   FROM expenses e
   LEFT JOIN expense_categories cat ON cat.id = e.category_id
   LEFT JOIN suppliers s ON s.id = e.supplier_id
-  WHERE e.status IN ('new', 'filed') AND e.document_date BETWEEN ? AND ?`;
+  WHERE e.business_id = ? AND e.status IN ('new', 'filed') AND e.document_date BETWEEN ? AND ?`;
+
+/** The parameters EXPENSE_ROWS_SQL binds, in order. */
+export const expenseParams = (businessId: number, from: string, to: string) => [businessId, from, to];
 
 /** Every YYYY-MM from `from`'s month to `to`'s month, inclusive. */
 export function monthsBetween(from: string, to: string): string[] {
@@ -84,24 +90,27 @@ export interface CashFlowMonth {
 }
 
 /** Cash flow: money in from payments (and paid imported documents), money out on expenses. */
-export async function cashFlowByMonth(db: D1Database, from: string, to: string): Promise<CashFlowMonth[]> {
+export async function cashFlowByMonth(db: D1Database, from: string, to: string, businessId: number): Promise<CashFlowMonth[]> {
   const rows = await all<{ month: string; kind: string; total: number | null }>(
     db,
     `SELECT month, kind, SUM(ils) AS total FROM (
        SELECT strftime('%Y-%m', p.paid_on) AS month, 'in' AS kind, ${ILS('p.amount_minor', 'p.currency', 'p.amount_ils_minor')} AS ils
        FROM payments p JOIN documents d ON d.id = p.document_id
-       WHERE d.status = 'final' AND p.paid_on BETWEEN ? AND ?
+       WHERE d.business_id = ? AND d.status = 'final' AND p.paid_on BETWEEN ? AND ?
        UNION ALL
        SELECT strftime('%Y-%m', x.issue_date), 'imported', ${externalSignSql('x.doc_type')} * ${ILS('x.total_minor', 'x.currency', 'x.total_ils_minor')}
-       FROM external_documents x WHERE ${externalIsCashSql('x.doc_type')} AND x.issue_date BETWEEN ? AND ?
+       FROM external_documents x WHERE x.business_id = ? AND ${externalIsCashSql('x.doc_type')} AND x.issue_date BETWEEN ? AND ?
        UNION ALL
        SELECT strftime('%Y-%m', e.document_date), 'out', ${ILS('e.amount_minor', 'e.currency', 'e.amount_ils_minor')}
-       FROM expenses e WHERE e.status IN ('new', 'filed') AND e.document_date BETWEEN ? AND ?
+       FROM expenses e WHERE e.business_id = ? AND e.status IN ('new', 'filed') AND e.document_date BETWEEN ? AND ?
      ) GROUP BY month, kind`,
+    businessId,
     from,
     to,
+    businessId,
     from,
     to,
+    businessId,
     from,
     to,
   );
@@ -129,7 +138,7 @@ export interface ProfitLossMonthAgg {
 }
 
 /** Income (issued plus imported) against expenses, by document date. */
-export async function profitLossByMonth(db: D1Database, from: string, to: string): Promise<ProfitLossMonthAgg[]> {
+export async function profitLossByMonth(db: D1Database, from: string, to: string, businessId: number): Promise<ProfitLossMonthAgg[]> {
   const rows = await all<{ month: string; kind: string; total: number | null }>(
     db,
     `SELECT month, kind, SUM(ils) AS total FROM (
@@ -138,12 +147,8 @@ export async function profitLossByMonth(db: D1Database, from: string, to: string
        UNION ALL
        SELECT strftime('%Y-%m', date), 'expense', ils_minor FROM (${EXPENSE_ROWS_SQL})
      ) GROUP BY month, kind`,
-    from,
-    to,
-    from,
-    to,
-    from,
-    to,
+    ...incomeParams(businessId, from, to),
+    ...expenseParams(businessId, from, to),
   );
   const byMonth = new Map<string, ProfitLossMonthAgg>(
     monthsBetween(from, to).map((month) => [month, { month, incomeIlsMinor: 0, importedIncomeIlsMinor: 0, expensesIlsMinor: 0, netIlsMinor: 0 }]),
@@ -168,14 +173,11 @@ export interface IncomeMonth {
 }
 
 /** Income by month, SUMIT's "income without VAT by month" (a פטור charges no VAT, so total is net). */
-export async function incomeByMonth(db: D1Database, from: string, to: string): Promise<IncomeMonth[]> {
+export async function incomeByMonth(db: D1Database, from: string, to: string, businessId: number): Promise<IncomeMonth[]> {
   const rows = await all<{ month: string; imported: number; total: number | null }>(
     db,
     `SELECT strftime('%Y-%m', date) AS month, imported, SUM(ils_minor) AS total FROM (${INCOME_ROWS_SQL}) GROUP BY month, imported`,
-    from,
-    to,
-    from,
-    to,
+    ...incomeParams(businessId, from, to),
   );
   const byMonth = new Map<string, IncomeMonth>(
     monthsBetween(from, to).map((month) => [month, { month, issuedIlsMinor: 0, importedIlsMinor: 0, totalIlsMinor: 0 }]),
@@ -241,7 +243,7 @@ function mergeShareRow(map: Map<string, ShareRow>, key: string, init: () => Shar
 }
 
 /** Income per client, issued and imported. An imported document with no matched client groups by its printed name. */
-export async function incomeByClient(db: D1Database, from: string, to: string, limit?: number): Promise<Breakdown> {
+export async function incomeByClient(db: D1Database, businessId: number, from: string, to: string, limit?: number): Promise<Breakdown> {
   const rows = await all<{
     client_id: number | null;
     name_en: string | null;
@@ -257,10 +259,7 @@ export async function incomeByClient(db: D1Database, from: string, to: string, l
     `SELECT client_id, name_en, name_he, name_text, currency, imported, SUM(amount_minor) AS amount, SUM(ils_minor) AS ils, COUNT(*) AS n
      FROM (${INCOME_ROWS_SQL})
      GROUP BY client_id, CASE WHEN client_id IS NULL THEN name_text END, currency, imported`,
-    from,
-    to,
-    from,
-    to,
+    ...incomeParams(businessId, from, to),
   );
   const map = new Map<string, ShareRow>();
   for (const r of rows) {
@@ -278,7 +277,7 @@ export async function incomeByClient(db: D1Database, from: string, to: string, l
  * division). A line with no catalog service groups by its description. Imported documents carry
  * no lines, so they are not part of this breakdown.
  */
-export async function incomeByService(db: D1Database, from: string, to: string, limit?: number): Promise<Breakdown> {
+export async function incomeByService(db: D1Database, businessId: number, from: string, to: string, limit?: number): Promise<Breakdown> {
   const rows = await all<{
     item_id: number | null;
     name_en: string;
@@ -301,8 +300,9 @@ export async function incomeByService(db: D1Database, from: string, to: string, 
      JOIN documents d ON d.id = l.document_id
      JOIN document_types dt ON dt.code = d.type
      LEFT JOIN items i ON i.id = l.item_id
-     WHERE d.status = 'final' AND dt.kind IN (${INCOME_KINDS}) AND d.date BETWEEN ? AND ?
+     WHERE d.business_id = ? AND d.status = 'final' AND dt.kind IN (${INCOME_KINDS}) AND d.date BETWEEN ? AND ?
      GROUP BY l.item_id, CASE WHEN l.item_id IS NULL THEN l.description_en END, d.currency`,
+    businessId,
     from,
     to,
   );
@@ -332,8 +332,9 @@ export async function incomeByService(db: D1Database, from: string, to: string, 
        SUM(${externalSignSql('x.doc_type')} * ${ILS('x.total_minor', 'x.currency', 'x.total_ils_minor')}) AS ils,
        COUNT(*) AS n
      FROM external_documents x LEFT JOIN items i ON i.id = x.item_id
-     WHERE x.issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('x.doc_type')}
+     WHERE x.business_id = ? AND x.issue_date BETWEEN ? AND ? AND ${externalIsIncomeSql('x.doc_type')}
      GROUP BY x.item_id, x.currency`,
+    businessId,
     from,
     to,
   );
@@ -358,13 +359,12 @@ export async function incomeByService(db: D1Database, from: string, to: string, 
 }
 
 /** Expenses per category. No category reads "Uncategorized". */
-export async function expensesByCategory(db: D1Database, from: string, to: string, limit?: number): Promise<Breakdown> {
+export async function expensesByCategory(db: D1Database, businessId: number, from: string, to: string, limit?: number): Promise<Breakdown> {
   const rows = await all<{ category_id: number | null; category_name: string | null; currency: string; amount: number; ils: number | null; n: number }>(
     db,
     `SELECT category_id, category_name, currency, SUM(amount_minor) AS amount, SUM(ils_minor) AS ils, COUNT(*) AS n
      FROM (${EXPENSE_ROWS_SQL}) GROUP BY category_id, currency`,
-    from,
-    to,
+    ...expenseParams(businessId, from, to),
   );
   const map = new Map<string, ShareRow>();
   for (const r of rows) {
@@ -403,7 +403,7 @@ export function sameDayLastYear(date: string): string {
 }
 
 /** Previous full year, this year to date, and the same stretch of last year. One query. */
-export async function yearComparison(db: D1Database, today: string): Promise<YearComparison> {
+export async function yearComparison(db: D1Database, today: string, businessId: number): Promise<YearComparison> {
   const year = Number(today.slice(0, 4));
   const prevStart = `${year - 1}-01-01`;
   const prevEnd = `${year - 1}-12-31`;
@@ -429,12 +429,8 @@ export async function yearComparison(db: D1Database, today: string): Promise<Yea
     sameEnd,
     ytdStart,
     ytdStart,
-    prevStart,
-    today,
-    prevStart,
-    today,
-    prevStart,
-    today,
+    ...incomeParams(businessId, prevStart, today),
+    ...expenseParams(businessId, prevStart, today),
   );
   const totals = (from: string, to: string, i: number | null | undefined, e: number | null | undefined): YearTotals => ({
     from,
@@ -529,9 +525,9 @@ function importedTypeCode(docType: string): string {
  * Open imported demands join the list, flagged `imported`. They carry no due date, so they are due
  * on their issue date.
  */
-export async function openItems(db: D1Database, today: string, demands?: OpenDemand[]): Promise<OpenItem[]> {
-  const list = demands ?? (await openDemands(db));
-  const imported = await openImportedDemands(db);
+export async function openItems(db: D1Database, today: string, businessId: number, demands?: OpenDemand[]): Promise<OpenItem[]> {
+  const list = demands ?? (await openDemands(db, businessId));
+  const imported = await openImportedDemands(db, businessId);
   const meta = list.length === 0 ? [] : await all<{
     id: number;
     type: string;

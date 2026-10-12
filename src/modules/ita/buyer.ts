@@ -31,8 +31,17 @@ export type BuyerLookup<T> = { found: true; data: T } | { found: false; code: st
 
 const NINE = /^\d{9}$/;
 
-function client(env: ItaEnv, io: ClockAndFetch) {
-  return new ItaClient(env, new ItaTokenStore(env, io), io);
+function client(env: ItaEnv, io: ClockAndFetch, businessId: number) {
+  return new ItaClient(env, new ItaTokenStore(env, io, businessId), io);
+}
+
+/** R24: the buyer is the current business. Business 1 reads the secrets, another its own tax id. */
+async function buyerVatNumber(env: ItaEnv, businessId: number): Promise<string> {
+  if (businessId === 1) return itaIdentity(env).vatNumber;
+  const row = await env.DB.prepare('SELECT tax_id FROM businesses WHERE id = ?').bind(businessId).first<{ tax_id: string | null }>();
+  const vat = (row?.tax_id ?? '').trim();
+  if (!NINE.test(vat)) throw new ValidationError('Set the tax id of this business in Settings > Business.');
+  return vat;
 }
 
 function unwrap(result: Awaited<ReturnType<ItaClient['post']>>) {
@@ -57,14 +66,14 @@ export async function supplierInvoiceDetails(
   env: ItaEnv,
   io: ClockAndFetch,
   input: { supplier_vat_number: string; confirmation_number: string },
+  businessId = 1,
 ): Promise<BuyerLookup<SupplierInvoiceDetails>> {
   if (!NINE.test(input.supplier_vat_number)) throw new ValidationError('The supplier VAT number has 9 digits.');
   const confirmation = input.confirmation_number.replace(/\s/g, '');
   if (!/^\d{9,30}$/.test(confirmation)) throw new ValidationError('An allocation number has 9 to 30 digits.');
-  const me = itaIdentity(env);
   const res = unwrap(
-    await client(env, io).post(ITA_PATHS.details, {
-      customer_vat_number: Number(me.vatNumber),
+    await client(env, io, businessId).post(ITA_PATHS.details, {
+      customer_vat_number: Number(await buyerVatNumber(env, businessId)),
       confirmation_number: confirmation,
       vat_number: Number(input.supplier_vat_number),
     }),
@@ -104,19 +113,19 @@ export async function supplierConfirmationNumber(
     invoice_date: string;
     invoice_reference_number?: string;
   },
+  businessId = 1,
 ): Promise<BuyerLookup<{ confirmation_number: string; short_number: string }>> {
   if (!NINE.test(input.supplier_vat_number)) throw new ValidationError('The supplier VAT number has 9 digits.');
   assertDate(input.invoice_date, 'invoice_date');
-  const me = itaIdentity(env);
   const body: Record<string, unknown> = {
-    customer_vat_number: Number(me.vatNumber),
+    customer_vat_number: Number(await buyerVatNumber(env, businessId)),
     vat_number: Number(input.supplier_vat_number),
     payment_amount: n122(input.payment_amount_minor),
     vat_amount: n122(input.vat_amount_minor),
     invoice_date: input.invoice_date,
   };
   if (input.invoice_reference_number) body.invoice_reference_number = input.invoice_reference_number.slice(0, 20);
-  const res = unwrap(await client(env, io).post(ITA_PATHS.confirmationNumber, body));
+  const res = unwrap(await client(env, io, businessId).post(ITA_PATHS.confirmationNumber, body));
   const raw = (res.json as { confirmation_number?: unknown } | null)?.confirmation_number;
   const value = raw === undefined || raw === null ? '' : String(raw);
   if (res.status !== 200 || !/^\d{9,}$/.test(value) || /^0+$/.test(value)) return notFound(res.json, res.status);

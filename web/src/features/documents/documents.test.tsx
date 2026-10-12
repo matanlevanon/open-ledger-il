@@ -102,7 +102,7 @@ describe('income screens', () => {
     expect(screen.getAllByText('$750.00').length).toBeGreaterThan(0);
     expect(calls.filter((c) => c.path.startsWith('/api/documents')).at(-1)?.path).toBe('/api/documents?tab=unpaid&type=PR');
     fireEvent.click(screen.getByRole('tab', { name: 'Draft' }));
-    await waitFor(() => expect(calls.at(-1)?.path).toBe('/api/documents?tab=draft&type=PR'));
+    await waitFor(() => expect(calls.filter((c) => c.path.startsWith('/api/documents')).at(-1)?.path).toBe('/api/documents?tab=draft&type=PR'));
     expect(screen.getByRole('tab', { name: 'All' })).toBeInTheDocument();
   });
 
