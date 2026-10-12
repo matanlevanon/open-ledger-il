@@ -43,6 +43,8 @@ import { paymentMethodsModule } from './payment-methods';
 import { servicesModule } from './services';
 
 import { createRecurringModule } from './recurring';
+// Update check: Settings > Updates and a monthly check on the 1st.
+import { updatesModule } from './updates';
 
 // R14 mcp: `mcpModule` mounts at the top-level `/mcp` path in src/index.ts, not under /api. It
 // authenticates with the MCP_TOKEN bearer secret, not Cloudflare Access, and owns no cron, so it
@@ -109,4 +111,5 @@ export const modules: ModuleDef[] = [
   servicesModule,
 
   createRecurringModule({ documentsOptions: documentsServiceOptions }),
+  updatesModule,
 ];

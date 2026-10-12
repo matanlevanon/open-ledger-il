@@ -13,8 +13,9 @@ import { RatesTab } from './RatesTab';
 import { ServicesTab } from './ServicesTab';
 import { SignatureTab } from './SignatureTab';
 import { TaxTab } from './TaxTab';
+import { UpdatesTab } from './UpdatesTab';
 
-type Tab = 'business' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups';
+type Tab = 'business' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
 
 const TABS: [Tab, MessageKey][] = [
   ['business', 'settings.tabs.business'],
@@ -29,6 +30,7 @@ const TABS: [Tab, MessageKey][] = [
   ['expenses', 'settings.tabs.expenses'],
   ['dashboard', 'settings.tabs.dashboard'],
   ['backups', 'settings.tabs.backups'],
+  ['updates', 'settings.tabs.updates'],
 ];
 
 /**
@@ -80,6 +82,7 @@ export function SettingsPage() {
         {tab === 'expenses' && <ExpensesTab />}
         {tab === 'dashboard' && <DashboardTab />}
         {tab === 'backups' && <BackupsTab />}
+        {tab === 'updates' && <UpdatesTab />}
       </div>
     </section>
   );

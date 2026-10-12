@@ -136,4 +136,32 @@ export const runBackupNow = () =>
 
 export const runChecksNow = () => send<GapCheckResult>('/checks/run', 'POST');
 
+export interface UpdateCheck {
+  status: 'up_to_date' | 'update_available' | 'off' | 'no_releases' | 'error';
+  current: string;
+  latest: string | null;
+  releaseUrl: string | null;
+  releaseName: string | null;
+  publishedAt: string | null;
+  checkedAt: string;
+  message: string;
+}
+
+export interface UpdatesInfo {
+  current: string;
+  repo: string | null;
+  last: UpdateCheck | null;
+}
+
+export const fetchUpdates = () => apiGet<UpdatesInfo>('/updates');
+
+export async function checkUpdatesNow(): Promise<UpdatesInfo> {
+  const res = await fetch('/api/updates/check', { method: 'POST', headers: { Accept: 'application/json' } });
+  if (!res.ok) {
+    const errorBody = (await res.json().catch(() => null)) as { error: { code: string; message: string } } | null;
+    throw new ApiError(res.status, errorBody?.error.code ?? 'http_error', errorBody?.error.message ?? 'Request failed.');
+  }
+  return (await res.json()) as UpdatesInfo;
+}
+
 export { ApiError };

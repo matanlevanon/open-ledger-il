@@ -292,6 +292,20 @@ most likely to hit the cron CPU limit:
 Upgrade in the Cloudflare dashboard: **Workers & Pages** > **Plans**. Paid includes 30 million CPU
 milliseconds a month and allows 30 seconds of CPU per request by default.
 
+## Update check
+
+Settings > Updates shows the running version and has a Check for updates button. The same check
+runs on the 1st of each month (on the 07:00 daily cron) and posts to Slack once per new version.
+
+1. In Workers > your Worker > Settings > Variables, set `UPDATE_REPO` to `owner/name` of the
+   GitHub repo you deploy from. Empty turns the check off.
+2. Publish a GitHub release for each version, tagged `v<version>` to match `package.json`, for
+   example `v1.4.0`. The check reads the latest release, not tags alone. Pre-release tags such as
+   `v1.4.0-beta` are skipped.
+
+The check only reads and tells. It never installs anything and holds no Cloudflare token. Update
+by deploying the new version the same way you installed it.
+
 ## D1 time-travel: test and restore procedure
 
 D1's own point-in-time recovery is separate from, and in addition to, R14's own quarterly export

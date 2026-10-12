@@ -28,6 +28,7 @@ SOFTWARE_VERSION = "1.3.0"
 SOFTWARE_REGISTRATION_NUMBER = ""   # 8 digits, from the Tax Authority's registration certificate
 SOFTWARE_PRODUCER_VAT = ""          # tax ID of the software producer; empty means the business itself
 SOFTWARE_PRODUCER_NAME = ""
+UPDATE_REPO = ""                   # owner/name of the GitHub repo you deploy from. Settings > Updates and a monthly check compare against its latest release. Empty turns the check off.
 
 # Secrets. Set with `wrangler secret put <NAME>` or in the dashboard. Never commit a value.
 # Full list with owners in docs/secrets.md.
@@ -86,7 +87,7 @@ crons = [
   "30 5 * * *",    # R12: ITA token refresh check and day-75 reminder
   "0 6 * * *",     # R04: Bank of Israel rates, daily, plus a 7-day healing backfill
   "0 7 * * *",     # Reminders, recurring documents, accountant access expiry, Drive expense sync,
-                   # ceiling alerts, and the monthly accountant pack on the 5th
+                   # ceiling alerts, the monthly accountant pack on the 5th, and the update check on the 1st
 ]
 
 # R02: bundles embedded font files as raw bytes, so PDF rendering needs no network.

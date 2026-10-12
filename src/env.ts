@@ -35,6 +35,8 @@ export interface Env {
   /** Unified file (מבנה אחיד) INI.TXT software fields (section 3.1): the software as registered with the Tax Authority. */
   SOFTWARE_NAME?: string;
   SOFTWARE_VERSION?: string;
+  /** Update check: owner/name of the GitHub repo this Ledger comes from. Empty turns the check off. */
+  UPDATE_REPO?: string;
   /** The Tax Authority's software registration number, 8 digits, once issued. Empty until then. */
   SOFTWARE_REGISTRATION_NUMBER?: string;
   /** Tax ID of the software producer. Empty means the business itself. */
