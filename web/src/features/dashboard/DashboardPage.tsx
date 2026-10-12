@@ -604,6 +604,8 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
       case 'aging':
         return c.aging ? <Card {...common}><AgingCard data={c.aging} /></Card> : null;
       case 'ceiling':
+        // R24: only עוסק פטור, and an עוסק מורשה in the year of its switch.
+        if (data.businessType && !data.businessType.showCeiling) return null;
         return (
           <Card {...common}>
             {data.ceiling ? (
@@ -613,16 +615,32 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
             )}
           </Card>
         );
-      case 'vat':
+      case 'vat': {
+        // R24: VAT belongs to עוסק מורשה and a company. A פטור business never sees this card.
+        if (!data.vatDue.applicable) return null;
+        const p = data.vatDue.period;
         return (
           <Card {...common}>
-            {data.vatDue.applicable ? (
-              <p className="text-2xl font-semibold text-ink ltr-nums">{formatMoney(data.vatDue.amountMinor, data.vatDue.currency)}</p>
-            ) : (
-              <EmptyState title={t('dashboard.noVatYet')} description={t('dashboard.noVatYetDescription')} />
+            <p data-testid="vat-due" className="text-2xl font-semibold text-ink ltr-nums">
+              {formatMoney(data.vatDue.amountMinor, data.vatDue.currency)}
+            </p>
+            {p && (
+              <>
+                <p className="mt-1 text-sm text-muted ltr-nums">{t('dashboard.vatPeriod', { from: p.from, to: p.to })}</p>
+                <p className="text-sm text-ink ltr-nums">{t('dashboard.vatReportBy', { date: p.reportDue })}</p>
+              </>
+            )}
+            {data.vatDue.outputMinor !== undefined && (
+              <p className="mt-1 text-xs text-muted ltr-nums">
+                {t('dashboard.vatBreakdown', {
+                  output: formatMoney(data.vatDue.outputMinor, 'ILS'),
+                  input: formatMoney(data.vatDue.inputMinor ?? 0, 'ILS'),
+                })}
+              </p>
             )}
           </Card>
         );
+      }
       case 'ita':
         return (
           <Card {...common}>
@@ -642,9 +660,16 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-6xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 id="page-title" className="font-heading text-3xl text-ink">
-          {t('dashboard.title')}
-        </h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 id="page-title" className="font-heading text-3xl text-ink">
+            {t('dashboard.title')}
+          </h1>
+          {data?.businessType && (
+            <span data-testid="business-type-pill" title={t('dashboard.businessTypeLabel')} className="rounded-full bg-surface px-3 py-0.5 text-sm font-semibold text-accent-2">
+              {t(`businessType.${data.businessType.entityType}` as MessageKey)}
+            </span>
+          )}
+        </div>
         <Link to="/settings?tab=dashboard" className="text-sm font-semibold text-accent-2 hover:underline">
           {t('dash.customize')}
         </Link>

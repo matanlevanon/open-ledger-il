@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { TextField, TextareaField } from '../../components/fields';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
-import { ApiError, type BusinessProfile, fetchBusiness, updateBusiness } from './api';
+import { ApiError, type BusinessProfile, type EntityType, fetchBusiness, fetchBusinessTypeStatus, updateBusiness } from './api';
 import { ImageUpload } from './ImageUpload';
 
 type FormState = {
@@ -46,15 +46,26 @@ interface BusinessTabProps {
   onSaved?: () => void;
   /** Hides the logo and payment sections on the first-run setup screen. */
   setup?: boolean;
+  /** R24: the business type the form describes. A company's tax ID is its ח.פ. Default: read from the Worker. */
+  entityType?: EntityType;
 }
 
-export function BusinessTab({ onSaved, setup = false }: BusinessTabProps = {}) {
+export function BusinessTab({ onSaved, setup = false, entityType }: BusinessTabProps = {}) {
   const [form, setForm] = useState<FormState | null>(null);
+  const [storedType, setStoredType] = useState<EntityType>('osek_patur');
   const [forbidden, setForbidden] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const toast = useToast();
   const t = useT();
+
+  useEffect(() => {
+    if (entityType) return;
+    fetchBusinessTypeStatus()
+      .then((st) => setStoredType(st.entityType))
+      .catch(() => setStoredType('osek_patur'));
+  }, [entityType]);
+  const isCompany = (entityType ?? storedType) === 'company';
 
   useEffect(() => {
     fetchBusiness()
@@ -93,13 +104,13 @@ export function BusinessTab({ onSaved, setup = false }: BusinessTabProps = {}) {
         <TextField label={t('settings.business.nameEnLabel')} required value={form.nameEn} onChange={set('nameEn')} />
         <TextField label={t('settings.business.nameHeLabel')} required dir="rtl" value={form.nameHe} onChange={set('nameHe')} />
         <TextField
-          label={t('settings.business.taxIdLabel')}
+          label={t(isCompany ? 'settings.business.companyNumberLabel' : 'settings.business.taxIdLabel')}
           required
           inputMode="numeric"
           dir="ltr"
           value={form.taxId}
           onChange={set('taxId')}
-          hint={t('settings.business.taxIdHint')}
+          hint={t(isCompany ? 'settings.business.companyNumberHint' : 'settings.business.taxIdHint')}
         />
         <TextField label={t('settings.business.taglineEnLabel')} value={form.taglineEn} onChange={set('taglineEn')} />
         <TextField label={t('settings.business.taglineHeLabel')} dir="rtl" value={form.taglineHe} onChange={set('taglineHe')} />

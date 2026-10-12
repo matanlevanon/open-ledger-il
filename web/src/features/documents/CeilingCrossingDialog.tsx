@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Dialog } from '../../components/Dialog';
-import { usePreferences } from '../../app/preferences';
 import { useT } from '../../i18n';
 import { formatMoney } from '../../lib/money';
 import { apiSend } from './api';
-import { clientName } from './format';
+import { type SwitchResult, SwitchResultView } from './SwitchResultView';
 import { btn, btnPrimary, btnSecondary, input, label } from './ui';
 
 /** Matches src/modules/ceiling/guard.ts's CeilingCrossingDetails, the CEILING_CROSSING error's `details`. */
@@ -16,24 +14,6 @@ export interface CeilingCrossingDetails {
   amountMinor: number;
   limitMinor: number;
   gapMinor: number;
-}
-
-/** src/modules/documents/service.ts's OpenPaymentRequestSummary. */
-interface OpenPaymentRequest {
-  id: number;
-  displayNumber: string | null;
-  clientNameEn: string | null;
-  clientNameHe: string | null;
-  date: string;
-  currency: string;
-  totalMinor: number;
-}
-
-/** src/modules/legal-mode/service.ts's SwitchResult. */
-interface SwitchResult {
-  message: string;
-  openPaymentRequests: OpenPaymentRequest[];
-  repricedDrafts: number[];
 }
 
 interface CeilingCrossingDialogProps {
@@ -54,7 +34,6 @@ interface CeilingCrossingDialogProps {
  */
 export function CeilingCrossingDialog({ details, onClose, onRetry }: CeilingCrossingDialogProps) {
   const t = useT();
-  const { locale } = usePreferences();
   const [effectiveDate, setEffectiveDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [repriceDrafts, setRepriceDrafts] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -102,25 +81,7 @@ export function CeilingCrossingDialog({ details, onClose, onRetry }: CeilingCros
         </p>
 
         {result ? (
-          <div className="space-y-3">
-            <p className="rounded-md border border-line bg-surface p-3 text-ink">{result.message}</p>
-            {result.openPaymentRequests.length > 0 && (
-              <div className="rounded-md border border-line bg-surface p-3">
-                <p className={label}>{t('ceilingCrossing.openPaymentRequestsLabel')}</p>
-                <ul className="mt-2 space-y-1 text-sm">
-                  {result.openPaymentRequests.map((pr) => (
-                    <li key={pr.id} className="flex items-center justify-between gap-3">
-                      <Link to={`/income/documents/${pr.id}`} className="text-brand underline">
-                        {pr.displayNumber ?? `PR-${pr.id}`}
-                      </Link>
-                      <span className="text-ink">{clientName({ name_en: pr.clientNameEn, name_he: pr.clientNameHe }, locale) || t('documents.noClient')}</span>
-                      <span className="ltr-nums text-ink">{formatMoney(pr.totalMinor, pr.currency)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+          <SwitchResultView result={result} />
         ) : (
           <div className="rounded-md border border-line bg-surface p-3">
             <label className="block">

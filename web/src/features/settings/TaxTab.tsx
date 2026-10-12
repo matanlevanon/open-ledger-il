@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import { formatMinor } from '../../lib/money';
+import { BusinessTypeCard } from './BusinessTypeCard';
 import { ApiError, type CeilingRow, type VatRateRow, addVatRate, fetchCeilings, fetchVatRates, upsertCeiling } from './api';
 
 export function TaxTab() {
@@ -73,6 +74,7 @@ export function TaxTab() {
 
   return (
     <div className="flex flex-col gap-8">
+      <BusinessTypeCard />
       <section>
         <h2 className="font-heading text-lg text-ink">{t('settings.tax.ceilingsTitle')}</h2>
         <p className="text-xs text-muted">{t('settings.tax.ceilingsHint')}</p>

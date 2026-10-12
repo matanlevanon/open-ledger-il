@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { LayoutEntry } from '../../api/dashboard';
+import { type LayoutEntry, fetchDashboardLayout } from '../../api/dashboard';
 import { ToastProvider } from '../../components/Toast';
 import { DashboardTab } from './DashboardTab';
 
@@ -37,5 +37,22 @@ describe('Settings > Dashboard', () => {
     renderTab();
     expect(await screen.findByRole('button', { name: 'Move Quick actions up' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Move Cash flow down' })).toBeDisabled();
+  });
+});
+
+describe('fetchDashboardLayout (R24)', () => {
+  it('drops the cards that do not apply to the business type, so Customize hides them', async () => {
+    const original = global.fetch;
+    global.fetch = vi.fn(async () =>
+      new Response(JSON.stringify({ cards: [{ id: 'ceiling', visible: true }, { id: 'vat', visible: true }, { id: 'ita', visible: true }], unavailable: ['ceiling'] }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    ) as unknown as typeof fetch;
+    try {
+      expect((await fetchDashboardLayout()).map((c) => c.id)).toEqual(['vat', 'ita']);
+    } finally {
+      global.fetch = original;
+    }
   });
 });

@@ -26,7 +26,8 @@ interface DashboardBody {
   overdueRequests: { currency: string; count: number; totalMinor: number }[];
   cards: { cashFlow?: { from: string; to: string; months: { month: string; inflowIlsMinor: number }[] } };
   ceiling: { year: number; currency: string; limitMinor: number; currentMinor: number } | null;
-  vatDue: { applicable: boolean; amountMinor: number; currency: string };
+  vatDue: { applicable: boolean; amountMinor: number; currency: string; period: unknown; outputMinor: number; inputMinor: number };
+  businessType: { entityType: string; showCeiling: boolean };
   ita: { connected: boolean; message: string };
 }
 
@@ -43,7 +44,8 @@ describe('dashboard: read endpoint', () => {
     const body = await dashboard();
     expect(body.overdueRequests).toEqual([]);
     expect(body.ceiling).toEqual({ year: 2026, currency: 'ILS', limitMinor: 12283300, currentMinor: 0 });
-    expect(body.vatDue).toEqual({ applicable: false, amountMinor: 0, currency: 'ILS' });
+    expect(body.vatDue).toEqual({ applicable: false, amountMinor: 0, currency: 'ILS', period: null, outputMinor: 0, inputMinor: 0 });
+    expect(body.businessType).toEqual({ entityType: 'osek_patur', showCeiling: true });
     expect(body.ita.connected).toBe(false);
     expect(body.cards.cashFlow?.months).toHaveLength(12);
     expect(body.cards.cashFlow?.months.every((m) => m.inflowIlsMinor === 0)).toBe(true);

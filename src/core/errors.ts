@@ -74,7 +74,7 @@ export class ConsentRequiredError extends DomainError {
 
 /**
  * Codes raised by D1 triggers with RAISE(ABORT, '<code>').
- * Keep in sync with migrations/0001_core.sql and 0002_integrity.sql.
+ * Keep in sync with migrations/0001_core.sql, 0002_integrity.sql and 2410_business_type_lock.sql.
  */
 const TRIGGER_CODES: Record<string, () => DomainError> = {
   immutable_document: () => new ImmutableError(),
@@ -98,6 +98,9 @@ const TRIGGER_CODES: Record<string, () => DomainError> = {
     new NumberingError('series_started', 'The starting number is fixed once the series is in use.'),
   series_sequence: () => new NumberingError('series_sequence', 'Series numbers only move forward by one.'),
   series_reopen: () => new NumberingError('series_reopen', 'A closed series never reopens.'),
+  // R24, migrations/2410_business_type_lock.sql: פטור to מורשה is one way.
+  legal_mode_locked: () => new DomainError('legal_mode_locked', 'The legal mode history never changes and never returns to עוסק פטור.', 409),
+  entity_type_locked: () => new DomainError('entity_type_locked', 'The business type cannot change this way. It never returns to עוסק פטור.', 409),
 };
 
 /** Maps a D1 trigger error to a typed domain error. Returns the input when no code matches. */

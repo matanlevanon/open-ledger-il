@@ -51,6 +51,26 @@ Ceiling guard:
 
 Open: whether the crossing transaction itself carries VAT in full (A12).
 
+## Business type and the one-way lock (R24)
+
+Three business types: עוסק פטור (`osek_patur`), עוסק מורשה (`osek_murshe`) and חברה בע"מ (`company`), stored as `business_profile.entity_type`. A company is VAT registered from its first day, so its legal mode is מורשה from day one.
+
+The lock. פטור to מורשה is one way:
+- `legal_modes` is append-only. No UPDATE, no DELETE, and no פטור row once a מורשה row exists.
+- `entity_type` moves only `osek_patur` to `osek_murshe`, or `osek_patur` to `company` while no final document exists. Every other change raises `entity_type_locked`. A deleted or replaced profile row cannot come back as פטור.
+- Triggers in `migrations/2410_business_type_lock.sql` enforce this for every path: API, UI, installer and raw SQL.
+
+How a business becomes מורשה:
+- Becoming עוסק מורשה (`kind: becoming`): the owner picks a start date, today or later. The Ledger adds the 15-day VAT office task. The ceiling-crossing popup uses this flavour.
+- Already registered (`kind: registered`): only before the first final document. Starts today. No VAT office task.
+- A company (`POST /api/legal-mode/start-company`): only on a fresh פטור Ledger. Runs the registered flavour and records a company.
+
+Both flavours close the 400 series and open 305, 320, 330, 332 and 400-M, in one transaction with the type change. Settings > Tax shows the type. Only עוסק פטור has a switch, behind a typed confirmation (מורשה).
+
+Dashboard: the ceiling card shows for עוסק פטור, and for an עוסק מורשה in the calendar year it switched from פטור. The VAT card shows for עוסק מורשה and a company: output VAT of final tax documents in the current period minus reclaimable input VAT of expenses dated in it, in ILS. The period is monthly or bi-monthly (a business setting, default bi-monthly). The report due day is a dated config row in `vat_report_due_days` (default the 15th). Confirm both with your accountant.
+
+The installer never writes the type into the database. It sets the Worker variable `SETUP_BUSINESS_TYPE`, which preselects the first-run Business type step while setup is incomplete.
+
 ## עוסק מורשה, from the confirmed switch
 
 | Rule | Source | Open Ledger IL feature |

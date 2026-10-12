@@ -95,4 +95,7 @@ export const common = {
   'placeholder.laterRun': 'This screen is part of a later build run.',
   'placeholder.notFoundTitle': 'Page not found',
   'placeholder.notFoundDescription': 'Check the address or pick a section in the sidebar.',
+  'businessType.osek_patur': 'עוסק פטור',
+  'businessType.osek_murshe': 'עוסק מורשה',
+  'businessType.company': 'חברה בע"מ',
 };

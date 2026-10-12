@@ -1,5 +1,7 @@
 import { apiGet } from './client';
 
+export type EntityType = 'osek_patur' | 'osek_murshe' | 'company';
+
 export interface CurrencyTotal {
   currency: string;
   count: number;
@@ -106,7 +108,17 @@ export interface DashboardData {
   today: string;
   overdueRequests: CurrencyTotal[];
   ceiling: { year: number; currency: string; limitMinor: number; currentMinor: number } | null;
-  vatDue: { applicable: boolean; amountMinor: number; currency: string };
+  vatDue: {
+    applicable: boolean;
+    amountMinor: number;
+    currency: string;
+    /** R24: the current reporting period. Absent on an older Worker. */
+    period?: { from: string; to: string; reportDue: string; reporting: 'monthly' | 'bimonthly' } | null;
+    outputMinor?: number;
+    inputMinor?: number;
+  };
+  /** R24: the business type. Absent on an older Worker. */
+  businessType?: { entityType: EntityType; showCeiling: boolean };
   ita: { connected: boolean; message: string };
   cards: DashboardCards;
   /** Present when the call named no cards: the stored layout that picked them. */
@@ -155,8 +167,11 @@ export interface LayoutEntry {
   visible: boolean;
 }
 
+/** R24: drops the cards that do not apply to this business type, so Customize hides them too. */
 export async function fetchDashboardLayout(): Promise<LayoutEntry[]> {
-  return (await apiGet<{ cards: LayoutEntry[] }>('/dashboard/layout')).cards;
+  const body = await apiGet<{ cards: LayoutEntry[]; unavailable?: DashboardCard[] }>('/dashboard/layout');
+  const skip = new Set(body.unavailable ?? []);
+  return body.cards.filter((c) => !skip.has(c.id));
 }
 
 export const DEFAULT_LAYOUT: LayoutEntry[] = DASHBOARD_CARDS.map((id) => ({ id, visible: true }));

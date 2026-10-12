@@ -9,6 +9,16 @@ import type { ModuleDef } from '../../core/module';
 import type { AppEnv } from '../../env';
 import { type OpenDemand, openDemands } from '../documents/balances';
 import { ACTIVITY_DEFAULT_LIMIT, recentActivity } from './activity';
+import {
+  type EntityType,
+  getEntityType,
+  getVatReporting,
+  mursheRow,
+  showsCeiling,
+  vatDueIn,
+  vatPeriodOn,
+  vatReportDueDayOn,
+} from '../legal-mode/business-type';
 import { uploadService } from '../import';
 import {
   type AgingRow,
@@ -94,8 +104,18 @@ export interface DashboardData {
   today: string;
   overdueRequests: CurrencyTotal[];
   ceiling: { year: number; currency: string; limitMinor: number; currentMinor: number } | null;
-  vatDue: { applicable: boolean; amountMinor: number; currency: string };
+  vatDue: {
+    applicable: boolean;
+    amountMinor: number;
+    currency: string;
+    /** R24: the current reporting period and its report date. Null for עוסק פטור. */
+    period: { from: string; to: string; reportDue: string; reporting: 'monthly' | 'bimonthly' } | null;
+    outputMinor: number;
+    inputMinor: number;
+  };
   ita: { connected: boolean; message: string };
+  /** R24: the business type pill, and whether the ceiling card shows at all. */
+  businessType: { entityType: EntityType; showCeiling: boolean };
   cards: DashboardCards;
 }
 
@@ -178,7 +198,9 @@ export async function buildDashboard(db: D1Database, today: string, request: Das
   const wanted = new Set<DashboardCard>(request.cards ?? DASHBOARD_CARDS);
   const range = (card: PeriodCard) => request.ranges?.[card] ?? defaultRange(card, today);
 
-  const [legalMode, demands] = await Promise.all([legalModeOn(db, today), openDemands(db)]);
+  const [legalMode, demands, entityType, murshe] = await Promise.all([legalModeOn(db, today), openDemands(db), getEntityType(db), mursheRow(db)]);
+  const showCeiling = showsCeiling(entityType, murshe, today);
+  const vatApplicable = entityType !== 'osek_patur';
   const needsItems = wanted.has('overdue') || wanted.has('aging');
 
   const [ceiling, turnover, external, openRequests, items] = await Promise.all([
@@ -242,19 +264,28 @@ export async function buildDashboard(db: D1Database, today: string, request: Das
   });
   await Promise.all(jobs);
 
+  // R24: output VAT minus input VAT for the period that holds today. Dated due day, CLAUDE.md rule 4.
+  let vatDue: DashboardData['vatDue'] = { applicable: false, amountMinor: 0, currency: 'ILS', period: null, outputMinor: 0, inputMinor: 0 };
+  if (vatApplicable) {
+    const reporting = await getVatReporting(db);
+    const period = vatPeriodOn(today, reporting, await vatReportDueDayOn(db, today));
+    vatDue = { applicable: true, currency: 'ILS', period: { ...period, reporting }, ...(await vatDueIn(db, period)) };
+  }
+
   return {
     today,
     overdueRequests: overdueRequests(demands, today),
-    ceiling: ceiling
+    ceiling: ceiling && showCeiling
       ? { year: ceiling.year, currency: ceiling.currency, limitMinor: ceiling.amount_minor, currentMinor: turnover + external + openRequests }
       : null,
-    // VAT reporting belongs to עוסק מורשה. עוסק פטור owes no VAT, so the card reads zero and not applicable.
-    vatDue: { applicable: legalMode.mode === 'murshe', amountMinor: 0, currency: 'ILS' },
+    // VAT reporting belongs to עוסק מורשה and a company. עוסק פטור owes no VAT.
+    vatDue,
     // Live token status ships in R12.
     ita: {
       connected: false,
       message: legalMode.mode === 'murshe' ? 'Not connected yet.' : 'Connects after the switch to עוסק מורשה.',
     },
+    businessType: { entityType, showCeiling },
     cards,
   };
 }
@@ -329,6 +360,18 @@ export async function getDashboardLayout(db: D1Database): Promise<LayoutEntry[]>
   }
 }
 
+/**
+ * R24: cards that do not apply to this business type. Customize hides them too. The ceiling card
+ * belongs to עוסק פטור (and the year of the switch), the VAT card to עוסק מורשה and a company.
+ */
+export async function unavailableCards(db: D1Database, today: string): Promise<DashboardCard[]> {
+  const [entityType, murshe] = await Promise.all([getEntityType(db), mursheRow(db)]);
+  const out: DashboardCard[] = [];
+  if (!showsCeiling(entityType, murshe, today)) out.push('ceiling');
+  if (entityType === 'osek_patur') out.push('vat');
+  return out;
+}
+
 export interface DashboardModuleOptions {
   /** Business date. Default: today in Israel. */
   today?: () => string;
@@ -352,7 +395,7 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
     return c.json({ items: await recentActivity(c.env.DB, limit) });
   });
   routes.get('/layout', requireFeature('reports'), async (c) => {
-    return c.json({ cards: await getDashboardLayout(c.env.DB) });
+    return c.json({ cards: await getDashboardLayout(c.env.DB), unavailable: await unavailableCards(c.env.DB, today()) });
   });
   // Settings > Dashboard. Owner only, like every other setting.
   routes.put('/layout', requireRole('owner'), async (c) => {

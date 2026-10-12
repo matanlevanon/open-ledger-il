@@ -165,3 +165,20 @@ export async function checkUpdatesNow(): Promise<UpdatesInfo> {
 }
 
 export { ApiError };
+
+// R24: the business type and the one-way switch.
+export type EntityType = 'osek_patur' | 'osek_murshe' | 'company';
+export type VatReporting = 'monthly' | 'bimonthly';
+
+export interface BusinessTypeStatus {
+  entityType: EntityType;
+  /** No final document yet. "Already registered" and a company need it. */
+  fresh: boolean;
+  switchedOn: string | null;
+  vatReporting: VatReporting;
+  showCeiling: boolean;
+  /** The installer's preselection, only while setup is incomplete. */
+  setupBusinessType: EntityType | null;
+}
+
+export const fetchBusinessTypeStatus = () => apiGet<BusinessTypeStatus>('/legal-mode/status');

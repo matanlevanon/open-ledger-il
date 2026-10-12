@@ -12,6 +12,7 @@ import {
   listOpenFinalPaymentRequests,
   repriceOpenDraftsForSwitch,
 } from '../documents';
+import { REGISTERED_NOTE, getEntityType, isFreshLedger } from './business-type';
 
 /**
  * The real עוסק מורשה switch (docs/legal-requirements.md, "Switch from פטור to מורשה", point 4),
@@ -37,7 +38,25 @@ export interface SwitchResult {
   openPaymentRequests: OpenPaymentRequestSummary[];
   /** Draft ids re-saved, only when the owner ticked repriceDrafts. Never a final document. */
   repricedDrafts: number[];
-  vatOfficeTaskDueAt: string;
+  /** Null for the `registered` flavour: the registration is already done. */
+  vatOfficeTaskDueAt: string | null;
+  entityType: 'osek_murshe' | 'company';
+}
+
+/**
+ * R24 Phase A. `becoming`: the owner picks the start date and the VAT office task is added.
+ * `registered`: the business was already מורשה before the Ledger, only on a fresh Ledger, starts
+ * today, no task. `company` runs the registered flavour and records a company.
+ */
+export type SwitchKind = 'becoming' | 'registered';
+
+export interface SwitchOptions {
+  kind: SwitchKind;
+  effectiveDate: string;
+  reason: string | null;
+  repriceDrafts: boolean;
+  /** The business type the switch records. `company` comes only from start-company. */
+  target: 'osek_murshe' | 'company';
 }
 
 function addDays(date: string, days: number): string {
@@ -68,19 +87,28 @@ export interface SwitchDeps {
 export async function switchToMurshe(
   env: Env,
   deps: SwitchDeps,
-  effectiveDate: string,
-  reason: string | null,
-  repriceDrafts: boolean,
+  opts: SwitchOptions,
   user: AuthUser,
   actor: AuditActor,
 ): Promise<SwitchResult> {
   const db = env.DB;
+  const { kind, effectiveDate, reason, repriceDrafts, target } = opts;
   const already = await first<{ id: number }>(db, "SELECT id FROM legal_modes WHERE mode = 'murshe' LIMIT 1");
   if (already) throw new ConflictError('already_murshe', 'The switch to עוסק מורשה is already confirmed. It cannot run twice.');
+  if ((await getEntityType(db)) !== 'osek_patur') throw new ConflictError('already_murshe', 'This business is not עוסק פטור. There is nothing to switch.');
+  if ((kind === 'registered' || target === 'company') && !(await isFreshLedger(db))) {
+    throw new ConflictError(
+      'ledger_not_fresh',
+      target === 'company'
+        ? 'A company starts only on a fresh Ledger, before the first final document.'
+        : 'Already registered applies only before the first final document. Use Becoming עוסק מורשה instead.',
+    );
+  }
 
   const now = nowIso();
-  const vatOfficeTaskDueAt = addDays(effectiveDate, VAT_OFFICE_NOTICE_DAYS);
+  const vatOfficeTaskDueAt = kind === 'becoming' ? addDays(effectiveDate, VAT_OFFICE_NOTICE_DAYS) : null;
   const seriesOpened = [...MURSHE_SERIES_TYPES, MURSHE_RECEIPT_SERIES];
+  const note = kind === 'registered' ? REGISTERED_NOTE : reason;
 
   await transaction(db, [
     stmt(
@@ -90,8 +118,9 @@ export async function switchToMurshe(
       effectiveDate,
       now,
       user.id,
-      reason,
+      note,
     ),
+    stmt(db, 'UPDATE business_profile SET entity_type = ? WHERE id = 1', target),
     stmt(db, "UPDATE series SET closed_at = ? WHERE id = ? AND closed_at IS NULL", now, PATUR_RECEIPT_SERIES),
     stmt(
       db,
@@ -111,16 +140,23 @@ export async function switchToMurshe(
       MURSHE_RECEIPT_SERIES,
     ),
     stmt(db, `UPDATE document_types SET enabled = 1 WHERE code IN (${MURSHE_SERIES_TYPES.map(() => '?').join(',')})`, ...MURSHE_SERIES_TYPES),
-    stmt(
-      db,
-      `INSERT INTO tasks (kind, title, due_at, alert_at) VALUES ('vat_office_notice', ?, ?, ?)`,
-      'Notify the VAT office of the switch to עוסק מורשה',
-      vatOfficeTaskDueAt,
-      addDays(vatOfficeTaskDueAt, -5),
-    ),
-    auditStatement(db, actor, 'legal_mode.switch_confirmed', 'legal_mode', effectiveDate, {
+    ...(vatOfficeTaskDueAt
+      ? [
+          stmt(
+            db,
+            `INSERT INTO tasks (kind, title, due_at, alert_at) VALUES ('vat_office_notice', ?, ?, ?)`,
+            'Notify the VAT office of the switch to עוסק מורשה',
+            vatOfficeTaskDueAt,
+            addDays(vatOfficeTaskDueAt, -5),
+          ),
+        ]
+      : []),
+    auditStatement(db, actor, target === 'company' ? 'legal_mode.company_started' : 'legal_mode.switch_confirmed', 'legal_mode', effectiveDate, {
+      kind,
+      entityType: target,
       effectiveDate,
       reason,
+      note,
       seriesClosed: [PATUR_RECEIPT_SERIES],
       seriesOpened,
     }),
@@ -155,5 +191,6 @@ export async function switchToMurshe(
     openPaymentRequests,
     repricedDrafts,
     vatOfficeTaskDueAt,
+    entityType: target,
   };
 }

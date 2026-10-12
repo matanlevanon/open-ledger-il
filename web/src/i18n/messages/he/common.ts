@@ -93,4 +93,7 @@ export const common: Record<keyof typeof en, string> = {
   'placeholder.laterRun': 'המסך הזה חלק מהרצת פיתוח מאוחרת יותר.',
   'placeholder.notFoundTitle': 'העמוד לא נמצא',
   'placeholder.notFoundDescription': 'בדוק את הכתובת או בחר מקטע בתפריט הצד.',
+  'businessType.osek_patur': 'עוסק פטור',
+  'businessType.osek_murshe': 'עוסק מורשה',
+  'businessType.company': 'חברה בע"מ',
 };

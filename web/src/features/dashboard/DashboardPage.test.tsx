@@ -86,11 +86,43 @@ describe('DashboardPage', () => {
     expect(link).toHaveAttribute('href', '/reports?report=cash-flow&from=2025-10-01&to=2026-09-28');
   });
 
-  it('shows the ceiling meter, the VAT card and the ITA status', async () => {
+  it('עוסק פטור: the type pill, the ceiling meter and the ITA status, no VAT card', async () => {
     renderPage();
     expect(await screen.findByTestId('ceiling-percent')).toHaveTextContent('68%');
-    expect(screen.getByText('No VAT yet')).toBeInTheDocument();
+    expect(screen.getByTestId('business-type-pill')).toHaveTextContent('עוסק פטור');
+    expect(card('vat')).toBeNull();
+    expect(screen.queryByText(/owes no VAT/)).not.toBeInTheDocument();
     expect(screen.getByText('Not connected')).toBeInTheDocument();
+  });
+
+  it('a company: the VAT card with its period and report date, no ceiling card', async () => {
+    const d = data();
+    d.businessType = { entityType: 'company', showCeiling: false };
+    d.ceiling = null;
+    d.vatDue = {
+      applicable: true,
+      amountMinor: 816000,
+      currency: 'ILS',
+      period: { from: '2026-09-01', to: '2026-10-31', reportDue: '2026-11-15', reporting: 'bimonthly' },
+      outputMinor: 900000,
+      inputMinor: 84000,
+    };
+    renderPage(() => Promise.resolve(d));
+    expect(await screen.findByTestId('vat-due')).toHaveTextContent('₪8,160.00');
+    expect(screen.getByTestId('business-type-pill')).toHaveTextContent('חברה בע"מ');
+    expect(within(card('vat')).getByText('Report by 2026-11-15')).toBeInTheDocument();
+    expect(within(card('vat')).getByText('Period 2026-09-01 to 2026-10-31')).toBeInTheDocument();
+    expect(card('ceiling')).toBeNull();
+  });
+
+  it('a מורשה in the year of its switch keeps the ceiling card next to the VAT card', async () => {
+    const d = data();
+    d.businessType = { entityType: 'osek_murshe', showCeiling: true };
+    d.vatDue = { applicable: true, amountMinor: 0, currency: 'ILS', period: null, outputMinor: 0, inputMinor: 0 };
+    renderPage(() => Promise.resolve(d));
+    expect(await screen.findByTestId('ceiling-percent')).toBeInTheDocument();
+    expect(screen.getByTestId('vat-due')).toBeInTheDocument();
+    expect(screen.getByTestId('business-type-pill')).toHaveTextContent('עוסק מורשה');
   });
 
   it('shows only the visible cards, in the stored order', async () => {

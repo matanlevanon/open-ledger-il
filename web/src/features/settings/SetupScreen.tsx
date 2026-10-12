@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import type { MessageKey } from '../../i18n';
 import { useT } from '../../i18n';
+import type { EntityType } from './api';
 import { BusinessTab } from './BusinessTab';
+import { BusinessTypeStep } from './BusinessTypeStep';
 
 interface SetupScreenProps {
   missing: string[];
@@ -11,10 +14,12 @@ interface SetupScreenProps {
 /**
  * First-run setup (R22): shown to the owner instead of every screen but Settings and About while
  * the business profile misses a required field. The Worker refuses to create a document until
- * then too, so this screen is guidance, not the enforcement.
+ * then too, so this screen is guidance, not the enforcement. R24: the Business type step comes
+ * first. The business fields show once the type is settled.
  */
 export function SetupScreen({ missing, onSaved }: SetupScreenProps) {
   const t = useT();
+  const [type, setType] = useState<EntityType | null>(null);
   const fields = missing.map((f) => t(`settings.setup.field${f.charAt(0).toUpperCase()}${f.slice(1)}` as MessageKey)).join(', ');
   return (
     <section aria-labelledby="setup-title" className="mx-auto max-w-3xl">
@@ -23,9 +28,14 @@ export function SetupScreen({ missing, onSaved }: SetupScreenProps) {
       </h1>
       <p className="mt-2 text-sm text-muted">{t('settings.setup.intro')}</p>
       {missing.length > 0 && <p className="mt-1 text-sm text-danger">{t('settings.setup.missing', { fields })}</p>}
-      <div className="mt-6 rounded-card border border-line bg-canvas p-4 shadow-card">
-        <BusinessTab setup onSaved={onSaved} />
+      <div className="mt-6">
+        <BusinessTypeStep onSettled={setType} />
       </div>
+      {type && (
+        <div className="mt-6 rounded-card border border-line bg-canvas p-4 shadow-card">
+          <BusinessTab key={type} setup entityType={type} onSaved={onSaved} />
+        </div>
+      )}
     </section>
   );
 }
