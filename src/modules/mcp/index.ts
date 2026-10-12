@@ -4,6 +4,7 @@ import type { AuditActor } from '../../core/audit';
 import { DomainError, mapDbError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import { MCP_TOOLS, type McpEnv, findTool } from './tools';
+import { APP_VERSION } from '../../version';
 
 /**
  * MCP endpoint (PLAN.md's `MCP` module, runs/R14-ops.md): streamable HTTP transport, one tool
@@ -33,7 +34,7 @@ interface JsonRpcMessage {
 }
 
 const PROTOCOL_VERSION = '2025-06-18';
-const SERVER_INFO = { name: 'open-ledger-il', version: '1.3.0' };
+const SERVER_INFO = { name: 'open-ledger-il', version: APP_VERSION };
 
 function mcpActor(headers: { get(name: string): string | null }): AuditActor {
   return {

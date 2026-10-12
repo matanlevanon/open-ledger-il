@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.4.0 (2026-10-13)
+
+### Business type
+- עוסק פטור, עוסק מורשה or חברה בע"מ, chosen on the first-run setup screen. Settings > Tax shows the
+  type, and a פטור business switches to מורשה from there, with the word מורשה typed to confirm.
+- The switch is one way. Database triggers refuse any change back to פטור.
+- The dashboard follows the type: the ceiling card for פטור, the VAT due card with its period and
+  report date for מורשה and companies.
+
+### Several businesses in one Ledger
+- One עוסק and any number of companies. Add a business from the top-bar switcher or Settings >
+  Businesses. Each business has its own numbering, hash chain, Tax Authority login and exports.
+- Brands: the name, tagline and contacts a document prints, per business.
+- Roles per business: owner, assistant, accountant.
+
+### Business documents
+- Settings > Business documents: upload certificates, read the name and number from them, view,
+  download, and share with a link that expires and can be revoked. Reminders before a certificate ends.
+
+### Other
+- Expense and invoice reading works with an Anthropic key or a Gemini key (AI_PROVIDER).
+- Settings > Updates checks for a new release, and a monthly check posts to Slack (UPDATE_REPO).
+- The business form accepts an empty email, and a refused save names the field.
+- Every file is written once, so the 7-year bucket lock never blocks the Ledger.
+- The ita-auth broker keeps its clients in D1, registers new installs by itself, and has an admin page.
+
 ## 1.3.0 (2026-10-08)
 
 ### Tax Authority (allocation numbers)
