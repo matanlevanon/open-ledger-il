@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { readerStatus } from '../ai';
 import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
 import { requireFeature, requireRole } from '../../core/auth';
@@ -126,6 +127,8 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
       indexTitlePattern: await driveImport.getIndexTitlePattern(c.env.DB),
       dailySync: await driveImport.getDailySync(c.env.DB),
       runs: await driveImport.listImportRuns(c.env.DB),
+      // R24: who reads documents and whether its key is set. Never the key.
+      reader: readerStatus(c.env),
     }),
   );
 

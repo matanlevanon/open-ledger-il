@@ -2,7 +2,7 @@ import type { ModuleDef } from '../../core/module';
 import type { Env } from '../../env';
 import { boiRateSource } from '../fx';
 import { createImportRoutes } from './routes';
-import { AnthropicExternalDocExtractor } from './upload-extractor';
+import { AiExternalDocExtractor } from './upload-extractor';
 import type { UploadDeps } from './upload-service';
 
 export * as importService from './service';
@@ -14,7 +14,7 @@ export type { UploadDeps } from './upload-service';
 
 function defaultUploadDeps(env: Env): UploadDeps {
   return {
-    extractor: new AnthropicExternalDocExtractor(env),
+    extractor: new AiExternalDocExtractor(env),
     fx: boiRateSource(env.DB),
     files: env.FILES,
   };

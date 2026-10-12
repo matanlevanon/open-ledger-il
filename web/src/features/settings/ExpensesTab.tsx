@@ -76,6 +76,20 @@ export function ExpensesTab() {
 
   return (
     <div className="flex flex-col gap-6">
+      {settings.reader && (
+        <section className="flex flex-col gap-2">
+          <h2 className="font-heading text-lg text-ink">{t('settings.expenses.readerTitle')}</h2>
+          <p className="text-sm text-ink" data-testid="reader-status">
+            {settings.reader.provider === null
+              ? t('settings.expenses.readerNone')
+              : t(settings.reader.keySet ? 'settings.expenses.readerOn' : 'settings.expenses.readerNoKey', {
+                  provider: settings.reader.provider === 'gemini' ? 'Gemini' : 'Anthropic',
+                })}
+          </p>
+          <p className="text-xs text-muted">{t('settings.expenses.readerHint')}</p>
+        </section>
+      )}
+
       <section className="flex flex-col gap-2">
         <h2 className="font-heading text-lg text-ink">{t('settings.expenses.folderTitle')}</h2>
         <p className="text-xs text-muted">{t('settings.expenses.folderHint')}</p>

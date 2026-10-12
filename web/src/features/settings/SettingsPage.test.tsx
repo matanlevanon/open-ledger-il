@@ -159,4 +159,26 @@ describe('SettingsPage', () => {
     await waitFor(() => expect(toggle).toBeChecked());
     expect(puts).toHaveLength(1);
   });
+
+  it('shows which provider reads documents on the Expenses tab, never the key', async () => {
+    mockFetch({
+      'GET /api/ops/business': () => json({ business }),
+      'GET /api/expenses/settings/drive': () =>
+        json({ folderId: '', folderIdSaved: false, dailySync: false, runs: [], reader: { provider: 'gemini', keySet: true } }),
+    });
+    renderPage();
+    fireEvent.click(screen.getByRole('tab', { name: 'Expenses' }));
+    expect(await screen.findByText('Gemini reads uploaded documents. The key is set.')).toBeInTheDocument();
+  });
+
+  it('says documents are typed by hand when no reader is set up', async () => {
+    mockFetch({
+      'GET /api/ops/business': () => json({ business }),
+      'GET /api/expenses/settings/drive': () =>
+        json({ folderId: '', folderIdSaved: false, dailySync: false, runs: [], reader: { provider: null, keySet: false } }),
+    });
+    renderPage();
+    fireEvent.click(screen.getByRole('tab', { name: 'Expenses' }));
+    expect(await screen.findByText(/No reader is set up/)).toBeInTheDocument();
+  });
 });

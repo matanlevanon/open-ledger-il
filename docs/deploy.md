@@ -169,7 +169,10 @@ for `ledger` on this zone first, or the add is refused.
 | `ITA_CLIENT_ID_PRODUCTION`, `ITA_CLIENT_SECRET_PRODUCTION` | ITA developer portal, production app registration, once approved: https://openapi-portal.taxes.gov.il/shaam/production |
 | `ITA_TOKEN_KEY` | 32 random bytes, base64. Generate on your computer: `openssl rand -base64 32` |
 | `ITA_VAT_NUMBER` | Optional. Business VAT number once עוסק מורשה. Leave unset until then |
-| `ANTHROPIC_API_KEY` | Anthropic console, a key scoped to this Worker's use. Reads expense documents (R07) and, since R17, "Upload existing documents" under Import; unset, both fall back to a manual-entry review screen |
+| `ANTHROPIC_API_KEY` | Anthropic console, a key scoped to this Worker's use. Reads expense documents (R07) and "Upload existing documents" under Import (R17). One of two document readers since R24 |
+| `GEMINI_API_KEY` | Optional, the other document reader (R24). aistudio.google.com, Get API key, Create API key. Starts with AIza. On Google's free tier, Google may use what you send to improve its products and people may read it ([terms](https://ai.google.dev/gemini-api/terms)). Use the paid tier for financial documents |
+
+Document reading picks its provider from the Worker variable `AI_PROVIDER` (`anthropic` or `gemini`, in `wrangler.toml`). Empty uses whichever key is set, Anthropic first. No key: every upload falls back to typing the details by hand. `ANTHROPIC_MODEL` and `GEMINI_MODEL` override the default model names in `src/modules/ai/index.ts` when a model is retired. Settings > Expenses shows which provider reads documents and whether its key is set.
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | Google Cloud service account, the full JSON key file's contents as one value. Used both for expense ingest (reads `<root>/YYYY-MM`) and, since R16 task 12, the quarterly backup's off-site copy (writes `<root>/Backups/YYYY-Qn`), so the service account needs **Editor** access on your expenses root folder, shared from Drive's own sharing dialog, not just Viewer |
 | `SLACK_WEBHOOK_URL` | Optional. An incoming webhook for a Slack channel of your choice |
 | `DOWNLOAD_SIGN_KEY` | 32 random bytes, base64: `openssl rand -base64 32` |

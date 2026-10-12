@@ -4,7 +4,7 @@ import { SYSTEM_ACTOR } from '../../core/audit';
 import { todayIsrael } from '../../core/db';
 import { GoogleDriveSource } from './drive';
 import { DRIVE_DAILY_CRON, runDailyDriveImport } from './drive-import';
-import { AnthropicExtractor } from './extractor';
+import { AiExtractor } from './extractor';
 import { boiRateSource } from '../fx';
 import { createExpensesRoutes } from './routes';
 import type { Deps } from './service';
@@ -20,7 +20,7 @@ export { DRIVE_DAILY_CRON, importMonth, runDailyDriveImport } from './drive-impo
 function defaultDeps(env: Env): Deps {
   return {
     drive: new GoogleDriveSource(env),
-    extractor: new AnthropicExtractor(env),
+    extractor: new AiExtractor(env),
     fx: boiRateSource(env.DB),
   };
 }

@@ -28,6 +28,9 @@ SOFTWARE_VERSION = "1.3.0"
 SOFTWARE_REGISTRATION_NUMBER = ""   # 8 digits, from the Tax Authority's registration certificate
 SOFTWARE_PRODUCER_VAT = ""          # tax ID of the software producer; empty means the business itself
 SOFTWARE_PRODUCER_NAME = ""
+AI_PROVIDER = ""                    # "anthropic" or "gemini": who reads uploaded documents. Empty: whichever key is set, Anthropic first (R24).
+ANTHROPIC_MODEL = ""                # Empty uses the default in src/modules/ai. Set it when a model is retired.
+GEMINI_MODEL = ""                   # Empty uses the default in src/modules/ai. Set it when a model is retired.
 UPDATE_REPO = ""                   # owner/name of the GitHub repo you deploy from. Settings > Updates and a monthly check compare against its latest release. Empty turns the check off.
 
 # Secrets. Set with `wrangler secret put <NAME>` or in the dashboard. Never commit a value.
@@ -40,7 +43,8 @@ UPDATE_REPO = ""                   # owner/name of the GitHub repo you deploy fr
 #   ITA_TOKEN_KEY         AES-GCM key for stored ITA tokens, 32 random bytes base64 (R12)
 #   ITA_RELAY_URL, ITA_RELAY_CLIENT_ID, ITA_RELAY_CLIENT_SECRET   Optional relay with an Israeli address (R24)
 #   ITA_VAT_NUMBER        Business VAT number sent to the ITA. Optional, defaults to OWNER_TAX_ID (R12)
-#   ANTHROPIC_API_KEY     Expense extraction (R07)
+#   ANTHROPIC_API_KEY     Document reading with Anthropic: expenses, imports (R07, R17, R24)
+#   GEMINI_API_KEY        Document reading with Gemini, the alternative (R24)
 #   GOOGLE_SERVICE_ACCOUNT_JSON  Drive and Sheets read, expense import and backup (R07, R14, R20)
 #   SLACK_WEBHOOK_URL     Alerts (R08, R09, R12, R14)
 #   DOWNLOAD_SIGN_KEY     HMAC key for signed R2 download links (R09)

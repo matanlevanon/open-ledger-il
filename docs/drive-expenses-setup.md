@@ -66,6 +66,7 @@ When it asks for the value, paste the whole content of the JSON file, from the f
 
 - With the month's index sheet (titled `Expense index YYYY-MM` in the root folder by default, change the pattern in **Settings** > **Expenses**), it creates an expense for each row marked Expense (or הוצאה) and attaches the PDF from the row's Drive link. Other statuses are counted, not created.
 - Without an index sheet, it reads every file in the month folder with AI and adds each one as a new expense for review. It skips documents your own business issued, matched by the business name and tax id in Settings > Business.
+- The AI is Anthropic or Gemini, whichever you set up (`AI_PROVIDER` and its key, see `docs/deploy.md`). Settings > Expenses shows which one. With no key, a file is not read and the run lists it as an error to enter by hand.
 - It never reads the `_to_be_deleted` folder.
 - It skips anything already in the ledger, uploads included: the same Drive file, the same file content, or the same supplier and document number. A row with the same supplier, date and total in shekels is flagged and not created.
 - It never changes or deletes an expense that is already there.

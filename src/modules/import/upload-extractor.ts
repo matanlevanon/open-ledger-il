@@ -1,4 +1,5 @@
 import type { Env } from '../../env';
+import { documentReaderFor } from '../ai';
 import { EMPTY_EXTRACTION, type ExtractedExternalDoc, ExtractedExternalDocSchema } from './upload-types';
 
 export interface ExternalDocExtractInput {
@@ -13,8 +14,6 @@ export interface ExternalDocExtractor {
 }
 
 const TOOL_NAME = 'record_external_document';
-const EXTRACTION_MODEL = 'claude-sonnet-5';
-const ANTHROPIC_VERSION = '2023-06-01';
 
 const INPUT_SCHEMA = {
   type: 'object',
@@ -47,61 +46,27 @@ const INPUT_SCHEMA = {
   required: ['source', 'documentType', 'originalNumber', 'issueDate', 'clientName', 'clientTaxId', 'currency', 'amountBeforeVat', 'vatAmount', 'total', 'exchangeRate', 'totalIls', 'paidStatus'],
 } as const;
 
-/** Claude with vision, forced to answer through one tool call so the output matches the schema. */
-export class AnthropicExternalDocExtractor implements ExternalDocExtractor {
-  constructor(private readonly env: Env) {}
+/** Reads one uploaded document with the chosen provider (R24 Phase 0). No key: empty fields for manual entry. */
+export class AiExternalDocExtractor implements ExternalDocExtractor {
+  constructor(
+    private readonly env: Env,
+    private readonly fetchFn: typeof fetch = fetch,
+  ) {}
 
   async extract(input: ExternalDocExtractInput): Promise<ExtractedExternalDoc> {
-    const apiKey = this.env.ANTHROPIC_API_KEY;
-    if (!apiKey) return EMPTY_EXTRACTION;
-
-    const base64 = arrayBufferToBase64(input.bytes);
-    const isPdf = input.contentType === 'application/pdf';
-    const documentBlock = isPdf
-      ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } }
-      : { type: 'image', source: { type: 'base64', media_type: input.contentType, data: base64 } };
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': ANTHROPIC_VERSION,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: EXTRACTION_MODEL,
-        max_tokens: 1024,
-        tools: [{ name: TOOL_NAME, description: 'Records the fields read from a previously-issued document.', input_schema: INPUT_SCHEMA }],
-        tool_choice: { type: 'tool', name: TOOL_NAME },
-        messages: [
-          {
-            role: 'user',
-            content: [
-              documentBlock,
-              {
-                type: 'text',
-                text: 'Read this previously-issued invoice or receipt (from SUMIT, Wave or another system) and call record_external_document with its fields. Use null for anything not printed on the document.',
-              },
-            ],
-          },
-        ],
-      }),
+    const reader = documentReaderFor(this.env, this.fetchFn);
+    if (!reader) return EMPTY_EXTRACTION;
+    const answer = await reader.read({
+      bytes: input.bytes,
+      contentType: input.contentType,
+      name: TOOL_NAME,
+      description: 'Records the fields read from a previously-issued document.',
+      schema: INPUT_SCHEMA,
+      prompt:
+        'Read this previously-issued invoice or receipt (from SUMIT, Wave or another system) and call record_external_document with its fields. Use null for anything not printed on the document.',
     });
-    if (!res.ok) throw new Error(`Anthropic extraction failed: ${res.status} ${await res.text()}`);
-
-    const body = (await res.json()) as { content: { type: string; name?: string; input?: unknown }[] };
-    const toolUse = body.content.find((block) => block.type === 'tool_use' && block.name === TOOL_NAME);
-    if (!toolUse) throw new Error('Anthropic did not return the record_external_document tool call.');
-    return ExtractedExternalDocSchema.parse(toolUse.input);
+    const parsed = ExtractedExternalDocSchema.safeParse(answer);
+    if (!parsed.success) throw new Error(`The ${reader.provider} answer does not fit the document fields.`);
+    return parsed.data;
   }
-}
-
-function arrayBufferToBase64(bytes: ArrayBuffer): string {
-  let binary = '';
-  const view = new Uint8Array(bytes);
-  const chunk = 0x8000;
-  for (let i = 0; i < view.length; i += chunk) {
-    binary += String.fromCharCode(...view.subarray(i, i + chunk));
-  }
-  return btoa(binary);
 }

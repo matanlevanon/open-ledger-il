@@ -19,6 +19,13 @@ export interface Env {
   SLACK_WEBHOOK_URL?: string;
   DOWNLOAD_SIGN_KEY?: string;
   ANTHROPIC_API_KEY?: string;
+  /** R24: Gemini key for document reading, the alternative to ANTHROPIC_API_KEY. */
+  GEMINI_API_KEY?: string;
+  /** R24: "anthropic" or "gemini". Empty: whichever key is set, Anthropic first. */
+  AI_PROVIDER?: string;
+  /** R24: model names, so a model retirement needs no code change. Defaults in src/modules/ai. */
+  ANTHROPIC_MODEL?: string;
+  GEMINI_MODEL?: string;
   GOOGLE_SERVICE_ACCOUNT_JSON?: string;
   /** Outgoing email (R06), Resend API key. */
   MAIL_API_KEY?: string;

@@ -170,6 +170,8 @@ export interface DriveSettings {
   indexTitlePattern: string;
   dailySync: boolean;
   runs: ImportSummary[];
+  /** R24: who reads documents. Absent on an older Worker. */
+  reader?: { provider: 'anthropic' | 'gemini' | null; keySet: boolean };
 }
 
 export async function fetchDriveSettings(): Promise<DriveSettings> {
