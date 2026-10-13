@@ -14,7 +14,10 @@ export type SendTokenPayload =
   /** R24 Phase C: a business document share link. The link row decides if it still opens. */
   | { kind: 'business_document'; linkId: number; exp: number }
   /** R25: a contract signing link. The contract row (status, expiry) decides if it still opens. */
-  | { kind: 'contract'; contractId: number; exp: number };
+  | { kind: 'contract'; contractId: number; exp: number }
+  /** R26: the demo gate's consent confirmation link and the unsubscribe link in its emails. */
+  | { kind: 'demo_confirm'; consentId: number; exp: number }
+  | { kind: 'demo_unsubscribe'; leadId: number; exp: number };
 
 function base64url(bytes: Uint8Array): string {
   let str = '';

@@ -1,3 +1,4 @@
+import { demoMailerFor } from '../demo/outbox';
 import { type Context, Hono } from 'hono';
 import { listBusinessIds } from '../../core/business';
 import { z } from 'zod';
@@ -50,8 +51,10 @@ export interface RecurringModuleOptions {
 
 function defaultSend(env: Env, baseUrl: string): SendFn {
   return async (documentId, actor, businessId) => {
-    if (!env.MAIL_API_KEY) throw new Error('MAIL_API_KEY is not set. Outgoing email is unavailable.');
-    await sendDocumentEmail({ db: env.DB, files: env.FILES, env, mailer: new ResendMailer(env.MAIL_API_KEY), baseUrl, businessId }, { documentId, actor });
+    // R26: demo mode keeps the email in the outbox. Nothing reaches a client.
+    const demo = demoMailerFor({ ...env, DEMO_BUSINESS_ID: String(businessId) });
+    if (!demo && !env.MAIL_API_KEY) throw new Error('MAIL_API_KEY is not set. Outgoing email is unavailable.');
+    await sendDocumentEmail({ db: env.DB, files: env.FILES, env, mailer: demo ?? new ResendMailer(env.MAIL_API_KEY!), baseUrl, businessId }, { documentId, actor });
   };
 }
 

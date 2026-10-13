@@ -1,3 +1,4 @@
+import { demoItaFetch } from '../demo/ita-fake';
 import { ConfigError } from '../../core/errors';
 import type { Env } from '../../env';
 
@@ -114,6 +115,8 @@ const RELAY_HOSTS: Record<string, string> = {
  * The browser sign-in (authorize) never passes here: it runs in the user's own browser.
  */
 export function relayedFetch(env: ItaEnv, base: typeof fetch): typeof fetch {
+  // R26: every ITA server call passes here. In demo mode the fake Tax Authority answers instead of the network.
+  if ((env.DEMO_MODE ?? '').trim() === '1') return demoItaFetch(Number(env.DEMO_ITA_DELAY_MS ?? 2000));
   const relay = (env.ITA_RELAY_URL ?? '').trim().replace(/\/+$/, '');
   if (!relay) return base;
   const id = (env.ITA_RELAY_CLIENT_ID ?? '').trim();

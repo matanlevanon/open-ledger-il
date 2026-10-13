@@ -1,3 +1,4 @@
+import { withDemoWatermark } from '../demo/watermark';
 import { type Context, Hono } from 'hono';
 import { requireFeature } from '../../core/auth';
 import { businessIdOf } from '../../core/business';
@@ -32,7 +33,7 @@ async function documentIdInBusiness(c: Context<AppEnv>): Promise<number> {
 
 function engineFor(env: Env): PdfEngine {
   if (!env.BROWSER) throw new ValidationError('Browser Rendering is not configured (the BROWSER binding is missing).');
-  return new BrowserRenderingPdfEngine(env.BROWSER);
+  return withDemoWatermark(new BrowserRenderingPdfEngine(env.BROWSER), env);
 }
 
 const routes = new Hono<AppEnv>();

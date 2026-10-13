@@ -1,3 +1,4 @@
+import { announceDemoSend } from '../../app/demo';
 import { type ReactNode, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -137,6 +138,7 @@ export function DocumentPage() {
       await sendingApi.sendEmail(id, { to: sendForm.to.trim() || null, cc: list(sendForm.cc), bcc: list(sendForm.bcc) });
       setSendForm(null);
       setSendNotice(t('documents.page.sentByEmailNotice'));
+      announceDemoSend();
       setData(await docsApi.get(id));
     } catch (e) {
       handleSendError(e);

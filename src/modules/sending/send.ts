@@ -1,3 +1,4 @@
+import { withDemoWatermark } from '../demo/watermark';
 import { first, run } from '../../core/db';
 import { ConfigError, ConsentRequiredError, ValidationError } from '../../core/errors';
 import type { Env } from '../../env';
@@ -13,7 +14,7 @@ import { documentEmailHtml, documentEmailText } from './templates';
 
 function engineFor(env: Env): PdfEngine {
   if (!env.BROWSER) throw new ConfigError('Browser Rendering is not configured (the BROWSER binding is missing).');
-  return new BrowserRenderingPdfEngine(env.BROWSER);
+  return withDemoWatermark(new BrowserRenderingPdfEngine(env.BROWSER), env);
 }
 
 export interface SendDeps {

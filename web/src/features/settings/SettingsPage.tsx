@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDemoLocked } from '../../app/demo';
 import type { MessageKey } from '../../i18n';
 import { useT } from '../../i18n';
 import { BusinessDocumentsPanel } from '../business-documents/BusinessDocumentsPanel';
@@ -55,6 +56,9 @@ function initialTab(): Tab {
 export function SettingsPage() {
   const [tab, setTab] = useState<Tab>(initialTab);
   const t = useT();
+  // R26: on the public demo Settings are visible and locked, except Tax (the switch) and Businesses.
+  const demoLocked = useDemoLocked();
+  const locked = demoLocked && tab !== 'tax' && tab !== 'businesses';
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl">
@@ -77,7 +81,12 @@ export function SettingsPage() {
         ))}
       </div>
 
-      <div className="mt-6 rounded-card border border-line bg-canvas p-4 shadow-card">
+      {demoLocked && (
+        <p role="note" data-testid="demo-settings-locked" className="mt-4 rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-sm text-ink">
+          {t('demo.settingsLocked')}
+        </p>
+      )}
+      <fieldset disabled={locked} className="mt-6 min-w-0 rounded-card border border-line bg-canvas p-4 shadow-card disabled:opacity-90">
         {tab === 'business' && <BusinessTab />}
         {tab === 'documents' && <BusinessDocumentsPanel onUseDetails={() => setTab('business')} />}
         {tab === 'businesses' && <BusinessesTab startAdding={new URLSearchParams(window.location.search).get('add') === '1'} />}
@@ -95,7 +104,7 @@ export function SettingsPage() {
         {tab === 'dashboard' && <DashboardTab />}
         {tab === 'backups' && <BackupsTab />}
         {tab === 'updates' && <UpdatesTab />}
-      </div>
+      </fieldset>
     </section>
   );
 }

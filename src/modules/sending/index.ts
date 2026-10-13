@@ -1,3 +1,4 @@
+import { demoMailerFor } from '../demo/outbox';
 import { todayIsrael } from '../../core/db';
 import type { ModuleDef } from '../../core/module';
 import type { Env } from '../../env';
@@ -6,6 +7,9 @@ import { REMINDERS_CRON, runRemindersCron } from './reminders';
 import { createSendingRoutes } from './routes';
 
 function defaultMailer(env: Env): Mailer {
+  // R26: demo mode keeps client email in the outbox and shows it as a preview.
+  const demo = demoMailerFor(env);
+  if (demo) return demo;
   if (!env.MAIL_API_KEY) throw new Error('MAIL_API_KEY is not set. Outgoing email is unavailable.');
   if (!env.MAIL_FROM) throw new Error('MAIL_FROM is not set. Outgoing email is unavailable.');
   return new ResendMailer(env.MAIL_API_KEY, env.MAIL_FROM);

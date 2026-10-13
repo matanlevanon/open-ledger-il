@@ -4,6 +4,8 @@ import type { AppEnv, Env } from '../env';
 import { SYSTEM_ACTOR, actorFrom, auditAs, auditStatement } from './audit';
 import { all, first, stmt, todayIsrael, transaction } from './db';
 import { ForbiddenError, UnauthorizedError } from './errors';
+import { isDemo } from '../modules/demo/config';
+import { sessionFromCookie } from '../modules/demo/session';
 
 /**
  * Sign-in through Cloudflare Access.
@@ -168,7 +170,13 @@ export function authenticate(options: AuthOptions = {}): MiddlewareHandler<AppEn
     const env = c.env;
     const token = c.req.header('Cf-Access-Jwt-Assertion');
     let email: string;
-    if (token) {
+    // R26: in demo mode the visitor's session cookie names a synthetic owner of their sandbox.
+    const demo = isDemo(env) ? await sessionFromCookie(env.DB, c.req.header('Cookie')) : null;
+    if (isDemo(env) && !demo) throw new UnauthorizedError('Open the demo from its start page.');
+    if (demo) {
+      email = demo.email;
+      c.set('demo', { sandboxId: demo.sandboxId, admin: demo.admin, adminEmail: demo.adminEmail });
+    } else if (token) {
       email = await emailFromAccessJwt(token, env, options);
     } else if (devBypassAllowed(env)) {
       email = env.DEV_AUTH_EMAIL!.trim().toLowerCase();

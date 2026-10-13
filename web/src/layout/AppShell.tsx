@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { DemoBanner, DemoOutboxPreview, DemoProvider } from '../app/demo';
 import { IssuingProvider } from '../app/issuing';
 import { useLocation } from 'react-router-dom';
 import { MOCK_MODE, type Me, fetchMe } from '../api/client';
@@ -64,6 +65,7 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
   const sidebar = <Sidebar role={me?.role} features={me?.features ?? []} email={me?.email} issuing={issuing} onNavigate={() => setDrawerOpen(false)} />;
 
   return (
+    <DemoProvider value={me?.demo ?? null}>
     <IssuingProvider value={{ issuing, setIssuing }}>
     {/* The page itself scrolls. The sidebar stays in view on wide screens. */}
     <div className="flex min-h-full min-w-0">
@@ -75,6 +77,7 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
         </div>
       )}
       <div className="flex min-w-0 flex-1 flex-col">
+        <DemoBanner />
         <TopBar me={me} error={error} onMenu={() => setDrawerOpen(true)} />
         <main ref={mainRef} className="flex-1 px-4 pb-6 pt-5 md:px-8 md:py-6">
           {showSetup ? <SetupScreen missing={missing} onSaved={checkSetup} /> : children}
@@ -90,6 +93,8 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
       </div>
       <BottomNav role={me?.role} features={me?.features ?? []} onMore={() => setDrawerOpen(true)} />
     </div>
+    <DemoOutboxPreview />
     </IssuingProvider>
+    </DemoProvider>
   );
 }

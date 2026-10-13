@@ -1,3 +1,4 @@
+import { announceDemoSend } from '../../app/demo';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { fetchMe } from '../../api/client';
@@ -363,6 +364,7 @@ export function ContractEditor() {
     if (id) {
       try {
         setSent(await contractsApi.send(id, emailReady ? 'email' : 'link'));
+        announceDemoSend();
       } catch (e) {
         setError(errorText(e, t));
         markMissing();

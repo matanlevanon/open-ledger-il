@@ -69,6 +69,8 @@ export interface EvidenceView {
   identity: 'email_code' | 'link_only';
   signerEmail: string | null;
   events: EvidenceEvent[];
+  /** R26: the demo's code was shown on screen, not emailed. */
+  demo?: boolean;
 }
 
 export interface ContractRenderInput {
@@ -229,8 +231,9 @@ export function deviceOf(ua: string | null): string {
 }
 
 function evidenceHtml(e: EvidenceView): string {
-  const identity =
-    e.identity === 'email_code'
+  const identity = e.demo
+    ? 'Demo: identity confirmed by a one-time code shown on screen. In a real Ledger the code goes to the signer by email.'
+    : e.identity === 'email_code'
       ? `Identity confirmed by a one-time code sent to ${esc(e.signerEmail ?? '')} and typed on the signing page.`
       : 'Identity confirmed by link only. No email code was used.';
   return `<section class="evidence" dir="ltr" lang="en">

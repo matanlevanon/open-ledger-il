@@ -1,3 +1,6 @@
+import { withDemoWatermark } from '../demo/watermark';
+import { isDemo } from '../demo/config';
+import { demoMailerFor } from '../demo/outbox';
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
@@ -67,11 +70,11 @@ export interface ContractsOptions {
 
 function defaultEngine(env: Env): PdfEngine {
   if (!env.BROWSER) throw new ValidationError('Browser Rendering is not configured (the BROWSER binding is missing).');
-  return new BrowserRenderingPdfEngine(env.BROWSER);
+  return withDemoWatermark(new BrowserRenderingPdfEngine(env.BROWSER), env);
 }
 
 function defaultMailer(env: Env): Mailer | null {
-  return env.MAIL_API_KEY ? new ResendMailer(env.MAIL_API_KEY, env.MAIL_FROM) : null;
+  return demoMailerFor(env) ?? (env.MAIL_API_KEY ? new ResendMailer(env.MAIL_API_KEY, env.MAIL_FROM) : null);
 }
 
 function baseUrl(c: Context<AppEnv>): string {
@@ -110,7 +113,7 @@ function depsFor(c: Context<AppEnv>, options: ContractsOptions, needEngine: bool
   const env = c.env;
   return {
     env,
-    engine: needEngine ? (options.engineFor ?? defaultEngine)(env) : { renderPdf: () => Promise.reject(new Error('No engine needed.')) },
+    engine: needEngine ? withDemoWatermark((options.engineFor ?? defaultEngine)(env), env) : { renderPdf: () => Promise.reject(new Error('No engine needed.')) },
     mailer: (options.mailerFor ?? defaultMailer)(env),
     notifier: notifierFor(env, options),
     baseUrl: baseUrl(c),
@@ -266,11 +269,12 @@ export function createContractsPublicModule(options: ContractsOptions = {}): Mod
   const manual = declareManualAuth('public signing link, token and contract row carry signature, expiry and status');
   const deps = (c: Context<AppEnv>): ContractDeps => ({
     env: c.env,
-    engine: (options.engineFor ?? defaultEngine)(c.env),
+    engine: withDemoWatermark((options.engineFor ?? defaultEngine)(c.env), c.env),
     mailer: (options.mailerFor ?? defaultMailer)(c.env),
     notifier: notifierFor(c.env, options),
     baseUrl: baseUrl(c),
     now: options.now,
+    demoCodes: isDemo(c.env),
   });
   const lightDeps = (c: Context<AppEnv>) => ({ env: c.env, now: options.now });
 
@@ -302,7 +306,7 @@ export function createContractsPublicModule(options: ContractsOptions = {}): Mod
         signerEmail: row.signer_email ?? '',
         signerName: row.signer_name ?? '',
         fields,
-        codeRequired: (options.mailerFor ?? defaultMailer)(c.env) !== null,
+        codeRequired: (options.mailerFor ?? defaultMailer)(c.env) !== null || isDemo(c.env),
         today: todayIsrael(options.now ? options.now() : new Date()),
       }),
     );

@@ -21,7 +21,8 @@
     "demo:unified-file": "node scripts/demo-unified-file.mjs",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "seed:demo": "node scripts/seed-demo.mjs",
-    "leak-check": "node scripts/leak-check.mjs"
+    "leak-check": "node scripts/leak-check.mjs",
+    "deploy:sample": "wrangler d1 migrations apply DB --remote --env sample && wrangler deploy --env sample"
   },
   "dependencies": {
     "@cloudflare/puppeteer": "^1.4.0",

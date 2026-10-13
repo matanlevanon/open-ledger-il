@@ -51,6 +51,8 @@ export interface ContractDeps {
   notifier: Notifier;
   baseUrl: string;
   now?: () => Date;
+  /** R26: demo mode shows the signing code on screen, labelled demo, instead of emailing it. */
+  demoCodes?: boolean;
 }
 
 const nowOf = (deps: { now?: () => Date }) => (deps.now ? deps.now() : new Date());
@@ -745,8 +747,8 @@ function sixDigits(): string {
 }
 
 /** Emails a new 6-digit code. Earlier codes stop working. */
-export async function requestCode(deps: ContractDeps, row: ContractRow, req: PublicRequest, opts: { code?: string } = {}): Promise<{ sentTo: string }> {
-  if (!deps.mailer) throw new ConflictError('code_not_needed', 'No code is needed for this link.');
+export async function requestCode(deps: ContractDeps, row: ContractRow, req: PublicRequest, opts: { code?: string } = {}): Promise<{ sentTo: string; demoCode?: string }> {
+  if (!deps.mailer && !deps.demoCodes) throw new ConflictError('code_not_needed', 'No code is needed for this link.');
   if (!row.signer_email) throw new ValidationError('This contract has no signer email.');
   const now = nowOf(deps);
   // Earlier codes stay valid until they expire: emails arrive late or out of order, so whichever
@@ -768,8 +770,9 @@ export async function requestCode(deps: ContractDeps, row: ContractRow, req: Pub
     ),
     eventStatement(deps.env.DB, row, 'code_sent', signerActor(row, req), { to: row.signer_email }),
   ]);
+  if (deps.demoCodes) return { sentTo: row.signer_email, demoCode: code };
   const sender = await senderLabel(deps.env.DB, row.business_id);
-  await deps.mailer.send({
+  await deps.mailer!.send({
     to: row.signer_email,
     fromName: sender,
     subject: `Your code to sign ${row.title}`,
@@ -851,8 +854,8 @@ export async function signContract(deps: ContractDeps, row: ContractRow, req: Pu
   }
   const signature = decodePngDataUri(input.signaturePng);
 
-  const identityMethod: 'email_code' | 'link_only' = deps.mailer ? 'email_code' : 'link_only';
-  if (deps.mailer) {
+  const identityMethod: 'email_code' | 'link_only' = deps.mailer || deps.demoCodes ? 'email_code' : 'link_only';
+  if (deps.mailer || deps.demoCodes) {
     if (!input.code) throw new ValidationError('Type the code we emailed you.');
     await checkCode(deps, row, input.code, req);
   }
@@ -906,6 +909,7 @@ export async function signContract(deps: ContractDeps, row: ContractRow, req: Pu
       identity: identityMethod,
       signerEmail: row.signer_email,
       events: evidenceEvents,
+      demo: deps.demoCodes ?? false,
     },
   });
   const images: Record<string, Uint8Array> = {};

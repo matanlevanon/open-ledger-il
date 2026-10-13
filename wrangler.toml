@@ -106,3 +106,70 @@ fallthrough = true
 type = "Text"
 globs = ["**/*.svg"]
 fallthrough = true
+
+# R26: an optional public demo of this Ledger. The same code, deployed with DEMO_MODE=1
+# (src/modules/demo). Its own names for everything: nothing here shares a database, a bucket or a
+# secret with the Ledger above. Deploy with `npm run deploy:sample`, which applies the sample D1's
+# migrations, then deploys. Steps in docs/demo-mode.md. Crons, assets and the rules above are inherited.
+[env.sample]
+name = "open-ledger-sample"
+workers_dev = false
+preview_urls = false
+# routes = [{ pattern = "demo.example.com", custom_domain = true }]
+
+[env.sample.vars]
+ENVIRONMENT = "production"
+ITA_ENV = "sandbox"
+DEMO_MODE = "1"
+DEMO_PRODUCT_NAME = "Open Ledger IL"
+DEMO_SENDER_NAME = ""               # Who the marketing box names, e.g. "Sample Business Ltd". Empty says "us".
+DEMO_CTA_URL = ""                   # Where the demo banner's button points. Empty points to the site root.
+DEMO_CONSENT_VERSION = "2026-10-13" # Change it whenever the consent text changes.
+DEMO_CONSENT_TEXT_EN = ""           # The marketing box text. Empty uses the neutral default.
+DEMO_CONSENT_TEXT_HE = ""
+DEMO_PRIVACY_CONTACT = ""
+DEMO_DAILY_PDF_CAP = "400"
+DEMO_DAILY_SANDBOX_CAP = "300"
+TURNSTILE_SITE_KEY = ""             # The Turnstile widget's site key.
+ADMIN_EMAILS = ""                   # Emails allowed on /admin, comma separated.
+ACCESS_TEAM_DOMAIN = ""             # e.g. "https://<team>.cloudflareaccess.com", for the /admin Access app.
+ACCESS_AUD = ""                     # The audience tag of the /admin Access app.
+PUBLIC_APP_URL = ""                 # e.g. "https://demo.example.com".
+DEMO_RESET_URL = ""                 # The reset Worker's URL. Empty runs the reset in this Worker.
+MAIL_FROM = ""                      # e.g. "Open Ledger demo <demo@example.com>". Empty uses the Resend default.
+AI_PROVIDER = ""
+SOFTWARE_NAME = "Open Ledger IL demo"
+SOFTWARE_VERSION = "1.0.0"
+UPDATE_REPO = ""
+OWNER_EMAIL = ""                    # No bootstrap owner: visitors sign in by the demo session only.
+SOFTWARE_REGISTRATION_NUMBER = ""
+SOFTWARE_PRODUCER_VAT = ""
+SOFTWARE_PRODUCER_NAME = ""
+ANTHROPIC_MODEL = ""
+GEMINI_MODEL = ""
+SETUP_BUSINESS_TYPE = ""
+# Secrets for the sample Worker only:
+#   SEND_LINK_KEY, DOWNLOAD_SIGN_KEY      HMAC keys (consent and unsubscribe links, downloads, signing links)
+#   TURNSTILE_SECRET                      Turnstile, verified server-side
+#   DEMO_LEAD_WEBHOOK_URL, DEMO_LEAD_SECRET   Optional lead capture. Off unless both are set
+#   MAIL_API_KEY                          Resend, for the gate's confirmation and code emails only
+#   SLACK_WEBHOOK_URL                     Caps, resets, leads
+#   DEMO_RESET_SECRET                     Shared with the reset Worker's RESET_SECRET
+# Never set ITA credentials, a relay key or a signing certificate here: demo mode refuses to start.
+
+[[env.sample.d1_databases]]
+binding = "DB"
+database_name = "open-ledger-sample"
+database_id = "REPLACE_WITH_YOUR_SAMPLE_D1_ID"
+migrations_dir = "migrations"
+
+[[env.sample.r2_buckets]]
+binding = "FILES"
+bucket_name = "open-ledger-sample-files"
+
+[[env.sample.r2_buckets]]
+binding = "BACKUPS"
+bucket_name = "open-ledger-sample-backups"
+
+[env.sample.browser]
+binding = "BROWSER"

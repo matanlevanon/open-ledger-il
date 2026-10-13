@@ -51,11 +51,51 @@ export interface Env {
   /** Tax ID of the software producer. Empty means the business itself. */
   SOFTWARE_PRODUCER_VAT?: string;
   SOFTWARE_PRODUCER_NAME?: string;
+  /** R26: "1" turns the Worker into the public demo (src/modules/demo). Empty in a normal Ledger. */
+  DEMO_MODE?: string;
+  /** R26: where the banner's "Get your own Ledger" goes. */
+  DEMO_CTA_URL?: string;
+  /** R26: the name in the gate's marketing consent text, and the product name on the gate. */
+  DEMO_SENDER_NAME?: string;
+  DEMO_PRODUCT_NAME?: string;
+  /** R26: a version label stored with each consent. Change it when the consent text changes. */
+  DEMO_CONSENT_VERSION?: string;
+  /** R26: the marketing box text on the gate. Empty uses a neutral default that names DEMO_SENDER_NAME. */
+  DEMO_CONSENT_TEXT_EN?: string;
+  DEMO_CONSENT_TEXT_HE?: string;
+  /** R26: caps per sandbox per day, and per whole demo per day. Defaults in src/modules/demo/config.ts. */
+  DEMO_CAP_DOCUMENTS?: string;
+  DEMO_CAP_PDFS?: string;
+  DEMO_CAP_UPLOADS?: string;
+  DEMO_CAP_UPLOAD_MB?: string;
+  DEMO_CAP_CONTRACTS?: string;
+  DEMO_CAP_BUSINESSES?: string;
+  DEMO_DAILY_PDF_CAP?: string;
+  DEMO_DAILY_SANDBOX_CAP?: string;
+  /** R26: the fake Tax Authority's answer delay in milliseconds. Default 2000. */
+  DEMO_ITA_DELAY_MS?: string;
+  /** R26: Cloudflare Turnstile on the gate. The site key is a variable, the secret a secret. */
+  TURNSTILE_SITE_KEY?: string;
+  TURNSTILE_SECRET?: string;
+  /** R26: optional lead capture. Off unless both are set: each lead posts as JSON to the URL with X-Lead-Secret. */
+  DEMO_LEAD_WEBHOOK_URL?: string;
+  DEMO_LEAD_SECRET?: string;
+  /** R26: emails allowed on /admin, behind a Cloudflare Access app on that path. */
+  ADMIN_EMAILS?: string;
+  /** R26: the reset Worker's POST /run and its shared secret, for "Reset sandboxes now". */
+  DEMO_RESET_URL?: string;
+  DEMO_RESET_SECRET?: string;
+  /** R26: the contact the demo's privacy notice names, for deletion requests. */
+  DEMO_PRIVACY_CONTACT?: string;
+  /** R26, set per request by the demo guard, never configured: the business the demo outbox files an email under. */
+  DEMO_BUSINESS_ID?: string;
 }
 
 export interface AppVariables {
   user: AuthUser;
   requestId: string;
+  /** R26: set for a demo session. admin = the sample set opened from /admin. */
+  demo?: { sandboxId: number | null; admin: boolean; adminEmail: string | null };
 }
 
 /** Hono generic for every app and sub-router in the Worker. */

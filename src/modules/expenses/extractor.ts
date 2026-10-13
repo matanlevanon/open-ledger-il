@@ -1,6 +1,19 @@
 import type { Env } from '../../env';
 import { documentReaderFor } from '../ai';
+import { isDemo } from '../demo/config';
 import { type ExtractedExpense, ExtractedExpenseSchema } from './types';
+
+/** R26: the fixed sample reading a demo upload gets. */
+export const DEMO_EXTRACTION = (): ExtractedExpense => ({
+  supplierName: 'Demo Supplier (sample reading)',
+  supplierId: null,
+  documentNumber: 'DEMO-1001',
+  date: new Date().toISOString().slice(0, 10),
+  currency: 'ILS',
+  amount: '118.00',
+  vatAmount: '18.00',
+  documentType: 'Demo: a sample result, not read from your file',
+});
 
 export interface ExtractInput {
   bytes: ArrayBuffer;
@@ -38,6 +51,8 @@ export class AiExtractor implements Extractor {
   ) {}
 
   async extract(input: ExtractInput): Promise<ExtractedExpense> {
+    // R26: document reading is off in demo mode. Every upload gets the same sample result, labelled demo.
+    if (isDemo(this.env)) return DEMO_EXTRACTION();
     const reader = documentReaderFor(this.env, this.fetchFn);
     if (!reader) throw new Error('No document reading key is set.');
     const answer = await reader.read({

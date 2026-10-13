@@ -1,6 +1,7 @@
 import { access } from './access';
 import { analytics } from './analytics';
 import { contracts } from './contracts';
+import { demo } from './demo';
 import { common } from './common';
 import { dashboard } from './dashboard';
 import { documents } from './documents';
@@ -15,4 +16,4 @@ import { settings } from './settings';
  * migrated area (R16 task 16). `he/index.ts` is typed against this object's keys, so a key
  * missing from the Hebrew catalog is a TypeScript error at build time.
  */
-export const en = { ...common, ...dashboard, ...settings, ...documents, ...expenses, ...reports, ...ita, ...access, ...importFeature, ...analytics, ...contracts };
+export const en = { ...common, ...dashboard, ...settings, ...documents, ...expenses, ...reports, ...ita, ...access, ...importFeature, ...analytics, ...contracts, ...demo };

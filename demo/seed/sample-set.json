@@ -1,0 +1,705 @@
+{
+  "version": 1,
+  "note": "The master sample set for demo mode. Fake people and companies only: emails on example.com, phones in the 050-0000000 range, ID numbers that pass the checksum and are not issued. daysAgo counts back from yesterday when the set loads or a sandbox copies it. Contracts use the neutral Service Agreement and Work Order templates from src/modules/contracts/seed.ts.",
+  "businesses": [
+    {
+      "key": "studio",
+      "entityType": "osek_patur",
+      "nameEn": "Noa Levi Studio",
+      "nameHe": "נועה לוי סטודיו",
+      "taxId": "000000018",
+      "addressEn": "1 Sample St, Tel Aviv",
+      "addressHe": "רחוב הדוגמה 1, תל אביב",
+      "email": "hello@noa-studio.example.com",
+      "phone": "050-0000001",
+      "clients": [
+        {
+          "key": "sample",
+          "nameEn": "Sample Client Ltd",
+          "nameHe": "לקוח לדוגמה בע\"מ",
+          "companyId": "599999919",
+          "country": "IL",
+          "email": "billing@sample-client.example.com",
+          "phone": "050-0000011",
+          "addressEn": "10 Example Rd, Haifa",
+          "contact": {
+            "name": "Dana Sample",
+            "role": "CEO",
+            "email": "dana@sample-client.example.com",
+            "phone": "050-0000012"
+          }
+        },
+        {
+          "key": "yael",
+          "nameEn": "Yael Cohen",
+          "nameHe": "יעל כהן",
+          "country": "IL",
+          "email": "yael@example.com",
+          "phone": "050-0000013"
+        },
+        {
+          "key": "galil",
+          "nameEn": "Galil Cafe Ltd",
+          "nameHe": "קפה הגליל בע\"מ",
+          "companyId": "599999927",
+          "country": "IL",
+          "email": "office@galil-cafe.example.com",
+          "phone": "050-0000014",
+          "addressEn": "5 Market Sq, Safed"
+        },
+        {
+          "key": "bright",
+          "nameEn": "Bright Ideas Inc",
+          "country": "US",
+          "foreignResident": true,
+          "currency": "USD",
+          "email": "ap@bright-ideas.example.com",
+          "addressEn": "100 Demo Ave, Austin TX"
+        },
+        {
+          "key": "nordic",
+          "nameEn": "Nordic Design AB",
+          "country": "SE",
+          "foreignResident": true,
+          "currency": "EUR",
+          "email": "finance@nordic-design.example.com",
+          "addressEn": "2 Exempelgatan, Stockholm"
+        }
+      ],
+      "services": [
+        {
+          "nameEn": "Brand identity",
+          "model": "fixed_fee",
+          "descriptionEn": "Logo, colours and type for a new brand.",
+          "items": [
+            "Discovery session",
+            "Logo concepts",
+            "Colour and type system",
+            "Brand guide"
+          ]
+        },
+        {
+          "nameEn": "Design retainer",
+          "model": "monthly_retainer",
+          "descriptionEn": "Ongoing design work each month.",
+          "items": [
+            "Social media designs",
+            "Presentation decks",
+            "Monthly review call"
+          ]
+        }
+      ],
+      "documents": [
+        {
+          "ref": "q1",
+          "type": "QT",
+          "client": "sample",
+          "daysAgo": 175,
+          "lines": [
+            {
+              "description": "Brand identity package",
+              "unitPriceMinor": 900000
+            }
+          ]
+        },
+        {
+          "ref": "r1",
+          "type": "400",
+          "client": "sample",
+          "daysAgo": 168,
+          "lines": [
+            {
+              "description": "Logo design, first payment",
+              "unitPriceMinor": 450000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "r2",
+          "type": "400",
+          "client": "yael",
+          "daysAgo": 160,
+          "lines": [
+            {
+              "description": "Wedding invitation design",
+              "unitPriceMinor": 600000
+            }
+          ],
+          "pay": "card"
+        },
+        {
+          "ref": "r3",
+          "type": "400",
+          "client": "galil",
+          "daysAgo": 150,
+          "lines": [
+            {
+              "description": "Menu redesign",
+              "unitPriceMinor": 800000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "p1",
+          "type": "PR",
+          "client": "galil",
+          "daysAgo": 140,
+          "dueDays": 14,
+          "lines": [
+            {
+              "description": "Signage design",
+              "unitPriceMinor": 350000
+            }
+          ],
+          "cancel": "The client cancelled the order."
+        },
+        {
+          "ref": "r4",
+          "type": "400",
+          "client": "sample",
+          "daysAgo": 128,
+          "lines": [
+            {
+              "description": "Logo design, final payment",
+              "unitPriceMinor": 750000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "r5",
+          "type": "400",
+          "client": "bright",
+          "daysAgo": 115,
+          "currency": "USD",
+          "overrideRate": "3.700000",
+          "lines": [
+            {
+              "description": "Landing page design",
+              "unitPriceMinor": 243200
+            }
+          ],
+          "pay": "card"
+        },
+        {
+          "ref": "q2",
+          "type": "QT",
+          "client": "nordic",
+          "daysAgo": 105,
+          "currency": "EUR",
+          "lines": [
+            {
+              "description": "Packaging design, 3 products",
+              "unitPriceMinor": 300000
+            }
+          ]
+        },
+        {
+          "ref": "r6",
+          "type": "400",
+          "client": "yael",
+          "daysAgo": 98,
+          "lines": [
+            {
+              "description": "Photo album layout",
+              "unitPriceMinor": 520000
+            }
+          ],
+          "pay": "card"
+        },
+        {
+          "ref": "f1",
+          "type": "300",
+          "client": "sample",
+          "daysAgo": 90,
+          "lines": [
+            {
+              "description": "Design retainer, August",
+              "unitPriceMinor": 600000
+            }
+          ]
+        },
+        {
+          "ref": "r7",
+          "type": "400",
+          "client": "sample",
+          "daysAgo": 85,
+          "lines": [
+            {
+              "description": "Design retainer, August",
+              "unitPriceMinor": 600000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "r8",
+          "type": "400",
+          "client": "galil",
+          "daysAgo": 70,
+          "lines": [
+            {
+              "description": "Social media kit",
+              "unitPriceMinor": 1200000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "c1",
+          "type": "credit",
+          "of": "r8",
+          "daysAgo": 66,
+          "amountMinor": 50000,
+          "reason": "Discount agreed after delivery."
+        },
+        {
+          "ref": "r9",
+          "type": "400",
+          "client": "sample",
+          "daysAgo": 55,
+          "lines": [
+            {
+              "description": "Design retainer, September",
+              "unitPriceMinor": 650000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "p2",
+          "type": "PR",
+          "client": "galil",
+          "daysAgo": 45,
+          "dueDays": 14,
+          "lines": [
+            {
+              "description": "Seasonal menu",
+              "unitPriceMinor": 280000
+            }
+          ]
+        },
+        {
+          "ref": "r10",
+          "type": "400",
+          "client": "yael",
+          "daysAgo": 30,
+          "lines": [
+            {
+              "description": "Birthday invitation set",
+              "unitPriceMinor": 900000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "q3",
+          "type": "QT",
+          "client": "yael",
+          "daysAgo": 12,
+          "lines": [
+            {
+              "description": "Business cards",
+              "unitPriceMinor": 120000
+            }
+          ]
+        },
+        {
+          "ref": "f2",
+          "type": "300",
+          "client": "sample",
+          "daysAgo": 6,
+          "dueDays": 10,
+          "lines": [
+            {
+              "description": "Design retainer, October",
+              "unitPriceMinor": 650000
+            }
+          ]
+        },
+        {
+          "ref": "p3",
+          "type": "PR",
+          "client": "nordic",
+          "daysAgo": 1,
+          "currency": "EUR",
+          "dueDays": 30,
+          "lines": [
+            {
+              "description": "Packaging design, deposit",
+              "unitPriceMinor": 100000
+            }
+          ]
+        }
+      ],
+      "expenses": [
+        {
+          "supplier": "Sample Software Ltd",
+          "category": "software",
+          "daysAgo": 160,
+          "amountMinor": 9900,
+          "number": "INV-1001"
+        },
+        {
+          "supplier": "Sample Software Ltd",
+          "category": "software",
+          "daysAgo": 130,
+          "amountMinor": 9900,
+          "number": "INV-1043"
+        },
+        {
+          "supplier": "Demo Print House",
+          "category": "professional_services",
+          "daysAgo": 120,
+          "amountMinor": 45000,
+          "number": "2231"
+        },
+        {
+          "supplier": "Sample Software Ltd",
+          "category": "software",
+          "daysAgo": 100,
+          "amountMinor": 9900,
+          "number": "INV-1089"
+        },
+        {
+          "supplier": "Example Ads",
+          "category": "advertising",
+          "daysAgo": 75,
+          "amountMinor": 30000,
+          "number": "A-77"
+        },
+        {
+          "supplier": "Sample Software Ltd",
+          "category": "software",
+          "daysAgo": 40,
+          "amountMinor": 9900,
+          "number": "INV-1140",
+          "status": "new"
+        }
+      ],
+      "contracts": [
+        {
+          "template": "Service Agreement",
+          "client": "sample",
+          "title": "Service Agreement, Sample Client Ltd",
+          "daysAgo": 20,
+          "state": "signed",
+          "signer": {
+            "name": "Dana Sample",
+            "role": "CEO",
+            "email": "dana@sample-client.example.com"
+          }
+        },
+        {
+          "template": "Work Order",
+          "client": "sample",
+          "title": "Design retainer, Q4",
+          "daysAgo": 3,
+          "state": "viewed",
+          "signer": {
+            "name": "Dana Sample",
+            "role": "CEO",
+            "email": "dana@sample-client.example.com"
+          }
+        }
+      ]
+    },
+    {
+      "key": "company",
+      "entityType": "company",
+      "nameEn": "Demo Studio Ltd",
+      "nameHe": "דמו סטודיו בע\"מ",
+      "taxId": "599999901",
+      "addressEn": "20 Example Blvd, Tel Aviv",
+      "addressHe": "שדרות הדוגמה 20, תל אביב",
+      "email": "office@demo-studio.example.com",
+      "phone": "050-0000002",
+      "registeredDaysAgo": 200,
+      "clients": [
+        {
+          "key": "tech",
+          "nameEn": "Example Tech Ltd",
+          "nameHe": "טק לדוגמה בע\"מ",
+          "companyId": "599999935",
+          "vatNumber": "599999935",
+          "country": "IL",
+          "email": "ap@example-tech.example.com",
+          "phone": "050-0000021",
+          "addressEn": "3 Innovation St, Herzliya",
+          "contact": {
+            "name": "Avi Example",
+            "role": "CFO",
+            "email": "avi@example-tech.example.com",
+            "phone": "050-0000022"
+          }
+        },
+        {
+          "key": "global",
+          "nameEn": "Global Apps LLC",
+          "country": "US",
+          "foreignResident": true,
+          "currency": "USD",
+          "email": "billing@global-apps.example.com",
+          "addressEn": "500 Sample Way, New York NY"
+        },
+        {
+          "key": "books",
+          "nameEn": "The Book Corner",
+          "nameHe": "פינת הספר",
+          "companyId": "599999943",
+          "vatNumber": "599999943",
+          "country": "IL",
+          "email": "hello@book-corner.example.com",
+          "phone": "050-0000023"
+        }
+      ],
+      "services": [
+        {
+          "nameEn": "Product design sprint",
+          "model": "fixed_fee",
+          "descriptionEn": "A two-week sprint from problem to tested prototype.",
+          "items": [
+            "Kick-off workshop",
+            "User interviews",
+            "Prototype",
+            "Test report"
+          ]
+        },
+        {
+          "nameEn": "Development retainer",
+          "model": "monthly_retainer",
+          "descriptionEn": "A monthly block of development hours.",
+          "items": [
+            "Feature development",
+            "Bug fixes",
+            "Monthly release notes"
+          ]
+        }
+      ],
+      "documents": [
+        {
+          "ref": "cq1",
+          "type": "QT",
+          "client": "tech",
+          "daysAgo": 170,
+          "lines": [
+            {
+              "description": "Product design sprint",
+              "unitPriceMinor": 400000
+            }
+          ]
+        },
+        {
+          "ref": "ci1",
+          "type": "320",
+          "client": "tech",
+          "daysAgo": 160,
+          "lines": [
+            {
+              "description": "Product design sprint",
+              "unitPriceMinor": 400000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "ci2",
+          "type": "320",
+          "client": "global",
+          "daysAgo": 140,
+          "currency": "USD",
+          "overrideRate": "3.700000",
+          "lines": [
+            {
+              "description": "Mobile app UI, phase 1",
+              "unitPriceMinor": 300000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "ci3",
+          "type": "320",
+          "client": "books",
+          "daysAgo": 120,
+          "lines": [
+            {
+              "description": "Online store setup",
+              "unitPriceMinor": 350000
+            }
+          ],
+          "pay": "card"
+        },
+        {
+          "ref": "cc1",
+          "type": "credit",
+          "of": "ci3",
+          "daysAgo": 110,
+          "amountMinor": 50000,
+          "reason": "Credit for a late delivery."
+        },
+        {
+          "ref": "cf1",
+          "type": "300",
+          "client": "tech",
+          "daysAgo": 95,
+          "lines": [
+            {
+              "description": "Development retainer, July",
+              "unitPriceMinor": 450000
+            }
+          ]
+        },
+        {
+          "ref": "ci4",
+          "type": "320",
+          "client": "tech",
+          "daysAgo": 90,
+          "lines": [
+            {
+              "description": "Development retainer, July",
+              "unitPriceMinor": 450000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "ci5",
+          "type": "320",
+          "client": "global",
+          "daysAgo": 60,
+          "currency": "USD",
+          "overrideRate": "3.700000",
+          "lines": [
+            {
+              "description": "Mobile app UI, phase 2",
+              "unitPriceMinor": 300000
+            }
+          ],
+          "pay": "bank_transfer"
+        },
+        {
+          "ref": "cf2",
+          "type": "300",
+          "client": "books",
+          "daysAgo": 25,
+          "dueDays": 14,
+          "lines": [
+            {
+              "description": "Store maintenance, Q3",
+              "unitPriceMinor": 200000
+            }
+          ]
+        },
+        {
+          "ref": "cq2",
+          "type": "QT",
+          "client": "global",
+          "daysAgo": 8,
+          "currency": "USD",
+          "lines": [
+            {
+              "description": "Mobile app UI, phase 3",
+              "unitPriceMinor": 450000
+            }
+          ]
+        },
+        {
+          "ref": "cf3",
+          "type": "300",
+          "client": "tech",
+          "daysAgo": 2,
+          "dueDays": 30,
+          "lines": [
+            {
+              "description": "Development retainer, October",
+              "unitPriceMinor": 450000
+            }
+          ]
+        }
+      ],
+      "expenses": [
+        {
+          "supplier": "Sample Cloud Inc",
+          "category": "software",
+          "daysAgo": 150,
+          "amountMinor": 42000,
+          "vatMinor": 0,
+          "currency": "USD",
+          "number": "C-3301"
+        },
+        {
+          "supplier": "Demo Office Rentals",
+          "category": "professional_services",
+          "daysAgo": 120,
+          "amountMinor": 354000,
+          "vatMinor": 54000,
+          "number": "OR-551"
+        },
+        {
+          "supplier": "Sample Cloud Inc",
+          "category": "software",
+          "daysAgo": 90,
+          "amountMinor": 42000,
+          "vatMinor": 0,
+          "currency": "USD",
+          "number": "C-3402"
+        },
+        {
+          "supplier": "Example Ads",
+          "category": "advertising",
+          "daysAgo": 70,
+          "amountMinor": 118000,
+          "vatMinor": 18000,
+          "number": "A-98"
+        },
+        {
+          "supplier": "Demo Office Rentals",
+          "category": "professional_services",
+          "daysAgo": 30,
+          "amountMinor": 354000,
+          "vatMinor": 54000,
+          "number": "OR-602"
+        },
+        {
+          "supplier": "Sample Cloud Inc",
+          "category": "software",
+          "daysAgo": 5,
+          "amountMinor": 42000,
+          "vatMinor": 0,
+          "currency": "USD",
+          "number": "C-3511",
+          "status": "new"
+        }
+      ],
+      "contracts": [
+        {
+          "template": "Work Order",
+          "client": "tech",
+          "title": "Development retainer, Q4",
+          "daysAgo": 15,
+          "state": "signed",
+          "signer": {
+            "name": "Avi Example",
+            "role": "CFO",
+            "email": "avi@example-tech.example.com"
+          }
+        },
+        {
+          "template": "Service Agreement",
+          "client": "books",
+          "title": "Service Agreement, The Book Corner",
+          "daysAgo": 2,
+          "state": "sent",
+          "signer": {
+            "name": "Rina Example",
+            "role": "Owner",
+            "email": "rina@book-corner.example.com"
+          }
+        }
+      ]
+    }
+  ]
+}

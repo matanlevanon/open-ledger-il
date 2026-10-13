@@ -22,6 +22,9 @@ description = "Test-only values and lockfile integrity hashes"
 paths = [
   '''package-lock\.json''',
   '''scripts/leak-denylist\.txt''',
+  # The bundled demo certificate and key, published on purpose. Its subject is
+  # "Open Ledger IL Demo, not valid" and demo mode refuses any other certificate.
+  '''src/modules/demo/demo-cert\.ts''',
 ]
 regexes = [
   '''test-[a-z-]+-not-a-secret''',

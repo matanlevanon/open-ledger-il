@@ -1,3 +1,4 @@
+import { demoMailerFor } from '../demo/outbox';
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom, auditStatement } from '../../core/audit';
@@ -40,6 +41,9 @@ export interface BusinessDocumentsOptions {
 }
 
 function defaultMailer(env: Env): Mailer {
+  // R26: demo mode keeps client email in the outbox and shows it as a preview.
+  const demo = demoMailerFor(env);
+  if (demo) return demo;
   if (!env.MAIL_API_KEY) throw new ConfigError('Email is not set up. Add MAIL_API_KEY to send by email.');
   return new ResendMailer(env.MAIL_API_KEY);
 }

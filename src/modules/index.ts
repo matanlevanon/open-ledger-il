@@ -55,6 +55,9 @@ import { businessDocumentsModule } from './business-documents';
 // R25: contracts and work orders, Fill & Sign. The public signing link mounts under /sending/public/c.
 import { createContractsModule, createContractsPublicModule } from './contracts';
 
+// R26: demo mode for the public Sample Ledger. Every route answers 404 unless DEMO_MODE=1.
+import { createDemoAppModule, createDemoModule } from './demo';
+
 // R14 mcp: `mcpModule` mounts at the top-level `/mcp` path in src/index.ts, not under /api. It
 // authenticates with the MCP_TOKEN bearer secret, not Cloudflare Access, and owns no cron, so it
 // does not belong in this registry.
@@ -128,4 +131,7 @@ export const modules: ModuleDef[] = [
 
   createContractsModule({ documentsOptions: documentsServiceOptions }),
   createContractsPublicModule(),
+
+  createDemoModule({ documentsOptions: documentsServiceOptions }),
+  createDemoAppModule(),
 ];

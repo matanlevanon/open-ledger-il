@@ -100,6 +100,9 @@ export class ItaTokenStore {
 
   /** Builds the browser URL for the ITA login. */
   authorizeUrl(state: string, redirectUri: string): string {
+    // R26: in demo mode Connect succeeds at once. The callback gets a demo code, which the fake
+    // Tax Authority (src/modules/demo/ita-fake.ts) exchanges for demo tokens.
+    if ((this.env.DEMO_MODE ?? '').trim() === '1') return `${redirectUri}?code=demo&state=${encodeURIComponent(state)}`;
     // With a login broker, the broker sends the browser to the ITA and back to this install.
     const broker = itaBroker(this.env);
     if (broker) {

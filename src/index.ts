@@ -11,11 +11,18 @@ import type { AppEnv, Env } from './env';
 import { modules as registeredModules } from './modules';
 import { isPublicApiPath } from './modules/sending/public-paths';
 import { mcpModule } from './modules/mcp';
+import { demoEnv, demoGuard, demoMisconfigured, isDemo } from './modules/demo';
+import { demoTexts } from './modules/demo/config';
+import { type AdminOptions, createDemoAdminRoutes } from './modules/demo/admin';
+import { gatePageHtml, misconfiguredPageHtml, privacyPageHtml } from './modules/demo/pages';
+import { sessionFromCookie } from './modules/demo/session';
 import { dispatchScheduled } from './scheduled';
 
 export interface AppOptions {
   auth?: AuthOptions;
   modules?: ModuleDef[];
+  /** R26: the demo admin's Access check and fetch. Tests pass a local JWKS. */
+  demoAdmin?: AdminOptions;
 }
 
 function errorBody(code: string, message: string, details?: unknown) {
@@ -27,15 +34,41 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const api = new Hono<AppEnv>();
 
-  api.get('/health', (c) => c.json({ ok: true, service: 'open-ledger-il', environment: c.env.ENVIRONMENT }));
+  // R26: demo mode. Nothing here runs unless DEMO_MODE=1. The demo refuses to start next to real
+  // credentials, then every request runs with the demo bindings (demo certificate, fake Tax
+  // Authority, document reading off). A page request without a demo session gets the gate.
+  app.use('*', async (c, next) => {
+    if (!isDemo(c.env)) return next();
+    const wrong = demoMisconfigured(c.env as Env & Record<string, unknown>);
+    if (wrong) {
+      console.error('demo_misconfigured', wrong);
+      return c.html(misconfiguredPageHtml(), 503);
+    }
+    c.env = demoEnv(c.env);
+    const path = c.req.path;
+    if (path.startsWith('/api/') || path === '/api' || path.startsWith('/mcp') || path.startsWith('/admin')) return next();
+    const lang = c.req.query('lang') === 'he' ? 'he' : 'en';
+    if (path === '/privacy') return c.html(privacyPageHtml(c.env, lang));
+    // Static files (scripts, styles, icons) load without a session. Pages need one.
+    if (/.[a-z0-9]+$/i.test(path) && !path.endsWith('.html')) return next();
+    if (c.req.method === 'GET' && !(await sessionFromCookie(c.env.DB, c.req.header('Cookie')))) return c.html(gatePageHtml(c.env, lang));
+    return next();
+  });
+
+    api.get('/health', (c) => c.json({ ok: true, service: 'open-ledger-il', environment: c.env.ENVIRONMENT }));
 
   // A handful of routes (the consent-accept page, the WhatsApp share link) are opened by the
   // client, not a signed-in owner or accountant, so they carry no Cloudflare Access session.
   // Their own signed, expiring token is the authorization (src/modules/sending/tokens.ts).
   api.use('*', async (c, next) => {
     if (isPublicApiPath(c.req.path)) return next();
+    // R26: the gate and its links, and the admin (its own Access check), run before any session.
+    if (isDemo(c.env) && (c.req.path.startsWith('/api/demo/') || c.req.path.startsWith('/api/admin'))) return next();
     return authenticate(options.auth)(c, next);
   });
+
+  // R26: settings read-only, caps, the outbox and the watermark, for demo sessions only.
+  api.use('*', demoGuard());
 
   api.get('/me', async (c) => {
     const user = c.get('user');
@@ -51,6 +84,8 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
         // R24: the business this session acts on, and every business the person may open.
         businessId: user.businessId,
         businesses: user.businesses,
+        // R26: the banner and the Settings lock read this. Absent outside demo mode.
+        ...(isDemo(c.env) ? { demo: { admin: c.get('demo')?.admin ?? false, ctaUrl: demoTexts(c.env).ctaUrl, product: demoTexts(c.env).product } } : {}),
       },
     });
   });
@@ -87,7 +122,12 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
 
   api.notFound((c) => c.json(errorBody('not_found', 'No such endpoint.'), 404));
 
+  // R26: the demo admin, behind Cloudflare Access. 404 outside demo mode.
+  const demoAdmin = createDemoAdminRoutes(options.demoAdmin);
+  api.route('/admin', demoAdmin);
+
   app.route('/api', api);
+  app.route('/admin', demoAdmin);
 
   // Bearer-token MCP endpoint (MCP_TOKEN secret), not Cloudflare Access, so it is mounted here
   // rather than through the /api registry. wrangler.toml routes /mcp and /mcp/* to the Worker.

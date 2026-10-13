@@ -51,7 +51,8 @@ export function fixFor(code: string): ItaFix {
 
 /** The rightmost 9 digits of a confirmation number: the short allocation number printed and reported. */
 export function shortAllocationNumber(confirmationNumber: string): string {
-  const value = confirmationNumber.trim();
+  // R26: the demo's fake Tax Authority prefixes its numbers with DEMO-. The real ITA never does.
+  const value = confirmationNumber.trim().replace(/^DEMO-/, '');
   if (!/^\d{9,}$/.test(value)) throw new RangeError('An allocation number has at least 9 digits and digits only.');
   return value.slice(-9);
 }
@@ -76,6 +77,7 @@ function confirmationOf(body: Record<string, unknown> | null): string | null {
   const raw = body?.confirmation_number;
   if (raw === undefined || raw === null) return null;
   const value = String(raw).trim();
+  if (/^DEMO-\d{9}$/.test(value)) return value;
   return /^\d{9,}$/.test(value) && !/^0+$/.test(value) ? value : null;
 }
 

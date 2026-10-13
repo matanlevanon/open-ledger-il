@@ -1,3 +1,4 @@
+import { demoMailerFor } from '../demo/outbox';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { r2Prefix } from '../../core/business';
 import { zipSync } from 'fflate';
@@ -172,7 +173,7 @@ export async function buildAccountantPack(env: Env, period: string, businessId: 
   let emailError: string | null = null;
 
   if (recipients.length > 0) {
-    const mailer = deps.mailer ?? (env.MAIL_API_KEY && env.MAIL_FROM ? new ResendMailer(env.MAIL_API_KEY, env.MAIL_FROM) : null);
+    const mailer = deps.mailer ?? demoMailerFor(env) ?? (env.MAIL_API_KEY && env.MAIL_FROM ? new ResendMailer(env.MAIL_API_KEY, env.MAIL_FROM) : null);
     if (!mailer) {
       emailError = 'MAIL_API_KEY or MAIL_FROM is not set. The pack was generated but not emailed.';
     } else {

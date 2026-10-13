@@ -1,0 +1,51 @@
+# R26: open-ledger-sample-reset. Removes the demo's visitor sandboxes every night at 03:00 Israel
+# time and reloads the master sample set when the seed moves up. Its own Worker, its own bindings
+# to the sample Ledger's D1 and files bucket. Never bind it to a real Ledger's database.
+name = "open-ledger-sample-reset"
+main = "src/index.ts"
+compatibility_date = "2026-08-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+preview_urls = false
+
+[vars]
+ENVIRONMENT = "production"
+DEMO_MODE = "1"
+
+# Secrets:
+#   RESET_SECRET        Shared with the sample Ledger's DEMO_RESET_SECRET, for POST /run.
+#   SLACK_WEBHOOK_URL   Alerts when a reset fails or rolls back.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "open-ledger-sample"
+database_id = "REPLACE_WITH_YOUR_SAMPLE_D1_ID"
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "open-ledger-sample-files"
+
+[[r2_buckets]]
+binding = "BACKUPS"
+bucket_name = "open-ledger-sample-backups"
+
+# 03:00 in Israel is 00:00 UTC in summer (IDT) and 01:00 UTC in winter (IST). Both fire, and the
+# Worker runs only the one that lands on 03:00 Israel time.
+[triggers]
+crons = ["0 0 * * *", "0 1 * * *"]
+
+# The sample set renders its contracts with the Ledger's own code, which bundles its fonts.
+[[rules]]
+type = "Data"
+globs = ["**/*.woff2"]
+fallthrough = true
+
+[[rules]]
+type = "Data"
+globs = ["**/*.png"]
+fallthrough = true
+
+[[rules]]
+type = "Text"
+globs = ["**/*.svg"]
+fallthrough = true

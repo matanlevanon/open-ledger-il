@@ -2,6 +2,7 @@ import type { en } from '../en';
 import { access } from './access';
 import { analytics } from './analytics';
 import { contracts } from './contracts';
+import { demo } from './demo';
 import { common } from './common';
 import { dashboard } from './dashboard';
 import { documents } from './documents';
@@ -24,4 +25,5 @@ export const he: Record<keyof typeof en, string> = {
   ...importFeature,
   ...analytics,
   ...contracts,
+  ...demo,
 };

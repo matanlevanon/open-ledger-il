@@ -192,6 +192,7 @@ ${code}
     signing: t.signing,
     sign: t.sign,
     resend: t.resend,
+    demoCode: input.lang === 'he' ? 'הדגמה: הקוד שלך הוא' : 'Demo: your code is',
     signedBody: input.codeRequired ? t.signedBody : t.signedBodyNoEmail,
   }).replace(/</g, '\\u003c');
   const script = `<script>
@@ -251,8 +252,9 @@ ${code}
   var resend = $('resend-code');
   function askCode(btn) {
     err.textContent = ''; btn.disabled = true;
-    post('/code').then(function () {
-      sendCode.classList.add('hidden'); $('code-sent').classList.remove('hidden'); resend.classList.remove('hidden');
+    post('/code').then(function (j) {
+      var el = $('code-sent'); if (j && j.demoCode) el.textContent = S.demoCode + ' ' + j.demoCode;
+      sendCode.classList.add('hidden'); el.classList.remove('hidden'); resend.classList.remove('hidden');
       if (codeBox) codeBox.focus();
     }).catch(function (e) { err.textContent = e.message; }).then(function () { btn.disabled = false; });
   }
