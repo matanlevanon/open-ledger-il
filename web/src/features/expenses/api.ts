@@ -4,6 +4,8 @@ export type ExpenseStatus = 'new' | 'filed' | 'not_expense' | 'duplicate' | 'ret
 
 export interface Expense {
   id: number;
+  /** R29: on the public demo, the session key of the visitor who uploaded it. Null for the sample set. */
+  demo_session_id?: string | null;
   supplier_name?: string | null;
   supplier_tax_id?: string | null;
   category_name?: string | null;

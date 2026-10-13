@@ -1,4 +1,4 @@
-import { announceDemoSend } from '../../app/demo';
+import { announceDemoSend, openDemoSigningPage, useDemoLocked } from '../../app/demo';
 import { BackLink, contractParent } from '../../components/BackLink';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -210,6 +210,7 @@ export function defaultTermsTemplate(templates: { id: number; name: string; kind
 export function ContractEditor() {
   const t = useT();
   const { locale } = usePreferences();
+  const demoLocked = useDemoLocked();
   const params = useParams();
   const editId = params.id ? Number(params.id) : null;
   const clientFromQuery = Number(new URLSearchParams(useLocation().search).get('clientId'));
@@ -364,6 +365,12 @@ export function ContractEditor() {
     setBusy(true);
     setNote(null);
     const id = await save();
+    // R29: on the demo a visitor's contract is never sent. The signing page opens as a preview.
+    if (id && demoLocked) {
+      openDemoSigningPage(id, locale);
+      setBusy(false);
+      return;
+    }
     if (id) {
       try {
         setSent(await contractsApi.send(id, emailReady ? 'email' : 'link'));
@@ -524,7 +531,7 @@ export function ContractEditor() {
         <ErrorNote error={error} />
       </div>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-        <span className="text-sm text-muted">{t(emailReady ? 'contracts.editor.sendNote' : 'contracts.editor.sendNoteNoEmail', { n: linkDays })}</span>
+        <span className="text-sm text-muted">{demoLocked ? t('demo.signingNote') : t(emailReady ? 'contracts.editor.sendNote' : 'contracts.editor.sendNoteNoEmail', { n: linkDays })}</span>
         <div className="flex gap-2">
           {note && (
             <span role="status" className="self-center text-sm text-muted">
@@ -535,7 +542,7 @@ export function ContractEditor() {
             {t('contracts.editor.saveDraft')}
           </button>
           <button type="button" className={btnPrimary} disabled={busy || !body} onClick={() => void onSend()}>
-            {emailReady ? t('contracts.editor.send') : t('contracts.editor.makeLink')}
+            {demoLocked ? t('demo.signingPreview') : emailReady ? t('contracts.editor.send') : t('contracts.editor.makeLink')}
           </button>
         </div>
       </div>

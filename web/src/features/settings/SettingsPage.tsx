@@ -56,9 +56,9 @@ function initialTab(): Tab {
 export function SettingsPage() {
   const [tab, setTab] = useState<Tab>(initialTab);
   const t = useT();
-  // R26: on the public demo Settings are visible and locked, except Tax (the switch) and Businesses.
+  // R26, R29: on the public demo Settings are visible and every tab is read-only.
   const demoLocked = useDemoLocked();
-  const locked = demoLocked && tab !== 'tax' && tab !== 'businesses';
+  const locked = demoLocked;
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl">

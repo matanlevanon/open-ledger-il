@@ -45,6 +45,8 @@ export interface Client {
   archived_at: string | null;
   /** R18 task 6, replacing archived_at as the field the app reads. */
   active: number;
+  /** R29: on the public demo, the session key of the visitor who created it. Null for the sample set. */
+  demo_session_id?: string | null;
   balances?: Totals;
   overdue?: Totals;
 }

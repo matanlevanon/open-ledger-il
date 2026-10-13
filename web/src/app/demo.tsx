@@ -1,21 +1,34 @@
 import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
-import { apiGet } from '../api/client';
+import { ApiError, type ApiErrorBody, apiGet } from '../api/client';
 import { Dialog } from '../components/Dialog';
 import { useT } from '../i18n';
 
 /**
- * R26: the public demo, as the web app sees it. Null on every real Ledger. The banner shows on
- * every page, Settings stay visible and read-only, and a sent email opens as a preview.
+ * R26, R29: the public demo, as the web app sees it. Null on every real Ledger. The banner shows
+ * on every page. The sample data is read-only: its buttons hide and one line says why. A visitor's
+ * own drafts stay editable, and Issue, Send, Record payment and Sign open previews.
  */
 export interface DemoInfo {
   admin: boolean;
   ctaUrl: string;
   product: string;
+  /** R29: the session key on the visitor's own rows. Null for the admin. */
+  ownKey?: string | null;
 }
 
 const DemoContext = createContext<DemoInfo | null>(null);
 
 export function DemoProvider({ value, children }: { value: DemoInfo | null; children: ReactNode }) {
+  // R29: in the demo the browser tab carries the demo product name. It goes back on leave.
+  const product = value?.product || null;
+  useEffect(() => {
+    if (!product || typeof document === 'undefined') return;
+    const before = document.title;
+    document.title = product;
+    return () => {
+      document.title = before;
+    };
+  }, [product]);
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
 }
 
@@ -23,10 +36,75 @@ export function useDemo(): DemoInfo | null {
   return useContext(DemoContext);
 }
 
+/** R29: the app name in the sidebar. The demo shows its own product name in both languages. */
+export function useAppName(): string {
+  const t = useT();
+  const demo = useDemo();
+  return demo?.product || t('app.name');
+}
+
 /** True when this screen is read-only: the demo, for a visitor. The admin's sample set is not. */
 export function useDemoLocked(): boolean {
   const demo = useDemo();
   return demo !== null && !demo.admin;
+}
+
+/**
+ * R29: true when this row is sample data the visitor may not change. A row the visitor created
+ * carries its session key. Without the key on the row, `draft` decides: a visitor's documents and
+ * contracts are always drafts, and the sample set has none.
+ */
+export function useDemoReadOnly(row: { demo_session_id?: string | null; status?: string } | null | undefined): boolean {
+  const demo = useDemo();
+  if (!demo || demo.admin || !row) return false;
+  if (row.demo_session_id !== undefined) return !row.demo_session_id || row.demo_session_id !== demo.ownKey;
+  return row.status !== 'draft';
+}
+
+/** The one line that says why a sample row has no edit buttons. */
+export function DemoReadOnlyNote({ text }: { text?: string }) {
+  const t = useT();
+  return (
+    <p role="note" data-testid="demo-read-only" className="mb-4 rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-sm text-ink">
+      {text ?? t('demo.readOnly')}
+    </p>
+  );
+}
+
+/**
+ * Opens a preview PDF from /api/demo-app in a new tab. The tab opens first, so a popup blocker
+ * lets it through, then gets the file.
+ */
+export async function openDemoPdf(path: string, body: unknown = {}): Promise<void> {
+  const tab = typeof window !== 'undefined' ? window.open('', '_blank') : null;
+  try {
+    const res = await fetch(`/api/demo-app${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) {
+      const err = (await res.json().catch(() => null)) as ApiErrorBody | null;
+      throw new ApiError(res.status, err?.error.code ?? 'http_error', err?.error.message ?? 'Request failed.');
+    }
+    const url = URL.createObjectURL(await res.blob());
+    if (tab) tab.location.href = url;
+    else window.open(url, '_blank', 'noopener');
+  } catch (e) {
+    tab?.close();
+    throw e;
+  }
+}
+
+/** Builds the email a send would deliver, files it in the visitor's outbox, and shows it. */
+export async function previewDemoSend(documentId: number): Promise<void> {
+  const res = await fetch(`/api/demo-app/documents/${documentId}/send-preview`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+  if (!res.ok) {
+    const err = (await res.json().catch(() => null)) as ApiErrorBody | null;
+    throw new ApiError(res.status, err?.error.code ?? 'http_error', err?.error.message ?? 'Request failed.');
+  }
+  announceDemoSend();
+}
+
+/** The real signing page, in preview mode, for a visitor's own contract draft. */
+export function openDemoSigningPage(contractId: number, lang: 'en' | 'he'): void {
+  window.open(`/api/demo-app/sign-preview/c/${contractId}?lang=${lang}`, '_blank', 'noopener');
 }
 
 export const DEMO_SENT_EVENT = 'ledger:demo-sent';

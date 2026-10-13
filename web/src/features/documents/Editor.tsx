@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { BackLink, documentParent } from '../../components/BackLink';
+import { useDemoLocked } from '../../app/demo';
 import { fetchBrands } from '../../api/businesses';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ApiError } from '../../api/client';
@@ -193,6 +194,8 @@ function toBody(s: EditorState, isReceipt: boolean, t: ReturnType<typeof useT>):
 
 export function DocumentEditor({ type: fixedType }: { type?: string }) {
   const t = useT();
+  // R29: a demo visitor saves drafts only. The document page offers Issue as a preview.
+  const demoLocked = useDemoLocked();
   const { locale } = usePreferences();
   const { id } = useParams();
   const location = useLocation();
@@ -813,11 +816,13 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
             <button type="submit" className={btnSecondary} disabled={busy}>
               {t('documents.editor.saveDraft')}
             </button>
-            <button type="button" className={btnPrimary} disabled={busy} onClick={() => void save(true)}>
-              {t('documents.editor.saveAndFinalize')}
-            </button>
+            {!demoLocked && (
+              <button type="button" className={btnPrimary} disabled={busy} onClick={() => void save(true)}>
+                {t('documents.editor.saveAndFinalize')}
+              </button>
+            )}
           </div>
-          <p className="mt-2 text-xs text-muted">{t('documents.editor.finalizeHint')}</p>
+          <p className="mt-2 text-xs text-muted">{demoLocked ? t('demo.previewNote') : t('documents.editor.finalizeHint')}</p>
         </Card>
       </form>
       <Dialog

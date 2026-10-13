@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
+import { DemoReadOnlyNote, useDemoReadOnly } from '../../app/demo';
 import { Link, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { type MessageKey, useT } from '../../i18n';
 import { type Client, type ClientConsent, type ConsentFormInput, clientsApi, docsApi, paymentMethodsApi } from './api';
@@ -442,6 +443,8 @@ export function ClientPage() {
   const types = useLoad(() => docsApi.types(), []);
   const [newDocOpen, setNewDocOpen] = useState(false);
   const newDocRef = useRef<HTMLDivElement>(null);
+  // R29: on the demo a sample client is read-only. A client the visitor created edits as usual.
+  const readOnly = useDemoReadOnly(data?.client);
 
   useEffect(() => {
     if (!newDocOpen) return;
@@ -502,6 +505,8 @@ export function ClientPage() {
               )}
             </div>
             )}
+            {!readOnly && (
+            <>
             <Link to={`/clients/${c.id}/edit`} className={btnSecondary}>
               {t('clients.page.edit')}
             </Link>
@@ -524,6 +529,8 @@ export function ClientPage() {
               </span>
               {c.active === 1 ? t('clients.page.active') : t('clients.page.notActive')}
             </button>
+            </>
+            )}
           </>
         }
       >
@@ -533,6 +540,7 @@ export function ClientPage() {
         {t('clients.page.balanceLabel')} <span className="ltr-nums font-semibold text-ink">{totalsText(data.balances)}</span>
         {c.active !== 1 && <span className="ms-3 text-danger">{t('clients.notActiveBadge')}</span>}
       </p>
+      {readOnly && <DemoReadOnlyNote />}
       <ErrorNote error={actionError} />
       <div role="tablist" aria-label={t('clients.page.sectionsAriaLabel')} className="mb-4 flex gap-2 border-b border-line">
         {TABS.map((tb) => (
@@ -592,12 +600,15 @@ export function ClientPage() {
                     {p.is_primary === 1 && <span className="ms-2 text-xs text-muted">{t('clients.page.primaryBadge')}</span>}
                     <span className="block text-xs text-muted">{[p.role, p.email, p.phone].filter(Boolean).join(', ')}</span>
                   </span>
-                  <button type="button" className="text-xs text-danger" onClick={() => act(() => clientsApi.removeContact(c.id, p.id))}>
-                    {t('clients.page.removeContact')}
-                  </button>
+                  {!readOnly && (
+                    <button type="button" className="text-xs text-danger" onClick={() => act(() => clientsApi.removeContact(c.id, p.id))}>
+                      {t('clients.page.removeContact')}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
+            {!readOnly && (
             <form
               className="grid gap-2"
               onSubmit={(e) => {
@@ -634,8 +645,9 @@ export function ClientPage() {
                 {t('clients.page.addContact')}
               </button>
             </form>
+            )}
           </Card>
-          {issuing && (
+          {issuing && !readOnly && (
             <div className="md:col-span-2">
               <ClientReminders clientId={c.id} />
             </div>

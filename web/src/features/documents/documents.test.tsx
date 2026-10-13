@@ -30,11 +30,11 @@ beforeEach(() => {
 
 afterEach(() => vi.unstubAllGlobals());
 
-function renderAt(path: string) {
+function renderAt(path: string, me: Me = owner) {
   return render(
     <ToastProvider>
       <MemoryRouter initialEntries={[path]}>
-        <App loadMe={() => Promise.resolve(owner)} />
+        <App loadMe={() => Promise.resolve(me)} />
       </MemoryRouter>
     </ToastProvider>,
   );
@@ -340,5 +340,30 @@ describe('R28 default payment methods per client', () => {
     await new Promise((r) => setTimeout(r, 50));
     expect(box('Bit').checked).toBe(true);
     expect(box('Bank transfer').checked).toBe(true);
+  });
+});
+
+describe('R29 the public demo', () => {
+  const visitor: Me = { ...owner, demo: { admin: false, ctaUrl: '/', product: 'Open Ledger IL', ownKey: 'key-mine' } };
+  const view = (over: Record<string, unknown>) => ({ document: doc(over), lines: [], payments: [], meta: null, source: null, links: { outgoing: [], incoming: [] }, events: [] });
+
+  it('a sample document is read-only: one line says why, and no cancel, send or payment buttons show', async () => {
+    routes['GET /api/documents/7'] = () => view({});
+    renderAt('/income/documents/7', visitor);
+    expect(await screen.findByTestId('demo-read-only')).toHaveTextContent('Read-only in the demo. Duplicate it to get a private draft of your own.');
+    expect(screen.getByRole('button', { name: 'Duplicate' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Send by email/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Record payment/ })).toBeNull();
+    expect(screen.queryByRole('heading', { name: /Cancel/ })).toBeNull();
+  });
+
+  it('a visitor\u2019s own draft offers Issue, Send and Record payment as previews', async () => {
+    routes['GET /api/documents/9'] = () => view({ id: 9, status: 'draft', state: 'draft', number: null, display_number: null });
+    renderAt('/income/documents/9', visitor);
+    expect(await screen.findByRole('button', { name: 'Issue (preview)' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Send by email (preview)' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Record payment (preview)' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Finalize' })).toBeNull();
+    expect(screen.queryByTestId('demo-read-only')).toBeNull();
   });
 });

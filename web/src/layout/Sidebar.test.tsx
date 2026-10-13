@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type DemoInfo, DemoProvider } from '../app/demo';
 import { PreferencesProvider } from '../app/preferences';
 import { Sidebar } from './Sidebar';
 
@@ -164,5 +165,44 @@ describe('Sidebar: Create new', () => {
     await waitFor(() => expect(screen.getAllByRole('menuitem')).toHaveLength(7));
     expect(screen.queryByRole('menuitem', { name: /advance approval/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('menuitem', { name: 'Credit Invoice' })).not.toBeInTheDocument();
+  });
+});
+
+/** R29: the demo shows its own product name above New and in the browser tab. A real Ledger does not. */
+describe('Sidebar: app name in the demo', () => {
+  const demo: DemoInfo = { admin: false, ctaUrl: '/', product: 'Example Demo', ownKey: 'key-mine' };
+  const renderWith = (value: DemoInfo | null) =>
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <PreferencesProvider persist={() => undefined}>
+          <DemoProvider value={value}>
+            <Sidebar role="owner" features={['clients']} email="owner@example.com" />
+          </DemoProvider>
+        </PreferencesProvider>
+      </MemoryRouter>,
+    );
+
+  afterEach(() => {
+    document.documentElement.lang = 'en';
+  });
+
+  it('shows the demo product name and sets the tab title, in English and Hebrew', () => {
+    for (const lang of ['en', 'he']) {
+      document.documentElement.lang = lang;
+      document.title = 'Open Ledger IL';
+      const view = renderWith(demo);
+      expect(screen.getAllByRole('link')[0]).toHaveTextContent('Example Demo');
+      expect(screen.queryByText('Open Ledger IL')).toBeNull();
+      expect(document.title).toBe('Example Demo');
+      view.unmount();
+      expect(document.title).toBe('Open Ledger IL');
+    }
+  });
+
+  it('keeps Open Ledger IL and the tab title outside the demo', () => {
+    document.title = 'Open Ledger IL';
+    renderWith(null);
+    expect(screen.getAllByRole('link')[0]).toHaveTextContent('Open Ledger IL');
+    expect(document.title).toBe('Open Ledger IL');
   });
 });

@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { fetchMe } from '../../api/client';
+import { DemoReadOnlyNote, useDemoReadOnly } from '../../app/demo';
 import { usePreferences } from '../../app/preferences';
 import { useT } from '../../i18n';
 import { btnDanger, btnPrimary, btnSecondary, Card, ErrorNote, errorText, input, label, Loading, PageTitle, useLoad } from '../documents/ui';
@@ -186,9 +187,11 @@ export function ContractPage() {
   const [note, setNote] = useState<string | null>(null);
   const [voiding, setVoiding] = useState(false);
   const [reason, setReason] = useState('');
+  // R29: on the demo the sample contracts are read-only. A visitor's own contracts are drafts.
+  const demoReadOnly = useDemoReadOnly(data?.contract);
   if (!data) return error ? <ErrorNote error={error} /> : <Loading />;
   const c = data.contract;
-  const canAct = me.data?.role === 'owner' || me.data?.role === 'assistant';
+  const canAct = (me.data?.role === 'owner' || me.data?.role === 'assistant') && !demoReadOnly;
   const open = c.status === 'sent' || c.status === 'viewed';
   const external = c.origin === 'external';
 
@@ -257,6 +260,7 @@ export function ContractPage() {
         <bdi>{c.title}</bdi> <ContractChip c={c} />
       </PageTitle>
       <ErrorNote error={actionError} />
+      {demoReadOnly && <DemoReadOnlyNote />}
       {note && (
         <p role="status" className="mb-3 text-sm text-muted">
           {note}

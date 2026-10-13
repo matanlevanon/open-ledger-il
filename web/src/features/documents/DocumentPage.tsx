@@ -1,4 +1,4 @@
-import { announceDemoSend } from '../../app/demo';
+import { announceDemoSend, DemoReadOnlyNote, openDemoPdf, previewDemoSend, useDemoLocked } from '../../app/demo';
 import { BackLink, documentParent } from '../../components/BackLink';
 import { type ReactNode, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
@@ -77,6 +77,9 @@ export function DocumentPage() {
   const [sendForm, setSendForm] = useState<{ to: string; cc: string; bcc: string } | null>(null);
   const [consentRequired, setConsentRequired] = useState<{ clientId: number; clientName: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  // R29: on the demo a visitor's own drafts edit, and the sample documents are read-only.
+  const demoLocked = useDemoLocked();
+  const live = issuing && !demoLocked;
 
   if (!data) return <>{error ? <ErrorNote error={error} /> : <Loading />}</>;
   const d = data.document;
@@ -165,6 +168,19 @@ export function DocumentPage() {
     }
   }
 
+  /** R29: a demo preview in place of Issue, Record payment or Send. Nothing is issued or sent. */
+  async function demoPreview(work: () => Promise<void>) {
+    setBusy(true);
+    setActionError(null);
+    try {
+      await work();
+    } catch (e) {
+      setActionError(errorText(e, t));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   function showDraft() {
     pdfApi.showDraft(id, 'client');
     pdfApi.showDraft(id, 'filed');
@@ -219,7 +235,7 @@ export function DocumentPage() {
   // Steps render conditionally (a quote has no Payments step, for example), so number them
   // in sequence as they actually appear rather than with a fixed 1/2/3/4.
   const showPayments = !isDraft && (d.kind === 'demand' || d.kind === 'receipt' || d.kind === 'credit');
-  const showCancel = (issuing && isFinal) || d.status === 'cancelled';
+  const showCancel = (live && isFinal) || d.status === 'cancelled';
   let stepNo = 1;
   const stepCreate = stepNo++;
   const stepSend = !isDraft ? stepNo++ : null;
@@ -255,17 +271,17 @@ export function DocumentPage() {
                 {t('documents.page.duplicate')}
               </button>
             )}
-            {issuing && isFinal && ['demand', 'invoice'].includes(d.kind) && (
+            {live && isFinal && ['demand', 'invoice'].includes(d.kind) && (
               <Link to={`/income/recurring?template=${id}`} className={btnSecondary}>
                 {t('documents.page.makeRecurring')}
               </Link>
             )}
-            {issuing && isFinal && ['QT', 'PR'].includes(d.type) && d.state !== 'converted' && (
+            {live && isFinal && ['QT', 'PR'].includes(d.type) && d.state !== 'converted' && (
               <button type="button" className={btnSecondary} disabled={busy} onClick={() => act(() => docsApi.revise(id))}>
                 {t('documents.page.revise')}
               </button>
             )}
-            {issuing &&
+            {live &&
               isFinal &&
               d.state !== 'converted' &&
               (CONVERT_TO[d.type] ?? []).map((c) => (
@@ -297,15 +313,38 @@ export function DocumentPage() {
       </div>
       <DocTypeExplainer type={d.type} issued={!isDraft} />
       {!issuing && <p className="mb-4 rounded-md bg-surface px-3 py-2 text-sm text-muted">{t('issuing.offNote')}</p>}
+      {demoLocked && !isDraft && <DemoReadOnlyNote text={t('demo.readOnlyDocument')} />}
       <ErrorNote error={actionError} />
 
       <ol className="space-y-4" aria-label={t('documents.page.timelineLabel')}>
         <Step n={stepCreate} title={t('documents.page.stepCreate')}>
           <Summary view={data} />
-          {issuing && isDraft && (
+          {live && isDraft && (
             <button type="button" className={`${btnPrimary} mt-4`} disabled={busy} onClick={() => act(() => docsApi.finalize(id))}>
               {t('documents.page.finalize')}
             </button>
+          )}
+          {issuing && demoLocked && isDraft && (
+            <div className="mt-4 space-y-2">
+              <p role="note" className="text-sm text-muted">
+                {t('demo.previewNote')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className={btnPrimary} disabled={busy} onClick={() => void demoPreview(() => openDemoPdf(`/documents/${id}/issue-preview`))}>
+                  {t('demo.issuePreview')}
+                </button>
+                {d.client_id && (
+                  <button type="button" className={btnSecondary} disabled={busy} onClick={() => void demoPreview(() => previewDemoSend(id))}>
+                    {t('demo.sendPreview')}
+                  </button>
+                )}
+                {['demand', 'invoice'].includes(d.kind) && (
+                  <button type="button" className={btnSecondary} disabled={busy} onClick={() => void demoPreview(() => openDemoPdf(`/documents/${id}/receipt-preview`))}>
+                    {t('demo.receiptPreview')}
+                  </button>
+                )}
+              </div>
+            </div>
           )}
         </Step>
 
@@ -395,24 +434,28 @@ export function DocumentPage() {
                 <button type="button" className={btnSecondary} disabled={busy} onClick={() => void downloadCopy('filed')}>
                   {t('documents.page.downloadFiledCopy')}
                 </button>
-                <button type="button" className={sentEvents.length === 0 ? btnPrimary : btnSecondary} disabled={busy} onClick={() => void openSendForm()}>
-                  {t('documents.page.sendByEmail')}
-                </button>
-                <button
-                  type="button"
-                  className={sentEvents.length === 0 ? `${btn} bg-[#128C4A] text-white hover:opacity-90` : btnSecondary}
-                  disabled={busy}
-                  onClick={() => void whatsappLink()}
-                >
-                  {t('documents.page.getWhatsappLink')}
-                </button>
-                <button type="button" className={btnSecondary} disabled={busy} onClick={() => {
-                    setSendNotice(null);
-                    void act(() => docsApi.sent(id, 'print')).then((ok) => ok && setSendNotice(t('documents.page.markedSentByPrintNotice')));
-                  }}
-                >
-                  {t('documents.page.markSentByPrint')}
-                </button>
+                {!demoLocked && (
+                  <>
+                    <button type="button" className={sentEvents.length === 0 ? btnPrimary : btnSecondary} disabled={busy} onClick={() => void openSendForm()}>
+                      {t('documents.page.sendByEmail')}
+                    </button>
+                    <button
+                      type="button"
+                      className={sentEvents.length === 0 ? `${btn} bg-[#128C4A] text-white hover:opacity-90` : btnSecondary}
+                      disabled={busy}
+                      onClick={() => void whatsappLink()}
+                    >
+                      {t('documents.page.getWhatsappLink')}
+                    </button>
+                    <button type="button" className={btnSecondary} disabled={busy} onClick={() => {
+                        setSendNotice(null);
+                        void act(() => docsApi.sent(id, 'print')).then((ok) => ok && setSendNotice(t('documents.page.markedSentByPrintNotice')));
+                      }}
+                    >
+                      {t('documents.page.markSentByPrint')}
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </Step>
@@ -436,7 +479,7 @@ export function DocumentPage() {
                 ))}
               </ul>
             )}
-            {issuing && isFinal && (d.remaining_minor ?? 0) > 0 && (
+            {live && isFinal && (d.remaining_minor ?? 0) > 0 && (
               <RecordPayment
                 remaining={d.remaining_minor!}
                 currency={d.currency}
@@ -464,11 +507,11 @@ export function DocumentPage() {
                 ))}
               </ul>
             )}
-            {issuing && isFinal && d.kind === 'receipt' && d.state !== 'credited' && <CreditForm busy={busy} currency={d.currency} onSubmit={(body) => act(() => docsApi.credit(id, body), true)} />}
+            {live && isFinal && d.kind === 'receipt' && d.state !== 'credited' && <CreditForm busy={busy} currency={d.currency} onSubmit={(body) => act(() => docsApi.credit(id, body), true)} />}
           </Step>
         )}
 
-        {issuing && isFinal && (
+        {live && isFinal && (
           <Step n={stepCancel!} title={t('documents.page.stepCancel')}>
             <CancelForm busy={busy} onSubmit={(reason) => act(() => docsApi.cancel(id, reason))} />
           </Step>

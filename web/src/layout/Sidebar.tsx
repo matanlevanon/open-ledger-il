@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import type { Role } from '../api/client';
+import { useAppName } from '../app/demo';
 import { type Locale, usePreferences } from '../app/preferences';
 import { CLIENTS_CHANGED, type Client, type DocType, clientsApi, docsApi } from '../features/documents/api';
 import { clientName, newDocumentPath, offeredDocumentTypes } from '../features/documents/format';
@@ -252,6 +253,7 @@ function ClientsNavItem({ onNavigate, email }: ClientsNavItemProps) {
 
 export function Sidebar({ role, features, email, onNavigate, issuing = true }: SidebarProps) {
   const t = useT();
+  const appName = useAppName();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [types, setTypes] = useState<DocType[] | null>(null);
@@ -290,7 +292,7 @@ export function Sidebar({ role, features, email, onNavigate, issuing = true }: S
   return (
     <nav aria-label="Main" className="flex h-full flex-col gap-4 overflow-y-auto border-e border-line bg-canvas p-4">
       <Link to="/" className="px-3 font-heading text-xl text-brand" onClick={onNavigate}>
-        {t('app.name')}
+        {appName}
       </Link>
 
       {role !== 'accountant' && issuing && (

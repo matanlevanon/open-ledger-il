@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BackLink } from '../../components/BackLink';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useT } from '../../i18n';
+import { DemoReadOnlyNote, useDemoReadOnly } from '../../app/demo';
 import {
   type Category,
   type Expense,
@@ -50,6 +51,8 @@ export function ExpenseReviewPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [returnReason, setReturnReason] = useState('');
+  // R29: on the demo the sample expenses are read-only. A visitor's own uploads review as usual.
+  const readOnly = useDemoReadOnly(expense ? { demo_session_id: expense.demo_session_id ?? null } : null);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -132,6 +135,11 @@ export function ExpenseReviewPage() {
         {t('expenses.review.title')}
       </h1>
       {error && <p className="mt-4 text-sm text-danger">{error}</p>}
+      {readOnly && (
+        <div className="mt-4">
+          <DemoReadOnlyNote />
+        </div>
+      )}
 
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="rounded-card border border-line bg-surface p-2 shadow-card">
@@ -235,13 +243,13 @@ export function ExpenseReviewPage() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-2">
-            <button type="button" disabled={saving} onClick={() => decide('filed')} className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90 disabled:opacity-50">
+            <button type="button" disabled={saving || readOnly} onClick={() => decide('filed')} className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90 disabled:opacity-50">
               {t('expenses.review.fileButton')}
             </button>
-            <button type="button" disabled={saving} onClick={() => decide('not_expense')} className="rounded-full border border-line px-4 py-2 text-sm text-ink hover:bg-canvas disabled:opacity-50">
+            <button type="button" disabled={saving || readOnly} onClick={() => decide('not_expense')} className="rounded-full border border-line px-4 py-2 text-sm text-ink hover:bg-canvas disabled:opacity-50">
               {t('expenses.review.notExpenseButton')}
             </button>
-            <button type="button" disabled={saving} onClick={() => decide('duplicate')} className="rounded-full border border-line px-4 py-2 text-sm text-ink hover:bg-canvas disabled:opacity-50">
+            <button type="button" disabled={saving || readOnly} onClick={() => decide('duplicate')} className="rounded-full border border-line px-4 py-2 text-sm text-ink hover:bg-canvas disabled:opacity-50">
               {t('expenses.review.markDuplicateButton')}
             </button>
           </div>
@@ -253,7 +261,7 @@ export function ExpenseReviewPage() {
               value={returnReason}
               onChange={(e) => setReturnReason(e.target.value)}
             />
-            <button type="button" disabled={saving} onClick={() => decide('returned')} className="rounded-full border border-brand px-4 py-2 text-sm text-brand hover:bg-band disabled:opacity-50">
+            <button type="button" disabled={saving || readOnly} onClick={() => decide('returned')} className="rounded-full border border-brand px-4 py-2 text-sm text-brand hover:bg-band disabled:opacity-50">
               {t('expenses.review.returnButton')}
             </button>
           </div>
