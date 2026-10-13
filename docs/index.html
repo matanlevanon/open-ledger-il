@@ -204,7 +204,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 <main id="top">
   <div class="wrap">
     <div class="hero">
-      <div class="badge"><b>Free</b> · Open source (AGPL-3.0) · Self-hosted</div>
+      <div class="badge"><b>Free</b> · Open source (AGPL-3.0) · Self-hosted · Registered with the Israel Tax Authority</div>
       <h1>Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.</h1>
       <p class="lead">Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.</p>
       <div class="cta cta-demo">
@@ -270,6 +270,21 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
           <div class="ico" aria-hidden="true">↻</div>
           <h3>Recurring and duplicate</h3>
           <p>Copy any document in one click. Schedule a retainer with payment terms. Copies issue and email themselves, or wait on an approvals page with a Slack notice.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">§</div>
+          <h3>Contracts you sign in the Ledger</h3>
+          <p>A Service Agreement and a Work Order with your own fields. The client fills in, draws a signature and confirms with an email code. The signed PDF carries the evidence page and a certified digital signature.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">⎘</div>
+          <h3>Work orders that become invoices</h3>
+          <p>Number work orders on their own series, include the Service Agreement on a first job, and turn a signed work order into a pro forma with the work order number in the notes.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">▣</div>
+          <h3>Business documents in one place</h3>
+          <p>VAT and company certificates, bookkeeping and withholding confirmations. Claude reads the dates, and the dashboard warns before one expires.</p>
         </div>
         <div class="feat">
           <div class="ico" aria-hidden="true">✉</div>
@@ -389,6 +404,27 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
             <li>Create a receipt straight from the overdue card</li>
             <li>Cash flow, income by month and top clients</li>
             <li>Sortable tables, newest first by default</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Contracts and work orders</h3>
+          <ul>
+            <li>Contract and work order templates with fields you define, in English and Hebrew</li>
+            <li>Service Agreement included in the first work order, signed once</li>
+            <li>Client signs on the phone or the computer: fill in, draw, confirm with an email code</li>
+            <li>Signed PDF with an evidence page and a certified PAdES signature</li>
+            <li>Work order numbers on their own series, filled in for you</li>
+            <li>Signing reminders, and contracts signed elsewhere uploaded to the client record</li>
+            <li>Turn a signed work order into a pro forma</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Business documents</h3>
+          <ul>
+            <li>VAT and company certificates, bookkeeping and withholding confirmations</li>
+            <li>Claude reads the type, names and dates</li>
+            <li>Expiry warnings on the dashboard</li>
+            <li>Your assistant and accountant open the same list</li>
           </ul>
         </div>
         <div class="fgroup">
@@ -686,7 +722,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
       <div class="note"><b>When to move to Workers Paid.</b> The ledger uses 5 scheduled jobs, the most Workers Free allows. Free has three other limits worth knowing:<ul><li>Cron CPU: 10 ms per scheduled run on Free. Most jobs fit. The monthly accountant pack and the quarterly backup build files and are the ones likely to need Paid.</li><li>Browser Rendering, which draws every PDF: 10 minutes a day on Free, 10 hours a month on Paid.</li><li>D1 point-in-time recovery: 7 days on Free, 30 days on Paid. For legal books, 30 days is the one to have.</li></ul></div>
       <div class="reg" id="registration">
         <h3>Do you need to register the software with the Tax Authority?</h3>
-        <p>The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. <sup><a href="#ref-1">[1]</a></sup></p><p>You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.</p><p>Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings &gt; Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.</p><p>To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.</p>
+        <p>Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate covers version 1.1.0. Newer versions are added to it as they ship. <sup><a href="#ref-2">[2]</a></sup></p><p>The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. <sup><a href="#ref-1">[1]</a></sup></p><p>You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.</p><p>Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings &gt; Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.</p><p>To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.</p>
         <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">The ITA software registration page (Hebrew)</a></p>
         <div class="refs"><b>References</b><ol><li id="ref-1">Israel Tax Authority, &quot;Application to register software for a computerized accounting system&quot;, service page, updated 29.05.2025. Who must register: <q lang="he" dir="rtl">יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)</q> <a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">gov.il</a></li><li id="ref-2">Israel Tax Authority, registry of registered accounting software. <a href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">gov.il</a></li><li id="ref-3">Legal framework: Income Tax (Bookkeeping) Instructions, 1973, the computerized-system rules under instruction 36.</li></ol></div>
       </div>

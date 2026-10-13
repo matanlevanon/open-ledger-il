@@ -30,7 +30,7 @@ EN = dict(
     title='Open Ledger IL - invoices and books for an Israeli business, on your own Cloudflare',
     desc='Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.',
     nav=['Features', 'Feature list', 'On your phone', 'How it works', 'Screenshots', 'Setup'], github='View on GitHub',
-    badge='<b>Free</b> · Open source (AGPL-3.0) · Self-hosted',
+    badge='<b>Free</b> · Open source (AGPL-3.0) · Self-hosted · Registered with the Israel Tax Authority',
     h1='Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.',
     lead='Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.',
     cta=['Get the code', 'Read the deploy guide'], copy='Copy', copied='Copied',
@@ -55,6 +55,9 @@ EN = dict(
         ('₪', 'Foreign currency done right', 'Bank of Israel rates, cached daily. A receipt takes the rate of the document it pays, or a rate you type. Imported documents keep their printed rate.'),
         ('⇄', 'Client ledgers that add up', 'A payment request is charged once and closed by the receipt that pays it. Open balances, aging and an overdue list on the dashboard.'),
         ('↻', 'Recurring and duplicate', 'Copy any document in one click. Schedule a retainer with payment terms. Copies issue and email themselves, or wait on an approvals page with a Slack notice.'),
+        ('§', 'Contracts you sign in the Ledger', 'A Service Agreement and a Work Order with your own fields. The client fills in, draws a signature and confirms with an email code. The signed PDF carries the evidence page and a certified digital signature.'),
+        ('⎘', 'Work orders that become invoices', 'Number work orders on their own series, include the Service Agreement on a first job, and turn a signed work order into a pro forma with the work order number in the notes.'),
+        ('▣', 'Business documents in one place', 'VAT and company certificates, bookkeeping and withholding confirmations. Claude reads the dates, and the dashboard warns before one expires.'),
         ('✉', 'Send with consent', 'Email with CC and BCC, or a short WhatsApp link with a preview. Consent is recorded per client, and payment reminders go out before and after the due date.'),
         ('◔', 'פטור ceiling meter', 'Turnover against the annual ceiling, alerts at 70, 85, 95 and 100 percent, and a guided switch to עוסק מורשה.'),
         ('⤓', 'Expenses from Drive', 'Upload a receipt or import a month from Google Drive. Claude reads each document, you review and file it.'),
@@ -116,6 +119,21 @@ EN = dict(
             'Create a receipt straight from the overdue card',
             'Cash flow, income by month and top clients',
             'Sortable tables, newest first by default',
+        ]),
+        ('Contracts and work orders', [
+            'Contract and work order templates with fields you define, in English and Hebrew',
+            'Service Agreement included in the first work order, signed once',
+            'Client signs on the phone or the computer: fill in, draw, confirm with an email code',
+            'Signed PDF with an evidence page and a certified PAdES signature',
+            'Work order numbers on their own series, filled in for you',
+            'Signing reminders, and contracts signed elsewhere uploaded to the client record',
+            'Turn a signed work order into a pro forma',
+        ]),
+        ('Business documents', [
+            'VAT and company certificates, bookkeeping and withholding confirmations',
+            'Claude reads the type, names and dates',
+            'Expiry warnings on the dashboard',
+            'Your assistant and accountant open the same list',
         ]),
         ('Expenses and import', [
             'Upload a receipt or snap a photo, Claude reads supplier, date and amount',
@@ -195,6 +213,7 @@ EN = dict(
     ],
     reg_title='Do you need to register the software with the Tax Authority?',
     reg_p=[
+        'Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate covers version 1.1.0. Newer versions are added to it as they ship.',
         'The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included.',
         'You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients\u2019 books, and you register first.',
         'Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings > Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.',
@@ -228,7 +247,7 @@ HE = dict(
     title='Open Ledger IL - חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, בענן Cloudflare שלך',
     desc='מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.',
     nav=['יכולות', 'רשימת יכולות', 'בטלפון', 'איך זה עובד', 'צילומי מסך', 'הקמה'], github='לקוד ב-GitHub',
-    badge='<b>חינם</b> · קוד פתוח (AGPL-3.0) · מאוחסן אצלך',
+    badge='<b>חינם</b> · קוד פתוח (AGPL-3.0) · מאוחסן אצלך · רשומה ברשות המסים',
     h1='חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.',
     lead='הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.',
     cta=['לקוד', 'למדריך ההתקנה'], copy='העתקה', copied='הועתק',
@@ -253,6 +272,9 @@ HE = dict(
         ('₪', 'מטבע חוץ כמו שצריך', 'שערי בנק ישראל, נשמרים מדי יום. קבלה מקבלת את השער של המסמך שהיא משלמת, או שער שתקליד. מסמכים מיובאים שומרים את השער המודפס עליהם.'),
         ('⇄', 'כרטסת לקוח שמסתדרת', 'דרישת תשלום נרשמת פעם אחת ונסגרת בקבלה שמשלמת אותה. יתרות פתוחות, גיול ורשימת איחורים בלוח הבקרה.'),
         ('↻', 'מסמכים חוזרים ושכפול', 'שכפול כל מסמך בלחיצה. ריטיינר מתוזמן עם תנאי תשלום. העותקים מופקים ונשלחים לבד, או ממתינים בעמוד אישורים עם הודעת Slack.'),
+        ('§', 'חוזים שנחתמים במערכת', 'הסכם שירותים והזמנת עבודה עם שדות משלך. הלקוח ממלא, חותם בציור ומאשר בקוד שנשלח למייל. ה-PDF החתום כולל דף ראיות וחתימה דיגיטלית מאושרת.'),
+        ('⎘', 'הזמנות עבודה שהופכות לחשבון', 'מספור נפרד להזמנות עבודה, צירוף הסכם השירותים בעבודה הראשונה, והפיכת הזמנה חתומה לחשבון עסקה עם מספר ההזמנה בהערות.'),
+        ('▣', 'מסמכי העסק במקום אחד', 'תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור. Claude קורא את התאריכים, ולוח הבקרה מתריע לפני שמסמך פג תוקף.'),
         ('✉', 'שליחה בהסכמה', 'מייל עם CC ו-BCC, או קישור וואטסאפ מקוצר עם תצוגה מקדימה. ההסכמה נשמרת לכל לקוח, ותזכורות תשלום יוצאות לפני מועד התשלום ואחריו.'),
         ('◔', 'מד תקרת עוסק פטור', 'המחזור מול התקרה השנתית, התראות ב-70, 85, 95 ו-100 אחוז, ומעבר מודרך לעוסק מורשה.'),
         ('⤓', 'הוצאות מ-Drive', 'העלאת קבלה או ייבוא חודש שלם מ-Google Drive. Claude קורא כל מסמך, ואתה בודק ומתייק.'),
@@ -314,6 +336,21 @@ HE = dict(
             'הפקת קבלה ישירות מכרטיס האיחורים',
             'תזרים, הכנסות לפי חודש ולקוחות מובילים',
             'טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל',
+        ]),
+        ('חוזים והזמנות עבודה', [
+            'תבניות חוזה והזמנת עבודה עם שדות משלך, בעברית ובאנגלית',
+            'הסכם השירותים מצורף להזמנת העבודה הראשונה, חתימה אחת',
+            'הלקוח חותם בטלפון או במחשב: ממלא, חותם בציור ומאשר בקוד במייל',
+            'PDF חתום עם דף ראיות וחתימת PAdES מאושרת',
+            'מספרי הזמנות עבודה בסדרה משלהם, ממולאים אוטומטית',
+            'תזכורות חתימה, והעלאת חוזים שנחתמו מחוץ למערכת לכרטיס הלקוח',
+            'הפיכת הזמנת עבודה חתומה לחשבון עסקה',
+        ]),
+        ('מסמכי העסק', [
+            'תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור',
+            'Claude קורא את הסוג, השמות והתאריכים',
+            'התראה בלוח הבקרה לפני שמסמך פג תוקף',
+            'העוזר ורואה החשבון רואים את אותה רשימה',
         ]),
         ('הוצאות וייבוא', [
             'העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום',
@@ -393,6 +430,7 @@ HE = dict(
     ],
     reg_title='צריך לרשום את התוכנה ברשות המסים?',
     reg_p=[
+        'חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה חלה על מהדורה 1.1.0. מהדורות חדשות נוספות אליה עם השקתן.',
         'רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם.',
         'אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.',
         'מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות > הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.',
@@ -759,8 +797,10 @@ def page(c):
             <p>{e(p)}</p>
           </figcaption>
         </figure>''' for img, alt, h, p in c['phones'])
-    # The first paragraph states the ITA rule, so it points at reference 1, the service page it quotes.
-    reg = ''.join(f'<p>{e(x)}' + (' <sup><a href="#ref-1">[1]</a></sup>' if i == 0 else '') + '</p>' for i, x in enumerate(c['reg_p']))
+    # The first paragraph states the registration, so it points at reference 2, the registry. The second
+    # states the ITA rule and points at reference 1, the service page it quotes.
+    refs = {0: ' <sup><a href="#ref-2">[2]</a></sup>', 1: ' <sup><a href="#ref-1">[1]</a></sup>'}
+    reg = ''.join(f'<p>{e(x)}' + refs.get(i, '') + '</p>' for i, x in enumerate(c['reg_p']))
     def ref(i, t, url, label):
         q = f' <q lang="he" dir="rtl">{e(c["reg_quote"])}</q>' if i == 0 else ''
         a = f' <a href="{url}" rel="noopener">{label}</a>' if url else ''
