@@ -12,6 +12,7 @@ import type { ModuleDef } from '../../core/module';
 import type { AppEnv } from '../../env';
 import { type OpenDemand, openDemands } from '../documents/balances';
 import { ACTIVITY_DEFAULT_LIMIT, recentActivity } from './activity';
+import { shareDue, whatsappDue } from './whatsapp-due';
 import {
   type EntityType,
   getEntityType,
@@ -402,10 +403,20 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
     const businessId = businessIdOf(c);
     // R25: unsigned contracts are not the accountant's to see.
     const scoped = (d: DashboardData): DashboardData => (c.get('user').role === 'accountant' ? { ...d, contracts: { unsigned: [], expiring: [] } } : d);
-    if (request.cards) return c.json(scoped(await buildDashboard(c.env.DB, today(), businessId, request)));
+    // R28: reminders due on WhatsApp today, for the owner and the assistant who share them.
+    const role = c.get('user').role;
+    const due = role === 'owner' || role === 'assistant' ? await whatsappDue(c.env.DB, businessId, today()) : [];
+    if (request.cards) return c.json({ ...scoped(await buildDashboard(c.env.DB, today(), businessId, request)), whatsappDue: due });
     const layout = await getDashboardLayout(c.env.DB, businessId);
     const cards = layout.filter((e) => e.visible).map((e) => e.id);
-    return c.json({ ...scoped(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards })), layout });
+    return c.json({ ...scoped(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards })), whatsappDue: due, layout });
+  });
+  // R28: Share on WhatsApp for a due reminder. Returns the prefilled message link and logs it shared.
+  routes.post('/reminders/:id/share', requireRole('owner', 'assistant'), async (c) => {
+    const id = Number(c.req.param('id'));
+    if (!Number.isInteger(id) || id <= 0) throw new ValidationError('Not a valid id.');
+    const baseUrl = c.env.PUBLIC_APP_URL || new URL(c.req.url).origin;
+    return c.json(await shareDue(c.env, actorFrom(c), businessIdOf(c), id, today(), baseUrl));
   });
   // Phone Quick page: the latest documents and expenses, newest first.
   routes.get('/activity', requireFeatureOrAssistant('reports'), async (c) => {

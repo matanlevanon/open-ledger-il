@@ -18,8 +18,8 @@ import type { Mailer } from '../sending/mailer';
 import { signSendToken, verifySendToken } from '../sending/tokens';
 import { signPdf } from '../signing';
 import { placeFields } from './fields-pdf';
-import { type EvidenceEvent, FIELD_LINK_PREFIX, type FieldBox, isMoney, isScope, renderContract, valueText } from './render';
-import { getTemplate, templateVersion } from './templates';
+import { deviceOf, type EvidenceEvent, FIELD_LINK_PREFIX, type FieldBox, formatMoney, isMoney, isScope, renderContract, valueText } from './render';
+import { getLedgerTemplate, getTemplate, templateVersion } from './templates';
 import {
   CODE_MAX_TRIES,
   CODE_COOLDOWN_MS,
@@ -119,7 +119,7 @@ export const combinedName = (main: string, included: string | null | undefined) 
 async function includedTemplateFor(db: D1Database, businessId: number, mainKind: string, includeTemplateId: number | null | undefined) {
   if (!includeTemplateId) return null;
   if (mainKind !== 'work_order') throw new ValidationError('Only a work order includes the Standard Terms.');
-  const t = await getTemplate(db, businessId, includeTemplateId);
+  const t = await getLedgerTemplate(db, businessId, includeTemplateId);
   if (t.kind !== 'contract') throw new ValidationError('Pick a contract template to include, like the Standard Terms.');
   if (t.active !== 1) throw new ValidationError('The included template is turned off.');
   return t;
@@ -186,6 +186,8 @@ export function eventLabel(e: Pick<ContractEventRow, 'kind' | 'actor_email' | 'd
       return d.reason ? `Voided: ${d.reason}` : 'Voided';
     case 'proforma_created':
       return 'Draft pro forma created';
+    case 'uploaded':
+      return `Signed contract filed by ${e.actor_email ?? 'the Ledger'} · hash ${(d.sha256 ?? '').slice(0, 4)}…`;
     default:
       return e.kind;
   }
@@ -220,6 +222,8 @@ export interface ContractSummary {
   signedAt: string | null;
   expiresAt: string | null;
   signerEmail: string | null;
+  /** R28: 'external' for a contract signed outside the Ledger. */
+  origin: ContractRow['origin'];
 }
 
 export async function listClientContracts(db: D1Database, businessId: number, clientId: number, role: Role): Promise<ContractSummary[]> {
@@ -243,6 +247,7 @@ export async function listClientContracts(db: D1Database, businessId: number, cl
     signedAt: r.signed_at,
     expiresAt: r.expires_at,
     signerEmail: r.signer_email,
+    origin: r.origin,
   }));
 }
 
@@ -266,6 +271,92 @@ export interface ContractDetail extends ContractSummary {
   identityMethod: ContractRow['identity_method'];
   linkedDocumentId: number | null;
   events: EventView[];
+  overview: ContractOverview;
+  /** R28: what the owner entered for a contract signed outside the Ledger. Null for a Ledger contract. */
+  external: ExternalRecord | null;
+}
+
+/** The details of a contract signed elsewhere, as entered at upload. */
+export interface ExternalRecord {
+  signerName: string | null;
+  signerRole: string | null;
+  signerEmail: string | null;
+  signedDate: string;
+  startDate: string | null;
+  endDate: string | null;
+  fee: string | null;
+  notes: string | null;
+}
+
+function externalRecord(row: ContractRow, values: FieldValues): ExternalRecord | null {
+  if (row.origin !== 'external') return null;
+  const text = (v: unknown) => (typeof v === 'string' && v.trim() ? v : null);
+  return {
+    signerName: row.signer_name,
+    signerRole: text(values.signer_role),
+    signerEmail: row.signer_email,
+    signedDate: (row.signed_at ?? '').slice(0, 10),
+    startDate: text(values.start_date),
+    endDate: text(values.end_date),
+    fee: isMoney(values.fee) ? formatMoney(values.fee) : null,
+    notes: text(values.notes),
+  };
+}
+
+/** The record at a glance, without opening the PDF: services, key terms, who signed and when. */
+export interface ContractOverview {
+  services: { name: string; model: string; items: string[]; other: string | null; note: string | null; fee: string | null }[];
+  terms: { key: string; label: string; value: string }[];
+  signedBy: { name: string; role: string; at: string; ip: string | null; device: string; identity: ContractRow['identity_method'] } | null;
+  ownerSignedAt: string | null;
+}
+
+/**
+ * Key terms are the values you filled for this contract's main template: dates, money, choices,
+ * numbers and short text. Long text, client and business details and signer fields are left out,
+ * since the client name and the parties already head the page.
+ */
+function buildOverview(mainFields: FieldDef[], values: FieldValues, signerValues: Record<string, string> | null, events: EventView[], row: ContractRow): ContractOverview {
+  const services: ContractOverview['services'] = [];
+  const terms: ContractOverview['terms'] = [];
+  for (const f of mainFields) {
+    const v = values[f.key];
+    if (isScope(v)) {
+      for (const sv of v.services) {
+        services.push({
+          name: sv.nameEn || sv.nameHe,
+          model: sv.modelEn || sv.modelHe,
+          items: sv.items.map((i) => i.labelEn || i.labelHe).filter(Boolean),
+          other: sv.other ?? null,
+          note: sv.note ?? null,
+          fee: sv.fee ? formatMoney(sv.fee) : null,
+        });
+      }
+      continue;
+    }
+    if (f.kind !== 'owner_input' && f.kind !== 'choice') continue;
+    if (f.inputType === 'multiline') continue;
+    const text = valueText(f, v, 'en').trim();
+    if (!text) continue;
+    terms.push({ key: f.key, label: f.labelEn || f.labelHe || f.key, value: text });
+  }
+  const signed = [...events].reverse().find((e) => e.kind === 'signed') ?? null;
+  const roleField = mainFields.find((f) => f.kind === 'signer_input' && f.inputType === 'role');
+  return {
+    services,
+    terms,
+    signedBy: signed
+      ? {
+          name: String(signed.details?.name ?? row.signer_name ?? ''),
+          role: String(signed.details?.role ?? (roleField && signerValues ? signerValues[roleField.key] ?? '' : '')),
+          at: signed.at,
+          ip: signed.ip,
+          device: deviceOf(signed.userAgent),
+          identity: row.identity_method,
+        }
+      : null,
+    ownerSignedAt: row.owner_signed_at ?? null,
+  };
 }
 
 export async function contractDetail(db: D1Database, businessId: number, id: number, role: Role): Promise<ContractDetail> {
@@ -274,6 +365,10 @@ export async function contractDetail(db: D1Database, businessId: number, id: num
   const parts = await rowParts(db, row);
   const includedTemplate = row.included_template_id ? await getTemplate(db, businessId, row.included_template_id) : null;
   const client = await getClient(db, row.client_id, businessId);
+  const events = await contractEvents(db, row.id);
+  const mainVersion = await templateVersion(db, businessId, row.template_id, row.template_version);
+  const values = JSON.parse(row.field_values_json) as FieldValues;
+  const signerValues = row.signer_values_json ? (JSON.parse(row.signer_values_json) as Record<string, string>) : null;
   return {
     id: row.id,
     title: row.title,
@@ -291,8 +386,8 @@ export async function contractDetail(db: D1Database, businessId: number, id: num
     templateVersion: row.template_version,
     includedTemplate: includedTemplate ? { id: includedTemplate.id, name: includedTemplate.name, version: row.included_template_version ?? includedTemplate.current_version } : null,
     language: row.language,
-    values: JSON.parse(row.field_values_json) as FieldValues,
-    signerValues: row.signer_values_json ? (JSON.parse(row.signer_values_json) as Record<string, string>) : null,
+    values,
+    signerValues,
     fields: parts.fields,
     signer: { name: row.signer_name, email: row.signer_email, phone: row.signer_phone },
     linkDays: row.link_days,
@@ -302,7 +397,10 @@ export async function contractDetail(db: D1Database, businessId: number, id: num
     signedSha256: row.signed_pdf_sha256,
     identityMethod: row.identity_method,
     linkedDocumentId: row.linked_document_id,
-    events: await contractEvents(db, row.id),
+    events,
+    overview: buildOverview(JSON.parse(mainVersion.fields_json) as FieldDef[], values, signerValues, events, row),
+    origin: row.origin,
+    external: externalRecord(row, values),
   };
 }
 
@@ -349,7 +447,7 @@ export async function newContractDefaults(
   includeTemplateId?: number | null,
 ) {
   const client = await getClient(db, clientId, businessId);
-  const main = await getTemplate(db, businessId, templateId);
+  const main = await getLedgerTemplate(db, businessId, templateId);
   await includedTemplateFor(db, businessId, main.kind, includeTemplateId);
   const { version, included, fields } = await contractParts(db, businessId, { templateId, includedId: includeTemplateId });
   return {
@@ -372,7 +470,7 @@ async function draftValues(db: D1Database, env: Pick<Env, 'OWNER_TAX_ID'>, busin
 export async function createContractDraft(db: D1Database, env: Pick<Env, 'OWNER_TAX_ID'>, actor: AuditActor, input: ContractInput): Promise<number> {
   const businessId = actorBiz(actor);
   const client = await getClient(db, input.clientId, businessId);
-  const template = await getTemplate(db, businessId, input.templateId);
+  const template = await getLedgerTemplate(db, businessId, input.templateId);
   if (template.active !== 1) throw new ValidationError('This template is turned off.');
   await includedTemplateFor(db, businessId, template.kind, input.includeTemplateId);
   const { version, included, fields } = await contractParts(db, businessId, { templateId: template.id, includedId: input.includeTemplateId });
@@ -415,7 +513,7 @@ export async function updateContractDraft(db: D1Database, env: Pick<Env, 'OWNER_
   if (row.status !== 'draft') throw new ConflictError('contract_fixed', 'Only a draft can change. Void it and make a new one.');
   if (input.clientId !== row.client_id) throw new ValidationError('A contract keeps its client.');
   const client = await getClient(db, row.client_id, businessId);
-  const template = await getTemplate(db, businessId, input.templateId);
+  const template = await getLedgerTemplate(db, businessId, input.templateId);
   if (template.kind !== row.kind) throw new ValidationError('Pick a template of the same kind, or make a new contract.');
   await includedTemplateFor(db, businessId, template.kind, input.includeTemplateId);
   const { version, included, fields } = await contractParts(db, businessId, { templateId: template.id, includedId: input.includeTemplateId });
@@ -471,7 +569,7 @@ export async function ownerSignatureImage(env: Env, businessId: number): Promise
 export async function previewHtml(env: Env, actor: AuditActor, input: ContractInput): Promise<string> {
   const businessId = actorBiz(actor);
   const client = await getClient(env.DB, input.clientId, businessId);
-  const main = await getTemplate(env.DB, businessId, input.templateId);
+  const main = await getLedgerTemplate(env.DB, businessId, input.templateId);
   await includedTemplateFor(env.DB, businessId, main.kind, input.includeTemplateId);
   const { version, included, fields } = await contractParts(env.DB, businessId, { templateId: input.templateId, includedId: input.includeTemplateId });
   const values = await draftValues(env.DB, env, businessId, client, fields, input.values);
@@ -671,10 +769,13 @@ export async function remindContract(deps: ContractDeps, actor: AuditActor, id: 
   return { url, whatsappUrl: whatsappUrl(row.signer_phone, `${sender} sent you ${row.title} to sign: ${url}`), expiresAt: row.expires_at, emailed, sha256: row.sent_pdf_sha256 ?? '' };
 }
 
-/** Void keeps the row and its history. Only an unsigned contract can be voided. */
+/**
+ * Void keeps the row and its history. Only an unsigned contract can be voided, or a contract filed
+ * from outside the Ledger (R28), which stays on record with its PDF.
+ */
 export async function voidContract(db: D1Database, actor: AuditActor, id: number, reason: string | null): Promise<void> {
   const row = await getContract(db, actorBiz(actor), id);
-  if (row.status === 'signed') throw new ConflictError('contract_fixed', 'A signed contract is never voided.');
+  if (row.status === 'signed' && row.origin !== 'external') throw new ConflictError('contract_fixed', 'A signed contract is never voided.');
   if (row.status === 'void') return;
   const at = nowIso();
   await transaction(db, [
@@ -1053,6 +1154,7 @@ export async function createProformaFromContract(docCtx: DocumentsCtx, actor: Au
   const businessId = actorBiz(actor);
   const row = await getContract(db, businessId, id);
   if (row.kind !== 'work_order') throw new ValidationError('A pro forma comes from a work order.');
+  if (row.origin === 'external') throw new ValidationError('A contract signed elsewhere has no fields to fill a pro forma. Make the pro forma in the editor.');
   if (row.status !== 'signed') throw new ValidationError('Wait until the work order is signed.');
   if (row.linked_document_id) return row.linked_document_id;
   const version = await templateVersion(db, businessId, row.template_id, row.template_version);
@@ -1083,7 +1185,16 @@ export async function createProformaFromContract(docCtx: DocumentsCtx, actor: Au
   if (!currency && typeof currencyValue === 'string' && isCurrency(currencyValue)) currency = currencyValue;
   const start = fields.find((f) => f.mapsTo === 'start_date');
   const startText = start ? valueText(start, values[start.key], 'en') : '';
-  const notes = [`Work order: ${row.title}.`, startText ? `Start date: ${startText}.` : '', descriptionText && lines.every((l) => l.description !== descriptionText) ? descriptionText : '']
+  // The work order number, when the template has one: the work_order_number key, or a text field labelled as a number.
+  const numberField =
+    fields.find((f) => f.key === 'work_order_number') ??
+    fields.find((f) => f.kind === 'owner_input' && f.inputType === 'text' && /\b(number|no\.?)$/i.test(f.labelEn ?? ''));
+  const numberValue = numberField ? values[numberField.key] : null;
+  const numberText = typeof numberValue === 'string' ? numberValue.trim() : '';
+  // The default title is "<template name>, <client>". Drop a leading template name so the note does not say "Work order" twice.
+  const lead = `${version.name}, `;
+  const titleText = row.title.startsWith(lead) ? row.title.slice(lead.length) : row.title;
+  const notes = [numberText ? `Work order ${numberText}, ${titleText}.` : `Work order: ${titleText}.`, startText ? `Start date: ${startText}.` : '', descriptionText && lines.every((l) => l.description !== descriptionText) ? descriptionText : '']
     .filter(Boolean)
     .join('\n');
 

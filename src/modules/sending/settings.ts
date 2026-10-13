@@ -94,3 +94,29 @@ export async function setPaymentLinkSettings(db: D1Database, businessId: number,
   if (input.stripe !== undefined) await setSetting(db, businessId, 'sending.stripe_payment_link', input.stripe ?? '');
   if (input.paypal !== undefined) await setSetting(db, businessId, 'sending.paypal_payment_link', input.paypal ?? '');
 }
+
+/** R28: automatic contract signing reminders. On by default, after 3 and 7 days, and 2 days before the link ends. */
+export interface ContractReminderSettings {
+  enabled: boolean;
+  /** Days after sending without a signature, e.g. [3, 7]. */
+  afterDays: number[];
+  /** One reminder 2 days before the signing link ends. */
+  beforeEnd: boolean;
+}
+
+const DEFAULT_CONTRACT_AFTER_DAYS = [3, 7];
+
+export async function contractReminderSettings(db: D1Database, businessId: number): Promise<ContractReminderSettings> {
+  const [enabled, after, beforeEnd] = await Promise.all([
+    setting(db, businessId, 'contracts.reminders_enabled'),
+    setting(db, businessId, 'contracts.reminder_after_days'),
+    setting(db, businessId, 'contracts.reminder_before_end'),
+  ]);
+  return { enabled: enabled !== 'false', afterDays: parseDayList(after, DEFAULT_CONTRACT_AFTER_DAYS), beforeEnd: beforeEnd !== 'false' };
+}
+
+export async function setContractReminderSettings(db: D1Database, businessId: number, input: Partial<ContractReminderSettings>): Promise<void> {
+  if (input.enabled !== undefined) await setSetting(db, businessId, 'contracts.reminders_enabled', input.enabled ? 'true' : 'false');
+  if (input.afterDays !== undefined) await setSetting(db, businessId, 'contracts.reminder_after_days', input.afterDays.join(','));
+  if (input.beforeEnd !== undefined) await setSetting(db, businessId, 'contracts.reminder_before_end', input.beforeEnd ? 'true' : 'false');
+}

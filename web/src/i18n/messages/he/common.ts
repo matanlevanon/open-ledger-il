@@ -97,4 +97,5 @@ export const common: Record<keyof typeof en, string> = {
   'businessType.osek_patur': 'עוסק פטור',
   'businessType.osek_murshe': 'עוסק מורשה',
   'businessType.company': 'חברה בע"מ',
+  'common.back': 'חזרה',
 };

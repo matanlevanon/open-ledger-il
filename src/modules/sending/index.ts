@@ -24,7 +24,14 @@ export function createSendingModule(resolveMailer: (env: Env) => Mailer = defaul
     crons: [REMINDERS_CRON],
     async scheduled(controller, env) {
       if (controller.cron !== REMINDERS_CRON) return;
-      await runRemindersCron(env, resolveMailer(env), todayIsrael());
+      // R28: with email off the run still logs WhatsApp reminders due for the dashboard.
+      let mailer: Mailer | null = null;
+      try {
+        mailer = resolveMailer(env);
+      } catch {
+        mailer = null;
+      }
+      await runRemindersCron(env, mailer, todayIsrael());
     },
   };
 }

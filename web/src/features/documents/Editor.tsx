@@ -1,4 +1,5 @@
-import { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
+import { BackLink, documentParent } from '../../components/BackLink';
 import { fetchBrands } from '../../api/businesses';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ApiError } from '../../api/client';
@@ -270,15 +271,45 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state?.clientId, clients.data, business.data]);
 
+  // R28 task 11: true once the owner ticks or unticks a payment method on this document.
+  const methodsTouched = useRef(false);
+  // The client the defaults were last applied for, and whether the ticks came from them.
+  const methodsClient = useRef<number | null | undefined>(undefined);
+  const methodsFromDefaults = useRef(false);
+
   // Same prefill rule for the payment methods multi-select (R17 task 2).
   useEffect(() => {
-    if (editing || !state || state.paymentMethodIds.length > 0) return;
+    if (editing || !state || state.paymentMethodIds.length > 0 || methodsTouched.current) return;
     const c = state.clientId ? clients.data?.clients.find((x) => x.id === state.clientId) : null;
     const parse = (raw: string | null | undefined): number[] => (raw ? (JSON.parse(raw) as number[]) : []);
     const fallback = parse(c?.payment_method_ids).length > 0 ? parse(c?.payment_method_ids) : parse(business.data?.business.payment_method_ids);
     if (fallback.length > 0) setState((s) => (s ? { ...s, paymentMethodIds: fallback } : s));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state?.clientId, clients.data, business.data]);
+  }, [state?.clientId, clients.data, business.data, state?.paymentMethodIds.length]);
+
+  // R28 task 11: a new document starts with exactly the client's default methods, active ones only.
+  // Switching the client re-applies the new client's defaults until the owner changes the ticks.
+  // An existing draft keeps its ticks until its client changes. No defaults keeps the rule above.
+  useEffect(() => {
+    if (!state || !clients.data || !paymentMethods.data) return;
+    const previous = methodsClient.current;
+    methodsClient.current = state.clientId;
+    const changed = previous !== undefined && previous !== state.clientId;
+    if (previous !== undefined && !changed) return;
+    if ((editing && !changed) || methodsTouched.current) return;
+    const c = state.clientId ? clients.data.clients.find((x) => x.id === state.clientId) : null;
+    const active = new Set(paymentMethods.data.paymentMethods.map((m) => m.id));
+    const defaults = (c?.default_payment_method_ids ? (JSON.parse(c.default_payment_method_ids) as number[]) : []).filter((x) => active.has(x));
+    if (defaults.length > 0) {
+      methodsFromDefaults.current = true;
+      setState((s) => (s ? { ...s, paymentMethodIds: defaults } : s));
+    } else if (methodsFromDefaults.current) {
+      // The ticks were the previous client's defaults: clear them so the rule above refills.
+      methodsFromDefaults.current = false;
+      setState((s) => (s ? { ...s, paymentMethodIds: [] } : s));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.clientId, clients.data, paymentMethods.data]);
 
   // Once the catalog loads, a receipt's still-unset payment rows default to its first active
   // method, so the dropdown's visible selection and the saved value always agree.
@@ -368,6 +399,7 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl">
+      <BackLink to={documentParent(state.clientId)} />
       <PageTitle>{title}</PageTitle>
       <DocTypeExplainer type={type} issued={false} />
       <form onSubmit={onSubmit} className="space-y-4">
@@ -741,11 +773,12 @@ export function DocumentEditor({ type: fixedType }: { type?: string }) {
                       <input
                         type="checkbox"
                         checked={state.paymentMethodIds.includes(m.id)}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          methodsTouched.current = true;
                           set({
                             paymentMethodIds: e.target.checked ? [...state.paymentMethodIds, m.id] : state.paymentMethodIds.filter((x) => x !== m.id),
-                          })
-                        }
+                          });
+                        }}
                       />
                       {m.display_name}
                     </label>

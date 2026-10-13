@@ -4,6 +4,7 @@ import { ConflictError, NotFoundError, ValidationError } from '../../core/errors
 import { clientBalances, openDemands } from '../documents/balances';
 import { uploadService } from '../import';
 import { manualConsentDetail, manualConsentStatement } from '../sending/consent';
+import { assertMethodIdsExist } from '../payment-methods/service';
 import { hasClientName, NO_NAME_MESSAGE, type ClientInput, type ClientPatch, type ConsentInput, type ContactInput } from './schemas';
 
 export interface ClientRow {
@@ -25,6 +26,10 @@ export interface ClientRow {
   postal_code: string | null;
   notes: string | null;
   payment_instructions: string | null;
+  /** R28: 1 sends automatic payment and signing reminders, 0 sends none. */
+  auto_reminders: number;
+  /** R28 task 11: JSON array of payment_methods.id, NULL when the client has no default. */
+  default_payment_method_ids: string | null;
   archived_at: string | null;
   /** R18 task 6, replacing archived_at as the field the app reads: default active. */
   active: number;
@@ -60,6 +65,8 @@ const COLUMNS: [keyof ClientInput, keyof ClientRow][] = [
   ['postalCode', 'postal_code'],
   ['notes', 'notes'],
   ['paymentInstructions', 'payment_instructions'],
+  ['autoReminders', 'auto_reminders'],
+  ['defaultPaymentMethodIds', 'default_payment_method_ids'],
 ];
 
 /** R24: a client of another business reads as not found. */
@@ -121,11 +128,14 @@ async function writeConsent(db: D1Database, actor: AuditActor, clientId: number,
 }
 
 /** `clients.name_en` is `NOT NULL`; a missing English name stores '' there, never NULL. */
-function columnValue(key: keyof ClientInput, value: SqlValue | boolean | undefined): SqlValue | boolean {
+function columnValue(key: keyof ClientInput, value: SqlValue | boolean | number[] | undefined): SqlValue | boolean {
+  // R28: the default payment methods are a JSON array, NULL when empty.
+  if (Array.isArray(value)) return value.length > 0 ? JSON.stringify(value) : null;
   return key === 'nameEn' ? value ?? '' : value ?? null;
 }
 
 export async function createClient(db: D1Database, actor: AuditActor, input: ClientInput, consent?: ConsentInput | null): Promise<number> {
+  await assertMethodIdsExist(db, input.defaultPaymentMethodIds ?? [], actorBiz(actor));
   const cols = [...COLUMNS.map(([, col]) => col), 'business_id'];
   const values = [...COLUMNS.map(([key]) => columnValue(key, input[key])), actorBiz(actor)];
   const results = await transaction(db, [
@@ -148,6 +158,7 @@ export async function updateClient(
   const nextNameEn = patch.nameEn !== undefined ? patch.nameEn : current.name_en;
   const nextNameHe = patch.nameHe !== undefined ? patch.nameHe : current.name_he;
   if (!hasClientName({ nameEn: nextNameEn, nameHe: nextNameHe })) throw new ValidationError(NO_NAME_MESSAGE);
+  if (patch.defaultPaymentMethodIds) await assertMethodIdsExist(db, patch.defaultPaymentMethodIds, actorBiz(actor));
   const set = COLUMNS.filter(([key]) => patch[key] !== undefined);
   if (set.length > 0) {
     await transaction(db, [

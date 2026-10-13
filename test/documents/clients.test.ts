@@ -111,6 +111,16 @@ describe('clients', () => {
     expect(updated.client.client_copy_lang).toBe('en');
   });
 
+  /** R28 task 6: automatic reminders are on by default, can be turned off, and a PATCH of another field keeps the choice. */
+  it('automatic reminders: on by default, off by choice, kept by an unrelated PATCH', async () => {
+    const created = await ok('POST', '/clients', { nameEn: 'Reminder Co' });
+    expect(created.client.auto_reminders).toBe(1);
+    const id = created.client.id;
+    expect((await ok('PATCH', `/clients/${id}`, { autoReminders: false })).client.auto_reminders).toBe(0);
+    expect((await ok('PATCH', `/clients/${id}`, { notes: 'x' })).client.auto_reminders).toBe(0);
+    expect((await ok('POST', '/clients', { nameEn: 'Quiet Co', autoReminders: false })).client.auto_reminders).toBe(0);
+  });
+
   /** R18 task 6: an active flag replaces archiving. A not-active client is never deleted and keeps full document access; it is only hidden from the default client list. */
   it('deactivates instead of deleting; a not-active client still gets new documents', async () => {
     const id = await makeClient();

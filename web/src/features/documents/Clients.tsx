@@ -1,10 +1,11 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
-import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { Link, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { type MessageKey, useT } from '../../i18n';
-import { type Client, type ClientConsent, type ConsentFormInput, clientsApi, docsApi } from './api';
+import { type Client, type ClientConsent, type ConsentFormInput, clientsApi, docsApi, paymentMethodsApi } from './api';
 import { DocumentTable } from './DocumentList';
 import { ClientContracts } from '../contracts/ClientContracts';
+import { ClientReminders } from './ClientReminders';
 import { TYPE_NAME_KEYS } from './Editor';
 import { CURRENCIES, newDocumentPath, offeredDocumentTypes, totalsText } from './format';
 import { LedgerView } from './Ledger';
@@ -152,6 +153,8 @@ type ClientFields = {
   postalCode: string;
   notes: string;
   paymentInstructions: string;
+  autoReminders: boolean;
+  defaultPaymentMethodIds: number[];
 };
 
 function fieldsFrom(c?: Client): ClientFields {
@@ -172,6 +175,8 @@ function fieldsFrom(c?: Client): ClientFields {
     postalCode: c?.postal_code ?? '',
     notes: c?.notes ?? '',
     paymentInstructions: c?.payment_instructions ?? '',
+    autoReminders: c?.auto_reminders !== 0,
+    defaultPaymentMethodIds: c?.default_payment_method_ids ? (JSON.parse(c.default_payment_method_ids) as number[]) : [],
   };
 }
 
@@ -192,6 +197,8 @@ export function ClientForm() {
   const navigate = useNavigate();
   const editing = id !== undefined;
   const loaded = useLoad(async () => (editing ? clientsApi.get(Number(id)) : null), [id]);
+  // R28 task 11: the business's active payment methods, one checkbox each.
+  const methods = useLoad(() => paymentMethodsApi.list(true), []);
   const [fields, setFields] = useState<ClientFields | null>(null);
   const [consent, setConsent] = useState<ConsentFields | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -219,6 +226,11 @@ export function ClientForm() {
     setError(null);
     try {
       const body: Record<string, unknown> = { ...current! };
+      // Only methods still active are kept. One turned off since is dropped from the default.
+      if (methods.data) {
+        const active = new Set(methods.data.paymentMethods.map((m) => m.id));
+        body.defaultPaymentMethodIds = current!.defaultPaymentMethodIds.filter((x) => active.has(x));
+      }
       // Only write a consent row when the checkbox actually changed the granted state, so
       // an unrelated edit does not add a redundant entry to the consent history.
       if (currentConsent!.granted !== wasGranted) {
@@ -296,6 +308,33 @@ export function ClientForm() {
               placeholder={t('clients.form.paymentInstructionsPlaceholder')}
             />
           </label>
+          {methods.data && methods.data.paymentMethods.length > 0 && (
+            <fieldset className="mt-4" data-testid="default-payment-methods">
+              <legend className={label}>{t('clients.form.defaultPaymentMethods')}</legend>
+              <div className="mt-1 flex flex-wrap gap-3">
+                {methods.data.paymentMethods.map((m) => (
+                  <label key={m.id} className="flex items-center gap-1.5 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={current.defaultPaymentMethodIds.includes(m.id)}
+                      onChange={(e) =>
+                        set('defaultPaymentMethodIds', e.target.checked ? [...current.defaultPaymentMethodIds, m.id] : current.defaultPaymentMethodIds.filter((x) => x !== m.id))
+                      }
+                    />
+                    <bdi>{m.display_name}</bdi>
+                  </label>
+                ))}
+              </div>
+              <p className="mt-1 text-xs text-muted">{t('clients.form.defaultPaymentMethodsHint')}</p>
+            </fieldset>
+          )}
+          <div className="mt-4 rounded-md border border-line p-3">
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input type="checkbox" checked={current.autoReminders} onChange={(e) => set('autoReminders', e.target.checked)} />
+              {t('clients.form.autoReminders')}
+            </label>
+            <p className="mt-1 text-xs text-muted">{t('clients.form.autoRemindersHint')}</p>
+          </div>
           <div className="mt-4 rounded-md border border-line p-3">
             <label className="flex items-center gap-2 text-sm font-semibold">
               <input type="checkbox" checked={currentConsent.granted} onChange={(e) => setConsentField('granted', e.target.checked)} />
@@ -393,7 +432,10 @@ export function ClientPage() {
   const t = useT();
   const issuing = useIssuing();
   const id = Number(useParams().id);
-  const [tab, setTab] = useState<(typeof TABS)[number]['key']>('overview');
+  // R28: a Back link opens a tab directly, e.g. ?tab=contracts from a contract page.
+  const [search] = useSearchParams();
+  const wantedTab = TABS.find((x) => x.key === search.get('tab'))?.key ?? 'overview';
+  const [tab, setTab] = useState<(typeof TABS)[number]['key']>(wantedTab);
   const { data, error, setData } = useLoad(() => clientsApi.get(id), [id]);
   const [actionError, setActionError] = useState<string | null>(null);
   const [contact, setContact] = useState({ name: '', email: '', role: '' });
@@ -593,6 +635,11 @@ export function ClientPage() {
               </button>
             </form>
           </Card>
+          {issuing && (
+            <div className="md:col-span-2">
+              <ClientReminders clientId={c.id} />
+            </div>
+          )}
         </div>
       )}
       {tab === 'ledger' && <LedgerView clientId={c.id} />}

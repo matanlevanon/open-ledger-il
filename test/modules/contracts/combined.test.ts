@@ -450,6 +450,8 @@ describe('task 5: signing once', () => {
     expect(doc.document.status).toBe('draft');
     const lines = doc.lines ?? doc.document.lines;
     expect(lines.map((l: any) => l.unit_price_minor ?? l.unitPriceMinor)).toEqual([1200000]);
+    // No number field in this template: the note names the work order only.
+    expect(doc.document.notes).toMatch(/^Work order: /);
   });
 
   it('a contract without terms still signs with its own fields and evidence, as before', async () => {

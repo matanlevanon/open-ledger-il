@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { ApiError } from '../../api/client';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
-import { sendingApi } from '../documents/api';
+import { type ContractReminderSettings, type PaymentReminderSettings, sendingApi } from '../documents/api';
 import { btnPrimary, input, label } from '../documents/ui';
+import { RemindersSection } from './RemindersSection';
 
 /**
  * Settings > Email. Addresses copied on every document the Ledger emails, on top of each client's
@@ -13,6 +14,7 @@ export function EmailTab() {
   const t = useT();
   const toast = useToast();
   const [cc, setCc] = useState<string | null>(null);
+  const [reminders, setReminders] = useState<{ payments: PaymentReminderSettings; contracts: ContractReminderSettings } | null>(null);
   const [forbidden, setForbidden] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -20,7 +22,10 @@ export function EmailTab() {
   useEffect(() => {
     sendingApi
       .settings()
-      .then((s) => setCc(s.cc))
+      .then((s) => {
+        setCc(s.cc);
+        if (s.reminders && s.contractReminders) setReminders({ payments: s.reminders, contracts: s.contractReminders });
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 403) setForbidden(true);
         else setError(err instanceof Error ? err.message : t('settings.email.loadError'));
@@ -60,6 +65,7 @@ export function EmailTab() {
           {t('settings.email.save')}
         </button>
       </div>
+      {reminders && <RemindersSection payments={reminders.payments} contracts={reminders.contracts} />}
     </div>
   );
 }

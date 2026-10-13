@@ -31,6 +31,10 @@ const clientFields = z.object({
   notes: text(5000),
   /** Prefills a new quote or payment request for this client (R16 task 7); falls back to the business default. */
   paymentInstructions: text(5000),
+  /** R28: off, the client gets no automatic payment or signing reminder. Manual Remind still works. */
+  autoReminders: z.boolean().default(true),
+  /** R28 task 11: the payment methods a new document for this client starts with. Empty keeps the earlier rule. */
+  defaultPaymentMethodIds: z.array(z.number().int().positive()).max(20).default([]),
 });
 
 /** R19 rule 1: a client must have at least one of nameEn, nameHe. Both fields are already trimmed. */

@@ -19,6 +19,8 @@ import { BrowserRenderingPdfEngine, type PdfEngine } from '../pdf/engine';
 import { type Mailer, ResendMailer } from '../sending/mailer';
 import amaticHebrew from './assets/AmaticSC-Hebrew-Bold.woff2';
 import dancingScript from './assets/DancingScript-Regular.woff2';
+import { createExternalContract, externalInput } from './external';
+import { runContractReminders } from './reminders';
 import { addSignButtons } from './fields-pdf';
 import { closedPageHtml, type PageLang, signedPageHtml, signingPageHtml } from './public-page';
 import {
@@ -51,6 +53,8 @@ import { createService, createTemplate, listServices, listTemplates, templateVer
 import { contractInput, LINK_DAYS, serviceInput, templateInput, type FieldDef } from './types';
 
 export * from './service';
+export * from './external';
+export * from './reminders';
 export * from './templates';
 export * from './types';
 export { renderContract } from './render';
@@ -186,6 +190,30 @@ export function createContractsModule(options: ContractsOptions = {}): ModuleDef
     return c.json({ contract: await contractDetail(c.env.DB, businessIdOf(c), id, c.get('user').role) }, 201);
   });
 
+  // R28: a contract signed outside the Ledger, filed with its signed PDF.
+  r.post('/external', requireRole('owner', 'assistant'), async (c) => {
+    const form = await c.req.parseBody();
+    const file = form.file;
+    if (!(file instanceof File)) throw new ValidationError('Choose the signed PDF.');
+    const field = (name: string) => (typeof form[name] === 'string' ? (form[name] as string) : undefined);
+    const input = externalInput.parse({
+      clientId: field('clientId'),
+      title: field('title'),
+      kind: field('kind'),
+      signedDate: field('signedDate'),
+      signerName: field('signerName'),
+      signerRole: field('signerRole'),
+      signerEmail: field('signerEmail'),
+      startDate: field('startDate'),
+      endDate: field('endDate'),
+      feeAmountMinor: field('feeAmountMinor'),
+      feeCurrency: field('feeCurrency'),
+      notes: field('notes'),
+    });
+    const id = await createExternalContract(c.env, actorFrom(c), input, { name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) });
+    return c.json({ contract: await contractDetail(c.env.DB, businessIdOf(c), id, c.get('user').role) }, 201);
+  });
+
   r.get('/:id', requireFeature('contracts'), async (c) => {
     const businessId = businessIdOf(c);
     const detail = await contractDetail(c.env.DB, businessId, idParam(c), c.get('user').role);
@@ -244,7 +272,19 @@ export function createContractsModule(options: ContractsOptions = {}): ModuleDef
     async scheduled(controller, env) {
       if (controller.cron !== CONTRACTS_CRON) return;
       const notifier = notifierFor(env, options);
-      for (const businessId of await listBusinessIds(env.DB)) await contractsCron(env.DB, businessId, notifier, options.now ? options.now() : new Date());
+      // R28: expire ended links first, then the automatic signing reminders by email.
+      const deps: ContractDeps = {
+        env,
+        engine: { renderPdf: () => Promise.reject(new Error('No engine needed.')) },
+        mailer: (options.mailerFor ?? defaultMailer)(env),
+        notifier,
+        baseUrl: env.PUBLIC_APP_URL ?? '',
+        now: options.now,
+      };
+      for (const businessId of await listBusinessIds(env.DB)) {
+        await contractsCron(env.DB, businessId, notifier, options.now ? options.now() : new Date());
+        await runContractReminders(deps, businessId);
+      }
     },
   };
 }

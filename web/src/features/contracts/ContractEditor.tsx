@@ -1,4 +1,5 @@
 import { announceDemoSend } from '../../app/demo';
+import { BackLink, contractParent } from '../../components/BackLink';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { fetchMe } from '../../api/client';
@@ -198,10 +199,11 @@ export function isEmptyValue(v: unknown): boolean {
   return false;
 }
 
-/** R25b: the template a first engagement includes. "Standard Terms" first, else the first contract template. */
+/** R25b: the template a first engagement includes. "Service Agreement" or "Standard Terms" first, else the first contract template. */
 export function defaultTermsTemplate(templates: { id: number; name: string; kind: string }[]): number | null {
   const contracts = templates.filter((x) => x.kind === 'contract');
-  return (contracts.find((x) => x.name.trim().toLowerCase() === 'standard terms') ?? contracts[0])?.id ?? null;
+  const named = (n: string) => contracts.find((x) => x.name.trim().toLowerCase() === n);
+  return (named('service agreement') ?? named('standard terms') ?? contracts[0])?.id ?? null;
 }
 
 /** R25, Screen B: pick a template, check the fields, preview, send. */
@@ -272,9 +274,10 @@ export function ContractEditor() {
     loadedTemplate.current = c.templateId;
   }, [existing.data]);
 
-  // A new contract starts on the first template.
+  // A new contract starts on a work order: the Standard Terms are signed once per client, work
+  // orders many times. Without a work order template, the first template.
   useEffect(() => {
-    if (!editId && templateId === null && active.length > 0) setTemplateId(active[0]!.id);
+    if (!editId && templateId === null && active.length > 0) setTemplateId((active.find((x) => x.kind === 'work_order') ?? active[0]!).id);
   }, [editId, templateId, active]);
 
   // Picking a template loads its fields and every value the Ledger knows. Ticking the Standard
@@ -376,6 +379,7 @@ export function ContractEditor() {
   if (sent && savedId) {
     return (
       <section aria-labelledby="page-title" className="mx-auto max-w-3xl">
+        {clientId > 0 && <BackLink to={contractParent(clientId)} />}
         <PageTitle>{t('contracts.sent.title')}</PageTitle>
         <Card>
           {sent.emailed && <p className="text-sm">{t('contracts.sent.emailed', { email: signer.email })}</p>}
@@ -406,6 +410,7 @@ export function ContractEditor() {
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-6xl">
+      {clientId > 0 && <BackLink to={contractParent(clientId)} />}
       <PageTitle subtitle={t('contracts.editor.sub')}>{editId ? t('contracts.editor.titleEdit') : t('contracts.editor.titleNew')}</PageTitle>
       <ErrorNote error={error} />
       <div className="grid gap-4 lg:grid-cols-2">

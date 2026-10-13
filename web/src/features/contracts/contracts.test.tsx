@@ -93,7 +93,7 @@ beforeEach(() => {
     vi.fn(async (url: string, init?: RequestInit) => {
       const method = init?.method ?? 'GET';
       const key = `${method} ${url}`;
-      const body = init?.body ? JSON.parse(String(init.body)) : undefined;
+      const body = typeof init?.body === 'string' ? JSON.parse(init.body) : init?.body;
       calls.push({ key, body });
       const handler = routes[key];
       if (!handler) return new Response(JSON.stringify({ error: { code: 'not_found', message: key } }), { status: 404 });
@@ -133,6 +133,8 @@ describe('R25 Screen A, client contracts tab', () => {
     expect(screen.getByText('Viewed, not signed')).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'New contract or work order' })).toHaveAttribute('href', '/contracts/new?clientId=7');
     fireEvent.click(screen.getByRole('button', { name: 'Remind' }));
+    expect(calls.some((c) => c.key === 'POST /api/contracts/8/remind')).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: 'Remind by email' }));
     await screen.findByText('Reminder sent.');
     expect(calls.some((c) => c.key === 'POST /api/contracts/8/remind')).toBe(true);
   });
@@ -241,7 +243,7 @@ describe('R25b, Standard Terms and Work Order together', () => {
       </Routes>,
       '/contracts/new?clientId=7',
     );
-    const box = await screen.findByRole('checkbox', { name: 'Include the Standard Terms (first engagement)' });
+    const box = await screen.findByRole('checkbox', { name: 'Include the Service Agreement (first engagement)' });
     expect(box).not.toBeChecked();
     expect(screen.getByLabelText('Terms template')).toHaveValue('7');
     expect(await screen.findByLabelText(/^Terms signed on/)).toBeInTheDocument();
@@ -261,22 +263,25 @@ describe('R25b, Standard Terms and Work Order together', () => {
     expect(created.values.start).toBe('2026-12-01');
   });
 
-  it('the checkbox shows for a work order only', async () => {
+  const newDefaults = (templateId: number, kind: 'contract' | 'work_order') => () => ({
+    templateId,
+    templateVersion: 1,
+    includedTemplate: null,
+    kind,
+    title: kind === 'work_order' ? 'Work order, Acme Ltd' : 'Agreement, Acme Ltd',
+    fields: kind === 'work_order' ? WO_FIELDS : [],
+    values: {},
+    signer: { name: '', email: '', phone: '' },
+    linkDays: [7, 14, 30],
+    ownerSignature: false,
+    emailReady: true,
+  });
+
+  const openEditor = () => {
     routes['GET /api/contracts/templates'] = () => ({ templates: [WITH_TERMS[1]!, WITH_TERMS[0]!, WITH_TERMS[2]!] });
     routes['GET /api/contracts/services'] = () => ({ services: SERVICES });
-    routes['GET /api/contracts/new?clientId=7&templateId=6'] = () => ({
-      templateId: 6,
-      templateVersion: 2,
-      includedTemplate: null,
-      kind: 'contract',
-      title: 'Agreement, Acme Ltd',
-      fields: [],
-      values: {},
-      signer: { name: '', email: '', phone: '' },
-      linkDays: [7, 14, 30],
-      ownerSignature: false,
-      emailReady: true,
-    });
+    routes['GET /api/contracts/new?clientId=7&templateId=5'] = newDefaults(5, 'work_order');
+    routes['GET /api/contracts/new?clientId=7&templateId=6'] = newDefaults(6, 'contract');
     routes['POST /api/contracts/preview'] = () => '<p>preview</p>';
     wrap(
       <Routes>
@@ -284,9 +289,21 @@ describe('R25b, Standard Terms and Work Order together', () => {
       </Routes>,
       '/contracts/new?clientId=7',
     );
-    await screen.findByLabelText('Template');
+  };
+
+  it('a new contract starts on the work order template even when a contract template is listed first', async () => {
+    openEditor();
+    await waitFor(() => expect(screen.getByLabelText('Template')).toHaveValue('5'));
+    await waitFor(() => expect(calls.some((c) => c.key === 'GET /api/contracts/new?clientId=7&templateId=5')).toBe(true));
+    expect(calls.some((c) => c.key === 'GET /api/contracts/new?clientId=7&templateId=6')).toBe(false);
+  });
+
+  it('the checkbox shows for a work order only', async () => {
+    openEditor();
+    expect(await screen.findByTestId('include-terms')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Template'), { target: { value: '6' } });
     await waitFor(() => expect(calls.some((c) => c.key === 'GET /api/contracts/new?clientId=7&templateId=6')).toBe(true));
-    expect(screen.queryByTestId('include-terms')).toBeNull();
+    await waitFor(() => expect(screen.queryByTestId('include-terms')).toBeNull());
   });
 
   it('the client contracts tab shows Work Order + Standard Terms', async () => {
@@ -295,6 +312,105 @@ describe('R25b, Standard Terms and Work Order together', () => {
     });
     wrap(<ClientContracts clientId={7} canCreate />);
     expect(await screen.findByText('Work Order + Standard Terms')).toBeInTheDocument();
+  });
+});
+
+const EXTERNAL: ContractDetail = {
+  ...SIGNED,
+  id: 31,
+  title: 'Master services agreement',
+  kind: 'contract',
+  templateName: 'Signed outside the Ledger',
+  origin: 'external',
+  sentAt: null,
+  viewedAt: null,
+  signedAt: '2026-09-15',
+  expiresAt: null,
+  sentSha256: null,
+  signedSha256: 'beef00',
+  identityMethod: null,
+  overview: { services: [], terms: [], signedBy: null, ownerSignedAt: null },
+  external: { signerName: 'Dana Cohen', signerRole: 'CEO', signerEmail: 'dana@acme.co.il', signedDate: '2026-09-15', startDate: '2026-10-01', endDate: '2027-09-30', fee: '₪15,000.00', notes: 'Signed on paper.' },
+  events: [{ id: 9, kind: 'uploaded', label: 'Signed contract filed by owner@example.com · hash beef…', actor: 'owner@example.com', role: 'owner', ip: null, userAgent: null, at: '2026-10-13T08:00:00Z' }],
+};
+
+describe('R28, contracts signed elsewhere', () => {
+  it('the contracts tab adds a signed contract with its PDF and opens it', async () => {
+    routes['GET /api/contracts/clients/7'] = () => ({ contracts: [] });
+    routes['POST /api/contracts/external'] = () => ({ contract: EXTERNAL });
+    routes['GET /api/contracts/31'] = () => ({ contract: EXTERNAL, currentTemplateVersion: 1, currentFields: [], emailReady: true, ownerSignature: false });
+    wrap(
+      <Routes>
+        <Route path="/clients/7" element={<ClientContracts clientId={7} canCreate />} />
+        <Route path="/contracts/:id" element={<ContractPage />} />
+      </Routes>,
+      '/clients/7',
+    );
+    fireEvent.click(await screen.findByRole('button', { name: 'Add a signed contract' }));
+    const save = screen.getByRole('button', { name: 'Save signed contract' });
+    expect(save).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Master services agreement' } });
+    fireEvent.change(screen.getByLabelText('Signed on'), { target: { value: '2026-09-15' } });
+    fireEvent.change(screen.getByLabelText('Signer name'), { target: { value: 'Dana Cohen' } });
+    fireEvent.change(screen.getByLabelText('Signer role (optional)'), { target: { value: 'CEO' } });
+    fireEvent.change(screen.getByLabelText('Fee (optional)'), { target: { value: '15000' } });
+    const pdf = new File(['%PDF-1.7'], 'signed.pdf', { type: 'application/pdf' });
+    fireEvent.change(screen.getByLabelText('Signed PDF, up to 20 MB'), { target: { files: [pdf] } });
+    expect(save).not.toBeDisabled();
+    fireEvent.click(save);
+    expect(await screen.findByText('Master services agreement')).toBeInTheDocument();
+    const sent = calls.find((c) => c.key === 'POST /api/contracts/external')!.body as FormData;
+    expect(sent).toBeInstanceOf(FormData);
+    expect(sent.get('clientId')).toBe('7');
+    expect(sent.get('kind')).toBe('contract');
+    expect(sent.get('signedDate')).toBe('2026-09-15');
+    expect(sent.get('feeAmountMinor')).toBe('1500000');
+    expect(sent.get('feeCurrency')).toBe('ILS');
+    expect((sent.get('file') as File).name).toBe('signed.pdf');
+  });
+
+  it('a fee that is not a number stops the upload', async () => {
+    routes['GET /api/contracts/clients/7'] = () => ({ contracts: [] });
+    wrap(<ClientContracts clientId={7} canCreate />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Add a signed contract' }));
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'x' } });
+    fireEvent.change(screen.getByLabelText('Signed on'), { target: { value: '2026-09-15' } });
+    fireEvent.change(screen.getByLabelText('Signer name'), { target: { value: 'Dana' } });
+    fireEvent.change(screen.getByLabelText('Fee (optional)'), { target: { value: 'fifteen' } });
+    fireEvent.change(screen.getByLabelText('Signed PDF, up to 20 MB'), { target: { files: [new File(['%PDF'], 'a.pdf')] } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save signed contract' }));
+    expect(await screen.findByText('Write the fee as a number, like 15000 or 15000.50.')).toBeInTheDocument();
+    expect(calls.some((c) => c.key === 'POST /api/contracts/external')).toBe(false);
+  });
+
+  it('the list shows Signed outside the Ledger in place of the template', async () => {
+    routes['GET /api/contracts/clients/7'] = () => ({ contracts: [{ ...EXTERNAL, origin: 'external' }] });
+    wrap(<ClientContracts clientId={7} canCreate />);
+    expect(await screen.findByText('Signed outside the Ledger')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Remind' })).toBeNull();
+  });
+
+  it('the contract page shows what was entered, the PDF, and no evidence trail', async () => {
+    routes['GET /api/contracts/31'] = () => ({ contract: EXTERNAL, currentTemplateVersion: 1, currentFields: [], emailReady: true, ownerSignature: false });
+    wrap(
+      <Routes>
+        <Route path="/contracts/:id" element={<ContractPage />} />
+      </Routes>,
+      '/contracts/31',
+    );
+    const overview = await screen.findByTestId('external-overview');
+    expect(overview).toHaveTextContent('Dana Cohen, CEO');
+    expect(overview).toHaveTextContent('2026-10-01');
+    expect(overview).toHaveTextContent('2027-09-30');
+    expect(overview).toHaveTextContent('₪15,000.00');
+    expect(screen.getByText('Signed on paper.')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Download PDF' })).toHaveAttribute('href', '/api/contracts/31/pdf?which=signed&download=1');
+    fireEvent.click(screen.getByRole('button', { name: 'Record (1 event)' }));
+    expect(screen.getByTestId('external-record')).toHaveTextContent('Signed outside the Ledger.');
+    expect(screen.getAllByText(/Signed outside the Ledger/).length).toBeGreaterThan(1);
+    expect(screen.queryByText(/Identity confirmed/)).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Create pro forma' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Void' })).toBeInTheDocument();
   });
 });
 
@@ -310,12 +426,37 @@ describe('R25 Screen D, signed record', () => {
       '/contracts/9',
     );
     expect(await screen.findByRole('link', { name: 'Download signed PDF' })).toHaveAttribute('href', '/api/contracts/9/pdf?which=signed&download=1');
+    fireEvent.click(screen.getByRole('button', { name: 'Record (3 events)' }));
     expect(screen.getByText(/Signed by Dana Cohen, CEO/)).toBeInTheDocument();
     expect(screen.getAllByText(/IP 84\.229\.x\.x/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/iPhone Safari/).length).toBeGreaterThan(0);
     expect(screen.getByText('Identity confirmed by an email code.')).toBeInTheDocument();
     fireEvent.click(await screen.findByRole('button', { name: 'Create pro forma' }));
     await screen.findByText('Pro forma editor');
+  });
+});
+
+describe('R28, the Record card folds', () => {
+  it('starts closed, opens and closes from its header, and the Overview stays open', async () => {
+    routes['GET /api/contracts/9'] = () => ({ contract: { ...SIGNED, overview: { services: [], terms: [{ key: 'fee', label: 'Monthly fee', value: '₪32,000.00' }], signedBy: null, ownerSignedAt: null } }, currentTemplateVersion: 1, currentFields: FIELDS, emailReady: true, ownerSignature: true });
+    wrap(
+      <Routes>
+        <Route path="/contracts/:id" element={<ContractPage />} />
+      </Routes>,
+      '/contracts/9',
+    );
+    const toggle = await screen.findByRole('button', { name: 'Record (3 events)' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('contract-events')).toBeNull();
+    expect(screen.queryByText(/SHA-256/)).toBeNull();
+    expect(screen.getByText('Overview')).toBeInTheDocument();
+    expect(screen.getByText('₪32,000.00')).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('contract-events')).toBeInTheDocument();
+    expect(screen.getByText('Identity confirmed by an email code.')).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(screen.queryByTestId('contract-events')).toBeNull();
   });
 });
 

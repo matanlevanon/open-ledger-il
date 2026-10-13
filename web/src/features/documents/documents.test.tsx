@@ -295,3 +295,50 @@ describe('client screens', () => {
     expect(await screen.findByText(/manually, signed contract/)).toBeInTheDocument();
   });
 });
+
+describe('R28 default payment methods per client', () => {
+  const METHODS = [
+    { id: 1, display_name: 'Bank transfer', type: 'bank_transfer', currency: null, details: {}, active: 1, sort_order: 1 },
+    { id: 2, display_name: 'Bit', type: 'bit', currency: null, details: {}, active: 1, sort_order: 2 },
+  ];
+  const CLIENTS = [
+    // Method 3 is turned off, so it is skipped.
+    { id: 3, name_en: 'Acme Ltd', currency: 'ILS', client_copy_lang: 'en', active: 1, default_payment_method_ids: '[2,3]', payment_method_ids: '[1]' },
+    { id: 4, name_en: 'Beta Ltd', currency: 'ILS', client_copy_lang: 'en', active: 1, default_payment_method_ids: null, payment_method_ids: '[1]' },
+    { id: 5, name_en: 'Gamma Ltd', currency: 'ILS', client_copy_lang: 'en', active: 1, default_payment_method_ids: '[1,2]', payment_method_ids: null },
+  ];
+  const box = (name: string) => screen.getByRole('checkbox', { name }) as HTMLInputElement;
+
+  beforeEach(() => {
+    routes['GET /api/clients'] = () => ({ clients: CLIENTS });
+    routes['GET /api/payment-methods'] = () => ({ paymentMethods: METHODS });
+  });
+
+  it('a new document starts with exactly the client defaults, active ones only', async () => {
+    renderAt('/income/payment-requests/new?client=3');
+    await screen.findByRole('checkbox', { name: 'Bit' });
+    await waitFor(() => expect(box('Bit').checked).toBe(true));
+    expect(box('Bank transfer').checked).toBe(false);
+  });
+
+  it('switching the client re-applies the new client defaults until the ticks change, and no defaults keeps the last used rule', async () => {
+    renderAt('/income/payment-requests/new?client=3');
+    await waitFor(() => expect(box('Bit').checked).toBe(true));
+    fireEvent.change(screen.getByLabelText('Client'), { target: { value: '5' } });
+    await waitFor(() => expect(box('Bank transfer').checked).toBe(true));
+    expect(box('Bit').checked).toBe(true);
+    fireEvent.change(screen.getByLabelText('Client'), { target: { value: '4' } });
+    await waitFor(() => expect(box('Bit').checked).toBe(false));
+    expect(box('Bank transfer').checked).toBe(true);
+  });
+
+  it('after the owner changes a tick, switching the client keeps the ticks', async () => {
+    renderAt('/income/payment-requests/new?client=3');
+    await waitFor(() => expect(box('Bit').checked).toBe(true));
+    fireEvent.click(box('Bank transfer'));
+    fireEvent.change(screen.getByLabelText('Client'), { target: { value: '4' } });
+    await new Promise((r) => setTimeout(r, 50));
+    expect(box('Bit').checked).toBe(true);
+    expect(box('Bank transfer').checked).toBe(true);
+  });
+});

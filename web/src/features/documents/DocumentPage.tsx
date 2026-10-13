@@ -1,4 +1,5 @@
 import { announceDemoSend } from '../../app/demo';
+import { BackLink, documentParent } from '../../components/BackLink';
 import { type ReactNode, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -227,6 +228,7 @@ export function DocumentPage() {
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl">
+      <BackLink to={documentParent(d.client_id)} />
       <PageTitle
         actions={
           <>

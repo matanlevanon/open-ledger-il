@@ -13,6 +13,18 @@ export interface ContractAlert {
   daysLeft: number;
 }
 
+/** R28: a reminder the 07:00 run could not email, due on WhatsApp today. */
+export interface WhatsAppDueItem {
+  id: number;
+  clientId: number;
+  clientName: string;
+  targetKind: 'document' | 'contract';
+  targetId: number;
+  label: string;
+  rules: string[];
+  phone: string | null;
+}
+
 export interface CurrencyTotal {
   currency: string;
   count: number;
@@ -134,6 +146,8 @@ export interface DashboardData {
   expiringDocuments?: { id: number; type: string; typeLabel: { en: string; he: string }; validUntil: string; daysLeft: number }[];
   /** R25: contracts unsigned after 7 days, and signing links that end within 2 days. */
   contracts?: { unsigned: ContractAlert[]; expiring: ContractAlert[] };
+  /** R28: reminders due on WhatsApp today. Absent on an older Worker. */
+  whatsappDue?: WhatsAppDueItem[];
   ita: { connected: boolean; message: string };
   cards: DashboardCards;
   /** Present when the call named no cards: the stored layout that picked them. */

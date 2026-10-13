@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BackLink } from '../../components/BackLink';
 import { usePreferences } from '../../app/preferences';
 import { useT } from '../../i18n';
 import { btnPrimary, btnSecondary, ErrorNote, errorText, input, label, Loading, useLoad } from '../documents/ui';
@@ -152,6 +153,7 @@ function TemplateForm({ initial, onDone, onCancel }: { initial: Template | null;
   };
   return (
     <div className="flex flex-col gap-3" data-testid="template-form">
+      <BackLink onClick={onCancel} label={t('contracts.templates.back')} />
       <ErrorNote error={error} />
       <div className="grid gap-3 md:grid-cols-3">
         <label className="block md:col-span-2">

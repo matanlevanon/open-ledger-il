@@ -38,6 +38,10 @@ export interface Client {
   notes: string | null;
   payment_instructions: string | null;
   payment_method_ids: string | null;
+  /** R28: 0 when the client gets no automatic reminders. Older servers leave it out. */
+  auto_reminders?: number;
+  /** R28 task 11: JSON array of payment method ids a new document starts with. Older servers leave it out. */
+  default_payment_method_ids?: string | null;
   archived_at: string | null;
   /** R18 task 6, replacing archived_at as the field the app reads. */
   active: number;
@@ -342,12 +346,26 @@ export const docsApi = {
 export type SendEmailResult = { status: 'sent'; messageId: string | null };
 export type WhatsAppLinkResult = { status: 'ready'; url: string; message: string; waUrl: string | null; expiresAt: string };
 
+/** R06 payment reminders and R28 contract signing reminders, Settings > Email > Reminders. */
+export interface PaymentReminderSettings {
+  enabled: boolean;
+  beforeDays: number[];
+  afterDays: number[];
+}
+export interface ContractReminderSettings {
+  enabled: boolean;
+  afterDays: number[];
+  beforeEnd: boolean;
+}
+
 export const sendingApi = {
   sendEmail: (id: number, body: { to?: string | null; cc?: string[] | null; bcc?: string[] | null } = {}) =>
     apiSend<SendEmailResult>('POST', `/sending/documents/${id}/send`, body),
   /** The To and CC a send would use: the client's email, the account CC list and the client's CC list. */
   sendDefaults: (id: number) => apiGet<{ to: string | null; cc: string[]; bcc: string[] }>(`/sending/documents/${id}/send-defaults`),
-  settings: () => apiGet<{ cc: string }>('/sending/settings'),
+  settings: () => apiGet<{ cc: string; reminders?: PaymentReminderSettings; contractReminders?: ContractReminderSettings }>('/sending/settings'),
+  setReminders: (s: PaymentReminderSettings) => apiSend<PaymentReminderSettings>('PUT', '/sending/settings/reminders', s),
+  setContractReminders: (s: ContractReminderSettings) => apiSend<ContractReminderSettings>('PUT', '/sending/settings/contract-reminders', s),
   setCc: (cc: string) => apiSend<{ cc: string }>('PUT', '/sending/settings/cc', { cc }),
   whatsappLink: (id: number) => apiSend<WhatsAppLinkResult>('POST', `/sending/documents/${id}/whatsapp-link`, {}),
   requestConsent: (clientId: number) => apiSend<{ status: 'sent'; expiresAt: string }>('POST', `/sending/clients/${clientId}/consent/request`, {}),

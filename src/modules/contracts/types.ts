@@ -12,6 +12,9 @@ export type ContractLanguage = (typeof CONTRACT_LANGUAGES)[number];
 export const CONTRACT_STATUSES = ['draft', 'sent', 'viewed', 'signed', 'declined', 'expired', 'void'] as const;
 export type ContractStatus = (typeof CONTRACT_STATUSES)[number];
 
+export const CONTRACT_ORIGINS = ['ledger', 'external'] as const;
+export type ContractOrigin = (typeof CONTRACT_ORIGINS)[number];
+
 export const LINK_DAYS = [7, 14, 30] as const;
 export const DEFAULT_LINK_DAYS = 14;
 
@@ -173,6 +176,8 @@ export interface TemplateRow {
   kind: TemplateKind;
   current_version: number;
   active: number;
+  /** R28: 'external' marks the hidden template a contract signed elsewhere points at. */
+  origin: ContractOrigin;
   created_at: string;
   updated_at: string;
 }
@@ -230,6 +235,8 @@ export interface ContractRow {
   identity_method: 'email_code' | 'link_only' | null;
   linked_document_id: number | null;
   unsigned_alerted_at: string | null;
+  /** R28: 'external' for a contract signed outside the Ledger and filed with its PDF. */
+  origin: ContractOrigin;
 }
 
 export interface ContractEventRow {

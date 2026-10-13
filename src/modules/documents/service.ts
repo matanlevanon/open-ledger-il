@@ -399,12 +399,13 @@ interface ClientRow {
   company_id: string | null;
   payment_instructions: string | null;
   payment_method_ids: string | null;
+  default_payment_method_ids: string | null;
 }
 
 async function loadClient(db: D1Database, clientId: number, businessId: number): Promise<ClientRow> {
   const client = await first<ClientRow>(
     db,
-    'SELECT id, currency, client_copy_lang, country, foreign_resident, vat_number, company_id, payment_instructions, payment_method_ids FROM clients WHERE id = ? AND business_id = ?',
+    'SELECT id, currency, client_copy_lang, country, foreign_resident, vat_number, company_id, payment_instructions, payment_method_ids, default_payment_method_ids FROM clients WHERE id = ? AND business_id = ?',
     clientId,
     businessId,
   );
@@ -421,6 +422,18 @@ function allocationClientOf(client: ClientRow | null): AllocationCheckClient | n
 async function defaultPaymentInstructions(db: D1Database, businessId: number): Promise<string | null> {
   const row = await first<{ payment_instructions: string | null }>(db, 'SELECT payment_instructions FROM businesses WHERE id = ?', businessId);
   return row?.payment_instructions ?? null;
+}
+
+/**
+ * R28 task 11: the client's default payment methods, in the client's order, keeping only methods
+ * of this business that exist and are active. An inactive or removed method is skipped.
+ */
+export async function clientDefaultMethodIds(db: D1Database, raw: string | null | undefined, businessId: number): Promise<number[]> {
+  const ids = parseMethodIds(raw);
+  if (ids.length === 0) return [];
+  const active = await all<{ id: number }>(db, `SELECT id FROM payment_methods WHERE business_id = ? AND active = 1 AND id IN (${ids.map(() => '?').join(', ')})`, businessId, ...ids);
+  const ok = new Set(active.map((r) => r.id));
+  return ids.filter((id) => ok.has(id));
 }
 
 /** Business-level default payment methods (R17 task 2), the fallback when a client has none of its own. */
@@ -615,10 +628,18 @@ export async function createDraft(ctx: Ctx, input: DraftInput): Promise<number> 
       ? input.paymentInstructions
       : (client?.payment_instructions ?? (await defaultPaymentInstructions(db, bizOf(ctx))));
   // Same prefill rule as paymentInstructions (R16 task 7): a caller-sent selection wins;
-  // otherwise the client's last-used methods, falling back to the business default (R17 task 2).
+  // otherwise the client's default methods set on the client form (R28), then the client's
+  // last-used methods, falling back to the business default (R17 task 2).
+  const clientDefaults = await clientDefaultMethodIds(db, client?.default_payment_method_ids, bizOf(ctx));
   const clientMethodIds = parseMethodIds(client?.payment_method_ids);
   const paymentMethodIds =
-    input.paymentMethodIds.length > 0 ? input.paymentMethodIds : clientMethodIds.length > 0 ? clientMethodIds : await defaultPaymentMethodIds(db, bizOf(ctx));
+    input.paymentMethodIds.length > 0
+      ? input.paymentMethodIds
+      : clientDefaults.length > 0
+        ? clientDefaults
+        : clientMethodIds.length > 0
+          ? clientMethodIds
+          : await defaultPaymentMethodIds(db, bizOf(ctx));
   return insertDraft(
     ctx,
     {

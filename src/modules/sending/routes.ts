@@ -1,7 +1,7 @@
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
 import { all, first } from '../../core/db';
-import { requireFeature } from '../../core/auth';
+import { requireFeature, requireRole } from '../../core/auth';
 import { NotFoundError, UnauthorizedError, ValidationError } from '../../core/errors';
 import { openSharedDocument } from '../business-documents/service';
 import type { AppEnv, Env } from '../../env';
@@ -16,7 +16,18 @@ import { acceptConsent, consentHistory, consentState, requestConsent, revokeCons
 import { declareManualAuth } from '../access/route-guard';
 import type { Mailer } from './mailer';
 import { MAX_CC, ccListText } from './cc';
-import { businessDisplayName, ccSetting, paymentLinkSettings, reminderSettings, setCcSetting, setPaymentLinkSettings, setReminderSettings } from './settings';
+import {
+  businessDisplayName,
+  ccSetting,
+  contractReminderSettings,
+  paymentLinkSettings,
+  reminderSettings,
+  setCcSetting,
+  setContractReminderSettings,
+  setPaymentLinkSettings,
+  setReminderSettings,
+} from './settings';
+import { clientReminders } from './reminder-log';
 import { sendDefaults, sendDocumentEmail } from './send';
 import { senderName, shareDoc, sharePageHtml, verifyShareCode } from './share-page';
 import { verifySendToken } from './tokens';
@@ -51,6 +62,11 @@ const reminderSettingsInput = z.object({
   enabled: z.boolean().optional(),
   beforeDays: z.array(z.number().int().min(0)).optional(),
   afterDays: z.array(z.number().int().min(0)).optional(),
+});
+const contractReminderInput = z.object({
+  enabled: z.boolean().optional(),
+  afterDays: z.array(z.number().int().min(1).max(60)).max(10).optional(),
+  beforeEnd: z.boolean().optional(),
 });
 const paymentLinksInput = z.object({ stripe: z.string().trim().url().or(z.literal('')).nullish(), paypal: z.string().trim().url().or(z.literal('')).nullish() });
 
@@ -156,10 +172,17 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
     return c.json({ ok: true });
   });
 
+  // R28: the client page Reminders list, every automatic reminder for this client.
+  app.get('/clients/:id/reminders', requireRole('owner', 'assistant'), async (c) => {
+    const id = idParam(c.req.param('id'));
+    await getClient(c.env.DB, id, businessIdOf(c));
+    return c.json({ reminders: await clientReminders(c.env.DB, businessIdOf(c), id) });
+  });
+
   app.get('/settings', requireFeature('settings'), async (c) => {
     const b = businessIdOf(c);
-    const [reminders, links, cc] = await Promise.all([reminderSettings(c.env.DB, b), paymentLinkSettings(c.env.DB, b), ccSetting(c.env.DB, b)]);
-    return c.json({ reminders, paymentLinks: links, cc });
+    const [reminders, contractReminders, links, cc] = await Promise.all([reminderSettings(c.env.DB, b), contractReminderSettings(c.env.DB, b), paymentLinkSettings(c.env.DB, b), ccSetting(c.env.DB, b)]);
+    return c.json({ reminders, contractReminders, paymentLinks: links, cc });
   });
 
   app.put('/settings/cc', requireFeature('settings'), async (c) => {
@@ -172,6 +195,13 @@ export function createSendingRoutes(resolveMailer: (env: Env) => Mailer): Hono<A
     const input = reminderSettingsInput.parse(await body(c));
     await setReminderSettings(c.env.DB, businessIdOf(c), input);
     return c.json(await reminderSettings(c.env.DB, businessIdOf(c)));
+  });
+
+  // R28: contract signing reminders, shown with the payment reminders in Settings > Email.
+  app.put('/settings/contract-reminders', requireFeature('settings'), async (c) => {
+    const input = contractReminderInput.parse(await body(c));
+    await setContractReminderSettings(c.env.DB, businessIdOf(c), input);
+    return c.json(await contractReminderSettings(c.env.DB, businessIdOf(c)));
   });
 
   app.put('/settings/payment-links', requireFeature('settings'), async (c) => {

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { api, clock, ok } from './helpers';
+import { api, clock, line, makeClient, ok } from './helpers';
 
 beforeEach(() => {
   clock.today = '2026-10-06';
@@ -92,5 +92,59 @@ describe('US bank account for ACH', () => {
       details: { bankCountry: 'US', accountNumber: '1' },
     });
     expect(missing.status).toBe(400);
+  });
+});
+
+describe('default payment methods per client (R28 task 11)', () => {
+  async function method(name: string): Promise<number> {
+    const res = await ok('POST', '/payment-methods', { displayName: name, type: 'other' });
+    return res.paymentMethods.find((m: any) => m.display_name === name).id as number;
+  }
+  const draftFor = async (type: string, clientId: number, extra: Record<string, unknown> = {}) =>
+    (await ok('POST', '/documents', { type, clientId, lines: [line(10000)], ...extra })).document;
+  const idsOf = (doc: any) => (doc.payment_method_ids ? JSON.parse(doc.payment_method_ids) : []);
+
+  it('a client has no default payment methods until set, and the list round-trips', async () => {
+    const a = await method('Default A');
+    const b = await method('Default B');
+    const created = await ok('POST', '/clients', { nameEn: 'Defaults Ltd' });
+    expect(created.client.default_payment_method_ids).toBeNull();
+    const updated = await ok('PATCH', `/clients/${created.client.id}`, { defaultPaymentMethodIds: [b, a] });
+    expect(JSON.parse(updated.client.default_payment_method_ids)).toEqual([b, a]);
+    expect(JSON.parse((await ok('PATCH', `/clients/${created.client.id}`, { notes: 'x' })).client.default_payment_method_ids)).toEqual([b, a]);
+    expect((await ok('PATCH', `/clients/${created.client.id}`, { defaultPaymentMethodIds: [] })).client.default_payment_method_ids).toBeNull();
+    expect((await api('PATCH', `/clients/${created.client.id}`, { defaultPaymentMethodIds: [999999] })).status).toBe(409);
+  });
+
+  // The tax invoice (305) is off for the test business, an osek patur. The rule does not look at the type.
+  it('a new payment request, pro forma and receipt start with exactly the client defaults', async () => {
+    await method('Start A');
+    const b = await method('Start B');
+    const clientId = await makeClient({ defaultPaymentMethodIds: [b] });
+    for (const type of ['PR', '300', '400']) {
+      const doc = await draftFor(type, clientId, type === '400' ? { lines: [], payments: [] } : {});
+      expect(idsOf(doc)).toEqual([b]);
+    }
+  });
+
+  it('the owner can still change them per document', async () => {
+    const a = await method('Change A');
+    const b = await method('Change B');
+    const clientId = await makeClient({ defaultPaymentMethodIds: [a] });
+    const doc = await draftFor('PR', clientId, { paymentMethodIds: [b] });
+    expect(idsOf(doc)).toEqual([b]);
+  });
+
+  it('an inactive method is skipped, and an empty list keeps the last-used rule', async () => {
+    const a = await method('Skip A');
+    const b = await method('Skip B');
+    const clientId = await makeClient({ defaultPaymentMethodIds: [a, b] });
+    await ok('POST', `/payment-methods/${a}/deactivate`);
+    expect(idsOf(await draftFor('PR', clientId))).toEqual([b]);
+
+    const plain = await makeClient();
+    const used = await draftFor('PR', plain, { paymentMethodIds: [b] });
+    await ok('POST', `/documents/${used.id}/finalize`, {});
+    expect(idsOf(await draftFor('PR', plain))).toEqual([b]);
   });
 });

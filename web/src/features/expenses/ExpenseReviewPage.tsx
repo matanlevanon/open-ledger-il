@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { BackLink } from '../../components/BackLink';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useT } from '../../i18n';
 import {
@@ -126,6 +127,7 @@ export function ExpenseReviewPage() {
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl">
+      <BackLink to="/expenses" />
       <h1 id="page-title" className="font-heading text-3xl text-ink">
         {t('expenses.review.title')}
       </h1>

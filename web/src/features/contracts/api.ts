@@ -1,4 +1,4 @@
-import { apiGet } from '../../api/client';
+import { ApiError, type ApiErrorBody, apiGet } from '../../api/client';
 import { apiSend } from '../documents/api';
 
 /** R25: /api/contracts. */
@@ -131,6 +131,20 @@ export interface ContractSummary {
   signedAt: string | null;
   expiresAt: string | null;
   signerEmail: string | null;
+  /** R28: 'external' for a contract signed outside the Ledger. Older servers leave it out. */
+  origin?: 'ledger' | 'external';
+}
+
+/** R28: what the owner entered for a contract signed elsewhere. */
+export interface ExternalRecord {
+  signerName: string | null;
+  signerRole: string | null;
+  signerEmail: string | null;
+  signedDate: string;
+  startDate: string | null;
+  endDate: string | null;
+  fee: string | null;
+  notes: string | null;
 }
 
 export interface ContractEvent {
@@ -144,7 +158,15 @@ export interface ContractEvent {
   at: string;
 }
 
+export interface ContractOverview {
+  services: { name: string; model: string; items: string[]; other: string | null; note: string | null; fee: string | null }[];
+  terms: { key: string; label: string; value: string }[];
+  signedBy: { name: string; role: string; at: string; ip: string | null; device: string; identity: 'email_code' | 'link_only' | null } | null;
+  ownerSignedAt: string | null;
+}
+
 export interface ContractDetail extends ContractSummary {
+  overview?: ContractOverview;
   clientId: number;
   clientName: string;
   templateId: number;
@@ -163,6 +185,7 @@ export interface ContractDetail extends ContractSummary {
   identityMethod: 'email_code' | 'link_only' | null;
   linkedDocumentId: number | null;
   events: ContractEvent[];
+  external?: ExternalRecord | null;
 }
 
 export interface ContractInput {
@@ -217,8 +240,19 @@ export const contractsApi = {
   remind: (id: number, channel: 'email' | 'link') => apiSend<SendResult>('POST', `/contracts/${id}/remind`, { channel }),
   void: (id: number, reason: string | null) => apiSend<{ contract: ContractDetail }>('POST', `/contracts/${id}/void`, { reason }),
   proforma: (id: number) => apiSend<{ documentId: number }>('POST', `/contracts/${id}/proforma`, {}),
+  uploadExternal: (form: FormData) => postForm<{ contract: ContractDetail }>('/contracts/external', form),
   pdfUrl: (id: number, which: 'sent' | 'signed', download = false) => `/api/contracts/${id}/pdf?which=${which}${download ? '&download=1' : ''}`,
 };
+
+/** A multipart POST. The JSON client sets a JSON content type, so the upload goes direct. */
+async function postForm<T>(path: string, form: FormData): Promise<T> {
+  const res = await fetch(`/api${path}`, { method: 'POST', body: form, headers: { Accept: 'application/json' } });
+  if (!res.ok) {
+    const err = (await res.json().catch(() => null)) as ApiErrorBody | null;
+    throw new ApiError(res.status, err?.error.code ?? 'http_error', err?.error.message ?? 'Upload failed.', err?.error.details);
+  }
+  return (await res.json()) as T;
+}
 
 /** The preview is HTML, so it skips the JSON client. */
 export async function fetchPreview(input: ContractInput): Promise<string> {

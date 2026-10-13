@@ -99,4 +99,5 @@ export const common = {
   'businessType.osek_patur': 'עוסק פטור',
   'businessType.osek_murshe': 'עוסק מורשה',
   'businessType.company': 'חברה בע"מ',
+  'common.back': 'Back',
 };

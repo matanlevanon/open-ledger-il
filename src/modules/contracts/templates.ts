@@ -225,7 +225,7 @@ export async function listTemplates(db: D1Database, businessId: number): Promise
     db,
     `SELECT t.*, v.id AS v_id, (SELECT COUNT(*) FROM contracts c WHERE (c.template_id = t.id OR c.included_template_id = t.id) AND c.status <> 'draft') AS used
      FROM contract_templates t JOIN contract_template_versions v ON v.template_id = t.id AND v.version = t.current_version
-     WHERE t.business_id = ? ORDER BY t.active DESC, t.id`,
+     WHERE t.business_id = ? AND t.origin = 'ledger' ORDER BY t.active DESC, t.id`,
     businessId,
   );
   const out: TemplateView[] = [];
@@ -239,6 +239,13 @@ export async function listTemplates(db: D1Database, businessId: number): Promise
 export async function getTemplate(db: D1Database, businessId: number, id: number): Promise<TemplateRow> {
   const row = await first<TemplateRow>(db, 'SELECT * FROM contract_templates WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('Template', id);
+  return row;
+}
+
+/** A template the owner manages and sends from. The hidden template of contracts signed elsewhere reads as not found. */
+export async function getLedgerTemplate(db: D1Database, businessId: number, id: number): Promise<TemplateRow> {
+  const row = await getTemplate(db, businessId, id);
+  if (row.origin !== 'ledger') throw new NotFoundError('Template', id);
   return row;
 }
 
@@ -257,7 +264,7 @@ export async function templateVersion(db: D1Database, businessId: number, templa
 }
 
 export async function templateView(db: D1Database, businessId: number, id: number): Promise<TemplateView> {
-  const t = await getTemplate(db, businessId, id);
+  const t = await getLedgerTemplate(db, businessId, id);
   const v = await templateVersion(db, businessId, id);
   const used = (await first<{ n: number }>(db, "SELECT COUNT(*) AS n FROM contracts WHERE (template_id = ?1 OR included_template_id = ?1) AND status <> 'draft'", id))!.n;
   return toView(t, v, used);
@@ -292,7 +299,7 @@ export async function createTemplate(db: D1Database, actor: AuditActor, input: T
  */
 export async function updateTemplate(db: D1Database, actor: AuditActor, id: number, input: TemplateInput): Promise<TemplateView> {
   const businessId = actorBiz(actor);
-  const t = await getTemplate(db, businessId, id);
+  const t = await getLedgerTemplate(db, businessId, id);
   if (input.kind !== t.kind) throw new ValidationError('A template keeps its kind. Make a new template instead.');
   const fields = checkFields(input.fields, [input.bodyEn, input.bodyHe]);
   const used = await first(db, VERSION_USED_SQL, id, t.current_version);

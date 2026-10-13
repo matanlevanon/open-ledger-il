@@ -1,10 +1,20 @@
+import { env } from 'cloudflare:workers';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { createApp } from '../../../src/index';
 import { finalizeDocument } from '../../../src/core/numbering';
 import { acceptConsent } from '../../../src/modules/sending/consent';
 import { FakeMailer } from '../../../src/modules/sending/mailer';
 import { runReminders } from '../../../src/modules/sending/reminders';
 import { insertPaymentRequest, insertSendingClient } from '../../fixtures/sending/db';
 import { OWNER_ACTOR, db } from '../../helpers';
+
+const logOf = async (documentId: number) =>
+  (
+    await db()
+      .prepare("SELECT channel, rule, result FROM reminder_log WHERE target_kind = 'document' AND target_id = ? ORDER BY id")
+      .bind(documentId)
+      .all<{ channel: string; rule: string; result: string }>()
+  ).results;
 
 const TODAY = '2026-11-10';
 
@@ -85,5 +95,73 @@ describe('runReminders', () => {
     const result = await runReminders({ db: db(), mailer, today: TODAY , businessId: 1 });
     expect(result.sent).toBe(0);
     expect(mailer.sent).toHaveLength(0);
+  });
+});
+
+describe('R28 payment reminders: the client switch and the log', () => {
+  let mailer: FakeMailer;
+
+  beforeEach(() => {
+    mailer = new FakeMailer();
+  });
+
+  it('logs each send to reminder_log with its rule', async () => {
+    const clientId = await insertSendingClient({ email: 'logged@example.com' });
+    await acceptConsent(db(), { clientId, ip: null, userAgent: null });
+    const id = await finalizedRequest(clientId, '2026-11-13');
+    await runReminders({ db: db(), mailer, today: TODAY, businessId: 1 });
+    expect(await logOf(id)).toEqual([{ channel: 'email', rule: 'before_3', result: 'sent' }]);
+  });
+
+  it('skips a client with automatic reminders off', async () => {
+    const clientId = await insertSendingClient({ email: 'quiet@example.com' });
+    await acceptConsent(db(), { clientId, ip: null, userAgent: null });
+    await db().prepare('UPDATE clients SET auto_reminders = 0 WHERE id = ?').bind(clientId).run();
+    const id = await finalizedRequest(clientId, '2026-11-13');
+    await runReminders({ db: db(), mailer, today: TODAY, businessId: 1 });
+    expect(mailer.sent.some((m) => m.to === 'quiet@example.com')).toBe(false);
+    expect(await logOf(id)).toEqual([]);
+  });
+
+  it('a client with a phone and no email gets a WhatsApp reminder due, once', async () => {
+    const clientId = await insertSendingClient({ email: null, phone: '+972501112222' });
+    await acceptConsent(db(), { clientId, ip: null, userAgent: null });
+    const id = await finalizedRequest(clientId, '2026-11-13');
+    await runReminders({ db: db(), mailer, today: TODAY, businessId: 1 });
+    await runReminders({ db: db(), mailer, today: TODAY, businessId: 1 });
+    expect(await logOf(id)).toEqual([{ channel: 'whatsapp_due', rule: 'before_3', result: 'due' }]);
+  });
+
+  it('with email off, nothing is emailed and the reminder is due on WhatsApp', async () => {
+    const clientId = await insertSendingClient({ email: 'off@example.com' });
+    await acceptConsent(db(), { clientId, ip: null, userAgent: null });
+    const id = await finalizedRequest(clientId, '2026-11-07');
+    const result = await runReminders({ db: db(), mailer: null, today: TODAY, businessId: 1 });
+    expect(result.sent).toBe(0);
+    expect(await logOf(id)).toEqual([{ channel: 'whatsapp_due', rule: 'after_3', result: 'due' }]);
+  });
+
+  it('a client with neither email nor phone is skipped and nothing is logged', async () => {
+    const clientId = await insertSendingClient({ email: null, phone: null });
+    await acceptConsent(db(), { clientId, ip: null, userAgent: null });
+    const id = await finalizedRequest(clientId, '2026-11-13');
+    await runReminders({ db: db(), mailer, today: TODAY, businessId: 1 });
+    expect(await logOf(id)).toEqual([]);
+  });
+});
+
+describe('R28 reminder settings routes', () => {
+  const app = createApp();
+  const req = (method: string, path: string, body?: unknown) =>
+    app.request(`/api${path}`, { method, headers: { 'content-type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) }, { ...env, DEV_AUTH_EMAIL: 'owner@example.com' });
+
+  it('reads both reminder settings with their defaults and saves the contract ones', async () => {
+    const before = (await (await req('GET', '/sending/settings')).json()) as any;
+    expect(before.reminders).toEqual({ enabled: true, beforeDays: [3], afterDays: [3, 10] });
+    expect(before.contractReminders).toEqual({ enabled: true, afterDays: [3, 7], beforeEnd: true });
+    const saved = await req('PUT', '/sending/settings/contract-reminders', { enabled: true, afterDays: [5], beforeEnd: false });
+    expect(saved.status).toBe(200);
+    expect(await saved.json()).toEqual({ enabled: true, afterDays: [5], beforeEnd: false });
+    expect((await req('PUT', '/sending/settings/contract-reminders', { afterDays: [0] })).status).toBe(400);
   });
 });
