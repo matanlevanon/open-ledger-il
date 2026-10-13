@@ -82,7 +82,7 @@ function adminPageHtml(env: Env, email: string): string {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Demo Admin</title>
 <style>
 :root{--canvas:#faf9f6;--surface:#fff;--ink:#1d1d1b;--muted:#6b6a66;--line:#e3e1db;--brand:#1f5fd1;--ok:#1f8a4c;--okbg:#e6f4ec}
-@media (prefers-color-scheme:dark){:root{--canvas:#141413;--surface:#1d1d1b;--ink:#f2f1ed;--muted:#a3a29c;--line:#34332f;--okbg:#173525}}
+
 *{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font:15px/1.55 system-ui,"Segoe UI",sans-serif}
 main{max-width:1000px;margin:0 auto;padding:24px 16px 60px}.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:12px 0}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}

@@ -21,12 +21,14 @@
         try {
           var theme = localStorage.getItem('open-ledger-il-theme');
           if (theme !== 'light' && theme !== 'dark') {
-            theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : null;
+            // The demo opens light. Elsewhere, follow the system.
+            theme = document.documentElement.dataset.demo ? 'light' : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : null;
           }
           if (theme) document.documentElement.dataset.theme = theme;
 
           var locale = localStorage.getItem('open-ledger-il-locale');
-          if (locale === 'he') {
+          // The demo opens in Hebrew unless the visitor picked English.
+          if (locale === 'he' || (locale !== 'en' && document.documentElement.dataset.demo)) {
             document.documentElement.lang = 'he';
             document.documentElement.dir = 'rtl';
           }

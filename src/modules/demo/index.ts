@@ -169,7 +169,7 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
   });
 
   r.get('/confirm/:token', manual, async (c) => {
-    const lang: Lang = c.req.query('lang') === 'he' ? 'he' : 'en';
+    const lang: Lang = c.req.query('lang') === 'en' ? 'en' : 'he';
     try {
       const payload = await verifySendToken(c.env, c.req.param('token'));
       if (payload.kind !== 'demo_confirm') throw new UnauthorizedError('This link is not valid.');
@@ -183,7 +183,7 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
   });
 
   r.get('/unsubscribe/:token', manual, async (c) => {
-    const lang: Lang = c.req.query('lang') === 'he' ? 'he' : 'en';
+    const lang: Lang = c.req.query('lang') === 'en' ? 'en' : 'he';
     try {
       const payload = await verifySendToken(c.env, c.req.param('token'));
       if (payload.kind !== 'demo_unsubscribe') throw new UnauthorizedError('This link is not valid.');

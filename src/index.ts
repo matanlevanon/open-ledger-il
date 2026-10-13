@@ -47,7 +47,7 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
     c.env = demoEnv(c.env);
     const path = c.req.path;
     if (path.startsWith('/api/') || path === '/api' || path.startsWith('/mcp') || path.startsWith('/admin')) return next();
-    const lang = c.req.query('lang') === 'he' ? 'he' : 'en';
+    const lang = c.req.query('lang') === 'en' ? 'en' : 'he'; // The demo opens in Hebrew.
     if (path === '/privacy') return c.html(privacyPageHtml(c.env, lang));
     // Static files (scripts, styles, icons) load without a session. Pages need one.
     if (/.[a-z0-9]+$/i.test(path) && !path.endsWith('.html')) return next();
@@ -135,7 +135,14 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
 
   app.notFound(async (c) => {
     if (c.req.path.startsWith('/api/')) return c.json(errorBody('not_found', 'No such endpoint.'), 404);
-    if (c.env.ASSETS) return c.env.ASSETS.fetch(c.req.raw);
+    if (c.env.ASSETS) {
+      const res = await c.env.ASSETS.fetch(c.req.raw);
+      // Demo: mark the app page so its first-paint script defaults to the light theme.
+      if (isDemo(c.env) && (res.headers.get('content-type') ?? '').includes('text/html')) {
+        return new HTMLRewriter().on('html', { element: (e) => { e.setAttribute('data-demo', '1'); } }).transform(res);
+      }
+      return res;
+    }
     return c.text('Not found', 404);
   });
 

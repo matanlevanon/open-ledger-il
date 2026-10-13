@@ -130,15 +130,22 @@ describe('the gate', () => {
   });
 
   it('shows the gate without a session: name, email, an unticked box, Turnstile, the privacy link', async () => {
-    const html = await (await call('/')).text();
+    const html = await (await call('/?lang=en')).text();
     expect(html).toContain('Enter the demo');
     expect(html).toContain('name="consent" value="yes"');
     expect(html).not.toMatch(/name="consent"[^>]*checked/);
     expect(html).toContain('data-sitekey="1x00000000000000000000AA"');
     expect(html).toContain('Send me updates and offers from Sample Sender by email.');
-    expect(html).toContain('href="/privacy"');
+    expect(html).toContain('href="/privacy?lang=en"');
     expect(await (await call('/privacy?lang=he')).text()).toContain('הודעת פרטיות');
     expect((await call('/api/me')).status).toBe(401);
+  });
+
+  it('opens in Hebrew by default and remembers the language for the app', async () => {
+    const html = await (await call('/')).text();
+    expect(html).toContain('lang="he"');
+    expect(html).toContain("localStorage.setItem('open-ledger-il-locale','he')");
+    expect(await (await call('/privacy')).text()).toContain('הודעת פרטיות');
   });
 
   it('refuses a failed Turnstile check', async () => {

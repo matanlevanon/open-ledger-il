@@ -11,7 +11,7 @@ function shell(lang: Lang, title: string, body: string, head = ''): string {
   return `<!doctype html><html lang="${lang}" dir="${lang === 'he' ? 'rtl' : 'ltr'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)}</title>${head}
 <style>
 :root{--canvas:#faf9f6;--surface:#fff;--ink:#1d1d1b;--muted:#6b6a66;--line:#e3e1db;--brand:#1f5fd1;--danger:#b42318}
-@media (prefers-color-scheme:dark){:root{--canvas:#141413;--surface:#1d1d1b;--ink:#f2f1ed;--muted:#a3a29c;--line:#34332f}}
+
 *{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.55 system-ui,"Segoe UI",sans-serif}
 main{max-width:440px;margin:0 auto;padding:40px 16px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
@@ -57,7 +57,9 @@ export function gatePageHtml(env: Env, lang: Lang, opts: { error?: string | null
   const texts = demoTexts(env);
   const siteKey = (env.TURNSTILE_SITE_KEY ?? '').trim();
   const turnstile = siteKey ? `<div class="cf-turnstile" data-sitekey="${esc(siteKey)}" data-language="${lang}" style="margin-top:14px"></div>` : '';
-  const head = siteKey ? '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>' : '';
+  // The app opens in the language picked here.
+  const remember = `<script>try{localStorage.setItem('open-ledger-il-locale','${lang}')}catch(e){}</script>`;
+  const head = remember + (siteKey ? '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>' : '');
   return shell(
     lang,
     t.title(texts.product),
@@ -74,7 +76,7 @@ ${opts.error ? `<p class="err" role="alert">${esc(opts.error)}</p>` : ''}
 <button type="submit">${esc(t.enter)}</button>
 </form>
 <p class="muted links">${esc(t.noRealData)}</p>
-<p class="muted links"><a href="/privacy${lang === 'he' ? '?lang=he' : ''}">${esc(t.privacy)}</a> · <a href="/?lang=${lang === 'he' ? 'en' : 'he'}">${esc(t.other)}</a></p>
+<p class="muted links"><a href="/privacy?lang=${lang}">${esc(t.privacy)}</a> · <a href="/?lang=${lang === 'he' ? 'en' : 'he'}">${esc(t.other)}</a></p>
 </div>`,
     head,
   );
@@ -117,7 +119,7 @@ export function privacyPageHtml(env: Env, lang: Lang): string {
 <h2>למה</h2><p>כדי לפתוח לכם עותק פרטי של ההדגמה, ולמנוע שימוש לרעה. עדכונים והצעות נשלחים רק אם סימנתם את התיבה ואישרתם במייל.</p>
 <h2>לכמה זמן</h2><p>מה שיצרתם בהדגמה נמחק כל לילה ב-03:00. השם, האימייל ותיעוד ההסכמה נשמרים עד שתבקשו למחוק אותם.</p>
 <h2>הסרה</h2><p>בכל מייל מאיתנו יש קישור הסרה.${contact ? ` אפשר גם לכתוב אל ${esc(contact)}.` : ''}</p>
-<p class="links"><a href="/?lang=he">חזרה</a> · <a href="/privacy">English</a></p></div>`,
+<p class="links"><a href="/?lang=he">חזרה</a> · <a href="/privacy?lang=en">English</a></p></div>`,
     );
   }
   return shell(
@@ -129,7 +131,7 @@ export function privacyPageHtml(env: Env, lang: Lang): string {
 <h2>Why</h2><p>To open a private copy of the demo for you and to stop abuse. Updates and offers go out only if you ticked the box and confirmed by email.</p>
 <h2>For how long</h2><p>What you create in the demo is deleted every night at 03:00 Israel time. Your name, email and consent record stay until you ask us to delete them.</p>
 <h2>Unsubscribe</h2><p>Every email from us has an unsubscribe link.${contact ? ` You can also write to ${esc(contact)}.` : ''}</p>
-<p class="links"><a href="/">Back</a> · <a href="/privacy?lang=he">עברית</a></p></div>`,
+<p class="links"><a href="/?lang=en">Back</a> · <a href="/privacy?lang=he">עברית</a></p></div>`,
   );
 }
 

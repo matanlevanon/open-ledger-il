@@ -7,6 +7,10 @@ compatibility_flags = ["nodejs_compat"]
 # Reachable only at your custom domain, behind Cloudflare Access. No workers.dev or preview URLs.
 workers_dev = false
 preview_urls = false
+# keep_vars works only at the top level. It keeps variables set in the Cloudflare dashboard
+# (TURNSTILE_SITE_KEY, ACCESS_AUD, ADMIN_EMAILS, DEMO_RESET_URL, DEMO_CTA_URL, MAIL_FROM)
+# when a deploy from this file runs. Values listed in this file still win.
+keep_vars = true
 
 # Custom domain. Uncomment and set your own hostname (docs/deploy.md).
 # routes = [
@@ -78,7 +82,7 @@ binding = "BROWSER"
 directory = "./web/dist"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
-run_worker_first = ["/api/*", "/mcp", "/mcp/*"]
+run_worker_first = ["/api/*", "/mcp", "/mcp/*", "/admin", "/admin/*"]
 
 # Cron triggers. One block for the whole Worker. The single scheduled handler in src/scheduled.ts
 # receives every fire and dispatches it to each module that lists the cron in its `crons`.
@@ -173,3 +177,11 @@ bucket_name = "open-ledger-sample-backups"
 
 [env.sample.browser]
 binding = "BROWSER"
+
+# The demo's Worker runs first on every path: a visitor without a session gets the gate page,
+# and the Worker hands everything else to the assets.
+[env.sample.assets]
+directory = "./web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/*"]
