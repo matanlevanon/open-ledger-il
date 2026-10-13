@@ -3,7 +3,8 @@ Builds the product site: docs/index.html (English) and docs/he.html (Hebrew), ne
 screenshots in docs/screenshots/. Run: python3 scripts/build-site.py docs
 GitHub Pages serves it: Settings > Pages > Deploy from a branch > main, /docs.
 """
-import html, os, sys
+import html, json, os, sys
+from pathlib import Path
 
 # The page names no account. GitHub links are built in the browser from the Pages address
 # (<owner>.github.io/<repo>/), so a fork's page points at the fork.
@@ -17,6 +18,8 @@ CLONE = 'git clone https://github.com/OWNER/open-ledger-il.git'
 # The project's official live demo. scripts/leak-denylist.txt allows this one hostname in this
 # file and the two pages it builds, nowhere else.
 DEMO_URL = 'https://sampleledger.matanlevanon.com'
+# The version shown on the site comes from package.json, so a release bump updates it.
+VERSION = json.loads((Path(__file__).resolve().parent.parent / 'package.json').read_text(encoding='utf-8'))['version']
 
 LOGO = '''<svg viewBox="0 0 32 32" aria-hidden="true">
         <rect x="1" y="1" width="30" height="30" rx="8" fill="#141d2e" stroke="#26344b" stroke-width="1.5"/>
@@ -30,7 +33,7 @@ EN = dict(
     title='Open Ledger IL - invoices and books for an Israeli business, on your own Cloudflare',
     desc='Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.',
     nav=['Features', 'Feature list', 'On your phone', 'How it works', 'Screenshots', 'Setup'], github='View on GitHub',
-    badge='<b>Free</b> · Open source (AGPL-3.0) · Self-hosted · Registered with the Israel Tax Authority',
+    badge='<b>Free</b> · Open source (AGPL-3.0) · Self-hosted · Registered with the Israel Tax Authority · Version ' + VERSION,
     h1='Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.',
     lead='Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.',
     cta=['Get the code', 'Read the deploy guide'], copy='Copy', copied='Copied',
@@ -213,7 +216,7 @@ EN = dict(
     ],
     reg_title='Do you need to register the software with the Tax Authority?',
     reg_p=[
-        'Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate covers version 1.1.0. Newer versions are added to it as they ship.',
+        'Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is ' + VERSION + ', and new versions are added to the certificate as they are filed.',
         'The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included.',
         'You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients\u2019 books, and you register first.',
         'Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings > Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.',
@@ -247,7 +250,7 @@ HE = dict(
     title='Open Ledger IL - חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, בענן Cloudflare שלך',
     desc='מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.',
     nav=['יכולות', 'רשימת יכולות', 'בטלפון', 'איך זה עובד', 'צילומי מסך', 'הקמה'], github='לקוד ב-GitHub',
-    badge='<b>חינם</b> · קוד פתוח (AGPL-3.0) · מאוחסן אצלך · רשומה ברשות המסים',
+    badge='<b>חינם</b> · קוד פתוח (AGPL-3.0) · מאוחסן אצלך · רשומה ברשות המסים · גרסה ' + VERSION,
     h1='חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.',
     lead='הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.',
     cta=['לקוד', 'למדריך ההתקנה'], copy='העתקה', copied='הועתק',
@@ -430,7 +433,7 @@ HE = dict(
     ],
     reg_title='צריך לרשום את התוכנה ברשות המסים?',
     reg_p=[
-        'חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה חלה על מהדורה 1.1.0. מהדורות חדשות נוספות אליה עם השקתן.',
+        'חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא ' + VERSION + ', ומהדורות חדשות נוספות לתעודה עם הגשתן.',
         'רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם.',
         'אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.',
         'מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות > הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.',
@@ -476,7 +479,7 @@ OPTIONS_EN = r'''  <section id="options">
         </div>
         <div class="step">
           <h3>Set up for you</h3>
-          <p>Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪900, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself.</p>
+          <p>Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪699, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself.</p>
           <p><a href="#setup-form">Ask for a setup</a></p>
         </div>
       </div>
@@ -532,7 +535,7 @@ OPTIONS_HE = r'''  <section id="options">
         </div>
         <div class="step">
           <h3>הקמה עבורך</h3>
-          <p>מעדיף שמישהו אחר יקים? אתקין ואפרוס את המערכת בחשבונות Cloudflare ורשות המסים שלך, ואמסור לך אותה פועלת. התשלום החד פעמי הוא ₪900, פחות ממנוי שנתי במסלול ביניים בתוכנת חשבוניות בתשלום, שעולה כ-₪700 עד ₪1,200 בכל שנה. מאותו רגע המערכת שלך: בלי מנוי, עדכונים בחינם, ואת התחזוקה אתה מבצע בעצמך.</p>
+          <p>מעדיף שמישהו אחר יקים? אתקין ואפרוס את המערכת בחשבונות Cloudflare ורשות המסים שלך, ואמסור לך אותה פועלת. התשלום החד פעמי הוא ₪699, פחות ממנוי שנתי במסלול ביניים בתוכנת חשבוניות בתשלום, שעולה כ-₪700 עד ₪1,200 בכל שנה. מאותו רגע המערכת שלך: בלי מנוי, עדכונים בחינם, ואת התחזוקה אתה מבצע בעצמך.</p>
           <p><a href="#setup-form">לבקשת הקמה</a></p>
         </div>
       </div>
