@@ -14,6 +14,9 @@ LICENSE = '#" data-gh="/blob/main/LICENSE'
 ITA_REGISTRY = 'https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems'
 ITA_REG = 'https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system'
 CLONE = 'git clone https://github.com/OWNER/open-ledger-il.git'
+# The project's official live demo. scripts/leak-denylist.txt allows this one hostname in this
+# file and the two pages it builds, nowhere else.
+DEMO_URL = 'https://sampleledger.matanlevanon.com'
 
 LOGO = '''<svg viewBox="0 0 32 32" aria-hidden="true">
         <rect x="1" y="1" width="30" height="30" rx="8" fill="#141d2e" stroke="#26344b" stroke-width="1.5"/>
@@ -31,6 +34,14 @@ EN = dict(
     h1='Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.',
     lead='Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.',
     cta=['Get the code', 'Read the deploy guide'], copy='Copy', copied='Copied',
+    demo_nav='Demo', demo_cta='Try the live demo',
+    demo_note='No install. Sample data, in your browser, in about a minute.',
+    demo_eyebrow='Live demo', demo_h='Try it before you install it',
+    demo_points=[
+        ('Real sample businesses', 'Clients, documents, expenses and contracts, already filled in.'),
+        ('Drafts and the finished PDF', 'Create a draft and see the PDF it would issue.'),
+        ('Nothing you enter is kept', 'Your drafts are deleted when you leave.'),
+    ],
     cmd_note='Deploys to your own Cloudflare Worker. Starts on the Workers Free plan. Setup takes an afternoon.',
     shot_alt='The dashboard: open and overdue documents, cash flow, income by month and top clients',
     shot_cap='All screenshots on this page use an invented demo business.',
@@ -221,6 +232,14 @@ HE = dict(
     h1='חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.',
     lead='הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.',
     cta=['לקוד', 'למדריך ההתקנה'], copy='העתקה', copied='הועתק',
+    demo_nav='הדגמה', demo_cta='נסו את ההדגמה',
+    demo_note='בלי התקנה. נתוני דוגמה, בדפדפן, תוך דקה בערך.',
+    demo_eyebrow='הדגמה חיה', demo_h='נסו לפני שמתקינים',
+    demo_points=[
+        ('עסקי דוגמה אמיתיים', 'לקוחות, מסמכים, הוצאות וחוזים, כבר מלאים.'),
+        ('טיוטות וה-PDF המוגמר', 'יוצרים טיוטה ורואים את ה-PDF שהיא תפיק.'),
+        ('שום דבר שתזינו לא נשמר', 'הטיוטות נמחקות כשיוצאים.'),
+    ],
     cmd_note='נפרסת ל-Worker שלך ב-Cloudflare. מתחילה בתוכנית Workers Free. ההקמה לוקחת אחר צהריים.',
     shot_alt='לוח הבקרה: מסמכים פתוחים ובאיחור, תזרים, הכנסות לפי חודש ולקוחות מובילים',
     shot_cap='כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.',
@@ -403,6 +422,121 @@ HE = dict(
 )
 
 
+# Two ways to run it: the free self install, or a paid setup, with the setup request form.
+# Raw HTML per language, placed between the phone section and How it works.
+OPTIONS_EN = r'''  <section id="options">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Two ways to run it</div>
+        <h2>Install it yourself for free, or have it set up for you</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3>Free, on your own</h3>
+          <p>Open Ledger IL is free to install and use, with no license fee and no usage limits. The setup guide walks you through it step by step: Cloudflare account, database, sign-in and the Tax Authority connection. Updates are published here for free. You apply them when you choose.</p>
+          <p><a href="#" data-gh="/blob/main/docs/deploy.md">Read the setup guide</a></p>
+        </div>
+        <div class="step">
+          <h3>Set up for you</h3>
+          <p>Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪900, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself.</p>
+          <p><a href="#setup-form">Ask for a setup</a></p>
+        </div>
+      </div>
+      <form class="setup-form" id="setup-form" novalidate>
+        <h3>Ask for a setup</h3>
+        <label>Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>Business type<select name="type"><option>Osek patur (עוסק פטור)</option><option>Osek murshe (עוסק מורשה)</option><option>Company (חברה בע"מ)</option><option>Other</option></select></label>
+        <label class="full">Anything I should know<textarea name="message" rows="4"></textarea></label>
+        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>
+        <div class="full"><button class="btn btn-primary" type="submit">Send request</button></div>
+        <p class="status" role="status"></p>
+      </form>
+      <script>
+      (function () {
+        var f = document.getElementById('setup-form'); if (!f) return;
+        var st = f.querySelector('.status');
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var d = new FormData(f);
+          if (d.get('hp')) return;
+          var email = String(d.get('email') || '').trim();
+          if (!d.get('name') || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { st.textContent = 'Add your name and a valid email.'; return; }
+          var btn = f.querySelector('button'); btn.disabled = true; st.textContent = 'Sending...';
+          var msg = 'Phone: ' + (d.get('phone') || '-') + '\nBusiness type: ' + d.get('type') + '\n\n' + (d.get('message') || '');
+          fetch('https://contact.matanlevanon.com/lead', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (en)' })
+          }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
+            .then(function (ok) { st.textContent = ok ? 'Thanks. Your request reached me, and I will reply by email.' : 'The request did not go through. Try again in a minute.'; if (ok) f.reset(); })
+            .catch(function () { st.textContent = 'The request did not go through. Try again in a minute.'; })
+            .finally(function () { btn.disabled = false; });
+        });
+      })();
+      </script>
+    </div>
+  </section>
+
+'''
+
+OPTIONS_HE = r'''  <section id="options">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">שתי דרכים להפעיל</div>
+        <h2>להתקין בעצמך בחינם, או לקבל אותה מוקמת</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3>בחינם, בעצמך</h3>
+          <p>חשבונאות פתוחה חינמית להתקנה ולשימוש, בלי דמי רישיון ובלי מגבלת שימוש. מדריך ההתקנה לוקח אותך שלב אחר שלב: חשבון Cloudflare, מסד הנתונים, הכניסה למערכת והחיבור לרשות המסים. עדכונים מתפרסמים כאן בחינם, ואתה מתקין אותם מתי שתבחר.</p>
+          <p><a href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a></p>
+        </div>
+        <div class="step">
+          <h3>הקמה עבורך</h3>
+          <p>מעדיף שמישהו אחר יקים? אתקין ואפרוס את המערכת בחשבונות Cloudflare ורשות המסים שלך, ואמסור לך אותה פועלת. התשלום החד פעמי הוא ₪900, פחות ממנוי שנתי במסלול ביניים בתוכנת חשבוניות בתשלום, שעולה כ-₪700 עד ₪1,200 בכל שנה. מאותו רגע המערכת שלך: בלי מנוי, עדכונים בחינם, ואת התחזוקה אתה מבצע בעצמך.</p>
+          <p><a href="#setup-form">לבקשת הקמה</a></p>
+        </div>
+      </div>
+      <form class="setup-form" id="setup-form" novalidate>
+        <h3>לבקשת הקמה</h3>
+        <label>שם<input name="name" autocomplete="name" required></label>
+        <label>אימייל<input name="email" type="email" autocomplete="email" required></label>
+        <label>טלפון<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>סוג העסק<select name="type"><option>עוסק פטור</option><option>עוסק מורשה</option><option>חברה בע"מ</option><option>אחר</option></select></label>
+        <label class="full">משהו שכדאי שאדע<textarea name="message" rows="4"></textarea></label>
+        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>
+        <div class="full"><button class="btn btn-primary" type="submit">שליחת בקשה</button></div>
+        <p class="status" role="status"></p>
+      </form>
+      <script>
+      (function () {
+        var f = document.getElementById('setup-form'); if (!f) return;
+        var st = f.querySelector('.status');
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var d = new FormData(f);
+          if (d.get('hp')) return;
+          var email = String(d.get('email') || '').trim();
+          if (!d.get('name') || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { st.textContent = 'נא למלא שם ואימייל תקין.'; return; }
+          var btn = f.querySelector('button'); btn.disabled = true; st.textContent = 'שולח...';
+          var msg = 'טלפון: ' + (d.get('phone') || '-') + '\nסוג העסק: ' + d.get('type') + '\n\n' + (d.get('message') || '');
+          fetch('https://contact.matanlevanon.com/lead', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)' })
+          }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
+            .then(function (ok) { st.textContent = ok ? 'תודה. הבקשה הגיעה אליי, ואחזור אליך באימייל.' : 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; if (ok) f.reset(); })
+            .catch(function () { st.textContent = 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; })
+            .finally(function () { btn.disabled = false; });
+        });
+      })();
+      </script>
+    </div>
+  </section>
+
+'''
+
+
 IDS = ['features', 'list', 'mobile', 'how', 'screens', 'setup']
 
 # Set in __main__ to the output folder. The Hebrew page uses a screenshot's -he variant
@@ -551,12 +685,43 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 .foot a:hover { color: var(--text); }
 .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
+.btn-lg { padding: 18px 36px; font-size: 18px; border-radius: 14px; }
+.cta-demo { margin-bottom: 10px; }
+.demo-note { font-size: 14px; color: var(--text-mute); margin: 0 0 22px; }
+.demo-band { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #ffffff; border-top: 0; }
+.demo-band .eyebrow { color: #93c5fd; }
+.demo-band .sec-head p, .demo-band .demo-note { color: #cbd5e1; }
+.demo-points { list-style: none; padding: 0; margin: 0 auto 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 920px; }
+.demo-points li { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: 18px 20px; }
+.demo-points h3 { margin: 0 0 6px; font-size: 16px; }
+.demo-points p { margin: 0; color: #cbd5e1; font-size: 14.5px; }
+.demo-band .cta { margin-bottom: 10px; }
+.demo-band .demo-note { margin: 0; text-align: center; }
+@media (max-width: 760px) { .demo-points { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .btn-demo { width: 100%; } }
+.setup-form { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+.setup-form h3 { grid-column: 1 / -1; margin: 0; }
+.setup-form label { display: grid; gap: 6px; font-size: 14px; color: var(--text-dim); }
+.setup-form .full { grid-column: 1 / -1; }
+.setup-form input, .setup-form select, .setup-form textarea { font: inherit; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); }
+.setup-form .hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.setup-form .status { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--text-dim); }
+@media (max-width: 640px) { .setup-form { grid-template-columns: 1fr; } }
 '''
 
 
 def page(c):
     e = html.escape
     nav = '\n      '.join(f'<a href="#{i}">{e(t)}</a>' for i, t in zip(IDS, c['nav']))
+    # Every link to the demo opens in a new tab.
+    demo_link = f'href="{DEMO_URL}" target="_blank" rel="noopener"'
+    nav += f'\n      <a {demo_link}>{e(c["demo_nav"])}</a>'
+    demo_btn = f'<a class="btn btn-primary btn-lg btn-demo" {demo_link}>{e(c["demo_cta"])}</a>'
+    demo_points = '\n'.join(
+        f'''        <li>
+          <h3>{e(h)}</h3>
+          <p>{e(p)}</p>
+        </li>''' for h, p in c['demo_points'])
     feats = '\n'.join(
         f'''        <div class="feat">
           <div class="ico" aria-hidden="true">{ico}</div>
@@ -657,8 +822,12 @@ def page(c):
       <div class="badge">{c['badge']}</div>
       <h1>{c['h1']}</h1>
       <p class="lead">{e(c['lead'])}</p>
+      <div class="cta cta-demo">
+        {demo_btn}
+      </div>
+      <p class="demo-note">{e(c['demo_note'])}</p>
       <div class="cta">
-        <a class="btn btn-primary" href="{REPO}">{e(c['cta'][0])}</a>
+        <a class="btn btn-ghost" href="{REPO}">{e(c['cta'][0])}</a>
         <a class="btn btn-ghost" href="{DEPLOY}">{e(c['cta'][1])}</a>
       </div>
       <div class="cmd">
@@ -713,7 +882,7 @@ def page(c):
     </div>
   </section>
 
-  <section id="how">
+{OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE}  <section id="how">
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">{e(c['how_eyebrow'])}</div>
@@ -749,6 +918,22 @@ def page(c):
       <div class="honest">
 {rules}
       </div>
+    </div>
+  </section>
+
+  <section id="demo" class="demo-band">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">{e(c['demo_eyebrow'])}</div>
+        <h2>{e(c['demo_h'])}</h2>
+      </div>
+      <ul class="demo-points">
+{demo_points}
+      </ul>
+      <div class="cta">
+        {demo_btn}
+      </div>
+      <p class="demo-note">{e(c['demo_note'])}</p>
     </div>
   </section>
 

@@ -64,3 +64,5 @@ allow:open-ledger@matanlevanon.com
 allow:Built by Matan Levanon
 allow:נבנה על ידי מתן לבנון
 bd0385db
+# The project's official live demo. Allowed in the site builder and the two pages it builds, nowhere else.
+allow-in:scripts/build-site.py,docs/index.html,docs/he.html:sampleledger.matanlevanon.com

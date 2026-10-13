@@ -6,6 +6,7 @@
 //   fragment:<text>        a non-identifying, case-insensitive substring to refuse outright
 //   allow:<text>           an exact, case-insensitive string published on purpose (the setup
 //                          request address). It is removed from a line before the checks run.
+//   allow-in:<path>,<path>:<text>  the same, but only in the listed files (paths from the repo root)
 // The script hashes candidate strings (words, word pairs and triples, dotted or dashed compound
 // tokens, and their prefixes) and compares. Binary files (PDF, PNG, fonts) are checked through
 // their printable strings, which covers PDF info and XMP metadata and PNG text chunks.
@@ -29,6 +30,7 @@ function loadDenylist() {
   const hashes = new Map();
   const fragments = [];
   const allowed = [];
+  const allowedIn = [];
   for (const raw of readFileSync(DENYLIST, 'utf8').split(/\r?\n/)) {
     const line = raw.trim();
     if (!line || line.startsWith('#')) continue;
@@ -39,17 +41,22 @@ function loadDenylist() {
       fragments.push(line.slice('fragment:'.length).toLowerCase());
     } else if (line.startsWith('allow:')) {
       allowed.push(line.slice('allow:'.length).toLowerCase());
+    } else if (line.startsWith('allow-in:')) {
+      const rest = line.slice('allow-in:'.length);
+      const sep = rest.indexOf(':');
+      allowedIn.push({ files: new Set(rest.slice(0, sep).split(',').map((f) => f.trim())), text: rest.slice(sep + 1).toLowerCase() });
     }
   }
-  return { hashes, lengths: [...new Set(hashes.values())].sort((a, b) => a - b), fragments, allowed };
+  return { hashes, lengths: [...new Set(hashes.values())].sort((a, b) => a - b), fragments, allowed, allowedIn };
 }
 
-const { hashes, lengths, fragments, allowed } = loadDenylist();
+const { hashes, lengths, fragments, allowed, allowedIn } = loadDenylist();
 
-/** The line with every allowed string blanked out, lowercased. */
-function withoutAllowed(line) {
+/** The line with every allowed string blanked out, lowercased. A file-scoped string counts only in its files. */
+function withoutAllowed(line, file) {
   let lower = line.toLowerCase();
   for (const a of allowed) lower = lower.split(a).join(' ');
+  for (const a of allowedIn) if (a.files.has(file)) lower = lower.split(a.text).join(' ');
   return lower;
 }
 const cache = new Map();
@@ -105,7 +112,7 @@ function candidates(line) {
 function checkText(file, text, findings, binary = false) {
   const lines = text.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
-    const line = withoutAllowed(lines[i]);
+    const line = withoutAllowed(lines[i], file);
     const lower = line;
     for (const fragment of fragments) {
       if (lower.includes(fragment)) findings.push({ file, line: i + 1, rule: `fragment "${fragment}"` });

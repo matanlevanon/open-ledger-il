@@ -148,6 +148,20 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 .foot a:hover { color: var(--text); }
 .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
+.btn-lg { padding: 18px 36px; font-size: 18px; border-radius: 14px; }
+.cta-demo { margin-bottom: 10px; }
+.demo-note { font-size: 14px; color: var(--text-mute); margin: 0 0 22px; }
+.demo-band { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #ffffff; border-top: 0; }
+.demo-band .eyebrow { color: #93c5fd; }
+.demo-band .sec-head p, .demo-band .demo-note { color: #cbd5e1; }
+.demo-points { list-style: none; padding: 0; margin: 0 auto 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 920px; }
+.demo-points li { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: 18px 20px; }
+.demo-points h3 { margin: 0 0 6px; font-size: 16px; }
+.demo-points p { margin: 0; color: #cbd5e1; font-size: 14.5px; }
+.demo-band .cta { margin-bottom: 10px; }
+.demo-band .demo-note { margin: 0; text-align: center; }
+@media (max-width: 760px) { .demo-points { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .btn-demo { width: 100%; } }
 .setup-form { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
 .setup-form h3 { grid-column: 1 / -1; margin: 0; }
 .setup-form label { display: grid; gap: 6px; font-size: 14px; color: var(--text-dim); }
@@ -178,6 +192,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
       <a href="#how">How it works</a>
       <a href="#screens">Screenshots</a>
       <a href="#setup">Setup</a>
+      <a href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">Demo</a>
     </nav>
     <div class="nav-end">
       <a class="lang" href="he.html" hreflang="he" lang="he">עברית</a>
@@ -192,8 +207,12 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
       <div class="badge"><b>Free</b> · Open source (AGPL-3.0) · Self-hosted</div>
       <h1>Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.</h1>
       <p class="lead">Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.</p>
+      <div class="cta cta-demo">
+        <a class="btn btn-primary btn-lg btn-demo" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">Try the live demo</a>
+      </div>
+      <p class="demo-note">No install. Sample data, in your browser, in about a minute.</p>
       <div class="cta">
-        <a class="btn btn-primary" href="#" data-gh="">Get the code</a>
+        <a class="btn btn-ghost" href="#" data-gh="">Get the code</a>
         <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">Read the deploy guide</a>
       </div>
       <div class="cmd">
@@ -614,6 +633,33 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
           <p>ITA sandbox and production credentials, tokens and numbers are kept apart.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="demo" class="demo-band">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Live demo</div>
+        <h2>Try it before you install it</h2>
+      </div>
+      <ul class="demo-points">
+        <li>
+          <h3>Real sample businesses</h3>
+          <p>Clients, documents, expenses and contracts, already filled in.</p>
+        </li>
+        <li>
+          <h3>Drafts and the finished PDF</h3>
+          <p>Create a draft and see the PDF it would issue.</p>
+        </li>
+        <li>
+          <h3>Nothing you enter is kept</h3>
+          <p>Your drafts are deleted when you leave.</p>
+        </li>
+      </ul>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg btn-demo" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">Try the live demo</a>
+      </div>
+      <p class="demo-note">No install. Sample data, in your browser, in about a minute.</p>
     </div>
   </section>
 

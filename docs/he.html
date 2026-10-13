@@ -148,6 +148,20 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 .foot a:hover { color: var(--text); }
 .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
+.btn-lg { padding: 18px 36px; font-size: 18px; border-radius: 14px; }
+.cta-demo { margin-bottom: 10px; }
+.demo-note { font-size: 14px; color: var(--text-mute); margin: 0 0 22px; }
+.demo-band { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #ffffff; border-top: 0; }
+.demo-band .eyebrow { color: #93c5fd; }
+.demo-band .sec-head p, .demo-band .demo-note { color: #cbd5e1; }
+.demo-points { list-style: none; padding: 0; margin: 0 auto 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 920px; }
+.demo-points li { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: 18px 20px; }
+.demo-points h3 { margin: 0 0 6px; font-size: 16px; }
+.demo-points p { margin: 0; color: #cbd5e1; font-size: 14.5px; }
+.demo-band .cta { margin-bottom: 10px; }
+.demo-band .demo-note { margin: 0; text-align: center; }
+@media (max-width: 760px) { .demo-points { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .btn-demo { width: 100%; } }
 .setup-form { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
 .setup-form h3 { grid-column: 1 / -1; margin: 0; }
 .setup-form label { display: grid; gap: 6px; font-size: 14px; color: var(--text-dim); }
@@ -178,6 +192,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
       <a href="#how">איך זה עובד</a>
       <a href="#screens">צילומי מסך</a>
       <a href="#setup">הקמה</a>
+      <a href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">הדגמה</a>
     </nav>
     <div class="nav-end">
       <a class="lang" href="index.html" hreflang="en" lang="en">English</a>
@@ -192,8 +207,12 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
       <div class="badge"><b>חינם</b> · קוד פתוח (AGPL-3.0) · מאוחסן אצלך</div>
       <h1>חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.</h1>
       <p class="lead">הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.</p>
+      <div class="cta cta-demo">
+        <a class="btn btn-primary btn-lg btn-demo" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">נסו את ההדגמה</a>
+      </div>
+      <p class="demo-note">בלי התקנה. נתוני דוגמה, בדפדפן, תוך דקה בערך.</p>
       <div class="cta">
-        <a class="btn btn-primary" href="#" data-gh="">לקוד</a>
+        <a class="btn btn-ghost" href="#" data-gh="">לקוד</a>
         <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
       </div>
       <div class="cmd">
@@ -614,6 +633,33 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
           <p>פרטי הגישה, הטוקנים והמספרים של סביבת הניסוי והייצור ברשות המסים נשמרים בנפרד.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="demo" class="demo-band">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">הדגמה חיה</div>
+        <h2>נסו לפני שמתקינים</h2>
+      </div>
+      <ul class="demo-points">
+        <li>
+          <h3>עסקי דוגמה אמיתיים</h3>
+          <p>לקוחות, מסמכים, הוצאות וחוזים, כבר מלאים.</p>
+        </li>
+        <li>
+          <h3>טיוטות וה-PDF המוגמר</h3>
+          <p>יוצרים טיוטה ורואים את ה-PDF שהיא תפיק.</p>
+        </li>
+        <li>
+          <h3>שום דבר שתזינו לא נשמר</h3>
+          <p>הטיוטות נמחקות כשיוצאים.</p>
+        </li>
+      </ul>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg btn-demo" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">נסו את ההדגמה</a>
+      </div>
+      <p class="demo-note">בלי התקנה. נתוני דוגמה, בדפדפן, תוך דקה בערך.</p>
     </div>
   </section>
 
