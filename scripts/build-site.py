@@ -32,46 +32,28 @@ EN = dict(
     lang='en', dir='ltr', file='index.html', other='he.html', other_label='עברית',
     title='Open Ledger IL - invoices and books for an Israeli business, on your own Cloudflare',
     desc='Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.',
-    nav=['Features', 'Feature list', 'On your phone', 'How it works', 'Screenshots', 'Setup'], github='View on GitHub',
-    badge='<b>Free</b> · Open source (AGPL-3.0) · Self-hosted · Registered with the Israel Tax Authority · Version ' + VERSION,
+    nav=['Features', 'Screenshots', 'How it works', 'Pricing'], github='View on GitHub',
+    badge='<b>Free</b> · Open source · Registered with the Israel Tax Authority · v' + VERSION,
     h1='Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.',
-    lead='Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.',
-    cta=['Get the code', 'Read the deploy guide'], copy='Copy', copied='Copied',
+    lead='Quotes, receipts, tax invoices, contracts and expenses, with legal numbering and ITA allocation numbers. It runs in your own Cloudflare account. Your data stays yours.',
+    cta=['Get the code', 'Read the deploy guide', 'Let us set it up for you'], copy='Copy', copied='Copied',
     demo_nav='Demo', demo_cta='Try the live demo',
-    demo_note='No install. Sample data in your browser, open in seconds.',
-    demo_eyebrow='Live demo', demo_h='Try it before you install it',
-    demo_points=[
-        ('Real sample businesses', 'Clients, documents, expenses and contracts, already filled in.'),
-        ('Drafts and the finished PDF', 'Create a draft and see the PDF it would issue.'),
-        ('Nothing you enter is kept', 'Your drafts are deleted when you leave.'),
-    ],
-    cmd_note='Deploys to your own Cloudflare Worker. Starts on the Workers Free plan. Setup takes an afternoon.',
+    demo_note='No install. Sample data, opens in seconds.',
+    cmd_note='Starts on the Workers Free plan. Setup takes an afternoon.',
     shot_alt='The dashboard: open and overdue documents, cash flow, income by month and top clients',
     shot_cap='All screenshots on this page use an invented demo business.',
     feat_eyebrow='What it does', feat_h='Everything a small Israeli business issues and files',
-    feat_p='Built for a עוסק פטור today and a עוסק מורשה tomorrow, with the rules of both built in.',
+    feat_p='For a עוסק פטור today and a עוסק מורשה tomorrow.',
     features=[
-        ('▤', 'Every Israeli document type', 'Quotes, payment requests, pro formas (חשבון עסקה), receipts and credit receipts as פטור. Tax invoices, invoice/receipts and credit invoices as מורשה. English or bilingual Hebrew and English.'),
-        ('#', 'Numbering that cannot break', 'One series per document type, no gaps and no reuse. A final document never changes. A hash chain and database triggers enforce both.'),
-        ('✎', 'Signed PDFs', 'Your logo and signature on every document. Cloudflare Browser Rendering draws the PDF and a PAdES signature with your own key seals it.'),
-        ('✓', 'ITA allocation numbers', 'The Israel Invoices API v2 client for מספר הקצאה, sandbox and production, with a retry queue and a clear flow when the ITA refuses.'),
-        ('₪', 'Foreign currency done right', 'Bank of Israel rates, cached daily. A receipt takes the rate of the document it pays, or a rate you type. Imported documents keep their printed rate.'),
-        ('⇄', 'Client ledgers that add up', 'A payment request is charged once and closed by the receipt that pays it. Open balances, aging and an overdue list on the dashboard.'),
-        ('↻', 'Recurring and duplicate', 'Copy any document in one click. Schedule a retainer with payment terms. Copies issue and email themselves, or wait on an approvals page with a Slack notice.'),
-        ('§', 'Contracts you sign in the Ledger', 'A Service Agreement and a Work Order with your own fields. The client fills in, draws a signature and confirms with an email code. The signed PDF carries the evidence page and a certified digital signature.'),
-        ('⎘', 'Work orders that become invoices', 'Number work orders on their own series, include the Service Agreement on a first job, and turn a signed work order into a pro forma with the work order number in the notes.'),
-        ('▣', 'Business documents in one place', 'VAT and company certificates, bookkeeping and withholding confirmations. Claude reads the dates, and the dashboard warns before one expires.'),
-        ('✉', 'Send with consent', 'Email with CC and BCC, or a short WhatsApp link with a preview. Consent is recorded per client, and payment reminders go out before and after the due date.'),
-        ('◔', 'פטור ceiling meter', 'Turnover against the annual ceiling, alerts at 70, 85, 95 and 100 percent, and a guided switch to עוסק מורשה.'),
-        ('⤓', 'Expenses from Drive', 'Upload a receipt or import a month from Google Drive. Claude reads each document, you review and file it.'),
-        ('∑', 'Reports and an accountant login', 'Income, expenses, profit and loss, per-client ledgers and a monthly accountant pack. Your accountant gets a separate role with an end date and an access log.'),
-        ('⇪', 'Exports, import and backups', 'The unified file (מבנה אחיד) and PCN874. Import customers and past documents from another system. Quarterly backups to R2 and Google Drive.'),
-        ('▯', 'Built for your phone', 'A bottom tab bar, bigger text and buttons, and tables that turn into cards. Every screen works at phone width.'),
-        ('◉', 'Snap a receipt', 'Take a photo or pick one from the gallery. Claude reads supplier, date and amount. No signal? The photo waits on the phone and uploads later.'),
-        ('⌂', 'Installs like an app', 'Add it to your home screen. It opens on Quick: add an expense, issue a document and see your recent activity.'),
+        ('▤', 'Every Israeli document type', 'Quotes, payment requests, receipts and tax invoices, in English or Hebrew and English.'),
+        ('#', 'Numbering that cannot break', 'Gapless series, locked final documents and signed PDFs.'),
+        ('✓', 'ITA allocation numbers', 'Israel Invoices API v2, with a retry queue.'),
+        ('§', 'Contracts and work orders', 'The client signs on any screen. A signed work order becomes a pro forma.'),
+        ('◉', 'Expenses read by Claude', 'Snap a receipt or import a month from Google Drive.'),
+        ('∑', 'Reports for your accountant', 'P&L, client ledgers, the unified file and an accountant login.'),
     ],
-    list_eyebrow='Feature list', list_h='Every feature, in one list',
-    list_p='What ships today in the code, grouped by job.',
+    list_eyebrow='Feature list', list_h='Every feature',
+    list_p='Open a group to see what ships today.',
     feature_list=[
         ('Documents', [
             'Quotes, payment requests and pro formas (חשבון עסקה)',
@@ -161,21 +143,21 @@ EN = dict(
         ]),
     ],
     mob_eyebrow='On your phone', mob_h='Your books in your pocket',
-    mob_p='Install it on your home screen. It opens on the Quick page, ready for the next receipt.',
+    mob_p='Install it on your home screen. It opens ready for the next receipt.',
     phones=[
         ('phone-quick.png', 'Quick page with camera and gallery buttons and document shortcuts', 'Quick', 'Take a photo, pick from the gallery or start a document.'),
         ('phone-expense.png', 'Expense review with the receipt photo and the fields Claude filled in', 'Review and file', 'Claude fills in the fields. You check them and file.'),
         ('phone-activity.png', 'Recent activity list with documents and expenses', 'Recent activity', 'The latest documents and expenses, with amount and status.'),
         ('phone-dashboard.png', 'Dashboard on a phone with quick actions and overdue items', 'Dashboard', 'Open and overdue items, cash flow and the פטור ceiling.'),
     ],
-    how_eyebrow='How it works', how_h='Three steps, then you issue your first document',
-    how_p='You deploy your own copy. Nobody else runs it, sees it or holds your data.',
+    how_eyebrow='How it works', how_h='Three steps to your first document',
+    how_p='You deploy your own copy. Nobody else runs it or holds your data.',
     steps=[
         ('Deploy your copy', 'Create one D1 database and two R2 buckets, connect the Worker to your fork on GitHub, and add your domain. Every push to main deploys.'),
         ('Lock it down', 'Cloudflare Access signs you in with your own email. Add the secrets: the PDF signing key, the mail key, and ITA credentials when you are מורשה.'),
         ('Set up the business', 'Business profile, logo, signature and the starting number of each series, so numbering continues from your previous system.'),
     ],
-    shots_eyebrow='Screenshots', shots_h='What you get', shots_p='Invented demo data throughout.',
+    shots_eyebrow='Screenshots', shots_h='What you get', shots_p='',
     shots=[
         ('documents.png', 'Documents list with status, related documents and open amounts', 'Documents and their relations', 'Every document with its status, the documents it came from or led to, and what is still open.'),
         ('payment-requests.png', 'Payment requests list with overdue and open totals', 'Payment requests that close', 'Record a payment and the receipt links back to the request. Partial payments keep the rest open.'),
@@ -185,7 +167,7 @@ EN = dict(
         ('settings-business.png', 'Business settings with logo and signature', 'Your business, your brand', 'Business details, logo, signature, payment methods and bank details printed on your documents.'),
     ],
     rules_eyebrow='The rules', rules_h='Six rules the code enforces',
-    rules_p='Israeli bookkeeping rules are not settings here. The database refuses to break them.',
+    rules_p='The database refuses to break them.',
     rules=[
         ('A final document never changes', 'A mistake is fixed with a credit document or a cancellation, never an edit. Database triggers block updates to a final row.'),
         ('Numbers come only from finalize', 'Drafts carry no number, so a deleted draft never leaves a gap in the series.'),
@@ -195,7 +177,8 @@ EN = dict(
         ('Sandbox and production never mix', 'ITA sandbox and production credentials, tokens and numbers are kept apart.'),
     ],
     need_eyebrow='Before you start', need_h='What you need',
-    need_p='It starts on free tiers. Workers Paid, from $5 a month, is the one upgrade worth planning for.',
+    need_p='It starts on free tiers.',
+    more_h='Workers Paid, Tax Authority registration and known limits',
     need_cols=['Requirement', 'Notes'], required='Required', optional='Optional',
     needs=[
         ('Cloudflare account', True, 'Workers Free runs it: the Worker, D1, R2, Browser Rendering and 5 scheduled jobs. Workers Paid, from $5 a month, lifts the limits below.'),
@@ -239,8 +222,8 @@ EN = dict(
         'The PCN874 export fills the allocation-number column. The other columns are a stub.',
         'You run it: updates, secrets and the Cloudflare bill are yours.',
     ],
-    final_h='Read the code before you deploy it',
-    final_p='It issues legal documents under your name. The code is open so you can check every rule.',
+    final_h='See it working first',
+    final_p='Open the demo, then read the code. Every rule is in the open.',
     foot_links=['GitHub', 'Deploy guide', 'Setup guide', 'AGPL-3.0 licence'],
     foot_note='Self-hosted on Cloudflare Workers · Open source under AGPL-3.0 · Not affiliated with Cloudflare or the Israel Tax Authority',
 )
@@ -249,46 +232,28 @@ HE = dict(
     lang='he', dir='rtl', file='he.html', other='index.html', other_label='English',
     title='Open Ledger IL - חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, בענן Cloudflare שלך',
     desc='מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.',
-    nav=['יכולות', 'רשימת יכולות', 'בטלפון', 'איך זה עובד', 'צילומי מסך', 'הקמה'], github='לקוד ב-GitHub',
-    badge='<b>חינם</b> · קוד פתוח (AGPL-3.0) · מאוחסן אצלך · רשומה ברשות המסים · גרסה ' + VERSION,
+    nav=['יכולות', 'צילומי מסך', 'איך זה עובד', 'מחירים'], github='לקוד ב-GitHub',
+    badge='<b>חינם</b> · קוד פתוח · רשומה ברשות המסים · גרסה ' + VERSION,
     h1='חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.',
-    lead='הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.',
-    cta=['לקוד', 'למדריך ההתקנה'], copy='העתקה', copied='הועתק',
+    lead='הצעות מחיר, קבלות, חשבוניות מס, חוזים והוצאות, עם מספור חוקי ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר שלך.',
+    cta=['לקוד', 'למדריך ההתקנה', 'נקים לך את המערכת'], copy='העתקה', copied='הועתק',
     demo_nav='הדגמה', demo_cta='נסו את ההדגמה',
-    demo_note='בלי התקנה. נתוני דוגמה בדפדפן, נפתח תוך שניות.',
-    demo_eyebrow='הדגמה חיה', demo_h='נסו לפני שמתקינים',
-    demo_points=[
-        ('עסקי דוגמה אמיתיים', 'לקוחות, מסמכים, הוצאות וחוזים, כבר מלאים.'),
-        ('טיוטות וה-PDF המוגמר', 'יוצרים טיוטה ורואים את ה-PDF שהיא תפיק.'),
-        ('שום דבר שתזינו לא נשמר', 'הטיוטות נמחקות כשיוצאים.'),
-    ],
-    cmd_note='נפרסת ל-Worker שלך ב-Cloudflare. מתחילה בתוכנית Workers Free. ההקמה לוקחת אחר צהריים.',
+    demo_note='בלי התקנה. נתוני דוגמה, נפתח תוך שניות.',
+    cmd_note='מתחילה בתוכנית Workers Free. ההקמה לוקחת אחר צהריים.',
     shot_alt='לוח הבקרה: מסמכים פתוחים ובאיחור, תזרים, הכנסות לפי חודש ולקוחות מובילים',
     shot_cap='כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.',
     feat_eyebrow='מה היא עושה', feat_h='כל מה שעסק ישראלי קטן מפיק ומתייק',
-    feat_p='בנויה לעוסק פטור היום ולעוסק מורשה מחר, עם הכללים של שניהם בפנים.',
+    feat_p='לעוסק פטור היום ולעוסק מורשה מחר.',
     features=[
-        ('▤', 'כל סוגי המסמכים', 'הצעות מחיר, דרישות תשלום, חשבונות עסקה, קבלות וקבלות זיכוי כעוסק פטור. חשבוניות מס, חשבוניות מס קבלה וחשבוניות זיכוי כעוסק מורשה. באנגלית או בעברית ואנגלית.'),
-        ('#', 'מספור שלא נשבר', 'סדרה אחת לכל סוג מסמך, בלי חורים ובלי שימוש חוזר. מסמך סופי לא משתנה לעולם. שרשרת גיבוב וטריגרים במסד הנתונים אוכפים את שניהם.'),
-        ('✎', 'PDF חתום', 'הלוגו והחתימה שלך על כל מסמך. Browser Rendering של Cloudflare מפיק את ה-PDF, וחתימת PAdES במפתח שלך חותמת אותו.'),
-        ('✓', 'מספרי הקצאה', 'חיבור ל-API חשבוניות ישראל v2 של רשות המסים, סביבת ניסוי וייצור, עם תור ניסיונות חוזרים ותהליך ברור כשהרשות מסרבת.'),
-        ('₪', 'מטבע חוץ כמו שצריך', 'שערי בנק ישראל, נשמרים מדי יום. קבלה מקבלת את השער של המסמך שהיא משלמת, או שער שתקליד. מסמכים מיובאים שומרים את השער המודפס עליהם.'),
-        ('⇄', 'כרטסת לקוח שמסתדרת', 'דרישת תשלום נרשמת פעם אחת ונסגרת בקבלה שמשלמת אותה. יתרות פתוחות, גיול ורשימת איחורים בלוח הבקרה.'),
-        ('↻', 'מסמכים חוזרים ושכפול', 'שכפול כל מסמך בלחיצה. ריטיינר מתוזמן עם תנאי תשלום. העותקים מופקים ונשלחים לבד, או ממתינים בעמוד אישורים עם הודעת Slack.'),
-        ('§', 'חוזים שנחתמים במערכת', 'הסכם שירותים והזמנת עבודה עם שדות משלך. הלקוח ממלא, חותם בציור ומאשר בקוד שנשלח למייל. ה-PDF החתום כולל דף ראיות וחתימה דיגיטלית מאושרת.'),
-        ('⎘', 'הזמנות עבודה שהופכות לחשבון', 'מספור נפרד להזמנות עבודה, צירוף הסכם השירותים בעבודה הראשונה, והפיכת הזמנה חתומה לחשבון עסקה עם מספר ההזמנה בהערות.'),
-        ('▣', 'מסמכי העסק במקום אחד', 'תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור. Claude קורא את התאריכים, ולוח הבקרה מתריע לפני שמסמך פג תוקף.'),
-        ('✉', 'שליחה בהסכמה', 'מייל עם CC ו-BCC, או קישור וואטסאפ מקוצר עם תצוגה מקדימה. ההסכמה נשמרת לכל לקוח, ותזכורות תשלום יוצאות לפני מועד התשלום ואחריו.'),
-        ('◔', 'מד תקרת עוסק פטור', 'המחזור מול התקרה השנתית, התראות ב-70, 85, 95 ו-100 אחוז, ומעבר מודרך לעוסק מורשה.'),
-        ('⤓', 'הוצאות מ-Drive', 'העלאת קבלה או ייבוא חודש שלם מ-Google Drive. Claude קורא כל מסמך, ואתה בודק ומתייק.'),
-        ('∑', 'דוחות וכניסה לרואה החשבון', 'הכנסות, הוצאות, רווח והפסד, כרטסות לקוחות וחבילה חודשית לרואה החשבון. לרואה החשבון תפקיד נפרד עם תאריך סיום ויומן גישה.'),
-        ('⇪', 'ייצוא, ייבוא וגיבויים', 'קובץ במבנה אחיד ו-PCN874. ייבוא לקוחות ומסמכי עבר ממערכת אחרת. גיבוי רבעוני ל-R2 ול-Google Drive.'),
-        ('▯', 'בנויה לטלפון', 'סרגל ניווט תחתון, טקסט וכפתורים גדולים יותר, וטבלאות שהופכות לכרטיסים. כל מסך עובד ברוחב של טלפון.'),
-        ('◉', 'צילום קבלה', 'מצלמים או בוחרים תמונה מהגלריה. Claude קורא ספק, תאריך וסכום. אין קליטה? התמונה נשמרת בטלפון ועולה אחר כך.'),
-        ('⌂', 'מותקנת כמו אפליקציה', 'מוסיפים למסך הבית. היא נפתחת במסך "מהיר": הוספת הוצאה, הפקת מסמך ופעילות אחרונה.'),
+        ('▤', 'כל סוגי המסמכים', 'הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס, בעברית או בעברית ואנגלית.'),
+        ('#', 'מספור שלא נשבר', 'סדרות בלי חורים, מסמך סופי נעול ו-PDF חתום.'),
+        ('✓', 'מספרי הקצאה', 'API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.'),
+        ('§', 'חוזים והזמנות עבודה', 'הלקוח חותם בכל מסך. הזמנה חתומה הופכת לחשבון עסקה.'),
+        ('◉', 'הוצאות ש-Claude קורא', 'מצלמים קבלה או מייבאים חודש מ-Google Drive.'),
+        ('∑', 'דוחות לרואה החשבון', 'רווח והפסד, כרטסות, מבנה אחיד וכניסה לרואה החשבון.'),
     ],
-    list_eyebrow='רשימת יכולות', list_h='כל היכולות ברשימה אחת',
-    list_p='מה שכבר קיים היום בקוד, לפי תחום.',
+    list_eyebrow='רשימת יכולות', list_h='כל היכולות',
+    list_p='פתחו קבוצה כדי לראות מה קיים היום.',
     feature_list=[
         ('מסמכים', [
             'הצעות מחיר, דרישות תשלום וחשבונות עסקה',
@@ -378,21 +343,21 @@ HE = dict(
         ]),
     ],
     mob_eyebrow='בטלפון', mob_h='הנהלת החשבונות בכיס',
-    mob_p='מתקינים על מסך הבית. היא נפתחת במסך "מהיר", מוכנה לקבלה הבאה.',
+    mob_p='מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.',
     phones=[
         ('phone-quick.png', 'מסך מהיר עם כפתורי מצלמה וגלריה וקיצורי מסמכים', 'מהיר', 'מצלמים, בוחרים מהגלריה או פותחים מסמך חדש.'),
         ('phone-expense.png', 'בדיקת הוצאה עם צילום הקבלה והשדות ש-Claude מילא', 'בדיקה ותיוק', 'Claude ממלא את השדות. אתה בודק ומתייק.'),
         ('phone-activity.png', 'רשימת פעילות אחרונה עם מסמכים והוצאות', 'פעילות אחרונה', 'המסמכים וההוצאות האחרונים, עם סכום וסטטוס.'),
         ('phone-dashboard.png', 'לוח הבקרה בטלפון עם פעולות מהירות ופריטים באיחור', 'לוח בקרה', 'פריטים פתוחים ובאיחור, תזרים ותקרת עוסק פטור.'),
     ],
-    how_eyebrow='איך זה עובד', how_h='שלושה שלבים, ואז המסמך הראשון',
-    how_p='אתה פורס עותק משלך. אף אחד אחר לא מריץ אותו, לא רואה אותו ולא מחזיק את המידע שלך.',
+    how_eyebrow='איך זה עובד', how_h='שלושה שלבים למסמך הראשון',
+    how_p='אתה פורס עותק משלך. אף אחד אחר לא מריץ אותו ולא מחזיק את המידע שלך.',
     steps=[
         ('פריסת עותק משלך', 'יוצרים מסד נתונים D1 אחד ושני דליי R2, מחברים את ה-Worker ל-fork שלך ב-GitHub ומוסיפים דומיין. כל push ל-main נפרס.'),
         ('נעילה', 'Cloudflare Access מכניס אותך עם המייל שלך. מוסיפים סודות: מפתח החתימה, מפתח המייל ופרטי רשות המסים כשאתה עוסק מורשה.'),
         ('הגדרת העסק', 'פרטי העסק, לוגו, חתימה ומספר ההתחלה של כל סדרה, כדי שהמספור ימשיך מהמערכת הקודמת.'),
     ],
-    shots_eyebrow='צילומי מסך', shots_h='מה מקבלים', shots_p='נתוני דמו בדויים בכל העמוד.',
+    shots_eyebrow='צילומי מסך', shots_h='מה מקבלים', shots_p='',
     shots=[
         ('documents.png', 'רשימת מסמכים עם סטטוס, מסמכים קשורים ויתרות', 'מסמכים והקשרים ביניהם', 'כל מסמך עם הסטטוס שלו, המסמכים שממנו נוצר או שנוצרו ממנו, ומה עוד פתוח.'),
         ('payment-requests.png', 'רשימת דרישות תשלום עם סכומים פתוחים ובאיחור', 'דרישות תשלום שנסגרות', 'רושמים תשלום והקבלה מקושרת לדרישה. תשלום חלקי משאיר את היתרה פתוחה.'),
@@ -402,7 +367,7 @@ HE = dict(
         ('settings-business.png', 'הגדרות העסק עם לוגו וחתימה', 'העסק שלך, המיתוג שלך', 'פרטי העסק, לוגו, חתימה, אמצעי תשלום ופרטי בנק שמודפסים על המסמכים.'),
     ],
     rules_eyebrow='הכללים', rules_h='שישה כללים שהקוד אוכף',
-    rules_p='כללי הנהלת החשבונות בישראל הם לא הגדרה כאן. מסד הנתונים מסרב לשבור אותם.',
+    rules_p='מסד הנתונים מסרב לשבור אותם.',
     rules=[
         ('מסמך סופי לא משתנה', 'טעות מתקנים במסמך זיכוי או בביטול, לעולם לא בעריכה. טריגרים במסד הנתונים חוסמים עדכון של שורה סופית.'),
         ('מספר ניתן רק בהפקה', 'לטיוטה אין מספר, כך שטיוטה שנמחקה לא משאירה חור בסדרה.'),
@@ -412,7 +377,8 @@ HE = dict(
         ('ניסוי וייצור לא מתערבבים', 'פרטי הגישה, הטוקנים והמספרים של סביבת הניסוי והייצור ברשות המסים נשמרים בנפרד.'),
     ],
     need_eyebrow='לפני שמתחילים', need_h='מה צריך',
-    need_p='מתחילים בתוכניות חינמיות. Workers Paid, החל מ-5$ לחודש, הוא השדרוג היחיד ששווה לתכנן.',
+    need_p='מתחילים בתוכניות חינמיות.',
+    more_h='Workers Paid, רישום ברשות המסים ומגבלות ידועות',
     need_cols=['דרישה', 'הערות'], required='חובה', optional='רשות',
     needs=[
         ('חשבון Cloudflare', True, 'Workers Free מריץ אותה: ה-Worker, D1, R2, Browser Rendering ו-5 משימות מתוזמנות. Workers Paid, החל מ-5$ לחודש, מסיר את המגבלות שלמטה.'),
@@ -456,31 +422,41 @@ HE = dict(
         'ייצוא PCN874 ממלא את עמודת מספר ההקצאה. שאר העמודות עדיין חלקיות.',
         'אתה מריץ אותה: עדכונים, סודות וחשבון Cloudflare הם שלך.',
     ],
-    final_h='קרא את הקוד לפני שאתה פורס',
-    final_p='המערכת מפיקה מסמכים חוקיים בשמך. הקוד פתוח כדי שתוכל לבדוק כל כלל.',
+    final_h='קודם רואים אותה עובדת',
+    final_p='פותחים את ההדגמה, ואז קוראים את הקוד. כל כלל גלוי.',
     foot_links=['GitHub', 'מדריך פריסה', 'מדריך הגדרה', 'רישיון AGPL-3.0'],
     foot_note='מאוחסן ב-Cloudflare Workers · קוד פתוח ברישיון AGPL-3.0 · לא קשור ל-Cloudflare או לרשות המסים',
 )
 
 
 # Two ways to run it: the free self install, or a paid setup, with the setup request form.
-# Raw HTML per language, placed between the phone section and How it works.
+# Raw HTML per language, placed at the end of the page, before the closing call to action.
 OPTIONS_EN = r'''  <section id="options">
     <div class="wrap">
       <div class="sec-head">
-        <div class="eyebrow">Two ways to run it</div>
-        <h2>Install it yourself for free, or have it set up for you</h2>
+        <div class="eyebrow">Pricing</div>
+        <h2>Install it yourself, or have it set up for you</h2>
       </div>
-      <div class="steps">
-        <div class="step">
-          <h3>Free, on your own</h3>
-          <p>Open Ledger IL is free to install and use, with no license fee and no usage limits. The setup guide walks you through it step by step: Cloudflare account, database, sign-in and the Tax Authority connection. Updates are published here for free. You apply them when you choose.</p>
-          <p><a href="#" data-gh="/blob/main/docs/deploy.md">Read the setup guide</a></p>
+      <div class="plans">
+        <div class="plan">
+          <h3>Do it yourself</h3>
+          <div class="price">Free</div>
+          <ul>
+            <li>No license fee, no usage limits</li>
+            <li>Step-by-step setup guide</li>
+            <li>Free updates, applied when you choose</li>
+          </ul>
+          <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">Read the setup guide</a>
         </div>
-        <div class="step">
+        <div class="plan plan-main">
           <h3>Set up for you</h3>
-          <p>Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪699, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself.</p>
-          <p><a href="#setup-form">Ask for a setup</a></p>
+          <div class="price">₪699 <span>one time</span></div>
+          <ul>
+            <li>Installed on your own Cloudflare and Tax Authority accounts</li>
+            <li>Handed over working, in your name</li>
+            <li>No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year</li>
+          </ul>
+          <a class="btn btn-primary" href="#setup-form">Ask for a setup</a>
         </div>
       </div>
       <form class="setup-form" id="setup-form" novalidate>
@@ -524,19 +500,29 @@ OPTIONS_EN = r'''  <section id="options">
 OPTIONS_HE = r'''  <section id="options">
     <div class="wrap">
       <div class="sec-head">
-        <div class="eyebrow">שתי דרכים להפעיל</div>
-        <h2>להתקין בעצמך בחינם, או לקבל אותה מוקמת</h2>
+        <div class="eyebrow">מחירים</div>
+        <h2>להתקין בעצמך, או לקבל אותה מוקמת</h2>
       </div>
-      <div class="steps">
-        <div class="step">
-          <h3>בחינם, בעצמך</h3>
-          <p>חשבונאות פתוחה חינמית להתקנה ולשימוש, בלי דמי רישיון ובלי מגבלת שימוש. מדריך ההתקנה לוקח אותך שלב אחר שלב: חשבון Cloudflare, מסד הנתונים, הכניסה למערכת והחיבור לרשות המסים. עדכונים מתפרסמים כאן בחינם, ואתה מתקין אותם מתי שתבחר.</p>
-          <p><a href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a></p>
+      <div class="plans">
+        <div class="plan">
+          <h3>בעצמך</h3>
+          <div class="price">חינם</div>
+          <ul>
+            <li>בלי דמי רישיון ובלי מגבלת שימוש</li>
+            <li>מדריך התקנה שלב אחר שלב</li>
+            <li>עדכונים בחינם, מתקינים מתי שרוצים</li>
+          </ul>
+          <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
         </div>
-        <div class="step">
+        <div class="plan plan-main">
           <h3>הקמה עבורך</h3>
-          <p>מעדיף שמישהו אחר יקים? אתקין ואפרוס את המערכת בחשבונות Cloudflare ורשות המסים שלך, ואמסור לך אותה פועלת. התשלום החד פעמי הוא ₪699, פחות ממנוי שנתי במסלול ביניים בתוכנת חשבוניות בתשלום, שעולה כ-₪700 עד ₪1,200 בכל שנה. מאותו רגע המערכת שלך: בלי מנוי, עדכונים בחינם, ואת התחזוקה אתה מבצע בעצמך.</p>
-          <p><a href="#setup-form">לבקשת הקמה</a></p>
+          <div class="price">₪699 <span>חד פעמי</span></div>
+          <ul>
+            <li>מותקנת בחשבונות Cloudflare ורשות המסים שלך</li>
+            <li>נמסרת לך פועלת, על שמך</li>
+            <li>בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה</li>
+          </ul>
+          <a class="btn btn-primary" href="#setup-form">לבקשת הקמה</a>
         </div>
       </div>
       <form class="setup-form" id="setup-form" novalidate>
@@ -578,7 +564,7 @@ OPTIONS_HE = r'''  <section id="options">
 '''
 
 
-IDS = ['features', 'list', 'mobile', 'how', 'screens', 'setup']
+IDS = ['features', 'screens', 'how', 'options']
 
 # Set in __main__ to the output folder. The Hebrew page uses a screenshot's -he variant
 # (dashboard-he.png next to dashboard.png) when one exists, and the English one otherwise.
@@ -628,96 +614,113 @@ header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86
 h1 { font-size: clamp(32px, 5.2vw, 54px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 16px; font-weight: 800; }
 .lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-dim); max-width: 680px; margin: 0 auto 28px; }
 .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
+.shot { margin: 48px auto 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--surface); }
+.shot img { width: 100%; }
+.shot-cap { font-size: 13px; color: var(--text-mute); text-align: center; margin-top: 12px; }
+section { padding: 88px 0; }
+section + section { border-top: 1px solid var(--border-soft); }
+section.plain { padding-top: 24px; border-top: 0; }
+.sec-head { text-align: center; max-width: 620px; margin: 0 auto 40px; }
+.sec-head.sub { margin-top: 80px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+[dir=rtl] .eyebrow, [dir=rtl] th { letter-spacing: 0; }
+h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02em; margin: 0 0 10px; font-weight: 700; }
+.sec-head p { color: var(--text-dim); margin: 0; font-size: 17px; }
+.sec-head p:empty { display: none; }
+/* Hero links: three equal secondary buttons under the demo button. */
+.cta-links .btn { min-width: 0; }
+.btn-setup { border-color: rgba(22,163,74,.45); color: var(--green-2); }
+.btn-setup:hover { border-color: var(--green); }
+/* Highlights: six items, no boxes. */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 40px; max-width: 980px; margin: 0 auto; }
+@media (max-width: 860px) { .features { grid-template-columns: repeat(2, 1fr); gap: 28px 24px; } }
+@media (max-width: 520px) { .features { grid-template-columns: 1fr; } }
+.feat .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 12px; background: #e8efff; font-size: 18px; color: var(--blue); }
+.feat h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
+.feat p { margin: 0; color: var(--text-dim); font-size: 15px; }
+/* Every feature: closed groups the reader opens. */
+.flist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; max-width: 980px; margin: 0 auto; align-items: start; }
+@media (max-width: 760px) { .flist { grid-template-columns: 1fr; } }
+.fgroup { border-bottom: 1px solid var(--border); }
+.fgroup summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; font-weight: 600; font-size: 16px; }
+.fgroup summary::-webkit-details-marker { display: none; }
+.fgroup summary::after { content: '+'; margin-inline-start: auto; color: var(--text-mute); font-size: 20px; font-weight: 400; line-height: 1; }
+.fgroup[open] summary::after { content: '\\2212'; }
+.fgroup .count { font-size: 12px; font-weight: 600; color: var(--text-mute); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
+.fgroup ul { list-style: none; margin: 0 0 16px; padding: 0; }
+.fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
+.fgroup li::before { content: '\\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+/* Phones, right under the main screenshot. */
+.phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; max-width: 1000px; margin: 0 auto; }
+@media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }
+.phone { margin: 0; }
+.phone .frame { background: #0a0f18; border-radius: 30px; padding: 8px; box-shadow: var(--shadow); }
+.phone img { width: 100%; height: auto; border-radius: 23px; }
+.phone figcaption { padding: 14px 4px 0; text-align: center; font-size: 13.5px; color: var(--text-mute); line-height: 1.45; }
+.phone figcaption b { display: block; color: var(--text); font-size: 15px; font-weight: 650; margin-bottom: 2px; }
+@media (max-width: 620px) { .phone .frame { border-radius: 22px; padding: 5px; } .phone img { border-radius: 18px; } .phone figcaption { font-size: 12px; } .phone figcaption b { font-size: 13.5px; } }
+/* Screenshots: image first, one caption line. */
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 28px; align-items: start; }
+@media (max-width: 820px) { .gallery { grid-template-columns: 1fr; } }
+.gcard { margin: 0; }
+.gcard img { width: 100%; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px -18px rgba(15,23,42,.35); }
+.gcard figcaption { padding: 12px 2px 0; color: var(--text-dim); font-size: 14.5px; }
+.gcard figcaption b { color: var(--text); font-weight: 650; }
+/* Rules: a checked list in two columns. */
+.rules { list-style: none; padding: 0; margin: 0 auto; max-width: 980px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px 40px; }
+@media (max-width: 760px) { .rules { grid-template-columns: 1fr; } }
+.rules li { position: relative; padding-inline-start: 34px; }
+.rules li::before { content: '\\2713'; position: absolute; inset-inline-start: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: #dcfce7; color: var(--green-2); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.rules b { display: block; font-weight: 650; margin-bottom: 2px; }
+.rules span { color: var(--text-dim); font-size: 14.5px; }
+/* How it works: numbered steps without boxes. */
+.steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
+@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+.step { counter-increment: step; }
+.step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+.step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
+.step p { margin: 0; color: var(--text-dim); font-size: 15px; }
 .cmd { display: flex; align-items: center; gap: 12px; max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 12px 12px 16px; direction: ltr; }
 .cmd code { font-size: 13px; color: var(--text-dim); overflow-x: auto; white-space: nowrap; flex: 1; text-align: left; background: none; border: 0; padding: 0; }
 .cmd button { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
 .cmd button:hover { color: var(--text); border-color: var(--text-mute); }
-.cmd-note { font-size: 12.5px; color: var(--text-mute); margin-top: 10px; }
-.feat, .step, .gcard, .limits li, table { box-shadow: 0 1px 2px rgba(15,23,42,.04); }
-.shot { margin: 44px auto 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--surface); }
-.shot img { width: 100%; }
-.shot-cap { font-size: 13px; color: var(--text-mute); text-align: center; margin-top: 12px; }
-section { padding: 72px 0; border-top: 1px solid var(--border-soft); }
-.sec-head { text-align: center; max-width: 660px; margin: 0 auto 44px; }
-.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
-[dir=rtl] .eyebrow, [dir=rtl] th { letter-spacing: 0; }
-h2 { font-size: clamp(24px, 3.4vw, 34px); line-height: 1.2; letter-spacing: -.02em; margin: 0 0 12px; font-weight: 700; }
-.sec-head p { color: var(--text-dim); margin: 0; }
-.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-@media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 620px) {
-  /* Phones: two compact columns, so 6 to 8 features fit on one screen. */
-  .features { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .features .feat { padding: 12px; border-radius: 12px; }
-  .features .feat .ico { width: 28px; height: 28px; border-radius: 8px; font-size: 14px; margin-bottom: 8px; }
-  .features .feat h3 { font-size: 13.5px; line-height: 1.3; margin-bottom: 4px; }
-  .features .feat p { font-size: 12px; line-height: 1.45; }
-}
-.feat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
-.feat .ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 14px; background: var(--surface-2); border: 1px solid var(--border); font-size: 18px; color: var(--blue); }
-.feat h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 650; letter-spacing: -.01em; }
-.feat p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
-.flist { columns: 3 300px; column-gap: 16px; }
-.fgroup { break-inside: avoid; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin: 0 0 16px; }
-.fgroup h3 { margin: 0 0 10px; font-size: 15.5px; font-weight: 650; }
-.fgroup ul { list-style: none; margin: 0; padding: 0; }
-.fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
-.fgroup li::before { content: '\\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
-@media (max-width: 620px) { .fgroup { padding: 16px; } .fgroup li { font-size: 13.5px; } }
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
-.step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
-.step .n { width: 30px; height: 30px; border-radius: 9px; background: var(--blue-soft); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 14px; }
-.step h3 { margin: 0 0 8px; font-size: 16.5px; font-weight: 650; }
-.step p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
-.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
-@media (max-width: 820px) { .gallery { grid-template-columns: 1fr; } }
-.gcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.gcard img { width: 100%; border-bottom: 1px solid var(--border-soft); }
-.gcard .t { padding: 14px 18px 18px; }
-.gcard h3 { margin: 0 0 6px; font-size: 15.5px; font-weight: 650; }
-.gcard p { margin: 0; color: var(--text-dim); font-size: 14px; }
-.phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: start; }
-@media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
-.phone { margin: 0; }
-.phone .frame { background: #0a0f18; border: 1px solid var(--border); border-radius: 30px; padding: 8px; box-shadow: var(--shadow); }
-.phone img { width: 100%; height: auto; border-radius: 23px; }
-.phone figcaption { padding: 12px 4px 0; }
-.phone h3 { margin: 0 0 4px; font-size: 15px; font-weight: 650; }
-.phone p { margin: 0; color: var(--text-dim); font-size: 13.5px; line-height: 1.5; }
-@media (max-width: 620px) { .phone .frame { border-radius: 22px; padding: 5px; } .phone img { border-radius: 18px; } .phone h3 { font-size: 13.5px; } .phone p { font-size: 12px; } }
-.reg { background: var(--surface); border-inline-start: 3px solid var(--green); border-radius: 12px; padding: 20px 22px; margin-top: 22px; }
-.reg h3 { margin: 0 0 10px; font-size: 16.5px; font-weight: 650; }
-.reg p { margin: 0 0 10px; color: var(--text-dim); font-size: 14.5px; }
-.reg a { color: var(--blue); }
-.refs { border-top: 1px solid var(--border-soft); margin-top: 14px; padding-top: 12px; font-size: 13px; color: var(--text-mute); }
-.refs b { color: var(--text-dim); font-weight: 600; }
-.refs ol { margin: 6px 0 0; padding-inline-start: 20px; }
-.refs li { margin: 4px 0; }
-.refs q { color: var(--text-dim); unicode-bidi: isolate; }
-.reg sup a { text-decoration: none; font-size: 11px; }
-.refs li:target { background: var(--surface-2); border-radius: 6px; }
-.honest { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 820px) { .honest { grid-template-columns: 1fr; } }
-.hcard { background: var(--surface); border-inline-start: 3px solid var(--orange); border-radius: 12px; padding: 20px; }
-.hcard h3 { margin: 0 0 8px; font-size: 15.5px; font-weight: 650; }
-.hcard p { margin: 0; color: var(--text-dim); font-size: 14.5px; }
-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; font-size: 14.5px; }
-th, td { text-align: start; padding: 13px 18px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+.cmd-note { font-size: 13px; color: var(--text-mute); margin-top: 10px; text-align: center; }
+table { width: 100%; max-width: 980px; margin: 0 auto; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: start; padding: 13px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
 th { color: var(--text-mute); font-weight: 600; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; }
-tr:last-child td { border-bottom: 0; }
+td:first-child { width: 36%; padding-inline-end: 18px; }
 td b { font-weight: 600; }
 td span { color: var(--text-dim); }
 .tag { display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-inline-start: 8px; border: 1px solid var(--border); color: var(--text-mute); vertical-align: 1px; }
 .tag.req { color: var(--green); border-color: rgba(22,163,74,.4); }
-@media (max-width: 620px) { th, td { padding: 11px 12px; } td { display: block; border-bottom: 0; } tr { display: block; border-bottom: 1px solid var(--border-soft); padding: 6px 0; } thead { display: none; } }
-.note { background: var(--surface); border-inline-start: 3px solid var(--blue); border-radius: 12px; padding: 18px 20px; color: var(--text-dim); font-size: 14.5px; margin-top: 22px; }
-.note b { color: var(--text); }
-.note ul { margin: 10px 0 0; padding-inline-start: 20px; }
-.note li { margin: 4px 0; }
-.limits { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; list-style: none; padding: 0; margin: 0; }
-@media (max-width: 760px) { .limits { grid-template-columns: 1fr; } }
-.limits li { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; color: var(--text-dim); font-size: 14.5px; }
+@media (max-width: 620px) { td { display: block; border-bottom: 0; padding: 4px 0; width: auto !important; } tr { display: block; border-bottom: 1px solid var(--border); padding: 10px 0; } thead { display: none; } }
+/* Workers Paid, registration and limits, closed by default. */
+.more { max-width: 980px; margin: 28px auto 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.more summary { cursor: pointer; padding: 16px 20px; font-weight: 600; }
+.more-body { padding: 0 20px 18px; color: var(--text-dim); font-size: 14.5px; }
+.more-body h3 { color: var(--text); font-size: 15.5px; margin: 18px 0 6px; }
+.more-body p { margin: 0 0 8px; }
+.more-body ul { margin: 0; padding-inline-start: 20px; }
+.more-body li { margin: 4px 0; }
+.more-body a { color: var(--blue); }
+.refs { border-top: 1px solid var(--border-soft); margin-top: 12px; padding-top: 10px; font-size: 13px; color: var(--text-mute); }
+.refs b { color: var(--text-dim); font-weight: 600; }
+.refs ol { margin: 6px 0 0; padding-inline-start: 20px; }
+.refs q { color: var(--text-dim); unicode-bidi: isolate; }
+.more-body sup a { text-decoration: none; font-size: 11px; }
+.refs li:target { background: var(--surface-2); border-radius: 6px; }
+/* Pricing. */
+#options { background: var(--bg-2); }
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 860px; margin: 0 auto; }
+@media (max-width: 720px) { .plans { grid-template-columns: 1fr; } }
+.plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
+.plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
+.plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
+.price { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 14px; }
+.price span { font-size: 15px; font-weight: 500; color: var(--text-mute); }
+.plan ul { list-style: none; margin: 0 0 22px; padding: 0; flex: 1; }
+.plan li { position: relative; padding-inline-start: 22px; margin: 8px 0; color: var(--text-dim); font-size: 15px; }
+.plan li::before { content: '\\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
 .final { text-align: center; }
 .final .cta { margin-top: 26px; margin-bottom: 0; }
 footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: var(--text-mute); font-size: 14px; }
@@ -729,18 +732,8 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 .btn-lg { padding: 18px 36px; font-size: 18px; border-radius: 14px; }
 .cta-demo { margin-bottom: 10px; }
 .demo-note { font-size: 14px; color: var(--text-mute); margin: 0 0 22px; }
-.demo-band { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #ffffff; border-top: 0; }
-.demo-band .eyebrow { color: #93c5fd; }
-.demo-band .sec-head p, .demo-band .demo-note { color: #cbd5e1; }
-.demo-points { list-style: none; padding: 0; margin: 0 auto 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 920px; }
-.demo-points li { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: 18px 20px; }
-.demo-points h3 { margin: 0 0 6px; font-size: 16px; }
-.demo-points p { margin: 0; color: #cbd5e1; font-size: 14.5px; }
-.demo-band .cta { margin-bottom: 10px; }
-.demo-band .demo-note { margin: 0; text-align: center; }
-@media (max-width: 760px) { .demo-points { grid-template-columns: 1fr; } }
-@media (max-width: 640px) { .btn-demo { width: 100%; } }
-.setup-form { margin-top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 640px) { .btn-demo { width: 100%; } .cta-links { flex-direction: column; } .cta-links .btn { width: 100%; } }
+.setup-form { max-width: 860px; margin: 24px auto 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; scroll-margin-top: 84px; }
 .setup-form h3 { grid-column: 1 / -1; margin: 0; }
 .setup-form label { display: grid; gap: 6px; font-size: 14px; color: var(--text-dim); }
 .setup-form .full { grid-column: 1 / -1; }
@@ -748,6 +741,7 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 .setup-form .hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .setup-form .status { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--text-dim); }
 @media (max-width: 640px) { .setup-form { grid-template-columns: 1fr; } }
+section[id] { scroll-margin-top: 64px; }
 '''
 
 
@@ -758,47 +752,36 @@ def page(c):
     demo_link = f'href="{DEMO_URL}" target="_blank" rel="noopener"'
     nav += f'\n      <a {demo_link}>{e(c["demo_nav"])}</a>'
     demo_btn = f'<a class="btn btn-primary btn-lg btn-demo" {demo_link}>{e(c["demo_cta"])}</a>'
-    demo_points = '\n'.join(
-        f'''        <li>
-          <h3>{e(h)}</h3>
-          <p>{e(p)}</p>
-        </li>''' for h, p in c['demo_points'])
     feats = '\n'.join(
         f'''        <div class="feat">
           <div class="ico" aria-hidden="true">{ico}</div>
           <h3>{e(h)}</h3>
           <p>{e(p)}</p>
         </div>''' for ico, h, p in c['features'])
+    # Groups start closed, so the page shows the group names and the reader opens what they need.
     flist = '\n'.join(
-        f'''        <div class="fgroup">
-          <h3>{e(h)}</h3>
+        f'''        <details class="fgroup">
+          <summary>{e(h)}<span class="count">{len(items)}</span></summary>
           <ul>
 '''
         + '\n'.join(f'            <li>{e(i)}</li>' for i in items)
         + '''
           </ul>
-        </div>''' for h, items in c['feature_list'])
+        </details>''' for h, items in c['feature_list'])
     steps = '\n'.join(
-        f'''        <div class="step">
-          <div class="n">{n}</div>
+        f'''        <li class="step">
           <h3>{e(h)}</h3>
           <p>{e(p)}</p>
-        </div>''' for n, (h, p) in enumerate(c['steps'], 1))
+        </li>''' for h, p in c['steps'])
     shots = '\n'.join(
-        f'''        <div class="gcard">
+        f'''        <figure class="gcard">
           <img src="screenshots/{shot_src(c, img)}" alt="{e(alt)}" loading="lazy">
-          <div class="t">
-            <h3>{e(h)}</h3>
-            <p>{e(p)}</p>
-          </div>
-        </div>''' for img, alt, h, p in c['shots'])
+          <figcaption><b>{e(h)}.</b> {e(p)}</figcaption>
+        </figure>''' for img, alt, h, p in c['shots'])
     phones = '\n'.join(
         f'''        <figure class="phone">
           <div class="frame"><img src="screenshots/{shot_src(c, img)}" alt="{e(alt)}" loading="lazy" width="585" height="1266"></div>
-          <figcaption>
-            <h3>{e(h)}</h3>
-            <p>{e(p)}</p>
-          </figcaption>
+          <figcaption><b>{e(h)}</b>{e(p)}</figcaption>
         </figure>''' for img, alt, h, p in c['phones'])
     # The first paragraph states the registration, so it points at reference 2, the registry. The second
     # states the ITA rule and points at reference 1, the service page it quotes.
@@ -810,15 +793,15 @@ def page(c):
         return f'<li id="ref-{i + 1}">{e(t)}{q}{a}</li>'
     reg_refs = ''.join(ref(i, *r) for i, r in enumerate(c['reg_refs']))
     rules = '\n'.join(
-        f'''        <div class="hcard">
-          <h3>{e(h)}</h3>
-          <p>{e(p)}</p>
-        </div>''' for h, p in c['rules'])
+        f'''        <li>
+          <b>{e(h)}</b>
+          <span>{e(p)}</span>
+        </li>''' for h, p in c['rules'])
     needs = '\n'.join(
         f'''          <tr><td><b>{e(n)}</b><span class="tag{' req' if req else ''}">{e(c['required'] if req else c['optional'])}</span></td><td><span>{e(note)}</span></td></tr>'''
         for n, req, note in c['needs'])
     paid = ''.join(f'<li>{e(x)}</li>' for x in c['paid'])
-    limits = '\n'.join(f'        <li>{e(x)}</li>' for x in c['limits'])
+    limits = '\n'.join(f'            <li>{e(x)}</li>' for x in c['limits'])
     links = [REPO, DEPLOY, SETUP, LICENSE]
     foot = '\n      '.join(f'<a href="{u}">{e(t)}</a>' for u, t in zip(links, c['foot_links']))
     other_lang = 'he' if c['lang'] == 'en' else 'en'
@@ -869,15 +852,11 @@ def page(c):
         {demo_btn}
       </div>
       <p class="demo-note">{e(c['demo_note'])}</p>
-      <div class="cta">
+      <div class="cta cta-links">
         <a class="btn btn-ghost" href="{REPO}">{e(c['cta'][0])}</a>
         <a class="btn btn-ghost" href="{DEPLOY}">{e(c['cta'][1])}</a>
+        <a class="btn btn-ghost btn-setup" href="#options">{e(c['cta'][2])}</a>
       </div>
-      <div class="cmd">
-        <code id="cmd">{CLONE}</code>
-        <button id="copy" type="button">{e(c['copy'])}</button>
-      </div>
-      <p class="cmd-note">{e(c['cmd_note'])}</p>
 
       <div class="shot">
         <img src="screenshots/{shot_src(c, 'dashboard.png')}" alt="{e(c['shot_alt'])}">
@@ -885,6 +864,18 @@ def page(c):
       <p class="shot-cap">{e(c['shot_cap'])}</p>
     </div>
   </div>
+
+  <section id="mobile" class="plain">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>{e(c['mob_h'])}</h2>
+        <p>{e(c['mob_p'])}</p>
+      </div>
+      <div class="phones">
+{phones}
+      </div>
+    </div>
+  </section>
 
   <section id="features">
     <div class="wrap">
@@ -896,13 +887,8 @@ def page(c):
       <div class="features">
 {feats}
       </div>
-    </div>
-  </section>
 
-  <section id="list">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="eyebrow">{e(c['list_eyebrow'])}</div>
+      <div class="sec-head sub" id="list">
         <h2>{e(c['list_h'])}</h2>
         <p>{e(c['list_p'])}</p>
       </div>
@@ -912,38 +898,11 @@ def page(c):
     </div>
   </section>
 
-  <section id="mobile">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="eyebrow">{e(c['mob_eyebrow'])}</div>
-        <h2>{e(c['mob_h'])}</h2>
-        <p>{e(c['mob_p'])}</p>
-      </div>
-      <div class="phones">
-{phones}
-      </div>
-    </div>
-  </section>
-
-{OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE}  <section id="how">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="eyebrow">{e(c['how_eyebrow'])}</div>
-        <h2>{e(c['how_h'])}</h2>
-        <p>{e(c['how_p'])}</p>
-      </div>
-      <div class="steps">
-{steps}
-      </div>
-    </div>
-  </section>
-
   <section id="screens">
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">{e(c['shots_eyebrow'])}</div>
         <h2>{e(c['shots_h'])}</h2>
-        <p>{e(c['shots_p'])}</p>
       </div>
       <div class="gallery">
 {shots}
@@ -958,32 +917,29 @@ def page(c):
         <h2>{e(c['rules_h'])}</h2>
         <p>{e(c['rules_p'])}</p>
       </div>
-      <div class="honest">
+      <ul class="rules">
 {rules}
-      </div>
-    </div>
-  </section>
-
-  <section id="demo" class="demo-band">
-    <div class="wrap">
-      <div class="sec-head">
-        <div class="eyebrow">{e(c['demo_eyebrow'])}</div>
-        <h2>{e(c['demo_h'])}</h2>
-      </div>
-      <ul class="demo-points">
-{demo_points}
       </ul>
-      <div class="cta">
-        {demo_btn}
-      </div>
-      <p class="demo-note">{e(c['demo_note'])}</p>
     </div>
   </section>
 
-  <section id="setup">
+  <section id="how">
     <div class="wrap">
       <div class="sec-head">
-        <div class="eyebrow">{e(c['need_eyebrow'])}</div>
+        <div class="eyebrow">{e(c['how_eyebrow'])}</div>
+        <h2>{e(c['how_h'])}</h2>
+        <p>{e(c['how_p'])}</p>
+      </div>
+      <ol class="steps">
+{steps}
+      </ol>
+      <div class="cmd">
+        <code id="cmd">{CLONE}</code>
+        <button id="copy" type="button">{e(c['copy'])}</button>
+      </div>
+      <p class="cmd-note">{e(c['cmd_note'])}</p>
+
+      <div class="sec-head sub" id="setup">
         <h2>{e(c['need_h'])}</h2>
         <p>{e(c['need_p'])}</p>
       </div>
@@ -993,31 +949,32 @@ def page(c):
 {needs}
         </tbody>
       </table>
-      <div class="note"><b>{e(c['paid_title'])}</b> {e(c['paid_intro'])}<ul>{paid}</ul></div>
-      <div class="reg" id="registration">
-        <h3>{e(c['reg_title'])}</h3>
-        {reg}
-        <p><a href="{ITA_REG}" rel="noopener">{e(c['reg_link'])}</a></p>
-        <div class="refs"><b>{e(c['reg_refs_h'])}</b><ol>{reg_refs}</ol></div>
-      </div>
-
-      <div class="sec-head" style="margin-top:56px">
-        <div class="eyebrow">{e(c['limits_eyebrow'])}</div>
-        <h2>{e(c['limits_h'])}</h2>
-      </div>
-      <ul class="limits">
+      <details class="more" id="registration">
+        <summary>{e(c['more_h'])}</summary>
+        <div class="more-body">
+          <h3>{e(c['paid_title'])}</h3>
+          <p>{e(c['paid_intro'])}</p>
+          <ul>{paid}</ul>
+          <h3>{e(c['reg_title'])}</h3>
+          {reg}
+          <p><a href="{ITA_REG}" rel="noopener">{e(c['reg_link'])}</a></p>
+          <div class="refs"><b>{e(c['reg_refs_h'])}</b><ol>{reg_refs}</ol></div>
+          <h3>{e(c['limits_h'])}</h3>
+          <ul>
 {limits}
-      </ul>
+          </ul>
+        </div>
+      </details>
     </div>
   </section>
 
-  <section class="final">
+{OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE}  <section class="final">
     <div class="wrap">
       <h2>{e(c['final_h'])}</h2>
       <p class="lead">{e(c['final_p'])}</p>
       <div class="cta">
-        <a class="btn btn-primary" href="{REPO}">{e(c['cta'][0])}</a>
-        <a class="btn btn-ghost" href="{DEPLOY}">{e(c['cta'][1])}</a>
+        {demo_btn}
+        <a class="btn btn-ghost" href="{REPO}">{e(c['cta'][0])}</a>
       </div>
     </div>
   </section>
