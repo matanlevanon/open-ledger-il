@@ -13,4 +13,4 @@ enabled = true
 [[d1_databases]]
 binding = "DB"
 database_name = "ita-auth-clients"
-database_id = "bd0385db-51ac-464d-ae87-c731aa7e20f0"
+database_id = "REPLACE_WITH_YOUR_D1_ID"
