@@ -1,6 +1,7 @@
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
+import { todayIsrael } from '../../core/db';
 import { requireFeature, requireRole } from '../../core/auth';
 import { businessIdOf, listBusinessIds } from '../../core/business';
 import { ValidationError } from '../../core/errors';
@@ -15,6 +16,7 @@ import { BrowserRenderingPdfEngine, type PdfEngine } from '../pdf/engine';
 import { type Mailer, ResendMailer } from '../sending/mailer';
 import amaticHebrew from './assets/AmaticSC-Hebrew-Bold.woff2';
 import dancingScript from './assets/DancingScript-Regular.woff2';
+import { addSignButtons } from './fields-pdf';
 import { closedPageHtml, type PageLang, signedPageHtml, signingPageHtml } from './public-page';
 import {
   contractDetail,
@@ -33,8 +35,10 @@ import {
   remindContract,
   requestCode,
   sendContract,
+  SIGN_PATH,
   signContract,
   updateContractDraft,
+  viewHtml,
   voidContract,
   type ContractDeps,
 } from './service';
@@ -120,6 +124,12 @@ function pdfResponse(object: R2ObjectBody, name: string, download: boolean): Res
   const headers = new Headers({ 'content-type': 'application/pdf', 'cache-control': 'private, no-store' });
   headers.set('content-disposition', `${download ? 'attachment' : 'inline'}; filename*=UTF-8''${encodeURIComponent(name)}`);
   return new Response(object.body, { headers });
+}
+
+function pdfBytesResponse(bytes: Uint8Array, name: string, download: boolean): Response {
+  const headers = new Headers({ 'content-type': 'application/pdf', 'cache-control': 'private, no-store' });
+  headers.set('content-disposition', `${download ? 'attachment' : 'inline'}; filename*=UTF-8''${encodeURIComponent(name)}`);
+  return new Response(bytes, { headers });
 }
 
 const fileName = (title: string, signed: boolean) => `${title.replace(/[^\w֐-׿.-]+/g, '-').slice(0, 80)}${signed ? '-signed' : ''}.pdf`;
@@ -289,16 +299,35 @@ export function createContractsPublicModule(options: ContractsOptions = {}): Mod
         signerName: row.signer_name ?? '',
         fields: JSON.parse(version.fields_json) as FieldDef[],
         codeRequired: (options.mailerFor ?? defaultMailer)(c.env) !== null,
-        today: (options.now ? options.now() : new Date()).toISOString().slice(0, 10),
+        today: todayIsrael(options.now ? options.now() : new Date()),
       }),
     );
+  });
+
+  // The document as a web page, shown in the signing page. Readable on phones without a PDF viewer.
+  r.get('/:token/view', manual, async (c) => {
+    const link = await contractFromToken(lightDeps(c), c.req.param('token'));
+    if (link.state !== 'open') return c.redirect(`${baseUrl(c)}${SIGN_PATH}${c.req.param('token')}/pdf`);
+    const lang = pageLang(c, link.row.language);
+    const page = `${baseUrl(c)}${SIGN_PATH}${c.req.param('token')}?lang=${lang}#signature`;
+    const html = await viewHtml(c.env, link.row, page, lang === 'he' ? 'he' : 'en');
+    return new Response(html, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'private, no-store' } });
   });
 
   r.get('/:token/pdf', manual, async (c) => {
     const link = await contractFromToken(lightDeps(c), c.req.param('token'));
     if (link.state === 'closed') return c.html(closedPageHtml(pageLang(c, link.row?.language ?? 'en'), link.message), 410);
     const object = await publicPdf(c.env, link.row);
-    return pdfResponse(object, fileName(link.row.title, link.state === 'signed'), c.req.query('download') === '1');
+    const name = fileName(link.row.title, link.state === 'signed');
+    const download = c.req.query('download') === '1';
+    if (link.state !== 'open') return pdfResponse(object, name, download);
+    // Before signing: a Sign button in the client's signature box, linked back to the signing page.
+    const row = link.row;
+    const version = await templateVersion(c.env.DB, row.business_id, row.template_id, row.template_version);
+    const clientSigs = (JSON.parse(version.fields_json) as FieldDef[]).filter((f) => f.kind === 'signature' && f.party === 'client').map((f) => f.key);
+    const page = `${baseUrl(c)}${SIGN_PATH}${c.req.param('token')}?lang=${pageLang(c, row.language)}#signature`;
+    const bytes = await addSignButtons(new Uint8Array(await object.arrayBuffer()), clientSigs, page);
+    return pdfBytesResponse(bytes, name, download);
   });
 
   r.post('/:token/code', manual, async (c) => {

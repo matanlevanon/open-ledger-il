@@ -311,6 +311,16 @@ describe('create and send', () => {
     }
   });
 
+  it('the sent PDF has no reference to a missing object (Adobe repairs those and breaks the certification)', async () => {
+    const { id } = await sentBilingual();
+    const bytes = await storedPdf(id, 'sent');
+    const doc = await PDFDocument.load(bytes, { updateMetadata: false });
+    const defined = new Set(doc.context.enumerateIndirectObjects().map(([r]) => r.objectNumber));
+    const text = new TextDecoder('latin1').decode(bytes);
+    const missing = [...text.matchAll(/(?<![\d.])(\d+) 0 R/g)].map((m) => Number(m[1])).filter((n) => !defined.has(n));
+    expect(missing).toEqual([]);
+  });
+
   it('remind re-sends the same link and logs it', async () => {
     const { id, url } = await sentBilingual();
     const reminded = await ok(OWNER, 'POST', `/contracts/${id}/remind`, { channel: 'email' });
@@ -463,6 +473,40 @@ describe('the signing link', () => {
     expect((await publicCall(`${url}?lang=he`)).status).toBe(200);
   });
 
+  it('before signing, the viewed PDF has a Sign button in the client signature box that links to the signing page, the stored PDF does not', async () => {
+    const { id, url } = await sentBilingual();
+    const linksTo = async (bytes: Uint8Array) => {
+      const doc = await PDFDocument.load(bytes);
+      const uris: string[] = [];
+      for (const page of doc.getPages()) {
+        const annots = page.node.Annots();
+        for (let i = 0; i < (annots?.size() ?? 0); i++) {
+          const a = annots!.lookup(i) as unknown as { lookup: (n: unknown) => unknown };
+          if (a.lookup(PDFName.of('Subtype')) !== PDFName.of('Link')) continue;
+          const action = a.lookup(PDFName.of('A')) as { lookup: (n: unknown) => { decodeText: () => string } } | undefined;
+          const uri = action?.lookup(PDFName.of('URI'));
+          if (uri) uris.push(uri.decodeText());
+        }
+      }
+      return uris;
+    };
+    const viewed = await linksTo(new Uint8Array(await (await publicCall(`${url}/pdf`)).arrayBuffer()));
+    expect(viewed.some((u) => u.startsWith(url) && u.endsWith('#signature'))).toBe(true);
+    expect((await linksTo(await storedPdf(id, 'sent'))).some((u) => u.endsWith('#signature'))).toBe(false);
+  });
+
+  it('the signing page shows the document as a web page, with a Sign button in the client signature box', async () => {
+    const { url } = await sentBilingual();
+    const page = await (await publicCall(url)).text();
+    expect(page).toContain('/view"');
+    const res = await publicCall(`${url}/view`);
+    expect(res.headers.get('content-type')).toContain('text/html');
+    const html = await res.text();
+    expect(html).toContain('class="f f-sig sign-btn"');
+    expect(html).toContain('#signature');
+    expect(html).not.toContain('field.ledger.invalid');
+  });
+
   it('a forged link opens nothing', async () => {
     const { url } = await sentBilingual();
     const [prefix, token] = url.split('/c/');
@@ -521,14 +565,32 @@ describe('the email code', () => {
     expect(res.status).toBe(200);
   });
 
-  it('a code expires after 10 minutes', async () => {
+  it('a code expires after 15 minutes', async () => {
     const { url } = await sentBilingual();
     await publicCall(`${url}/code`, 'POST');
     const code = codeFromLastEmail();
-    offsetMs = 11 * 60 * 1000;
+    offsetMs = 16 * 60 * 1000;
     try {
       const res = await publicCall(`${url}/sign`, 'POST', { values: { signer_name: 'Dana Cohen' }, code, signaturePng: SIGNATURE, consent: true });
       expect(((await res.json()) as any).error.message).toContain('expired');
+    } finally {
+      offsetMs = 0;
+    }
+  });
+
+  it('an earlier code still works after a new one, and a new code waits a minute', async () => {
+    const { url } = await sentBilingual();
+    await publicCall(url);
+    await publicCall(`${url}/code`, 'POST');
+    const firstCode = codeFromLastEmail();
+    const tooSoon = await publicCall(`${url}/code`, 'POST');
+    expect(tooSoon.status).toBe(400);
+    offsetMs = 2 * 60 * 1000;
+    try {
+      expect((await publicCall(`${url}/code`, 'POST')).status).toBe(200);
+      expect(codeFromLastEmail()).not.toBe('');
+      const res = await publicCall(`${url}/sign`, 'POST', { values: { signer_name: 'Dana Cohen' }, code: firstCode, signaturePng: SIGNATURE, consent: true });
+      expect(res.status).toBe(200);
     } finally {
       offsetMs = 0;
     }

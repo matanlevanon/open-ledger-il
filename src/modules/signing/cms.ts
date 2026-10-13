@@ -30,6 +30,8 @@ const OID_SHA256 = forge.pki.oids.sha256!;
 const OID_CONTENT_TYPE = forge.pki.oids.contentType!;
 const OID_MESSAGE_DIGEST = forge.pki.oids.messageDigest!;
 const OID_SIGNING_TIME = forge.pki.oids.signingTime!;
+/** id-aa-signingCertificateV2 (RFC 5035). PAdES (ETSI.CAdES.detached) requires it, Adobe Reader marks the signature invalid without it. */
+const OID_SIGNING_CERTIFICATE_V2 = '1.2.840.113549.1.9.16.2.47';
 const OID_RSA_ENCRYPTION = forge.pki.oids.rsaEncryption!;
 const OID_RSASSA_PSS = forge.pki.oids['RSASSA-PSS']!;
 const OID_MGF1 = forge.pki.oids.mgf1!;
@@ -115,7 +117,14 @@ function signingTimeValueAsn1(signedAt: Date): forgeModule.asn1.Asn1 {
 }
 
 /** The three PKCS#9 signed attributes CMS requires: content type, message digest, signing time. */
-function authenticatedAttributes(messageDigest: Uint8Array, signedAt: Date): forgeModule.asn1.Asn1[] {
+/** SigningCertificateV2 ::= SEQUENCE { certs SEQUENCE OF ESSCertIDv2 }, one ESSCertIDv2 with the default SHA-256 and the certificate hash. */
+function signingCertificateV2Asn1(certHash: Uint8Array): forgeModule.asn1.Asn1 {
+  return asn1Sequence([
+    asn1Sequence([asn1Sequence([forge.asn1.create(Asn1Class.UNIVERSAL, Asn1Type.OCTETSTRING, false, forge.util.binary.raw.encode(certHash))])]),
+  ]);
+}
+
+function authenticatedAttributes(messageDigest: Uint8Array, signedAt: Date, certHash: Uint8Array): forgeModule.asn1.Asn1[] {
   return [
     attributeAsn1(OID_CONTENT_TYPE, asn1Oid(OID_DATA)),
     attributeAsn1(
@@ -123,6 +132,7 @@ function authenticatedAttributes(messageDigest: Uint8Array, signedAt: Date): for
       forge.asn1.create(Asn1Class.UNIVERSAL, Asn1Type.OCTETSTRING, false, forge.util.binary.raw.encode(messageDigest)),
     ),
     attributeAsn1(OID_SIGNING_TIME, signingTimeValueAsn1(signedAt)),
+    attributeAsn1(OID_SIGNING_CERTIFICATE_V2, signingCertificateV2Asn1(certHash)),
   ];
 }
 
@@ -178,7 +188,9 @@ export async function buildDetachedCms(input: CmsSignInput): Promise<Uint8Array>
   const { cryptoKey, scheme } = await importSigningKey(input.keyPem);
 
   const messageDigest = new Uint8Array(await crypto.subtle.digest('SHA-256', input.content));
-  const attributesForSigning = authenticatedAttributes(messageDigest, input.signedAt);
+  const certDer = forge.util.binary.raw.decode(forge.asn1.toDer(forge.pki.certificateToAsn1(certificate)).getBytes());
+  const certHash = new Uint8Array(await crypto.subtle.digest('SHA-256', certDer));
+  const attributesForSigning = authenticatedAttributes(messageDigest, input.signedAt, certHash);
 
   // Per RFC 2315 9.3: signed attributes are digested (and signed) as a SET OF, not the [0]
   // IMPLICIT form they are transmitted in.
@@ -200,7 +212,7 @@ export async function buildDetachedCms(input: CmsSignInput): Promise<Uint8Array>
       Asn1Class.CONTEXT_SPECIFIC,
       0,
       true,
-      authenticatedAttributes(messageDigest, input.signedAt),
+      authenticatedAttributes(messageDigest, input.signedAt, certHash),
     ),
     signatureAlgorithmIdentifier(scheme),
     forge.asn1.create(Asn1Class.UNIVERSAL, Asn1Type.OCTETSTRING, false, forge.util.binary.raw.encode(signature)),

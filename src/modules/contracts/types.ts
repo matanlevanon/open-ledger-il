@@ -249,7 +249,9 @@ export interface CodeRow {
   created_at: string;
 }
 
-export const CODE_TTL_MS = 10 * 60 * 1000;
+export const CODE_TTL_MS = 15 * 60 * 1000;
+/** A new code waits this long after the last one, so slow inboxes are not flooded. */
+export const CODE_COOLDOWN_MS = 60 * 1000;
 export const CODE_MAX_TRIES = 5;
 /** A dashboard line once a contract sits sent and unsigned this long. */
 export const UNSIGNED_AFTER_DAYS = 7;

@@ -216,6 +216,14 @@ function renderBody(body: string, lang: Lang, input: ContractRenderInput, c: Box
   });
 }
 
+/** A short device name from a user agent: "iPhone Safari", "Windows Chrome". The Ledger keeps the full string. */
+export function deviceOf(ua: string | null): string {
+  if (!ua) return '';
+  const os = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'Mac' : '';
+  const browser = /Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) ? 'Chrome' : /Firefox\//.test(ua) ? 'Firefox' : /Safari/.test(ua) ? 'Safari' : '';
+  return [os, browser].filter(Boolean).join(' ') || ua.slice(0, 40);
+}
+
 function evidenceHtml(e: EvidenceView): string {
   const identity =
     e.identity === 'email_code'
@@ -232,11 +240,12 @@ function evidenceHtml(e: EvidenceView): string {
 <tr><th>Identity</th><td>${identity}</td></tr>
 </tbody></table>
 <p class="ev-note">Signed content SHA-256 covers the sent PDF hash, the details the signer typed and the signature images. The hash of this whole file is kept in the Ledger.</p>
-<table class="ev-events"><thead><tr><th>Time (UTC)</th><th>Event</th><th>By</th><th>IP</th><th>Device</th></tr></thead><tbody>
+<h3>Events (times in UTC)</h3>
+<ol class="ev-lines">
 ${e.events
-  .map((ev) => `<tr><td>${esc(ev.at.replace('T', ' ').slice(0, 19))}</td><td>${esc(ev.label)}</td><td>${esc(ev.actor ?? '')}</td><td>${esc(ev.ip ?? '')}</td><td class="ua">${esc(ev.userAgent ?? '')}</td></tr>`)
+  .map((ev) => `<li><span class="t">${esc(ev.at.replace('T', ' ').slice(0, 19))}</span> · <b>${esc(ev.label)}</b>${[ev.actor && !ev.label.includes(ev.actor) ? ev.actor : '', ev.ip ? `IP ${ev.ip}` : '', deviceOf(ev.userAgent ?? null)].filter(Boolean).map((x) => ` · ${esc(x)}`).join('')}</li>`)
   .join('\n')}
-</tbody></table>
+</ol>
 </section>`;
 }
 
@@ -270,6 +279,9 @@ a.f-sig img { width: 100%; height: 100%; object-fit: contain; }
 .evidence th, .evidence td { border: 1px solid #dde3eb; padding: 1.2mm 1.8mm; text-align: left; vertical-align: top; }
 .evidence .hash { font-family: monospace; font-size: 7.5pt; word-break: break-all; }
 .evidence .ua { font-size: 7pt; word-break: break-word; }
+.evidence ol.ev-lines { list-style: none; margin: 1mm 0 0; padding: 0; }
+.evidence ol.ev-lines li { padding: 0.6mm 0; border-bottom: 1px solid #eef1f5; overflow-wrap: anywhere; }
+.evidence ol.ev-lines .t { font-family: monospace; font-size: 7.5pt; }
 .ev-note { color: #4b5563; }
 ${
   mode === 'preview'

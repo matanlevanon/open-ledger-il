@@ -123,6 +123,9 @@ export async function signPdf(bytes: Uint8Array, options: SignPdfOptions): Promi
   const acroForm = doc.catalog.getOrCreateAcroForm();
   acroForm.addField(widgetRef);
   acroForm.dict.set(PDFName.of('SigFlags'), PDFNumber.of(3)); // SignaturesExist | AppendOnly
+  // Adobe Reader regenerates field appearances when /NeedAppearances is present, which breaks a
+  // certification that allows no changes. pyHanko drops the key for the same reason.
+  acroForm.dict.delete(PDFName.of('NeedAppearances'));
 
   // Object streams would bury the placeholders inside compressed data, where the byte search
   // below could never find them.
@@ -138,11 +141,12 @@ export async function signPdf(bytes: Uint8Array, options: SignPdfOptions): Promi
   const byteRangeStart = indexOfBytes(withPlaceholders, new TextEncoder().encode(byteRangeText));
   if (byteRangeStart === -1) throw new Error('signPdf: could not find the /ByteRange placeholder.');
 
-  // Range 1 covers byte 0 through the '<' that opens /Contents; range 2 covers the closing
-  // '>' through end of file. Together they are every byte except the hex digits themselves.
-  const range1Length = contentsOpenAngle + 1;
-  const range2Start = contentsCloseAngle;
-  const range2Length = withPlaceholders.length - contentsCloseAngle;
+  // ISO 32000-1 12.8.1: the gap is the whole /Contents string, its '<' and '>' included. Range 1
+  // runs from byte 0 up to the '<'; range 2 runs from just after the '>' to the end of the file.
+  // Adobe Reader marks a signature invalid when the brackets sit inside the signed ranges.
+  const range1Length = contentsOpenAngle;
+  const range2Start = contentsCloseAngle + 1;
+  const range2Length = withPlaceholders.length - range2Start;
 
   const pad = (n: number): string => {
     const s = String(n);
@@ -187,8 +191,11 @@ export async function verifyPdf(bytes: Uint8Array): Promise<VerifyPdfResult> {
   if (contentsCloseAngle === -1) return { valid: false, reason: 'malformed_contents' };
 
   // The /ByteRange values must bracket this exact /Contents value; otherwise either one
-  // could have been edited independently of the other after signing.
-  if (r1Len !== contentsOpenAngle + 1 || r2Start !== contentsCloseAngle) {
+  // could have been edited independently of the other after signing. Files signed before the
+  // 12.8.1 fix kept the brackets inside the ranges; both layouts still verify here.
+  const standard = r1Len === contentsOpenAngle && r2Start === contentsCloseAngle + 1;
+  const legacy = r1Len === contentsOpenAngle + 1 && r2Start === contentsCloseAngle;
+  if (!standard && !legacy) {
     return { valid: false, reason: 'byte_range_mismatch' };
   }
 

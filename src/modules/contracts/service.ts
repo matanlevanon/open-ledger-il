@@ -1,6 +1,6 @@
 import { type AuditActor, actorBiz, auditStatement, systemActorFor } from '../../core/audit';
 import type { Role } from '../../core/auth';
-import { all, first, nowIso, stmt, transaction } from '../../core/db';
+import { all, first, nowIso, stmt, todayIsrael, transaction } from '../../core/db';
 import { ConflictError, ForbiddenError, NotFoundError, UnauthorizedError, ValidationError } from '../../core/errors';
 import { HOME_CURRENCY, isCurrency } from '../../core/money';
 import type { Env } from '../../env';
@@ -18,10 +18,11 @@ import type { Mailer } from '../sending/mailer';
 import { signSendToken, verifySendToken } from '../sending/tokens';
 import { signPdf } from '../signing';
 import { placeFields } from './fields-pdf';
-import { type EvidenceEvent, type FieldBox, isMoney, isScope, renderContract, valueText } from './render';
+import { type EvidenceEvent, FIELD_LINK_PREFIX, type FieldBox, isMoney, isScope, renderContract, valueText } from './render';
 import { getTemplate, templateVersion } from './templates';
 import {
   CODE_MAX_TRIES,
+  CODE_COOLDOWN_MS,
   CODE_TTL_MS,
   type CodeRow,
   type ContractEventRow,
@@ -498,7 +499,7 @@ export async function sendContract(deps: ContractDeps, actor: AuditActor & { nam
   if (opts.channel === 'email' && !deps.mailer) throw new ValidationError('Email is not set up. Copy the link or share it on WhatsApp.');
 
   const now = nowOf(deps);
-  const today = now.toISOString().slice(0, 10);
+  const today = todayIsrael(now);
   const ownerSigns = row.owner_sign === 1;
   let ownerImage: Uint8Array | null = null;
   if (ownerSigns) {
@@ -672,10 +673,16 @@ function sixDigits(): string {
 export async function requestCode(deps: ContractDeps, row: ContractRow, req: PublicRequest, opts: { code?: string } = {}): Promise<{ sentTo: string }> {
   if (!deps.mailer) throw new ConflictError('code_not_needed', 'No code is needed for this link.');
   if (!row.signer_email) throw new ValidationError('This contract has no signer email.');
-  const code = opts.code ?? sixDigits();
   const now = nowOf(deps);
+  // Earlier codes stay valid until they expire: emails arrive late or out of order, so whichever
+  // one reaches the inbox works. A locked code (too many tries) never comes back.
+  const last = await first<CodeRow>(deps.env.DB, 'SELECT * FROM contract_codes WHERE contract_id = ? ORDER BY id DESC LIMIT 1', row.id);
+  if (last && last.attempts < CODE_MAX_TRIES && now.getTime() - Date.parse(last.created_at) < CODE_COOLDOWN_MS) {
+    throw new ValidationError('A code is on its way. Check your inbox and spam, and ask again in a minute.');
+  }
+  const code = opts.code ?? sixDigits();
+  const minutes = Math.round(CODE_TTL_MS / 60000);
   await transaction(deps.env.DB, [
-    stmt(deps.env.DB, 'UPDATE contract_codes SET superseded = 1 WHERE contract_id = ? AND superseded = 0', row.id),
     stmt(
       deps.env.DB,
       'INSERT INTO contract_codes (contract_id, code_hash, sent_to, expires_at) VALUES (?, ?, ?, ?)',
@@ -691,30 +698,43 @@ export async function requestCode(deps: ContractDeps, row: ContractRow, req: Pub
     to: row.signer_email,
     fromName: sender,
     subject: `Your code to sign ${row.title}`,
-    html: `<!doctype html><html><body style="font-family:sans-serif;line-height:1.5"><p>Your code to sign ${escapeHtml(row.title)} from ${escapeHtml(sender)}:</p><p style="font-size:24px;font-weight:700;letter-spacing:4px">${code}</p><p>It works for 10 minutes.</p></body></html>`,
-    text: `Your code to sign ${row.title} from ${sender}: ${code}\nIt works for 10 minutes.\n`,
+    html: `<!doctype html><html><body style="font-family:sans-serif;line-height:1.5"><p>Your code to sign ${escapeHtml(row.title)} from ${escapeHtml(sender)}:</p><p style="font-size:24px;font-weight:700;letter-spacing:4px">${code}</p><p>It works for ${minutes} minutes.</p></body></html>`,
+    text: `Your code to sign ${row.title} from ${sender}: ${code}\nIt works for ${minutes} minutes.\n`,
   });
   return { sentTo: row.signer_email };
 }
 
-/** Checks a typed code: 10 minutes, 5 tries, then a new code. */
+/** Checks a typed code: any unexpired code works, 5 wrong tries lock them all, then a new code. */
 async function checkCode(deps: ContractDeps, row: ContractRow, code: string, req: PublicRequest): Promise<void> {
   const db = deps.env.DB;
-  const current = await first<CodeRow>(db, 'SELECT * FROM contract_codes WHERE contract_id = ? AND superseded = 0 ORDER BY id DESC LIMIT 1', row.id);
-  if (!current) throw new ValidationError('Ask for a code first.');
-  if (current.attempts >= CODE_MAX_TRIES) throw new ValidationError('Too many tries. Ask for a new code.');
-  if (Date.parse(current.expires_at) <= nowOf(deps).getTime()) throw new ValidationError('The code expired. Ask for a new one.');
-  if ((await codeHash(deps.env, row.id, code.trim())) !== current.code_hash) {
+  const latest = await first<CodeRow>(db, 'SELECT * FROM contract_codes WHERE contract_id = ? ORDER BY id DESC LIMIT 1', row.id);
+  if (!latest) throw new ValidationError('Ask for a code first.');
+  if (latest.attempts >= CODE_MAX_TRIES) throw new ValidationError('Too many tries. Ask for a new code.');
+  const nowIsoText = nowOf(deps).toISOString();
+  const live = await all<CodeRow>(
+    db,
+    'SELECT * FROM contract_codes WHERE contract_id = ? AND superseded = 0 AND attempts < ? AND expires_at > ? ORDER BY id DESC',
+    row.id,
+    CODE_MAX_TRIES,
+    nowIsoText,
+  );
+  if (live.length === 0) throw new ValidationError('The code expired. Ask for a new one.');
+  const hash = await codeHash(deps.env, row.id, code.replace(/\s+/g, ''));
+  const match = live.find((c) => c.code_hash === hash);
+  if (!match) {
+    const newest = live[0]!;
+    const lock = newest.attempts + 1 >= CODE_MAX_TRIES;
     await transaction(db, [
-      stmt(db, 'UPDATE contract_codes SET attempts = attempts + 1 WHERE id = ?', current.id),
-      eventStatement(db, row, 'code_failed', signerActor(row, req), { attempt: current.attempts + 1 }),
+      stmt(db, 'UPDATE contract_codes SET attempts = attempts + 1 WHERE id = ?', newest.id),
+      ...(lock ? [stmt(db, 'UPDATE contract_codes SET superseded = 1 WHERE contract_id = ? AND id <> ? AND superseded = 0', row.id, newest.id)] : []),
+      eventStatement(db, row, 'code_failed', signerActor(row, req), { attempt: newest.attempts + 1 }),
     ]);
-    const left = CODE_MAX_TRIES - current.attempts - 1;
+    const left = CODE_MAX_TRIES - newest.attempts - 1;
     throw new ValidationError(left > 0 ? `The code is not right. ${left} ${left === 1 ? 'try' : 'tries'} left.` : 'Too many tries. Ask for a new code.');
   }
   await transaction(db, [
-    stmt(db, 'UPDATE contract_codes SET confirmed_at = ? WHERE id = ?', nowIso(), current.id),
-    eventStatement(db, row, 'code_confirmed', signerActor(row, req), { to: current.sent_to }),
+    stmt(db, 'UPDATE contract_codes SET confirmed_at = ? WHERE id = ?', nowIso(), match.id),
+    eventStatement(db, row, 'code_confirmed', signerActor(row, req), { to: match.sent_to }),
   ]);
 }
 
@@ -765,7 +785,8 @@ export async function signContract(deps: ContractDeps, row: ContractRow, req: Pu
 
   const now = nowOf(deps);
   const signedAt = now.toISOString();
-  const today = signedAt.slice(0, 10);
+  // Every signing date is the date in Israel, so a contract signed after midnight Israel time gets that day.
+  const today = todayIsrael(now);
   const values = { ...(JSON.parse(row.field_values_json) as FieldValues), ...signerValues };
   for (const f of fields) if (f.kind === 'signed_date' && f.party === 'client') values[f.key] = today;
 
@@ -883,6 +904,45 @@ export async function declineContract(deps: ContractDeps, row: ContractRow, req:
 }
 
 /** The PDF the signing page shows: the signed copy once signed, else the sent copy. */
+/**
+ * The document as a web page for the signing page, so it reads on any phone without a PDF viewer.
+ * Same template version and frozen values as the sent PDF. The client's signature box is a Sign
+ * button that scrolls the signing page to the signature step. The PDF stays the signed record.
+ */
+export async function viewHtml(env: Env, row: ContractRow, signUrl: string, lang: 'en' | 'he'): Promise<string> {
+  const version = await templateVersion(env.DB, row.business_id, row.template_id, row.template_version);
+  const fields = JSON.parse(version.fields_json) as FieldDef[];
+  const values = JSON.parse(row.field_values_json) as FieldValues;
+  let html = renderContract({
+    title: row.title,
+    kind: row.kind,
+    language: row.language,
+    bodyEn: version.body_en,
+    bodyHe: version.body_he,
+    fields,
+    values,
+    identity: await identityFor(env, row.business_id),
+    mode: 'pdf',
+  }).html;
+  const prefix = FIELD_LINK_PREFIX.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+  const owner = row.owner_sign === 1 ? await ownerSignatureImage(env, row.business_id) : null;
+  const label = lang === 'he' ? 'לחתימה' : 'Sign';
+  const jump = `try{parent.document.getElementById('signature').scrollIntoView({behavior:'smooth',block:'center'});return false}catch(e){return true}`;
+  for (const f of fields) {
+    if (f.kind !== 'signature') continue;
+    const open = new RegExp(`<a class="f f-sig" dir="auto" href="${prefix}${encodeURIComponent(f.key)}">\\s*</a>`, 'g');
+    if (f.party === 'owner' && owner) html = html.replace(open, `<a class="f f-sig"><img src="${owner.dataUri}" alt=""></a>`);
+    if (f.party === 'client') html = html.replace(open, `<a class="f f-sig sign-btn" href="${escapeHtml(signUrl)}" target="_top" onclick="${jump}">${label}</a>`);
+  }
+  html = html.replace(new RegExp(` href="${prefix}[^"]*"`, 'g'), '');
+  const extra = `<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><style>
+body { max-width: 820px; margin: 0 auto; padding: 16px; }
+@media (max-width: 700px) { body { font-size: 14px; padding: 12px; } a.f-sig { width: 100%; max-width: 260px; height: 64px; } }
+a.sign-btn { display: inline-grid; place-items: center; background: #1f5fd1; border-color: #1f5fd1; color: #fff; font-weight: 700; font-size: 16px; text-decoration: none; cursor: pointer; }
+</style>`;
+  return html.replace('</head>', `${extra}</head>`);
+}
+
 export async function publicPdf(env: Env, row: ContractRow): Promise<R2ObjectBody> {
   const key = row.status === 'signed' ? row.signed_pdf_r2_key : row.sent_pdf_r2_key;
   const object = key ? await env.FILES.get(key) : null;
