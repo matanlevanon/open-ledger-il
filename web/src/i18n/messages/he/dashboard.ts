@@ -37,4 +37,7 @@ export const dashboard: Record<keyof typeof en, string> = {
   'dashboard.itaStatus': 'סטטוס רשות המסים',
   'dashboard.itaConnected': 'מחובר',
   'dashboard.itaNotConnected': 'לא מחובר',
+  'dashboard.itaConnectedLine': 'מספרי הקצאה מתבקשים אוטומטית.',
+  'dashboard.itaNotConnectedLine': 'עדיין לא מחובר. התחברו בעמוד רשות המסים.',
+  'dashboard.itaAfterSwitchLine': 'החיבור זמין אחרי המעבר לעוסק מורשה.',
 };

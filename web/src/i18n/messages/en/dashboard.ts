@@ -35,4 +35,7 @@ export const dashboard = {
   'dashboard.itaStatus': 'ITA status',
   'dashboard.itaConnected': 'Connected',
   'dashboard.itaNotConnected': 'Not connected',
+  'dashboard.itaConnectedLine': 'Allocation numbers are requested on their own.',
+  'dashboard.itaNotConnectedLine': 'Not connected yet. Connect on the Tax Authority page.',
+  'dashboard.itaAfterSwitchLine': 'Connects after the switch to עוסק מורשה.',
 };

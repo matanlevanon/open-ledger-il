@@ -4,6 +4,7 @@ import { getDoc } from '../documents/repo';
 import { z } from 'zod';
 import { actorFrom, audit } from '../../core/audit';
 import { requireFeature } from '../../core/auth';
+import { isDemo } from '../demo/config';
 import { all, first, run } from '../../core/db';
 import { thresholdOn } from '../../core/config';
 import type { AppEnv } from '../../env';
@@ -61,7 +62,30 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
   // Every ITA route is owner only: 'ita' is an owner-only feature (src/core/auth.ts).
   app.use('*', requireFeature('ita'));
 
+  // R29: a demo visitor always sees a working Tax Authority connection. Status, route check,
+  // renewal and reconnect answer at once. Nothing is stored and nothing leaves the Worker.
+  // The demo admin keeps the fake Tax Authority flow (demo/ita-fake.ts).
+  const demoVisitor = (c: Context<AppEnv>) => isDemo(c.env) && !!c.get('demo') && !c.get('demo')!.admin;
+  const demoStatus = (c: Context<AppEnv>) => {
+    const now = deps.now().getTime();
+    const day = 86_400_000;
+    return {
+      environment: service(c).tokens.environment,
+      connected: true,
+      status: 'active' as const,
+      status_reason: null,
+      login_at: new Date(now - 10 * day).toISOString(),
+      relogin_due_at: new Date(now + 80 * day).toISOString(),
+      days_since_login: 10,
+      days_until_relogin: 80,
+      last_refresh_at: new Date(now).toISOString(),
+      reminder_sent_at: null,
+      banner: false,
+    };
+  };
+
   app.get('/status', async (c) => {
+    if (demoVisitor(c)) return c.json({ connection: demoStatus(c) });
     const status = await service(c).tokens.status();
     return c.json({ connection: { ...status, banner: status.connected && (status.days_since_login ?? 0) >= RELOGIN_BANNER_DAY } });
   });
@@ -73,6 +97,13 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
    * away before that, by where it came from. No real token is sent.
    */
   app.get('/route-check', async (c) => {
+    if (demoVisitor(c)) {
+      return c.json({
+        environment: service(c).tokens.environment,
+        direct: { from: 'demo', status: 400, reached: true, reply: 'Demo: the Tax Authority answered.' },
+        relay: null,
+      });
+    }
     const e = env(c);
     const s = service(c);
     const tokenUrl = ITA_URLS[s.tokens.environment].token;
@@ -143,6 +174,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
 
   /** Renews the short-lived access token now, the same renewal an allocation call triggers on its own. */
   app.post('/refresh', async (c) => {
+    if (demoVisitor(c)) return c.json({ ok: true, from: 'demo' });
     const s = service(c);
     const where = origin(env(c), c.req.raw);
     try {
@@ -164,6 +196,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
 
   /** Starts the ITA login. The browser follows the redirect to the ITA. */
   app.get('/connect', async (c) => {
+    if (demoVisitor(c)) return c.redirect('/ita?connected=1', 302);
     const s = service(c);
     const state = randomToken();
     const redirectUri = `${new URL(c.req.url).origin}/api/ita/callback`;
@@ -184,6 +217,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
 
   /** The ITA sends the browser back here with a one-time code. */
   app.get('/callback', async (c) => {
+    if (demoVisitor(c)) return c.redirect('/ita?connected=1', 302);
     const state = c.req.query('state') ?? '';
     const code = c.req.query('code') ?? '';
     const back = (result: string) => c.redirect(`/ita?${result}`, 302);

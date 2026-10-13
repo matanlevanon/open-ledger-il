@@ -648,7 +648,15 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
           <Card {...common}>
             <div className="flex items-center gap-2">
               <StatusChip tone={data.ita.connected ? 'success' : 'neutral'}>{data.ita.connected ? t('dashboard.itaConnected') : t('dashboard.itaNotConnected')}</StatusChip>
-              <p className="text-sm text-muted">{data.ita.message}</p>
+              <p className="text-sm text-muted">
+                {data.ita.state === 'connected'
+                  ? t('dashboard.itaConnectedLine')
+                  : data.ita.state === 'not_connected'
+                    ? t('dashboard.itaNotConnectedLine')
+                    : data.ita.state === 'after_switch'
+                      ? t('dashboard.itaAfterSwitchLine')
+                      : data.ita.message}
+              </p>
             </div>
           </Card>
         );

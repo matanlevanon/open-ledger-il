@@ -60,10 +60,12 @@ const VISITOR_WRITES: Rule[] = [
   { method: 'PATCH', pattern: /^\/api\/me\/preferences$/ },
   // The previews check the draft's owner themselves.
   { method: 'POST', pattern: /^\/api\/demo-app\// },
+  // A visitor's Tax Authority renewal answers at once and stores nothing (ita/routes.ts).
+  { method: 'POST', pattern: /^\/api\/ita\/refresh$/ },
 ];
 
-/** Reads that write the sample set (the Tax Authority connection) are refused too. */
-const VISITOR_BLOCKED_READS = [/^\/api\/ita\/(connect|callback)(\/|$)/];
+/** Reads that would write the sample set. The Tax Authority routes answer a visitor themselves (ita/routes.ts). */
+const VISITOR_BLOCKED_READS: RegExp[] = [];
 
 export function visitorRule(method: string, path: string): Rule | null {
   return VISITOR_WRITES.find((r) => r.method === method && r.pattern.test(path)) ?? null;

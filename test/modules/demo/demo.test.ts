@@ -293,6 +293,7 @@ describe('the sample data is read-only', () => {
       /^POST \/api\/contracts(\/preview)?$/,
       /^PATCH \/api\/me\/preferences$/,
       /^POST \/api\/demo-app\//,
+      /^POST \/api\/ita\/refresh$/,
       /^POST \/api\/demo\//,
       /^(POST|PUT|PATCH|DELETE) \/api\/(sending\/public|admin)\//,
       /^(POST|PUT|PATCH|DELETE) \/(admin|mcp)\b/,
@@ -315,8 +316,13 @@ describe('the sample data is read-only', () => {
       checked++;
     }
     expect(checked).toBeGreaterThan(70);
-    // The sample businesses' other settings-like reads that write are refused too.
-    expect((await call('/api/ita/connect', { cookie: visitorA, business: company, redirect: 'manual' })).status).toBe(403);
+    // The Tax Authority always looks connected to a visitor, and reconnecting stores nothing.
+    const connect = await call('/api/ita/connect', { cookie: visitorA, business: company, redirect: 'manual' });
+    expect(connect.status).toBe(302);
+    expect(connect.headers.get('location')).toBe('/ita?connected=1');
+    expect((await json(await call('/api/ita/status', { cookie: visitorA, business: company }))).connection.connected).toBe(true);
+    expect(await json(await call('/api/ita/refresh', { method: 'POST', cookie: visitorA, business: company, body: '{}' }))).toEqual({ ok: true, from: 'demo' });
+    expect((await json(await call('/api/ita/route-check', { cookie: visitorA, business: company }))).direct.reached).toBe(true);
     expect(await sampleSnapshot()).toBe(before);
     expect(await Promise.all(masters.map((m) => fingerprintOf(env.DB, m)))).toEqual(fingerprints);
   }, 120_000);

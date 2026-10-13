@@ -8,6 +8,7 @@ import { requireFeature, requireFeatureOrAssistant, requireRole } from '../../co
 import { ceilingFor, legalModeOn } from '../../core/config';
 import { assertDate, first, nowIso, stmt, todayIsrael, transaction } from '../../core/db';
 import { ValidationError } from '../../core/errors';
+import { isDemo } from '../demo/config';
 import type { ModuleDef } from '../../core/module';
 import type { AppEnv } from '../../env';
 import { type OpenDemand, openDemands } from '../documents/balances';
@@ -117,7 +118,8 @@ export interface DashboardData {
     outputMinor: number;
     inputMinor: number;
   };
-  ita: { connected: boolean; message: string };
+  /** state picks the card's translated line: connected, not_connected, or after_switch (עוסק פטור). */
+  ita: { connected: boolean; message: string; state?: 'connected' | 'not_connected' | 'after_switch' };
   /** R24: the business type pill, and whether the ceiling card shows at all. */
   businessType: { entityType: EntityType; showCeiling: boolean };
   /** R24 Phase C: certificates that end within 30 days, or ended. One dashboard line each. */
@@ -198,6 +200,13 @@ export async function turnoverIls(db: D1Database, yearStart: string, yearEnd: st
 export interface DashboardRequest {
   cards?: DashboardCard[];
   ranges?: Partial<Record<PeriodCard, Range>>;
+}
+
+async function itaCard(db: D1Database, businessId: number, murshe: boolean): Promise<DashboardData['ita']> {
+  const row = await first<{ status: string }>(db, "SELECT status FROM ita_tokens WHERE business_id = ? AND status = 'active' ORDER BY login_at DESC LIMIT 1", businessId);
+  if (row) return { connected: true, state: 'connected', message: 'Connected. Allocation numbers are requested on their own.' };
+  if (!murshe) return { connected: false, state: 'after_switch', message: 'Connects after the switch to עוסק מורשה.' };
+  return { connected: false, state: 'not_connected', message: 'Not connected yet.' };
 }
 
 export async function buildDashboard(db: D1Database, today: string, businessId: number, request: DashboardRequest = {}): Promise<DashboardData> {
@@ -294,11 +303,8 @@ export async function buildDashboard(db: D1Database, today: string, businessId: 
       : null,
     // VAT reporting belongs to עוסק מורשה and a company. עוסק פטור owes no VAT.
     vatDue,
-    // Live token status ships in R12.
-    ita: {
-      connected: false,
-      message: legalMode.mode === 'murshe' ? 'Not connected yet.' : 'Connects after the switch to עוסק מורשה.',
-    },
+    // The Tax Authority connection of this business, from its stored tokens.
+    ita: await itaCard(db, businessId, legalMode.mode === 'murshe'),
     businessType: { entityType, showCeiling },
     expiringDocuments: await expiringDocuments(db, businessId, today),
     contracts: await contractLines(db, businessId),
@@ -406,10 +412,13 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
     // R28: reminders due on WhatsApp today, for the owner and the assistant who share them.
     const role = c.get('user').role;
     const due = role === 'owner' || role === 'assistant' ? await whatsappDue(c.env.DB, businessId, today()) : [];
-    if (request.cards) return c.json({ ...scoped(await buildDashboard(c.env.DB, today(), businessId, request)), whatsappDue: due });
+    // R29: in the demo the Tax Authority always shows as connected, as on its own page.
+    const demoIta = (d: DashboardData): DashboardData =>
+      isDemo(c.env) ? { ...d, ita: { connected: true, state: 'connected', message: 'Connected. Allocation numbers are requested on their own.' } } : d;
+    if (request.cards) return c.json({ ...scoped(demoIta(await buildDashboard(c.env.DB, today(), businessId, request))), whatsappDue: due });
     const layout = await getDashboardLayout(c.env.DB, businessId);
     const cards = layout.filter((e) => e.visible).map((e) => e.id);
-    return c.json({ ...scoped(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards })), whatsappDue: due, layout });
+    return c.json({ ...scoped(demoIta(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards }))), whatsappDue: due, layout });
   });
   // R28: Share on WhatsApp for a due reminder. Returns the prefilled message link and logs it shared.
   routes.post('/reminders/:id/share', requireRole('owner', 'assistant'), async (c) => {

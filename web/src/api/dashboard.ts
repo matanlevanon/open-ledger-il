@@ -148,7 +148,7 @@ export interface DashboardData {
   contracts?: { unsigned: ContractAlert[]; expiring: ContractAlert[] };
   /** R28: reminders due on WhatsApp today. Absent on an older Worker. */
   whatsappDue?: WhatsAppDueItem[];
-  ita: { connected: boolean; message: string };
+  ita: { connected: boolean; message: string; state?: 'connected' | 'not_connected' | 'after_switch' };
   cards: DashboardCards;
   /** Present when the call named no cards: the stored layout that picked them. */
   layout?: LayoutEntry[];
