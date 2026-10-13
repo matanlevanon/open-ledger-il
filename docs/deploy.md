@@ -83,6 +83,10 @@ its own switcher, or go to [dash.cloudflare.com/?to=/:account/access/apps](https
 The domain `ledger.example.com` does not need to exist yet. You are about to create it as a
 Custom Domain on the Worker in step 7.
 
+No domain? Use the free Cloudflare address instead, `open-ledger-il.<your-subdomain>.workers.dev`.
+Your workers.dev subdomain is shown in **Workers & Pages** > **Account details** (right column).
+Enter that address wherever this guide says `ledger.example.com`, here and in steps 5 and 7.
+
 ### Second application: public client links (Bypass)
 
 Clients open two links without a Cloudflare Access session: the consent page and the WhatsApp PDF
@@ -109,10 +113,13 @@ deploy cannot silently revert it.
    - `ACCESS_AUD` = the AUD tag from step 4.6
    - `OWNER_EMAIL` = your own sign-in email (the first sign-in from this email becomes the owner,
      once, while no owner row exists yet)
-   - `PUBLIC_APP_URL` = `https://ledger.example.com`
+   - `PUBLIC_APP_URL` = `https://ledger.example.com`, or your workers.dev address
    - `MAIL_FROM` = the sender for outgoing email, for example
-     `Sample Business Ltd <billing@example.com>`, on a domain verified in Resend
-   - Uncomment the `routes` block and set your own hostname
+     `Sample Business Ltd <billing@example.com>`, on a domain verified in Resend. Email needs a
+     domain of its own, even when the Ledger runs on workers.dev
+   - With your own domain: uncomment the `routes` block and set your own hostname
+   - With no domain: leave `routes` commented out and set `workers_dev = true`. Every deploy
+     reads this line, so `false` would switch the address off again
 4. Commit and push to `main` of your fork. None of these values is a secret by CLAUDE.md rule
    5's own list (ITA client secret, signing key, encryption key, ת"ז). If your fork is public,
    keep them out of it: Set them as plain (non-secret) **Variables**
@@ -137,6 +144,10 @@ deploy cannot silently revert it.
 7. Select **Save and Deploy**. This kicks off the first build and deploy from `main`.
 
 ## 7. Add the Custom Domain
+
+No domain? Skip this step. The Worker answers on its workers.dev address once `workers_dev = true`
+is pushed in step 5. Check it in **Settings** > **Domains & Routes**: the **workers.dev** row is
+enabled, and **Preview URLs** is disabled.
 
 **Cloudflare dashboard**, once your domain (`example.com` here) itself is an active zone on this
 Cloudflare account. Add it first under **Websites** if it is not already there. DNS for the rest
@@ -163,8 +174,8 @@ for `ledger` on this zone first, or the add is refused.
 | Name | Where the value comes from |
 |---|---|
 | `OWNER_TAX_ID` | Your ID number (ת"ז). The ITA user id, and the fallback when Settings > Business has no tax id |
-| `SIGNING_KEY_PEM` | PDF signing private key. Made by `node scripts/make-signing-cert.mjs "Your Business Name"`, run on your computer. Ask your accountant whether you need a certificate from a licensed authority instead |
-| `SIGNING_CERT_PEM` | PDF signing certificate, from the same script |
+| `SIGNING_KEY_PEM` | PDF signing private key. See "Make the PDF signing key" below |
+| `SIGNING_CERT_PEM` | PDF signing certificate, from the same step |
 | `ITA_CLIENT_ID_SANDBOX`, `ITA_CLIENT_SECRET_SANDBOX` | ITA developer portal, sandbox app registration: https://openapi-portal.taxes.gov.il/sandbox |
 | `ITA_CLIENT_ID_PRODUCTION`, `ITA_CLIENT_SECRET_PRODUCTION` | ITA developer portal, production app registration, once approved: https://openapi-portal.taxes.gov.il/shaam/production |
 | `ITA_TOKEN_KEY` | 32 random bytes, base64. Generate on your computer: `openssl rand -base64 32` |
@@ -179,6 +190,33 @@ Document reading picks its provider from the Worker variable `AI_PROVIDER` (`ant
 | `MAIL_API_KEY` | Resend dashboard, an API key |
 | `SEND_LINK_KEY` | 32 random bytes, base64: `openssl rand -base64 32` |
 | `MCP_TOKEN` | 32 random bytes, base64, or any long random string: `openssl rand -base64 32` |
+
+### Make the PDF signing key
+
+Every PDF carries a PAdES digital signature, made with a key and certificate in your business
+name. The certificate is self-managed: no certification authority, valid for 10 years.
+
+**Your computer**, in a terminal opened in your fork's folder:
+
+1. Install the packages once, if you have not: `npm ci`
+2. Run, with your business name as it appears on your documents:
+
+```
+node scripts/make-signing-cert.mjs "Your Business Name"
+```
+
+3. Wait up to a minute. The script prints two blocks, under `=== SIGNING_KEY_PEM ===` and
+   `=== SIGNING_CERT_PEM ===`. Nothing is written to disk.
+4. In the Worker's **Variables and Secrets** screen (above), add a **Secret** named
+   `SIGNING_KEY_PEM`. Paste the first block, from `-----BEGIN RSA PRIVATE KEY-----` to
+   `-----END RSA PRIVATE KEY-----`, both lines included.
+5. Add a second **Secret** named `SIGNING_CERT_PEM`. Paste the second block, from
+   `-----BEGIN CERTIFICATE-----` to `-----END CERTIFICATE-----`.
+6. Select **Deploy**, then close the terminal. The private key exists only in the Worker now.
+
+Without these two secrets, PDFs still print but carry no digital signature. To rotate the key
+before it expires, run the script again and replace both secrets. PDFs signed earlier keep their
+signature. Ask your accountant whether you need a certificate from a licensed authority instead.
 
 Never paste a secret value into a chat, an issue, a PR, or a commit. Generate the random ones on
 your computer with the commands above and paste the result straight into the dashboard field.

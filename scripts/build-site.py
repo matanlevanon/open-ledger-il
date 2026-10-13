@@ -182,9 +182,9 @@ EN = dict(
     need_cols=['Requirement', 'Notes'], required='Required', optional='Optional',
     needs=[
         ('Cloudflare account', True, 'Workers Free runs it: the Worker, D1, R2, Browser Rendering and 5 scheduled jobs. Workers Paid, from $5 a month, lifts the limits below.'),
-        ('A domain on Cloudflare', True, 'Your ledger address, for example ledger.example.com, behind Cloudflare Access. Zero Trust is free for small teams.'),
-        ('PDF signing key and certificate', True, 'For the PAdES signature on every PDF. docs/setup.md shows how to make one.'),
+        ('PDF signing key and certificate', True, 'For the PAdES signature on every PDF. One command makes both, docs/deploy.md step 8.'),
         ('Node.js and Wrangler', True, 'On your computer, to apply database migrations and set secrets.'),
+        ('A domain on Cloudflare', False, 'Your own ledger address, for example ledger.example.com. Without one, it runs on the free workers.dev address. Email from your own address still needs a domain.'),
         ('Resend account', False, 'To email documents, reminders and the accountant pack. The free tier covers a small business.'),
         ('ITA API credentials', False, 'Only as עוסק מורשה, for allocation numbers on tax invoices.'),
         ('Anthropic API key', False, 'For Claude to read expenses and past documents. Pay per use, a few cents per document.'),
@@ -382,9 +382,9 @@ HE = dict(
     need_cols=['דרישה', 'הערות'], required='חובה', optional='רשות',
     needs=[
         ('חשבון Cloudflare', True, 'Workers Free מריץ אותה: ה-Worker, D1, R2, Browser Rendering ו-5 משימות מתוזמנות. Workers Paid, החל מ-5$ לחודש, מסיר את המגבלות שלמטה.'),
-        ('דומיין ב-Cloudflare', True, 'הכתובת של המערכת, למשל ledger.example.com, מאחורי Cloudflare Access. Zero Trust חינמי לצוותים קטנים.'),
-        ('מפתח ותעודה לחתימת PDF', True, 'לחתימת PAdES על כל PDF. הקובץ docs/setup.md מסביר איך יוצרים.'),
+        ('מפתח ותעודה לחתימת PDF', True, 'לחתימת PAdES על כל PDF. פקודה אחת יוצרת את שניהם, docs/deploy.md שלב 8.'),
         ('Node.js ו-Wrangler', True, 'במחשב שלך, להרצת מיגרציות למסד הנתונים ולהגדרת סודות.'),
+        ('דומיין ב-Cloudflare', False, 'כתובת משלך למערכת, למשל ledger.example.com. בלי דומיין היא רצה בכתובת workers.dev החינמית. כדי לשלוח מייל מכתובת משלך צריך דומיין.'),
         ('חשבון Resend', False, 'לשליחת מסמכים, תזכורות וחבילת רואה החשבון במייל. התוכנית החינמית מספיקה לעסק קטן.'),
         ('פרטי גישה ל-API של רשות המסים', False, 'רק לעוסק מורשה, למספרי הקצאה על חשבוניות מס.'),
         ('מפתח API של Anthropic', False, 'כדי ש-Claude יקרא הוצאות ומסמכי עבר. תשלום לפי שימוש, כמה סנטים למסמך.'),

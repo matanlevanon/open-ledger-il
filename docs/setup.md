@@ -27,13 +27,7 @@ The legal mode starts as עוסק פטור. When a receipt would take turnover p
 
 **Settings** > **Signature** > **Signature image** > **Upload image**. A transparent PNG works best. The image prints above the signer line on every issued document. Without an upload, documents print no signature image.
 
-The signature image is separate from the digital signature. The digital signature (PAdES) uses `SIGNING_KEY_PEM` and `SIGNING_CERT_PEM` from `docs/secrets.md`. Make both with:
-
-```
-node scripts/make-signing-cert.mjs "Your Business Name"
-```
-
-Ask your accountant whether you need a certificate from a licensed authority instead of a self-managed key.
+The signature image is separate from the digital signature. The digital signature (PAdES) uses the secrets `SIGNING_KEY_PEM` and `SIGNING_CERT_PEM`. `docs/deploy.md` step 8, "Make the PDF signing key", makes both and adds them to the Worker.
 
 ## 4. Numbering start
 

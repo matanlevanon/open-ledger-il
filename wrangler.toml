@@ -5,6 +5,7 @@ compatibility_date = "2026-08-01"
 # R02: @cloudflare/puppeteer (Browser Rendering) needs node:buffer at runtime.
 compatibility_flags = ["nodejs_compat"]
 # Reachable only at your custom domain, behind Cloudflare Access. No workers.dev or preview URLs.
+# No domain? Set workers_dev = true and use the workers.dev address (docs/deploy.md step 7).
 workers_dev = false
 preview_urls = false
 # keep_vars works only at the top level. It keeps variables set in the Cloudflare dashboard

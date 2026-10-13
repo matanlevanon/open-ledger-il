@@ -531,9 +531,9 @@ section[id] { scroll-margin-top: 64px; }
         <thead><tr><th>Requirement</th><th>Notes</th></tr></thead>
         <tbody>
           <tr><td><b>Cloudflare account</b><span class="tag req">Required</span></td><td><span>Workers Free runs it: the Worker, D1, R2, Browser Rendering and 5 scheduled jobs. Workers Paid, from $5 a month, lifts the limits below.</span></td></tr>
-          <tr><td><b>A domain on Cloudflare</b><span class="tag req">Required</span></td><td><span>Your ledger address, for example ledger.example.com, behind Cloudflare Access. Zero Trust is free for small teams.</span></td></tr>
-          <tr><td><b>PDF signing key and certificate</b><span class="tag req">Required</span></td><td><span>For the PAdES signature on every PDF. docs/setup.md shows how to make one.</span></td></tr>
+          <tr><td><b>PDF signing key and certificate</b><span class="tag req">Required</span></td><td><span>For the PAdES signature on every PDF. One command makes both, docs/deploy.md step 8.</span></td></tr>
           <tr><td><b>Node.js and Wrangler</b><span class="tag req">Required</span></td><td><span>On your computer, to apply database migrations and set secrets.</span></td></tr>
+          <tr><td><b>A domain on Cloudflare</b><span class="tag">Optional</span></td><td><span>Your own ledger address, for example ledger.example.com. Without one, it runs on the free workers.dev address. Email from your own address still needs a domain.</span></td></tr>
           <tr><td><b>Resend account</b><span class="tag">Optional</span></td><td><span>To email documents, reminders and the accountant pack. The free tier covers a small business.</span></td></tr>
           <tr><td><b>ITA API credentials</b><span class="tag">Optional</span></td><td><span>Only as עוסק מורשה, for allocation numbers on tax invoices.</span></td></tr>
           <tr><td><b>Anthropic API key</b><span class="tag">Optional</span></td><td><span>For Claude to read expenses and past documents. Pay per use, a few cents per document.</span></td></tr>
