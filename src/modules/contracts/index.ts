@@ -20,6 +20,7 @@ import { addSignButtons } from './fields-pdf';
 import { closedPageHtml, type PageLang, signedPageHtml, signingPageHtml } from './public-page';
 import {
   contractDetail,
+  contractParts,
   contractFromToken,
   contractsCron,
   createContractDraft,
@@ -34,6 +35,7 @@ import {
   publicPdf,
   remindContract,
   requestCode,
+  rowParts,
   sendContract,
   SIGN_PATH,
   signContract,
@@ -164,9 +166,10 @@ export function createContractsModule(options: ContractsOptions = {}): ModuleDef
     const clientId = Number(c.req.query('clientId'));
     const templateId = Number(c.req.query('templateId'));
     if (!Number.isInteger(clientId) || !Number.isInteger(templateId)) throw new ValidationError('Pick a client and a template.');
+    const include = Number(c.req.query('includeTemplateId') ?? '');
     const businessId = businessIdOf(c);
     return c.json({
-      ...(await newContractDefaults(c.env.DB, c.env, businessId, clientId, templateId)),
+      ...(await newContractDefaults(c.env.DB, c.env, businessId, clientId, templateId, Number.isInteger(include) && include > 0 ? include : null)),
       linkDays: LINK_DAYS,
       ownerSignature: c.get('user').role === 'owner' && (await ownerSignatureImage(c.env, businessId)) !== null,
       emailReady: (options.mailerFor ?? defaultMailer)(c.env) !== null,
@@ -183,11 +186,12 @@ export function createContractsModule(options: ContractsOptions = {}): ModuleDef
   r.get('/:id', requireFeature('contracts'), async (c) => {
     const businessId = businessIdOf(c);
     const detail = await contractDetail(c.env.DB, businessId, idParam(c), c.get('user').role);
-    const template = await templateVersion(c.env.DB, businessId, detail.templateId);
+    // A draft edits against the current versions, the included template's too.
+    const current = await contractParts(c.env.DB, businessId, { templateId: detail.templateId, includedId: detail.includedTemplate?.id ?? null });
     return c.json({
       contract: detail,
-      currentTemplateVersion: template.version,
-      currentFields: JSON.parse(template.fields_json) as FieldDef[],
+      currentTemplateVersion: current.version.version,
+      currentFields: current.fields,
       emailReady: (options.mailerFor ?? defaultMailer)(c.env) !== null,
       ownerSignature: c.get('user').role === 'owner' && (await ownerSignatureImage(c.env, businessId)) !== null,
     });
@@ -287,7 +291,7 @@ export function createContractsPublicModule(options: ContractsOptions = {}): Mod
     const sender = identity.nameEn || identity.nameHe || 'Your supplier';
     if (link.state === 'signed') return c.html(signedPageHtml(pageLang(c, row.language), base, sender, row.title, row.signed_at ?? ''));
     await markViewed(c.env.DB, row, requestOf(c));
-    const version = await templateVersion(c.env.DB, row.business_id, row.template_id, row.template_version);
+    const { fields } = await rowParts(c.env.DB, row);
     return c.html(
       signingPageHtml({
         lang: pageLang(c, row.language),
@@ -297,7 +301,7 @@ export function createContractsPublicModule(options: ContractsOptions = {}): Mod
         kind: row.kind,
         signerEmail: row.signer_email ?? '',
         signerName: row.signer_name ?? '',
-        fields: JSON.parse(version.fields_json) as FieldDef[],
+        fields,
         codeRequired: (options.mailerFor ?? defaultMailer)(c.env) !== null,
         today: todayIsrael(options.now ? options.now() : new Date()),
       }),
@@ -323,8 +327,7 @@ export function createContractsPublicModule(options: ContractsOptions = {}): Mod
     if (link.state !== 'open') return pdfResponse(object, name, download);
     // Before signing: a Sign button in the client's signature box, linked back to the signing page.
     const row = link.row;
-    const version = await templateVersion(c.env.DB, row.business_id, row.template_id, row.template_version);
-    const clientSigs = (JSON.parse(version.fields_json) as FieldDef[]).filter((f) => f.kind === 'signature' && f.party === 'client').map((f) => f.key);
+    const clientSigs = (await rowParts(c.env.DB, row)).fields.filter((f) => f.kind === 'signature' && f.party === 'client').map((f) => f.key);
     const page = `${baseUrl(c)}${SIGN_PATH}${c.req.param('token')}?lang=${pageLang(c, row.language)}#signature`;
     const bytes = await addSignButtons(new Uint8Array(await object.arrayBuffer()), clientSigs, page);
     return pdfBytesResponse(bytes, name, download);

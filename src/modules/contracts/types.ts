@@ -37,6 +37,8 @@ export const PARTIES = ['owner', 'client'] as const;
 export type Party = (typeof PARTIES)[number];
 /** What a field feeds when a signed work order becomes a draft pro forma. */
 export const MAPS_TO = ['amount', 'currency', 'start_date', 'description'] as const;
+/** R25b: what a field means beyond its kind. */
+export const FIELD_ROLES = ['terms_date'] as const;
 
 const key = z
   .string()
@@ -72,6 +74,8 @@ export const fieldDef = z.object({
   /** A starting value for `owner_input`, for example the 14 in "within [14] days". */
   defaultValue: z.string().max(2000).nullish(),
   mapsTo: z.enum(MAPS_TO).nullish(),
+  /** R25b: `terms_date` marks the work order field that holds the date the Standard Terms were signed. */
+  role: z.enum(FIELD_ROLES).nullish(),
 });
 export type FieldDef = z.infer<typeof fieldDef>;
 
@@ -151,6 +155,8 @@ export const signerInput = z.object({ name: z.string().trim().min(1, 'Add the si
 export const contractInput = z.object({
   clientId: z.number().int().positive(),
   templateId: z.number().int().positive(),
+  /** R25b: a work order's first engagement includes a contract-kind template, printed before it. */
+  includeTemplateId: z.number().int().positive().nullish(),
   title: z.string().trim().max(200).nullish(),
   language: z.enum(CONTRACT_LANGUAGES).default('en'),
   values: z.record(z.string(), z.unknown()).default({}),
@@ -191,6 +197,8 @@ export interface ContractRow {
   client_id: number;
   template_id: number;
   template_version: number;
+  included_template_id: number | null;
+  included_template_version: number | null;
   kind: TemplateKind;
   title: string;
   language: ContractLanguage;

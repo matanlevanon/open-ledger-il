@@ -5,7 +5,7 @@ import { PreferencesProvider } from '../../app/preferences';
 import { ToastProvider } from '../../components/Toast';
 import type { ContractDetail, FieldDef, Service, Template } from './api';
 import { ClientContracts } from './ClientContracts';
-import { ContractEditor, toMinor } from './ContractEditor';
+import { ContractEditor, defaultTermsTemplate, toMinor } from './ContractEditor';
 import { ContractPage, deviceOf, maskIp } from './ContractPage';
 import { ContractTemplatesTab, optionsToText, textToOptions } from './ContractTemplatesTab';
 
@@ -59,6 +59,7 @@ const SIGNED: ContractDetail = {
   clientName: 'Acme Ltd',
   templateId: 5,
   templateVersion: 1,
+  includedTemplate: null,
   language: 'both',
   values: {},
   signerValues: { signer_name: 'Dana Cohen' },
@@ -192,6 +193,108 @@ describe('R25 Screen B, new contract', () => {
     expect(created.values.fee).toEqual({ amountMinor: 10000, currency: 'ILS' });
     expect(created.ownerSign).toBe(true);
     expect(calls.find((c) => c.key === 'POST /api/contracts/21/send')!.body).toEqual({ channel: 'email' });
+  });
+});
+
+describe('R25b, Standard Terms and Work Order together', () => {
+  const TERMS_FIELD = f({ key: 'terms_signed_date', kind: 'owner_input', inputType: 'date', labelEn: 'Terms signed on', required: true, role: 'terms_date' });
+  const WO_FIELDS: FieldDef[] = [f({ key: 'client_name', kind: 'client', source: 'name', labelEn: 'Client name' }), TERMS_FIELD, f({ key: 'start', kind: 'owner_input', inputType: 'date', labelEn: 'Start date' })];
+  const WITH_TERMS: Template[] = [
+    { ...TEMPLATES[0]!, fields: WO_FIELDS },
+    TEMPLATES[1]!,
+    { id: 7, name: 'Standard Terms', kind: 'contract', version: 3, active: true, bodyEn: 'x', bodyHe: '', fields: [], fieldCount: 20, usedCount: 2, updatedAt: '' },
+  ];
+
+  it('presets the picker to Standard Terms, else the first contract template', () => {
+    expect(defaultTermsTemplate(WITH_TERMS)).toBe(7);
+    expect(defaultTermsTemplate(TEMPLATES)).toBe(6);
+    expect(defaultTermsTemplate([TEMPLATES[0]!])).toBeNull();
+  });
+
+  it('ticking the box adds the terms fields, hides the terms date and sends both templates', async () => {
+    routes['GET /api/contracts/templates'] = () => ({ templates: WITH_TERMS });
+    routes['GET /api/contracts/services'] = () => ({ services: SERVICES });
+    const defaults = (fields: FieldDef[], included: unknown) => () => ({
+      templateId: 5,
+      templateVersion: 1,
+      includedTemplate: included,
+      kind: 'work_order',
+      title: 'Work order, Acme Ltd',
+      fields,
+      values: { client_name: 'Acme Ltd', terms_place: 'Tel Aviv' },
+      signer: { name: 'Dana Cohen', email: 'dana@acme.co.il', phone: '' },
+      linkDays: [7, 14, 30],
+      ownerSignature: true,
+      emailReady: true,
+    });
+    routes['GET /api/contracts/new?clientId=7&templateId=5'] = defaults(WO_FIELDS, null);
+    routes['GET /api/contracts/new?clientId=7&templateId=5&includeTemplateId=7'] = defaults(
+      [WO_FIELDS[0]!, { ...TERMS_FIELD, kind: 'signed_date', party: 'client', required: false }, WO_FIELDS[2]!, f({ key: 'terms_place', kind: 'owner_input', inputType: 'text', labelEn: 'Governing place' })],
+      { id: 7, name: 'Standard Terms', version: 3 },
+    );
+    routes['POST /api/contracts/preview'] = () => '<p>preview</p>';
+    routes['POST /api/contracts'] = () => ({ contract: { ...SIGNED, id: 22, status: 'draft' } });
+
+    wrap(
+      <Routes>
+        <Route path="/contracts/new" element={<ContractEditor />} />
+      </Routes>,
+      '/contracts/new?clientId=7',
+    );
+    const box = await screen.findByRole('checkbox', { name: 'Include the Standard Terms (first engagement)' });
+    expect(box).not.toBeChecked();
+    expect(screen.getByLabelText('Terms template')).toHaveValue('7');
+    expect(await screen.findByLabelText(/^Terms signed on/)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '2026-12-01' } });
+
+    fireEvent.click(box);
+    expect(await screen.findByText('Filled with the signing date')).toBeInTheDocument();
+    expect(screen.queryByLabelText(/^Terms signed on/)).toBeNull();
+    expect(await screen.findByLabelText('Governing place')).toHaveValue('Tel Aviv');
+    // What the owner typed before ticking stays.
+    expect(screen.getByLabelText('Start date')).toHaveValue('2026-12-01');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save draft' }));
+    await waitFor(() => expect(calls.some((c) => c.key === 'POST /api/contracts')).toBe(true));
+    const created = calls.find((c) => c.key === 'POST /api/contracts')!.body as any;
+    expect(created.includeTemplateId).toBe(7);
+    expect(created.values.start).toBe('2026-12-01');
+  });
+
+  it('the checkbox shows for a work order only', async () => {
+    routes['GET /api/contracts/templates'] = () => ({ templates: [WITH_TERMS[1]!, WITH_TERMS[0]!, WITH_TERMS[2]!] });
+    routes['GET /api/contracts/services'] = () => ({ services: SERVICES });
+    routes['GET /api/contracts/new?clientId=7&templateId=6'] = () => ({
+      templateId: 6,
+      templateVersion: 2,
+      includedTemplate: null,
+      kind: 'contract',
+      title: 'Agreement, Acme Ltd',
+      fields: [],
+      values: {},
+      signer: { name: '', email: '', phone: '' },
+      linkDays: [7, 14, 30],
+      ownerSignature: false,
+      emailReady: true,
+    });
+    routes['POST /api/contracts/preview'] = () => '<p>preview</p>';
+    wrap(
+      <Routes>
+        <Route path="/contracts/new" element={<ContractEditor />} />
+      </Routes>,
+      '/contracts/new?clientId=7',
+    );
+    await screen.findByLabelText('Template');
+    await waitFor(() => expect(calls.some((c) => c.key === 'GET /api/contracts/new?clientId=7&templateId=6')).toBe(true));
+    expect(screen.queryByTestId('include-terms')).toBeNull();
+  });
+
+  it('the client contracts tab shows Work Order + Standard Terms', async () => {
+    routes['GET /api/contracts/clients/7'] = () => ({
+      contracts: [{ id: 9, title: 'First engagement', kind: 'work_order', templateName: 'Work Order + Standard Terms', status: 'sent', sentAt: '2026-10-12T11:00:00Z', viewedAt: null, signedAt: null, expiresAt: null, signerEmail: null }],
+    });
+    wrap(<ClientContracts clientId={7} canCreate />);
+    expect(await screen.findByText('Work Order + Standard Terms')).toBeInTheDocument();
   });
 });
 

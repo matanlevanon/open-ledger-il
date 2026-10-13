@@ -18,6 +18,7 @@ import {
   type ContractsOptions,
   type FieldDef,
 } from '../../../src/modules/contracts';
+import { expandStartingValue } from '../../../src/modules/contracts/values';
 import { createDocumentsModule, type DocumentsModuleOptions } from '../../../src/modules/documents';
 import { FakeFxHistory, FxRates } from '../../../src/modules/fx';
 import { FakeMailer } from '../../../src/modules/sending';
@@ -190,13 +191,13 @@ beforeAll(async () => {
 });
 
 describe('seeded templates (every business starts with the neutral sample)', () => {
-  it('seeds the sample agreement and the sample work order, and no services', async () => {
+  it('seeds the Service Agreement and the Work Order, and no services', async () => {
     const { templates } = await ok(OWNER, 'GET', '/contracts/templates');
-    expect(templates.map((t: any) => t.name)).toEqual(expect.arrayContaining(['Sample agreement', 'Sample work order']));
-    workOrderId = templates.find((t: any) => t.name === 'Sample work order').id;
+    expect(templates.map((t: any) => t.name)).toEqual(expect.arrayContaining(['Service Agreement', 'Work Order']));
+    workOrderId = templates.find((t: any) => t.name === 'Work Order').id;
     expect((await ok(OWNER, 'GET', '/contracts/services')).services).toEqual([]);
     await ok(OWNER, 'GET', '/contracts/templates');
-    expect((await first<{ n: number }>(env.DB, "SELECT COUNT(*) AS n FROM contract_templates WHERE business_id = 1 AND name = 'Sample work order'"))!.n).toBe(1);
+    expect((await first<{ n: number }>(env.DB, "SELECT COUNT(*) AS n FROM contract_templates WHERE business_id = 1 AND name = 'Work Order'"))!.n).toBe(1);
   });
 
   it('the owner adds services with scope items', async () => {
@@ -244,12 +245,21 @@ describe('templates', () => {
 describe('create and send', () => {
   it('field prefill: client and business fields and defaults come filled', async () => {
     const { templates } = await ok(OWNER, 'GET', '/contracts/templates');
-    const st = templates.find((t: any) => t.name === 'Sample agreement');
+    const st = templates.find((t: any) => t.name === 'Service Agreement');
     const d = await ok(OWNER, 'GET', `/contracts/new?clientId=${clientId}&templateId=${st.id}`);
     expect(d.values.client_name).toBe('Acme Ltd');
     expect(d.values.client_tax_id).toBe('515555555');
     expect(d.values.business_name).toBe('Sample Business');
     expect(d.ownerSignature).toBe(true);
+  });
+
+  it('a starting value with tokens gives the date and the next running number', async () => {
+    expect(await expandStartingValue(env.DB, 9999, 'work_order_number', 'WO-{YYYY}-{NNN}', '2026-10-13')).toBe('WO-2026-001');
+    expect(await expandStartingValue(env.DB, 9999, 'work_order_number', 'Q{YY}{MM}', '2026-10-13')).toBe('Q2610');
+    const id = await newContract(workOrderId, { work_order_number: 'WO-2026-007' });
+    expect(id).toBeGreaterThan(0);
+    expect(await expandStartingValue(env.DB, 1, 'work_order_number', 'WO-{YYYY}-{NNN}', '2026-10-13')).toBe('WO-2026-008');
+    expect(await expandStartingValue(env.DB, 1, 'work_order_number', 'WO-{YYYY}-{NNN}', '2027-01-02')).toBe('WO-2027-001');
   });
 
   it('a value typed for this contract wins over the client record, the client stays unchanged', async () => {
@@ -741,7 +751,7 @@ describe('roles and businesses', () => {
     expect((await call(OWNER, 'GET', `/contracts/${any.id}`, undefined, b2)).status).toBe(404);
     expect((await call(OWNER, 'GET', `/contracts/clients/${clientId}`, undefined, b2)).status).toBe(404);
     const { templates } = await ok(OWNER, 'GET', '/contracts/templates', undefined, b2);
-    expect(templates.map((t: any) => t.name)).toEqual(['Sample agreement', 'Sample work order']);
+    expect(templates.map((t: any) => t.name)).toEqual(['Service Agreement', 'Work Order']);
     expect(templates.every((t: any) => !t.bodyEn.includes('MTN'))).toBe(true);
     expect((await ok(OWNER, 'GET', '/contracts/services', undefined, b2)).services).toEqual([]);
     // A business 1 template cannot be used in business 2.

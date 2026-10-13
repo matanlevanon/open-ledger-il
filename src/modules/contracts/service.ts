@@ -71,6 +71,59 @@ function escapeHtml(value: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// R25b: a work order with the Standard Terms included
+// ---------------------------------------------------------------------------
+
+/**
+ * The field list of a contract: the union by key of the main template and the included one. The
+ * work order's definition wins on a key clash, so a field printed in both parts is one field with
+ * one widget per place. With terms included, the work order's terms date field becomes the
+ * client's signing date: hidden from the owner and filled at signing.
+ */
+export function combineFields(main: FieldDef[], included: FieldDef[] | null): FieldDef[] {
+  if (!included) return main;
+  const keys = new Set(main.map((f) => f.key));
+  return [
+    ...main.map((f): FieldDef => (f.role === 'terms_date' ? { ...f, kind: 'signed_date', party: 'client', required: false, defaultValue: null } : f)),
+    ...included.filter((f) => !keys.has(f.key)),
+  ];
+}
+
+export interface ContractParts {
+  version: TemplateVersionRow;
+  included: TemplateVersionRow | null;
+  fields: FieldDef[];
+}
+
+/** The versions and the combined field list. Without versions, the current ones. */
+export async function contractParts(
+  db: D1Database,
+  businessId: number,
+  ref: { templateId: number; version?: number; includedId?: number | null; includedVersion?: number | null },
+): Promise<ContractParts> {
+  const version = await templateVersion(db, businessId, ref.templateId, ref.version);
+  const included = ref.includedId ? await templateVersion(db, businessId, ref.includedId, ref.includedVersion ?? undefined) : null;
+  return { version, included, fields: combineFields(JSON.parse(version.fields_json) as FieldDef[], included ? (JSON.parse(included.fields_json) as FieldDef[]) : null) };
+}
+
+/** The parts a stored contract was made with. */
+export const rowParts = (db: D1Database, row: ContractRow) =>
+  contractParts(db, row.business_id, { templateId: row.template_id, version: row.template_version, includedId: row.included_template_id, includedVersion: row.included_template_version });
+
+/** "Work Order + Standard Terms" for a combined contract, else the template name. */
+export const combinedName = (main: string, included: string | null | undefined) => (included ? `${main} + ${included}` : main);
+
+/** Checks the template picked to print before a work order. */
+async function includedTemplateFor(db: D1Database, businessId: number, mainKind: string, includeTemplateId: number | null | undefined) {
+  if (!includeTemplateId) return null;
+  if (mainKind !== 'work_order') throw new ValidationError('Only a work order includes the Standard Terms.');
+  const t = await getTemplate(db, businessId, includeTemplateId);
+  if (t.kind !== 'contract') throw new ValidationError('Pick a contract template to include, like the Standard Terms.');
+  if (t.active !== 1) throw new ValidationError('The included template is turned off.');
+  return t;
+}
+
+// ---------------------------------------------------------------------------
 // Reading
 // ---------------------------------------------------------------------------
 
@@ -120,7 +173,7 @@ export function eventLabel(e: Pick<ContractEventRow, 'kind' | 'actor_email' | 'd
     case 'code_failed':
       return 'Wrong code';
     case 'signed':
-      return `Signed by ${[d.name, d.role].filter(Boolean).join(', ')}${d.sha256 ? ` · final hash ${d.sha256.slice(0, 4)}…` : ''}`;
+      return `Signed by ${[d.name, d.role].filter(Boolean).join(', ')}${d.templates ? ` · ${d.templates}` : ''}${d.sha256 ? ` · final hash ${d.sha256.slice(0, 4)}…` : ''}`;
     case 'signed_copy_emailed':
       return 'Signed copy emailed to both sides';
     case 'declined':
@@ -169,9 +222,10 @@ export interface ContractSummary {
 
 export async function listClientContracts(db: D1Database, businessId: number, clientId: number, role: Role): Promise<ContractSummary[]> {
   await getClient(db, clientId, businessId);
-  const rows = await all<ContractRow & { template_name: string }>(
+  const rows = await all<ContractRow & { template_name: string; included_name: string | null }>(
     db,
-    `SELECT c.*, t.name AS template_name FROM contracts c JOIN contract_templates t ON t.id = c.template_id
+    `SELECT c.*, t.name AS template_name, it.name AS included_name FROM contracts c JOIN contract_templates t ON t.id = c.template_id
+     LEFT JOIN contract_templates it ON it.id = c.included_template_id
      WHERE c.business_id = ? AND c.client_id = ? ${role === 'accountant' ? "AND c.status = 'signed'" : ''} ORDER BY c.created_at DESC, c.id DESC`,
     businessId,
     clientId,
@@ -180,7 +234,7 @@ export async function listClientContracts(db: D1Database, businessId: number, cl
     id: r.id,
     title: r.title,
     kind: r.kind,
-    templateName: r.template_name,
+    templateName: combinedName(r.template_name, r.included_name),
     status: r.status,
     sentAt: r.sent_at,
     viewedAt: r.viewed_at,
@@ -195,6 +249,8 @@ export interface ContractDetail extends ContractSummary {
   clientName: string;
   templateId: number;
   templateVersion: number;
+  /** R25b: the Standard Terms printed before the work order. */
+  includedTemplate: { id: number; name: string; version: number } | null;
   language: ContractRow['language'];
   values: FieldValues;
   signerValues: Record<string, string> | null;
@@ -213,13 +269,14 @@ export interface ContractDetail extends ContractSummary {
 export async function contractDetail(db: D1Database, businessId: number, id: number, role: Role): Promise<ContractDetail> {
   const row = await getVisibleContract(db, businessId, id, role);
   const template = await getTemplate(db, businessId, row.template_id);
-  const version = await templateVersion(db, businessId, row.template_id, row.template_version);
+  const parts = await rowParts(db, row);
+  const includedTemplate = row.included_template_id ? await getTemplate(db, businessId, row.included_template_id) : null;
   const client = await getClient(db, row.client_id, businessId);
   return {
     id: row.id,
     title: row.title,
     kind: row.kind,
-    templateName: template.name,
+    templateName: combinedName(template.name, includedTemplate?.name),
     status: row.status,
     sentAt: row.sent_at,
     viewedAt: row.viewed_at,
@@ -230,10 +287,11 @@ export async function contractDetail(db: D1Database, businessId: number, id: num
     clientName: clientDisplayName(client, 'en'),
     templateId: row.template_id,
     templateVersion: row.template_version,
+    includedTemplate: includedTemplate ? { id: includedTemplate.id, name: includedTemplate.name, version: row.included_template_version ?? includedTemplate.current_version } : null,
     language: row.language,
     values: JSON.parse(row.field_values_json) as FieldValues,
     signerValues: row.signer_values_json ? (JSON.parse(row.signer_values_json) as Record<string, string>) : null,
-    fields: JSON.parse(version.fields_json) as FieldDef[],
+    fields: parts.fields,
     signer: { name: row.signer_name, email: row.signer_email, phone: row.signer_phone },
     linkDays: row.link_days,
     ownerSign: row.owner_sign === 1,
@@ -280,13 +338,22 @@ function eventStatement(db: D1Database, contract: Pick<ContractRow, 'id' | 'busi
 // ---------------------------------------------------------------------------
 
 /** What Screen B starts from: the template's fields with every value the Ledger already knows. */
-export async function newContractDefaults(db: D1Database, env: Pick<Env, 'OWNER_TAX_ID'>, businessId: number, clientId: number, templateId: number) {
+export async function newContractDefaults(
+  db: D1Database,
+  env: Pick<Env, 'OWNER_TAX_ID'>,
+  businessId: number,
+  clientId: number,
+  templateId: number,
+  includeTemplateId?: number | null,
+) {
   const client = await getClient(db, clientId, businessId);
-  const version = await templateVersion(db, businessId, templateId);
-  const fields = JSON.parse(version.fields_json) as FieldDef[];
+  const main = await getTemplate(db, businessId, templateId);
+  await includedTemplateFor(db, businessId, main.kind, includeTemplateId);
+  const { version, included, fields } = await contractParts(db, businessId, { templateId, includedId: includeTemplateId });
   return {
     templateId,
     templateVersion: version.version,
+    includedTemplate: included ? { id: included.template_id, name: included.name, version: included.version } : null,
     kind: version.kind,
     title: `${version.name}, ${clientDisplayName(client, 'en')}`,
     fields,
@@ -295,8 +362,7 @@ export async function newContractDefaults(db: D1Database, env: Pick<Env, 'OWNER_
   };
 }
 
-async function draftValues(db: D1Database, env: Pick<Env, 'OWNER_TAX_ID'>, businessId: number, client: ClientRow, version: TemplateVersionRow, raw: Record<string, unknown>): Promise<FieldValues> {
-  const fields = JSON.parse(version.fields_json) as FieldDef[];
+async function draftValues(db: D1Database, env: Pick<Env, 'OWNER_TAX_ID'>, businessId: number, client: ClientRow, fields: FieldDef[], raw: Record<string, unknown>): Promise<FieldValues> {
   const base = await prefill(db, businessId, client, fields, env.OWNER_TAX_ID ?? null);
   return { ...base, ...(await normalizeOwnerValues(db, businessId, fields, raw)) };
 }
@@ -306,18 +372,22 @@ export async function createContractDraft(db: D1Database, env: Pick<Env, 'OWNER_
   const client = await getClient(db, input.clientId, businessId);
   const template = await getTemplate(db, businessId, input.templateId);
   if (template.active !== 1) throw new ValidationError('This template is turned off.');
-  const version = await templateVersion(db, businessId, template.id);
-  const values = await draftValues(db, env, businessId, client, version, input.values);
+  await includedTemplateFor(db, businessId, template.kind, input.includeTemplateId);
+  const { version, included, fields } = await contractParts(db, businessId, { templateId: template.id, includedId: input.includeTemplateId });
+  const values = await draftValues(db, env, businessId, client, fields, input.values);
   const title = input.title?.trim() || `${version.name}, ${clientDisplayName(client, 'en')}`;
   const res = await transaction(db, [
     stmt(
       db,
-      `INSERT INTO contracts (business_id, client_id, template_id, template_version, kind, title, language, field_values_json, signer_name, signer_email, signer_phone, link_days, owner_sign, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO contracts (business_id, client_id, template_id, template_version, included_template_id, included_template_version, kind, title, language, field_values_json,
+         signer_name, signer_email, signer_phone, link_days, owner_sign, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       businessId,
       client.id,
       template.id,
       version.version,
+      included?.template_id ?? null,
+      included?.version ?? null,
       template.kind,
       title,
       input.language,
@@ -329,10 +399,10 @@ export async function createContractDraft(db: D1Database, env: Pick<Env, 'OWNER_
       input.ownerSign ? 1 : 0,
       actor.userId,
     ),
-    auditStatement(db, actor, 'contract.create', 'contract', null, { clientId: client.id, templateId: template.id, version: version.version }),
+    auditStatement(db, actor, 'contract.create', 'contract', null, { clientId: client.id, templateId: template.id, version: version.version, ...(included ? { includedTemplateId: included.template_id, includedVersion: included.version } : {}) }),
   ]);
   const id = Number(res[0]!.meta.last_row_id);
-  await transaction(db, [eventStatement(db, { id, business_id: businessId }, 'created', fromAudit(actor), { templateVersion: version.version })]);
+  await transaction(db, [eventStatement(db, { id, business_id: businessId }, 'created', fromAudit(actor), { templateVersion: version.version, ...(included ? { includedTemplateId: included.template_id, includedVersion: included.version } : {}) })]);
   return id;
 }
 
@@ -345,15 +415,18 @@ export async function updateContractDraft(db: D1Database, env: Pick<Env, 'OWNER_
   const client = await getClient(db, row.client_id, businessId);
   const template = await getTemplate(db, businessId, input.templateId);
   if (template.kind !== row.kind) throw new ValidationError('Pick a template of the same kind, or make a new contract.');
-  const version = await templateVersion(db, businessId, template.id);
-  const values = await draftValues(db, env, businessId, client, version, input.values);
+  await includedTemplateFor(db, businessId, template.kind, input.includeTemplateId);
+  const { version, included, fields } = await contractParts(db, businessId, { templateId: template.id, includedId: input.includeTemplateId });
+  const values = await draftValues(db, env, businessId, client, fields, input.values);
   await transaction(db, [
     stmt(
       db,
-      `UPDATE contracts SET template_id = ?, template_version = ?, title = ?, language = ?, field_values_json = ?, signer_name = ?, signer_email = ?, signer_phone = ?,
-         link_days = ?, owner_sign = ?, updated_at = ? WHERE id = ? AND status = 'draft'`,
+      `UPDATE contracts SET template_id = ?, template_version = ?, included_template_id = ?, included_template_version = ?, title = ?, language = ?, field_values_json = ?,
+         signer_name = ?, signer_email = ?, signer_phone = ?, link_days = ?, owner_sign = ?, updated_at = ? WHERE id = ? AND status = 'draft'`,
       template.id,
       version.version,
+      included?.template_id ?? null,
+      included?.version ?? null,
       input.title?.trim() || row.title,
       input.language,
       JSON.stringify(values),
@@ -365,7 +438,7 @@ export async function updateContractDraft(db: D1Database, env: Pick<Env, 'OWNER_
       nowIso(),
       id,
     ),
-    auditStatement(db, actor, 'contract.update', 'contract', id, { version: version.version }),
+    auditStatement(db, actor, 'contract.update', 'contract', id, { version: version.version, ...(included ? { includedTemplateId: included.template_id, includedVersion: included.version } : {}) }),
   ]);
 }
 
@@ -396,9 +469,10 @@ export async function ownerSignatureImage(env: Env, businessId: number): Promise
 export async function previewHtml(env: Env, actor: AuditActor, input: ContractInput): Promise<string> {
   const businessId = actorBiz(actor);
   const client = await getClient(env.DB, input.clientId, businessId);
-  const version = await templateVersion(env.DB, businessId, input.templateId);
-  const values = await draftValues(env.DB, env, businessId, client, version, input.values);
-  const fields = JSON.parse(version.fields_json) as FieldDef[];
+  const main = await getTemplate(env.DB, businessId, input.templateId);
+  await includedTemplateFor(env.DB, businessId, main.kind, input.includeTemplateId);
+  const { version, included, fields } = await contractParts(env.DB, businessId, { templateId: input.templateId, includedId: input.includeTemplateId });
+  const values = await draftValues(env.DB, env, businessId, client, fields, input.values);
   const owner = input.ownerSign ? await ownerSignatureImage(env, businessId) : null;
   return renderContract({
     title: input.title?.trim() || version.name,
@@ -406,6 +480,7 @@ export async function previewHtml(env: Env, actor: AuditActor, input: ContractIn
     language: input.language,
     bodyEn: version.body_en,
     bodyHe: version.body_he,
+    included: included ? { bodyEn: included.body_en, bodyHe: included.body_he } : null,
     fields,
     values: { ...values, ...signerNameValues(fields, input.signer.name ?? '') },
     identity: await identityFor(env, businessId),
@@ -489,8 +564,7 @@ export async function sendContract(deps: ContractDeps, actor: AuditActor & { nam
   const businessId = actorBiz(actor);
   const row = await getContract(db, businessId, id);
   if (row.status !== 'draft') throw new ConflictError('contract_fixed', 'This contract was already sent.');
-  const version = await templateVersion(db, businessId, row.template_id, row.template_version);
-  const fields = JSON.parse(version.fields_json) as FieldDef[];
+  const { version, included, fields } = await rowParts(db, row);
   const values = JSON.parse(row.field_values_json) as FieldValues;
   const missing = missingOwnerFields(fields, values);
   if (missing.length > 0) throw new ValidationError(`Fill these fields first: ${missing.join(', ')}.`);
@@ -516,6 +590,7 @@ export async function sendContract(deps: ContractDeps, actor: AuditActor & { nam
     language: row.language,
     bodyEn: version.body_en,
     bodyHe: version.body_he,
+    included: included ? { bodyEn: included.body_en, bodyHe: included.body_he } : null,
     fields,
     values,
     identity: await identityFor(env, businessId),
@@ -551,7 +626,7 @@ export async function sendContract(deps: ContractDeps, actor: AuditActor & { nam
   if (ownerSigns) statements.push(eventStatement(db, row, 'owner_signed', ev, { name: actor.name || actor.email }, sentAt));
   statements.push(
     eventStatement(db, row, 'sent', ev, { channel: opts.channel, to: opts.channel === 'email' ? row.signer_email : null, sha256: stored.sha256, expiresAt }, sentAt),
-    auditStatement(db, actor, 'contract.send', 'contract', row.id, { channel: opts.channel, sha256: stored.sha256, ownerSigned: ownerSigns, templateVersion: row.template_version }),
+    auditStatement(db, actor, 'contract.send', 'contract', row.id, { channel: opts.channel, sha256: stored.sha256, ownerSigned: ownerSigns, templateVersion: row.template_version, ...(included ? { includedTemplateId: included.template_id, includedVersion: included.version } : {}) }),
   );
   await transaction(db, statements);
 
@@ -766,8 +841,7 @@ export async function signContract(deps: ContractDeps, row: ContractRow, req: Pu
   const { env } = deps;
   const db = env.DB;
   if (!input.consent) throw new ValidationError('Tick the box to agree to sign electronically.');
-  const version = await templateVersion(db, row.business_id, row.template_id, row.template_version);
-  const fields = JSON.parse(version.fields_json) as FieldDef[];
+  const { version, included, fields } = await rowParts(db, row);
   const signerValues: Record<string, string> = {};
   for (const f of fields.filter((x) => x.kind === 'signer_input')) {
     const v = (input.values[f.key] ?? '').toString().trim().slice(0, 500);
@@ -795,18 +869,28 @@ export async function signContract(deps: ContractDeps, row: ContractRow, req: Pu
   const signedContentSha256 = await sha256Hex(
     JSON.stringify({ sentPdfSha256: row.sent_pdf_sha256, signerValues, signatureSha256: await sha256Hex(signature), signedAt }),
   );
+  const template = await getTemplate(db, row.business_id, row.template_id);
+  const includedTemplate = included ? await getTemplate(db, row.business_id, included.template_id) : null;
+  // R25b: the signing names both templates, in the event and on the evidence page.
+  const templates = includedTemplate && included ? `${template.name} v${row.template_version} and ${includedTemplate.name} v${included.version}` : null;
   const events = await contractEvents(db, row.id);
   const evidenceEvents: EvidenceEvent[] = [
     ...events.map((e) => ({ at: e.at, label: e.label, actor: e.actor, ip: e.ip, userAgent: e.userAgent })),
-    { at: signedAt, label: `Signed by ${[signerName, signerRole].filter(Boolean).join(', ')}`, actor: row.signer_email, ip: req.ip, userAgent: req.userAgent },
+    {
+      at: signedAt,
+      label: `Signed by ${[signerName, signerRole].filter(Boolean).join(', ')}${templates ? ` · ${templates}` : ''}`,
+      actor: row.signer_email,
+      ip: req.ip,
+      userAgent: req.userAgent,
+    },
   ];
-  const template = await getTemplate(db, row.business_id, row.template_id);
   const rendered = renderContract({
     title: row.title,
     kind: row.kind,
     language: row.language,
     bodyEn: version.body_en,
     bodyHe: version.body_he,
+    included: included ? { bodyEn: included.body_en, bodyHe: included.body_he } : null,
     fields,
     values,
     identity: await identityFor(env, row.business_id),
@@ -816,6 +900,7 @@ export async function signContract(deps: ContractDeps, row: ContractRow, req: Pu
       title: row.title,
       templateName: template.name,
       templateVersion: row.template_version,
+      includedTemplate: includedTemplate && included ? { name: includedTemplate.name, version: included.version } : null,
       sentSha256: row.sent_pdf_sha256 ?? '',
       signedContentSha256,
       identity: identityMethod,
@@ -859,7 +944,7 @@ export async function signContract(deps: ContractDeps, row: ContractRow, req: Pu
       signedAt,
       row.id,
     ),
-    eventStatement(db, row, 'signed', actor, { name: signerName, role: signerRole, sha256: stored.sha256, certified: Boolean(signing), signedContentSha256 }, signedAt),
+    eventStatement(db, row, 'signed', actor, { name: signerName, role: signerRole, sha256: stored.sha256, certified: Boolean(signing), signedContentSha256, ...(templates ? { templates } : {}) }, signedAt),
     auditStatement(db, { ...systemActorFor(row.business_id), email: row.signer_email, role: 'signer', ip: req.ip, userAgent: req.userAgent }, 'contract.sign', 'contract', row.id, {
       sha256: stored.sha256,
       identityMethod,
@@ -910,8 +995,7 @@ export async function declineContract(deps: ContractDeps, row: ContractRow, req:
  * button that scrolls the signing page to the signature step. The PDF stays the signed record.
  */
 export async function viewHtml(env: Env, row: ContractRow, signUrl: string, lang: 'en' | 'he'): Promise<string> {
-  const version = await templateVersion(env.DB, row.business_id, row.template_id, row.template_version);
-  const fields = JSON.parse(version.fields_json) as FieldDef[];
+  const { version, included, fields } = await rowParts(env.DB, row);
   const values = JSON.parse(row.field_values_json) as FieldValues;
   let html = renderContract({
     title: row.title,
@@ -919,6 +1003,7 @@ export async function viewHtml(env: Env, row: ContractRow, signUrl: string, lang
     language: row.language,
     bodyEn: version.body_en,
     bodyHe: version.body_he,
+    included: included ? { bodyEn: included.body_en, bodyHe: included.body_he } : null,
     fields,
     values,
     identity: await identityFor(env, row.business_id),

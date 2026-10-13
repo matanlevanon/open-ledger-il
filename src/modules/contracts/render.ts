@@ -62,6 +62,8 @@ export interface EvidenceView {
   title: string;
   templateName: string;
   templateVersion: number;
+  /** R25b: the Standard Terms printed before the work order, when included. */
+  includedTemplate?: { name: string; version: number } | null;
   sentSha256: string;
   signedContentSha256: string;
   identity: 'email_code' | 'link_only';
@@ -75,6 +77,8 @@ export interface ContractRenderInput {
   language: ContractLanguage;
   bodyEn: string;
   bodyHe: string;
+  /** R25b: the included template's text, printed first. The main text starts on a new page. */
+  included?: { bodyEn: string; bodyHe: string } | null;
   fields: FieldDef[];
   values: FieldValues;
   identity: RenderIdentity;
@@ -234,7 +238,9 @@ function evidenceHtml(e: EvidenceView): string {
 <p>A simple electronic signature with an evidence trail. The certificate signature on this file marks any change made after signing.</p>
 <table class="ev-meta"><tbody>
 <tr><th>Document</th><td>${esc(e.title)} (contract ${e.contractId})</td></tr>
-<tr><th>Template</th><td>${esc(e.templateName)}, version ${e.templateVersion}</td></tr>
+<tr><th>Template</th><td>${esc(e.templateName)}, version ${e.templateVersion}</td></tr>${
+    e.includedTemplate ? `<tr><th>Included template</th><td>${esc(e.includedTemplate.name)}, version ${e.includedTemplate.version}</td></tr>` : ''
+  }
 <tr><th>Sent PDF SHA-256</th><td class="hash">${esc(e.sentSha256)}</td></tr>
 <tr><th>Signed content SHA-256</th><td class="hash">${esc(e.signedContentSha256)}</td></tr>
 <tr><th>Identity</th><td>${identity}</td></tr>
@@ -293,22 +299,36 @@ body { padding: 6mm; }`
 }`;
 }
 
+/** R25b: the main text after an included template starts on a new page. Only added when included. */
+const PART_BREAK_CSS = `
+.body.part-break { break-before: page; border-top: none; margin-top: 0; padding-top: 0; }`;
+
+/** The sections one text prints in, by the language rule. English and Hebrew prints English then Hebrew. */
+function sectionsFor(language: ContractLanguage, bodyEn: string, bodyHe: string): { lang: Lang; body: string }[] {
+  const en = bodyEn.trim();
+  const he = bodyHe.trim();
+  if (language === 'en') return [en ? { lang: 'en', body: bodyEn } : { lang: 'he', body: bodyHe }];
+  if (language === 'he') return [he ? { lang: 'he', body: bodyHe } : { lang: 'en', body: bodyEn }];
+  const out: { lang: Lang; body: string }[] = [];
+  if (en) out.push({ lang: 'en', body: bodyEn });
+  if (he) out.push({ lang: 'he', body: bodyHe });
+  return out;
+}
+
 /** Renders the contract. Returns the HTML and every field box in it. */
 export function renderContract(input: ContractRenderInput): ContractRenderResult {
   const c = new BoxCollector();
-  const sections: { lang: Lang; body: string }[] = [];
-  const en = input.bodyEn.trim();
-  const he = input.bodyHe.trim();
-  if (input.language === 'en') sections.push(en ? { lang: 'en', body: input.bodyEn } : { lang: 'he', body: input.bodyHe });
-  else if (input.language === 'he') sections.push(he ? { lang: 'he', body: input.bodyHe } : { lang: 'en', body: input.bodyEn });
-  else {
-    if (en) sections.push({ lang: 'en', body: input.bodyEn });
-    if (he) sections.push({ lang: 'he', body: input.bodyHe });
-  }
-  const bodies = sections.map((s) => `<section class="body" dir="${s.lang === 'he' ? 'rtl' : 'ltr'}" lang="${s.lang}">${renderBody(s.body, s.lang, input, c)}</section>`).join('\n');
+  // R25b: an included template prints first, then the main text from a new page.
+  const included = input.included ? sectionsFor(input.language, input.included.bodyEn, input.included.bodyHe) : [];
+  const main = sectionsFor(input.language, input.bodyEn, input.bodyHe).map((s, i) => ({ ...s, breakBefore: i === 0 && included.length > 0 }));
+  const sections: { lang: Lang; body: string; breakBefore?: boolean }[] = [...included, ...main];
+  const bodies = sections
+    .map((s) => `<section class="body${s.breakBefore ? ' part-break' : ''}" dir="${s.lang === 'he' ? 'rtl' : 'ltr'}" lang="${s.lang}">${renderBody(s.body, s.lang, input, c)}</section>`)
+    .join('\n');
   const name = input.identity.nameEn || input.identity.nameHe;
   const head = `<header class="head" dir="ltr"><span class="biz" dir="auto">${esc(name)}</span>${input.identity.logoDataUri ? `<img src="${esc(input.identity.logoDataUri)}" alt="">` : ''}</header>`;
-  const html = `<!doctype html><html lang="${sections[0]?.lang ?? 'en'}"><head><meta charset="utf-8"><title>${esc(input.title)}</title><style>${styles(input.mode)}</style></head><body>${head}${bodies}${
+  const css = styles(input.mode) + (included.length > 0 ? PART_BREAK_CSS : '');
+  const html = `<!doctype html><html lang="${sections[0]?.lang ?? 'en'}"><head><meta charset="utf-8"><title>${esc(input.title)}</title><style>${css}</style></head><body>${head}${bodies}${
     input.evidence ? evidenceHtml(input.evidence) : ''
   }</body></html>`;
   return { html, boxes: [...c.boxes.values()] };

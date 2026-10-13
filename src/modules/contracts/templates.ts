@@ -1,4 +1,4 @@
-import { type AuditActor, actorBiz, auditStatement } from '../../core/audit';
+import { type AuditActor, actorBiz, auditStatement, systemActorFor } from '../../core/audit';
 import { settingKey } from '../../core/business';
 import { all, first, nowIso, stmt, transaction } from '../../core/db';
 import { NotFoundError, ValidationError } from '../../core/errors';
@@ -25,6 +25,14 @@ import {
 // ---------------------------------------------------------------------------
 
 const SEEDED_KEY = 'contracts.seeded';
+/** R25b: set once the work order templates carry the terms date role. */
+const TERMS_ROLE_KEY = 'contracts.terms_date_role';
+/** The work order field that holds the date the Standard Terms were signed, in the seeds. */
+export const TERMS_DATE_KEY = 'terms_signed_date';
+
+/** A version that a sent contract uses, as its template or as its included template. */
+export const VERSION_USED_SQL = `SELECT 1 FROM contracts WHERE status <> 'draft' AND (
+  (template_id = ?1 AND template_version = ?2) OR (included_template_id = ?1 AND included_template_version = ?2)) LIMIT 1`;
 
 /**
  * Seeds a business's templates and services the first time Contract templates opens. The seeded
@@ -33,11 +41,15 @@ const SEEDED_KEY = 'contracts.seeded';
  */
 export async function ensureSeeded(db: D1Database, businessId: number): Promise<void> {
   const key = settingKey(businessId, SEEDED_KEY);
-  if (await first(db, 'SELECT 1 FROM settings WHERE key = ?', key)) return;
+  if (await first(db, 'SELECT 1 FROM settings WHERE key = ?', key)) return ensureTermsDateRole(db, businessId);
   if ((await first<{ n: number }>(db, 'SELECT COUNT(*) AS n FROM businesses WHERE id = ?', businessId))?.n !== 1) return;
   const seed = seedFor(businessId);
   const now = nowIso();
-  const statements: D1PreparedStatement[] = [stmt(db, 'INSERT INTO settings (key, value) VALUES (?, ?)', key, now)];
+  const statements: D1PreparedStatement[] = [
+    stmt(db, 'INSERT INTO settings (key, value) VALUES (?, ?)', key, now),
+    // The seeds already carry the terms date role.
+    stmt(db, 'INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)', settingKey(businessId, TERMS_ROLE_KEY), now),
+  ];
   seed.services.forEach((s, i) => {
     statements.push(
       stmt(
@@ -96,6 +108,56 @@ export async function ensureSeeded(db: D1Database, businessId: number): Promise<
   }
 }
 
+/**
+ * R25b, once per business seeded before this run: marks the terms date field of each work order
+ * template with role terms_date. The current version changes in place while no sent contract uses
+ * it, else the change writes the next version, the normal versioning rule.
+ */
+export async function ensureTermsDateRole(db: D1Database, businessId: number): Promise<void> {
+  const flag = settingKey(businessId, TERMS_ROLE_KEY);
+  if (await first(db, 'SELECT 1 FROM settings WHERE key = ?', flag)) return;
+  const now = nowIso();
+  const statements: D1PreparedStatement[] = [stmt(db, 'INSERT INTO settings (key, value) VALUES (?, ?)', flag, now)];
+  const templates = await all<TemplateRow>(db, "SELECT * FROM contract_templates WHERE business_id = ? AND kind = 'work_order'", businessId);
+  for (const t of templates) {
+    const v = await first<TemplateVersionRow>(db, 'SELECT * FROM contract_template_versions WHERE template_id = ? AND version = ?', t.id, t.current_version);
+    if (!v) continue;
+    const fields = JSON.parse(v.fields_json) as FieldDef[];
+    if (fields.some((f) => f.role === 'terms_date')) continue;
+    const target = fields.find((f) => f.key === TERMS_DATE_KEY && f.kind === 'owner_input');
+    if (!target) continue;
+    const next = JSON.stringify(fields.map((f) => (f === target ? { ...f, role: 'terms_date' } : f)));
+    if (await first(db, VERSION_USED_SQL, t.id, v.version)) {
+      statements.push(
+        stmt(
+          db,
+          `INSERT INTO contract_template_versions (template_id, business_id, version, name, kind, body_en, body_he, fields_json)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          t.id,
+          businessId,
+          v.version + 1,
+          v.name,
+          v.kind,
+          v.body_en,
+          v.body_he,
+          next,
+        ),
+        stmt(db, 'UPDATE contract_templates SET current_version = ?, updated_at = ? WHERE id = ? AND current_version = ?', v.version + 1, now, t.id, v.version),
+      );
+    } else {
+      statements.push(stmt(db, 'UPDATE contract_template_versions SET fields_json = ? WHERE id = ?', next, v.id));
+    }
+    statements.push(auditStatement(db, systemActorFor(businessId), 'contract_template.terms_date_role', 'contract_template', t.id, { fromVersion: v.version }));
+  }
+  try {
+    await transaction(db, statements);
+  } catch (err) {
+    // Another request ran it first.
+    if (await first(db, 'SELECT 1 FROM settings WHERE key = ?', flag)) return;
+    throw err;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Field checks
 // ---------------------------------------------------------------------------
@@ -113,7 +175,9 @@ export function checkFields(fields: FieldDef[], bodies: string[]): FieldDef[] {
     if (field.kind === 'signer_input' && !(SIGNER_INPUT_TYPES as readonly string[]).includes(field.inputType ?? '')) throw new ValidationError(`Pick an input type for ${field.key}.`);
     if ((field.kind === 'signature' || field.kind === 'signed_date') && !field.party) throw new ValidationError(`Pick whose ${field.kind === 'signature' ? 'signature' : 'date'} ${field.key} is.`);
     if (field.kind === 'choice' && field.binding !== 'services' && field.options.length === 0) throw new ValidationError(`Add at least one option to ${field.key}.`);
+    if (field.role === 'terms_date' && (field.kind !== 'owner_input' || field.inputType !== 'date')) throw new ValidationError(`The terms date ${field.key} is a date the owner fills.`);
   }
+  if (parsed.filter((f) => f.role === 'terms_date').length > 1) throw new ValidationError('Mark one field as the terms date.');
   const used = bodies.flatMap((b) => tokensIn(b));
   const unknown = used.filter((k) => !keys.has(k));
   if (unknown.length > 0) throw new ValidationError(`The text uses fields that are not in the list: ${[...new Set(unknown)].join(', ')}.`);
@@ -159,7 +223,7 @@ export async function listTemplates(db: D1Database, businessId: number): Promise
   await ensureSeeded(db, businessId);
   const rows = await all<TemplateRow & { v_id: number; used: number }>(
     db,
-    `SELECT t.*, v.id AS v_id, (SELECT COUNT(*) FROM contracts c WHERE c.template_id = t.id AND c.status <> 'draft') AS used
+    `SELECT t.*, v.id AS v_id, (SELECT COUNT(*) FROM contracts c WHERE (c.template_id = t.id OR c.included_template_id = t.id) AND c.status <> 'draft') AS used
      FROM contract_templates t JOIN contract_template_versions v ON v.template_id = t.id AND v.version = t.current_version
      WHERE t.business_id = ? ORDER BY t.active DESC, t.id`,
     businessId,
@@ -195,7 +259,7 @@ export async function templateVersion(db: D1Database, businessId: number, templa
 export async function templateView(db: D1Database, businessId: number, id: number): Promise<TemplateView> {
   const t = await getTemplate(db, businessId, id);
   const v = await templateVersion(db, businessId, id);
-  const used = (await first<{ n: number }>(db, "SELECT COUNT(*) AS n FROM contracts WHERE template_id = ? AND status <> 'draft'", id))!.n;
+  const used = (await first<{ n: number }>(db, "SELECT COUNT(*) AS n FROM contracts WHERE (template_id = ?1 OR included_template_id = ?1) AND status <> 'draft'", id))!.n;
   return toView(t, v, used);
 }
 
@@ -231,7 +295,7 @@ export async function updateTemplate(db: D1Database, actor: AuditActor, id: numb
   const t = await getTemplate(db, businessId, id);
   if (input.kind !== t.kind) throw new ValidationError('A template keeps its kind. Make a new template instead.');
   const fields = checkFields(input.fields, [input.bodyEn, input.bodyHe]);
-  const used = await first(db, "SELECT 1 FROM contracts WHERE template_id = ? AND template_version = ? AND status <> 'draft' LIMIT 1", id, t.current_version);
+  const used = await first(db, VERSION_USED_SQL, id, t.current_version);
   const now = nowIso();
   const statements: D1PreparedStatement[] = [];
   let version = t.current_version;

@@ -1,4 +1,4 @@
-import { all, first } from '../../core/db';
+import { all, first, todayIsrael } from '../../core/db';
 import { ValidationError } from '../../core/errors';
 import { isCurrency } from '../../core/money';
 import { printedIdentity } from '../businesses/service';
@@ -119,9 +119,33 @@ export async function prefill(db: D1Database, businessId: number, client: Client
   for (const field of fields) {
     if (field.kind === 'client') out[field.key] = clientValue(client, contact, field.source);
     else if (field.kind === 'business') out[field.key] = businessValue(facts, field.source);
-    else if (field.kind === 'owner_input' && field.defaultValue) out[field.key] = field.defaultValue;
+    else if (field.kind === 'owner_input' && field.defaultValue) out[field.key] = await expandStartingValue(db, businessId, field.key, field.defaultValue);
   }
   return out;
+}
+
+/**
+ * A starting value may carry tokens: {YYYY}, {YY}, {MM} for the date, and {N}, {NN}, {NNN}... for a
+ * running number. "WO-{YYYY}-{NNN}" gives WO-2026-001, then WO-2026-002: the next number after the
+ * highest one this business already used in the same field with the same prefix and suffix, across
+ * every contract, drafts included. A new year starts again at 1. The owner can still type over it.
+ */
+export async function expandStartingValue(db: D1Database, businessId: number, key: string, pattern: string, today: string = todayIsrael()): Promise<string> {
+  const dated = pattern.replace(/\{YYYY\}/g, today.slice(0, 4)).replace(/\{YY\}/g, today.slice(2, 4)).replace(/\{MM\}/g, today.slice(5, 7));
+  const counter = /\{(N+)\}/.exec(dated);
+  if (!counter) return dated;
+  const width = counter[1]!.length;
+  const before = dated.slice(0, counter.index);
+  const after = dated.slice(counter.index + counter[0].length);
+  const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const shape = new RegExp(`^${esc(before)}(\\d+)${esc(after)}$`);
+  const rows = await all<{ v: unknown }>(db, 'SELECT json_extract(field_values_json, ?) AS v FROM contracts WHERE business_id = ?', `$.${key}`, businessId);
+  let max = 0;
+  for (const r of rows) {
+    const m = typeof r.v === 'string' ? shape.exec(r.v.trim()) : null;
+    if (m) max = Math.max(max, Number(m[1]));
+  }
+  return `${before}${String(max + 1).padStart(width, '0')}${after}`;
 }
 
 /** The signer the client page suggests: its primary contact. */

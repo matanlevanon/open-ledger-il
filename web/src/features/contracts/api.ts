@@ -30,6 +30,15 @@ export interface FieldDef {
   binding?: 'services' | null;
   defaultValue?: string | null;
   mapsTo?: 'amount' | 'currency' | 'start_date' | 'description' | null;
+  /** R25b: the work order field that holds the date the Standard Terms were signed. */
+  role?: 'terms_date' | null;
+}
+
+/** R25b: the Standard Terms printed before a work order. */
+export interface IncludedTemplate {
+  id: number;
+  name: string;
+  version: number;
 }
 
 export interface Template {
@@ -140,6 +149,7 @@ export interface ContractDetail extends ContractSummary {
   clientName: string;
   templateId: number;
   templateVersion: number;
+  includedTemplate: IncludedTemplate | null;
   language: ContractLanguage;
   values: FieldValues;
   signerValues: Record<string, string> | null;
@@ -158,6 +168,7 @@ export interface ContractDetail extends ContractSummary {
 export interface ContractInput {
   clientId: number;
   templateId: number;
+  includeTemplateId?: number | null;
   title?: string | null;
   language: ContractLanguage;
   values: Record<string, unknown>;
@@ -169,6 +180,7 @@ export interface ContractInput {
 export interface NewDefaults {
   templateId: number;
   templateVersion: number;
+  includedTemplate: IncludedTemplate | null;
   kind: TemplateKind;
   title: string;
   fields: FieldDef[];
@@ -195,7 +207,8 @@ export const contractsApi = {
   createService: (input: ServiceInput) => apiSend<{ services: Service[] }>('POST', '/contracts/services', input),
   updateService: (id: number, input: ServiceInput) => apiSend<{ services: Service[] }>('PUT', `/contracts/services/${id}`, input),
   forClient: (clientId: number) => apiGet<{ contracts: ContractSummary[] }>(`/contracts/clients/${clientId}`),
-  defaults: (clientId: number, templateId: number) => apiGet<NewDefaults>(`/contracts/new?clientId=${clientId}&templateId=${templateId}`),
+  defaults: (clientId: number, templateId: number, includeTemplateId?: number | null) =>
+    apiGet<NewDefaults>(`/contracts/new?clientId=${clientId}&templateId=${templateId}${includeTemplateId ? `&includeTemplateId=${includeTemplateId}` : ''}`),
   get: (id: number) =>
     apiGet<{ contract: ContractDetail; currentTemplateVersion: number; currentFields: FieldDef[]; emailReady: boolean; ownerSignature: boolean }>(`/contracts/${id}`),
   create: (input: ContractInput) => apiSend<{ contract: ContractDetail }>('POST', '/contracts', input),

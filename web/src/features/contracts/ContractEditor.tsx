@@ -184,6 +184,25 @@ function FieldInput({ field, value, setValue, services, locale }: { field: Field
 
 const OWNER_KINDS = ['client', 'business', 'owner_input', 'choice'];
 
+/** True when a field you fill on this screen has no value yet: the same test the server's "Fill these fields first" makes. */
+export function isEmptyValue(v: unknown): boolean {
+  if (v === null || v === undefined) return true;
+  if (typeof v === 'string') return v.trim() === '';
+  if (typeof v === 'object') {
+    const o = v as Record<string, unknown>;
+    if (Array.isArray(o.services)) return o.services.length === 0;
+    if (Array.isArray(o.selected)) return o.selected.length === 0 && !(typeof o.other === 'string' && o.other.trim());
+    if ('amount' in o) return o.amount === null || o.amount === undefined || String(o.amount).trim() === '';
+  }
+  return false;
+}
+
+/** R25b: the template a first engagement includes. "Standard Terms" first, else the first contract template. */
+export function defaultTermsTemplate(templates: { id: number; name: string; kind: string }[]): number | null {
+  const contracts = templates.filter((x) => x.kind === 'contract');
+  return (contracts.find((x) => x.name.trim().toLowerCase() === 'standard terms') ?? contracts[0])?.id ?? null;
+}
+
 /** R25, Screen B: pick a template, check the fields, preview, send. */
 export function ContractEditor() {
   const t = useT();
@@ -198,6 +217,8 @@ export function ContractEditor() {
 
   const [clientId, setClientId] = useState<number>(clientFromQuery);
   const [templateId, setTemplateId] = useState<number | null>(null);
+  const [includeTerms, setIncludeTerms] = useState(false);
+  const [termsId, setTermsId] = useState<number | null>(null);
   const [fields, setFields] = useState<FieldDef[]>([]);
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [title, setTitle] = useState('');
@@ -205,6 +226,8 @@ export function ContractEditor() {
   const [signer, setSigner] = useState({ name: '', email: '', phone: '' });
   const [linkDays, setLinkDays] = useState<7 | 14 | 30>(14);
   const [ownerSign, setOwnerSign] = useState(false);
+  // After a send or save that failed, empty required fields show in red until they are filled.
+  const [showMissing, setShowMissing] = useState(false);
   const [ownerSignature, setOwnerSignature] = useState(false);
   const [emailReady, setEmailReady] = useState(false);
   const [preview, setPreview] = useState('');
@@ -216,6 +239,15 @@ export function ContractEditor() {
   const loadedFor = useRef<string>('');
 
   const active = useMemo(() => (templates.data?.templates ?? []).filter((x) => x.active), [templates.data]);
+  const termsTemplates = useMemo(() => active.filter((x) => x.kind === 'contract'), [active]);
+  const isWorkOrder = active.find((x) => x.id === templateId)?.kind === 'work_order';
+  const includeId = isWorkOrder && includeTerms ? termsId : null;
+  const loadedTemplate = useRef<number | null>(null);
+
+  // The picker starts on the Standard Terms.
+  useEffect(() => {
+    if (termsId === null) setTermsId(defaultTermsTemplate(active));
+  }, [active, termsId]);
 
   // An existing draft: its values, signer and settings.
   useEffect(() => {
@@ -224,6 +256,8 @@ export function ContractEditor() {
     const c = d.contract;
     setClientId(c.clientId);
     setTemplateId(c.templateId);
+    setIncludeTerms(Boolean(c.includedTemplate));
+    if (c.includedTemplate) setTermsId(c.includedTemplate.id);
     setFields(d.currentFields);
     setValues(c.values as Record<string, unknown>);
     setTitle(c.title);
@@ -233,7 +267,8 @@ export function ContractEditor() {
     setOwnerSign(c.ownerSign);
     setOwnerSignature(d.ownerSignature);
     setEmailReady(d.emailReady);
-    loadedFor.current = `${c.clientId}:${c.templateId}`;
+    loadedFor.current = `${c.clientId}:${c.templateId}:${c.includedTemplate?.id ?? 0}`;
+    loadedTemplate.current = c.templateId;
   }, [existing.data]);
 
   // A new contract starts on the first template.
@@ -241,16 +276,23 @@ export function ContractEditor() {
     if (!editId && templateId === null && active.length > 0) setTemplateId(active[0]!.id);
   }, [editId, templateId, active]);
 
-  // Picking a template loads its fields and every value the Ledger knows.
+  // Picking a template loads its fields and every value the Ledger knows. Ticking the Standard
+  // Terms adds their fields and keeps what the owner already typed.
   useEffect(() => {
     if (!templateId || !clientId) return;
-    const key = `${clientId}:${templateId}`;
+    const key = `${clientId}:${templateId}:${includeId ?? 0}`;
     if (loadedFor.current === key) return;
     loadedFor.current = key;
+    const sameTemplate = loadedTemplate.current === templateId;
+    loadedTemplate.current = templateId;
     contractsApi
-      .defaults(clientId, templateId)
+      .defaults(clientId, templateId, includeId)
       .then((d) => {
         setFields(d.fields);
+        if (sameTemplate) {
+          setValues((prev) => ({ ...(d.values as Record<string, unknown>), ...prev }));
+          return;
+        }
         setValues(d.values as Record<string, unknown>);
         setTitle(d.title);
         if (!editId) setSigner(d.signer);
@@ -259,10 +301,10 @@ export function ContractEditor() {
         setEmailReady(d.emailReady);
       })
       .catch((e: unknown) => setError(errorText(e, t)));
-  }, [templateId, clientId, editId, t]);
+  }, [templateId, clientId, includeId, editId, t]);
 
   const body: ContractInput | null = templateId
-    ? { clientId, templateId, title, language, values, signer, linkDays, ownerSign }
+    ? { clientId, templateId, includeTemplateId: includeId, title, language, values, signer, linkDays, ownerSign }
     : null;
   const bodyKey = JSON.stringify(body);
 
@@ -309,6 +351,11 @@ export function ContractEditor() {
     setBusy(false);
   }
 
+  function markMissing() {
+    setShowMissing(true);
+    requestAnimationFrame(() => document.querySelector('[data-missing="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+  }
+
   async function onSend() {
     setBusy(true);
     setNote(null);
@@ -318,6 +365,7 @@ export function ContractEditor() {
         setSent(await contractsApi.send(id, emailReady ? 'email' : 'link'));
       } catch (e) {
         setError(errorText(e, t));
+        markMissing();
       }
     }
     setBusy(false);
@@ -380,6 +428,27 @@ export function ContractEditor() {
                 ))}
               </select>
             </label>
+            {isWorkOrder && termsTemplates.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2" data-testid="include-terms">
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={includeTerms} onChange={(e) => setIncludeTerms(e.target.checked)} />
+                  {t('contracts.editor.includeTerms')}
+                </label>
+                <select
+                  aria-label={t('contracts.editor.termsTemplate')}
+                  className={`${input} w-auto min-w-[12rem] flex-1`}
+                  value={termsId ?? ''}
+                  disabled={!includeTerms}
+                  onChange={(e) => setTermsId(Number(e.target.value))}
+                >
+                  {termsTemplates.map((tpl) => (
+                    <option key={tpl.id} value={tpl.id}>
+                      {tpl.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <label className="block">
               <span className={label}>{t('contracts.editor.language')}</span>
               <select className={input} value={language} onChange={(e) => setLanguage(e.target.value as ContractLanguage)}>
@@ -393,10 +462,23 @@ export function ContractEditor() {
               <input className={input} dir="auto" value={title} onChange={(e) => setTitle(e.target.value)} />
             </label>
             {fields
-              .filter((f) => OWNER_KINDS.includes(f.kind))
-              .map((f) => (
-                <FieldInput key={f.key} field={f} value={values[f.key]} setValue={setValue(f.key)} services={services.data!.services} locale={locale} />
-              ))}
+              .filter((f) => OWNER_KINDS.includes(f.kind) || f.role === 'terms_date')
+              .map((f) =>
+                OWNER_KINDS.includes(f.kind) ? (
+                  <div
+                    key={f.key}
+                    data-missing={showMissing && f.required && isEmptyValue(values[f.key]) ? 'true' : undefined}
+                    className={showMissing && f.required && isEmptyValue(values[f.key]) ? 'rounded-md p-1 ring-2 ring-danger' : undefined}
+                  >
+                    <FieldInput field={f} value={values[f.key]} setValue={setValue(f.key)} services={services.data!.services} locale={locale} />
+                  </div>
+                ) : (
+                  <div key={f.key}>
+                    <span className={label}>{labelOf(f, locale)}</span>
+                    <p className="text-sm text-muted">{t('contracts.editor.termsDateFilled')}</p>
+                  </div>
+                ),
+              )}
             <fieldset className="flex flex-col gap-2">
               <legend className={label}>{t('contracts.editor.signer')}</legend>
               <input aria-label={t('contracts.editor.signerName')} placeholder={t('contracts.editor.signerName')} className={input} dir="auto" value={signer.name} onChange={(e) => setSigner({ ...signer, name: e.target.value })} />
@@ -430,7 +512,11 @@ export function ContractEditor() {
           <p className="mt-2 text-xs text-muted">{t('contracts.editor.previewNote')}</p>
         </Card>
       </div>
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+      {/* The same notice as at the top, next to the buttons that raised it. */}
+      <div className="mt-4">
+        <ErrorNote error={error} />
+      </div>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm text-muted">{t(emailReady ? 'contracts.editor.sendNote' : 'contracts.editor.sendNoteNoEmail', { n: linkDays })}</span>
         <div className="flex gap-2">
           {note && (

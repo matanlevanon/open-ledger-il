@@ -18,7 +18,13 @@ export class FakeContractPdfEngine implements PdfEngine {
     let y = 790;
     const title = /<title>([^<]*)<\/title>/.exec(html)?.[1] ?? 'Contract';
     page.drawText(title.replace(/[^\x20-\x7e]/g, '?').slice(0, 80), { x: 40, y: 810, size: 11, font });
-    for (const m of html.matchAll(/<a class="f ([^"]*)" dir="auto" href="([^"]+)"/g)) {
+    // R25b: a section marked part-break starts a new page, as break-before: page does in Chrome.
+    for (const m of html.matchAll(/<a class="f ([^"]*)" dir="auto" href="([^"]+)"|<section class="body part-break"/g)) {
+      if (m[0].startsWith('<section')) {
+        page = doc.addPage([595, 842]);
+        y = 800;
+        continue;
+      }
       const href = m[2]!;
       if (!href.startsWith(FIELD_LINK_PREFIX)) continue;
       const height = m[1]!.includes('f-sig') ? 50 : 14;
