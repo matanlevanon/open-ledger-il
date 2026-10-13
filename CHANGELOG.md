@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.5.0 (2026-10-13)
+
+### Contracts and work orders
+- Contracts and work orders with Fill & Sign: versioned templates in English and Hebrew, fields
+  filled from the client and the business, a signing link with an email code, and a signed PDF
+  with an evidence page and a certifying signature.
+- Two neutral starter templates: a Service Agreement with standing terms for the whole
+  relationship, and a Work Order for each project. Have a lawyer review them before use.
+- A first engagement sends the Service Agreement and the Work Order as one PDF, signed once. The
+  work order's terms date fills with the signing date.
+- Fields can number themselves from a starting value like `WO-{YYYY}-{NNN}`.
+- File a contract signed on paper or elsewhere, with its PDF. It is stored write-once.
+- Automatic signing reminders from the 07:00 run, set in Settings > Email > Reminders.
+- The new contract screen starts on the Work Order, marks missing fields in red and shows the
+  error next to Send. Remind asks how to send. The contract page opens with an overview.
+- A pro forma made from a work order names its number in the notes.
+
+### Signing
+- The signing page shows the contract as a web page with a Sign button, light, and full width on a
+  computer. The PDF has a Sign button in each client signature box until it is signed.
+- Signing codes last 15 minutes, a new code waits a minute, earlier codes keep working, and five
+  wrong tries lock them.
+- Signing dates use the date in Israel.
+- Adobe Reader shows the certification as valid and the document as not modified.
+
+### Clients and reminders
+- A switch per client for automatic reminders, and a Reminders list on the client page.
+- Payment reminders respect the switch and are logged.
+- Reminders due on WhatsApp show on the dashboard.
+- Default payment methods per client, used first on a new document.
+- A Back link on every page below another. The contract Record card folds.
+
+### Demo mode
+- `DEMO_MODE=1` turns a Ledger into a public demo: a gate, a private sandbox per visitor, a
+  watermark on every PDF, a fake Tax Authority, email previews, daily caps, an admin page and a
+  nightly reset Worker. The same rules and locks as a real Ledger. See docs/demo-mode.md.
+- Lead capture is optional and posts to a webhook you choose. The consent text is a setting.
+
 ## 1.4.0 (2026-10-13)
 
 ### Business type

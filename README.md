@@ -33,6 +33,9 @@ The product page, in English and Hebrew, is published with GitHub Pages from the
 - **Exports.** The ITA unified file (מבנה אחיד). A PCN874 export with the allocation-number column (other columns are a stub).
 - **Import.** Customers and invoice history from Wave CSV exports and the SUMIT unified file. Upload documents issued in another system.
 - **Backups.** A quarterly D1 export with a restore test, stored in R2 and copied to Google Drive.
+- **Contracts and work orders.** Fill & Sign with an email code and a signed PDF with an evidence page. A neutral Service Agreement and Work Order to start from, one PDF for a first engagement, contracts signed elsewhere filed with their PDF, and automatic signing reminders.
+- **Reminders.** Payment and signing reminders by email, a switch per client, and reminders due on WhatsApp on the dashboard.
+- **Demo mode.** Run a public trial Ledger with private sandboxes per visitor, a watermark, a fake Tax Authority and a nightly reset.
 
 ## Screenshots
 
@@ -83,9 +86,13 @@ npm run dev
 | `docs/accountant-access.md` | The accountant role |
 | `docs/cloudflare-access.md` | Cloudflare Access setup |
 | `docs/drive-expenses-setup.md` | Google Drive expense import |
+| `docs/contracts.md` | Contracts, work orders, signing and reminders |
+| `docs/sending.md` | Email, payment links and reminders |
+| `docs/clients.md` | Client defaults and the reminders switch |
+| `docs/demo-mode.md` | Demo mode and how to run your own demo |
 | `specs/` | Official ITA specifications, with source links |
 
-Code comments name build runs (R00 to R22) from the original build plan. The run files are not part of this repository.
+Code comments name build runs (R00 to R28) from the original build plan. The run files are not part of this repository.
 
 ## Contributing and security
 

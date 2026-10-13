@@ -14,7 +14,7 @@ Field kinds:
 |---|---|---|
 | From the client | The Ledger, from the client record | Name, tax ID, address, contact. Editable for one contract. The client record stays as it is |
 | From the business | The Ledger, from the business and its brand | Name, legal name, tax ID, address, email, phone, website |
-| Typed by you at send | You, on the new contract screen | Text, multi-line text, money with currency, date, number. A starting value is optional |
+| Typed by you at send | You, on the new contract screen | Text, multi-line text, money with currency, date, number. A starting value is optional, and it can number itself: `WO-{YYYY}-{NNN}` gives WO-2026-001, then WO-2026-002, the next after the highest this business used in that field. `{YY}` and `{MM}` work too. A new year starts at 1. You can type over it |
 | Typed by the client | The client, on the signing page | Name, role, text, date |
 | Signature | The owner or the client | The owner signs with the saved image from Settings > Signature |
 | Date of signing | The Ledger, at signing | One per party |
@@ -26,7 +26,12 @@ Versions: while no sent contract uses a template, a save changes it in place. On
 
 A sent contract stores a copy of every value, including the service names and items. A later change to the client, the business, the template or the services list never changes it.
 
-Every business starts with a short neutral sample agreement and work order. Replace their text with your own terms. The Ledger ships no legal terms.
+Every business starts with two neutral templates:
+
+- **Service Agreement** (contract). The standing terms. It governs the whole relationship and stays in force between projects.
+- **Work Order** (work order). One per project: a number that fills itself (`WO-{YYYY}-{NNN}`), the date the Service Agreement was signed, the scope and the fee.
+
+Both are templates in plain wording, with no governing-law clause. Have a lawyer review them before use, and change them to fit your business. The Ledger gives no legal advice.
 
 ## Send
 
@@ -37,6 +42,25 @@ Every business starts with a short neutral sample agreement and work order. Repl
 5. Send for signing. The Ledger renders the PDF, adds the fields, stores it once at `business/<id>/contracts/<sha256>.pdf`, and emails the link when email is set up. Without email, copy the link or share it on WhatsApp.
 
 Remind sends the same link again. Every reminder is logged. Void stops an unsigned contract and keeps it on record.
+
+## Terms and work order together
+
+For a first engagement, send the Service Agreement and the Work Order as one PDF. The client signs once.
+
+1. New contract, pick a work order template.
+2. Tick "Include the Service Agreement (first engagement)". The picker next to it starts on the template named Service Agreement (or Standard Terms), else the first contract template. Pick another one if you need to.
+3. Fill the fields. The form shows the fields of both templates. A field key used in both is one field, and the work order's label and settings win.
+4. The terms date field of the work order goes away from the form, with the line "Filled with the signing date". The Ledger fills it with the client's signing date, in Israel time.
+
+The PDF prints the Service Agreement first, then the Work Order from a new page. With English and Hebrew, each part prints its English and then its Hebrew. There is one link, one signing and one evidence page. The evidence page names both templates and their versions, and so does the "Signed by" event.
+
+The client's one signature goes into every client signature box of both parts. Your saved signature goes into every owner signature box. Before signing, every client box shows a Sign button, in the PDF and in the web view.
+
+Once sent, both template versions are locked. Editing either template writes a new version, and the sent contract keeps the ones it was sent with. The client's Contracts tab and the contract page show the combined name, for example "Work Order + Service Agreement".
+
+A work order template marks its terms date field with the role `terms_date`. The neutral Work Order marks `terms_signed_date`. Businesses set up before this change get the role on their work order templates the first time Contract templates opens, as a new template version when a sent contract already uses the current one.
+
+Create pro forma works the same on a combined work order. It reads the work order's fields only.
 
 ## The PDF fields
 
@@ -52,9 +76,9 @@ In the sent PDF, the values you filled are locked. In the signed PDF, every fiel
 
 The client opens the link on a phone or a computer. No account, no app. English or Hebrew, with a switch on the page.
 
-- The page shows the PDF and a download.
+- The page shows the PDF and a download. Until it is signed, the PDF the client views or downloads has a blue Sign button in the client's signature box, linked back to the signature step of this page. The button is added on the fly. The stored sent PDF and the signed PDF never carry it.
 - The client types the details the template asks for.
-- With email set up, the client asks for a 6-digit code by email. It works for 10 minutes and allows 5 tries. After that, a new code. Without email, there is no code, and the evidence page says "Identity confirmed by link only".
+- With email set up, the client asks for a 6-digit code by email. It works for 15 minutes. A new code waits a minute after the last one, and earlier codes keep working until they expire, because emails can arrive late or out of order. 5 wrong tries lock every open code, and then the client asks for a new one. Without email, there is no code, and the evidence page says "Identity confirmed by link only".
 - The client draws or types a signature. Typed signatures use Dancing Script, with Amatic SC for Hebrew letters. Both fonts are under the SIL Open Font License and ship with the Ledger.
 - The client ticks the consent box and signs, or declines with an optional reason.
 
@@ -99,3 +123,44 @@ Every accountant view is written to `audit_log`.
 ## Alerts
 
 The dashboard shows a line for a contract sent and not signed after 7 days, and for a link that ends within 2 days. The 07:00 cron marks ended links as expired and sends one Slack line per contract at 7 days. Slack also gets a line when a contract is signed or declined.
+
+## Contracts signed elsewhere
+
+A contract signed on paper or in another system is filed under its client with the signed PDF. On the client's Contracts tab, Add a signed contract opens the form:
+
+- client, title, kind (contract or work order), signed date
+- signer name, role and email
+- optional start date, end date, fee with currency, and notes
+- the signed PDF, up to 20 MB
+
+The file must start as a PDF. The Ledger checks its first bytes, not its name. The same PDF twice is refused.
+
+What the Ledger does:
+
+- Stores the PDF write-once at `business/<id>/contracts/<sha256>.pdf`.
+- Creates the contract as signed, with `origin = external`. No link, no code, no signing.
+- Logs an `uploaded` event with who, when and the sha256, and a `contract.upload` audit row.
+- Points the row at a hidden template of origin `external` for its kind, made on first use. This template never shows in Contract templates and never makes a Ledger contract.
+
+After upload the contract never changes. The database triggers refuse any change to its values, PDF, hash, signer or dates. Void keeps it on record with its PDF, the same as any voided contract. No pro forma comes from it. Make the pro forma in the editor.
+
+The list and the contract page say "Signed outside the Ledger" in place of the evidence trail. The Overview shows what was entered. The PDF opens and downloads as usual. An accountant sees it under the same rule as a signed Ledger contract: the Signed contracts switch on, every view audited. Owner and assistant upload.
+
+## Automatic reminders
+
+The 07:00 cron emails the signer of a sent contract the same signing link, through the Remind path, so the contract records a `reminded` event. Settings > Email > Reminders sets the rules:
+
+- On or off. On by default.
+- Remind after N days without signing. Default 3 and 7.
+- One reminder 2 days before the link ends. On by default.
+
+Each rule fires once per contract. One email covers every rule due the same day. Every reminder writes a row to `reminder_log` with the rule and the result, and the run dedupes on it.
+
+The run skips:
+
+- signed, void, declined and expired contracts
+- contracts signed outside the Ledger
+- clients with automatic reminders off (`docs/clients.md`)
+- every contract while email is off
+
+With email off, a due reminder for a signer with a phone shows on the dashboard under "Reminders due on WhatsApp today". Share on WhatsApp opens the prefilled message with the link and logs it. Remind on the contract page works as before, for every client.
