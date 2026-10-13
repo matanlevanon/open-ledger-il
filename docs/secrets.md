@@ -64,6 +64,6 @@ These belong to a demo Worker (`open-ledger-sample` in `wrangler.toml`) and its 
 |---|---|---|
 | `TURNSTILE_SECRET` | secret | Turnstile on the demo gate, verified server-side |
 | `DEMO_LEAD_WEBHOOK_URL`, `DEMO_LEAD_SECRET` | secret | Optional. Each demo lead posts as JSON to the URL with the secret in `X-Lead-Secret`. Off unless both are set |
-| `DEMO_RESET_SECRET` | secret | The admin's Reset sandboxes now. Same value as the reset Worker's `RESET_SECRET` |
+| `DEMO_RESET_SECRET` | secret | The admin's Reset now. Same value as the reset Worker's `RESET_SECRET` |
 | `RESET_SECRET` | secret, reset Worker | Guards `POST /run` on `open-ledger-sample-reset` |
 | `DEMO_MODE` and the `DEMO_*` variables | variable | See `docs/demo-mode.md`. Empty on your own Ledger |

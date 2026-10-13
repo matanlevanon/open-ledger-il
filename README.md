@@ -35,7 +35,7 @@ The product page, in English and Hebrew, is published with GitHub Pages from the
 - **Backups.** A quarterly D1 export with a restore test, stored in R2 and copied to Google Drive.
 - **Contracts and work orders.** Fill & Sign with an email code and a signed PDF with an evidence page. A neutral Service Agreement and Work Order to start from, one PDF for a first engagement, contracts signed elsewhere filed with their PDF, and automatic signing reminders.
 - **Reminders.** Payment and signing reminders by email, a switch per client, and reminders due on WhatsApp on the dashboard.
-- **Demo mode.** Run a public trial Ledger with private sandboxes per visitor, a watermark, a fake Tax Authority and a nightly reset.
+- **Demo mode.** Run a public trial Ledger. Visitors enter at once, read one shared sample set and keep private drafts that are deleted when they leave. Issue, send, payment and signing show previews. A watermark, a fake Tax Authority, a 15-minute sweep and a nightly rebuild.
 
 ## Screenshots
 
