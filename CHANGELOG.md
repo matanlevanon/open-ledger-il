@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.6.0 (2026-10-13)
+
+### Demo mode
+- Visitors enter at once. Every visitor reads the same sample businesses, and nothing is copied
+  on entry.
+- The sample data is read-only for visitors. The server refuses every change to it, and the app
+  says "Read-only in the demo" next to the buttons it hides.
+- Visitors keep private drafts: documents, clients, contracts and expense uploads. Nobody else
+  sees them. They are deleted 30 minutes after the visitor leaves, and every night.
+- Issue, Send, Record payment and Sign show previews. A preview PDF carries the number 0000 and a
+  watermark. Nothing is numbered, sent or stored as signed.
+- The reset Worker runs every 15 minutes. It sweeps ended visits, and at 03:00 Israel time it
+  rebuilds the sample set if it changed. One build runs at a time.
+- The demo shows its own product name in the sidebar and in the browser tab.
+- The demo opens light and in Hebrew. The start page remembers the language picked there.
+- The start page now shows on every path, deep links included.
+- `/admin` runs on the Worker. `keep_vars` sits at the top level of `wrangler.toml`, so variables
+  set in the dashboard survive a deploy.
+- Demo visitors see a working Tax Authority connection on the fake.
+
+### Dashboard
+- The Tax Authority card reads the real connection state, in English and Hebrew.
+
+### Database
+- Migration 2900: demo session tags on the demo tables, the build lock and the sweep log.
+
 ## 1.5.0 (2026-10-13)
 
 ### Contracts and work orders
