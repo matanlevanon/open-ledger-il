@@ -35,7 +35,7 @@ EN = dict(
     lead='Quotes, payment requests, receipts and tax invoices with legal numbering, signed PDFs and ITA allocation numbers. It runs in your own Cloudflare account, and your data stays in your own database.',
     cta=['Get the code', 'Read the deploy guide'], copy='Copy', copied='Copied',
     demo_nav='Demo', demo_cta='Try the live demo',
-    demo_note='No install. Sample data, in your browser, in about a minute.',
+    demo_note='No install. Sample data in your browser, open in seconds.',
     demo_eyebrow='Live demo', demo_h='Try it before you install it',
     demo_points=[
         ('Real sample businesses', 'Clients, documents, expenses and contracts, already filled in.'),
@@ -233,7 +233,7 @@ HE = dict(
     lead='הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס עם מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר במסד הנתונים שלך.',
     cta=['לקוד', 'למדריך ההתקנה'], copy='העתקה', copied='הועתק',
     demo_nav='הדגמה', demo_cta='נסו את ההדגמה',
-    demo_note='בלי התקנה. נתוני דוגמה, בדפדפן, תוך דקה בערך.',
+    demo_note='בלי התקנה. נתוני דוגמה בדפדפן, נפתח תוך שניות.',
     demo_eyebrow='הדגמה חיה', demo_h='נסו לפני שמתקינים',
     demo_points=[
         ('עסקי דוגמה אמיתיים', 'לקוחות, מסמכים, הוצאות וחוזים, כבר מלאים.'),
