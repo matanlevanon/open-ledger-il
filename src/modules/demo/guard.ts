@@ -1,93 +1,144 @@
 import type { MiddlewareHandler } from 'hono';
 import { actorFrom, auditAs } from '../../core/audit';
 import { first } from '../../core/db';
-import { DomainError, ForbiddenError } from '../../core/errors';
+import { DomainError, ForbiddenError, NotFoundError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import { slackNotifier } from '../ita/notify';
-import { type CapKind, checkCap, countUse, DemoCapError } from './caps';
+import { type CapKind, checkCap, countUse } from './caps';
 import { demoCaps, isDemo } from './config';
+import { refreshFingerprint } from './sample';
+import { scopedDb } from './scoped-db';
 import { injectWatermark } from './watermark';
 
 /**
- * R26: the demo guard, after sign-in on every /api route, only with DEMO_MODE=1.
+ * R26, R29: the demo guard, after sign-in on every /api route, only with DEMO_MODE=1.
  *
- * A visitor does what a real owner does with documents, clients, expenses and contracts. The
- * Ledger's own locks stay in charge: drafts edit and delete, final documents only cancel and
- * credit, signed contracts never change. Settings stay visible and read-only, except the switch
- * to עוסק מורשה and Add a business. The sample set opened from /admin writes anything, audited.
+ * Every visitor opens the same sample businesses. The sample data is read-only: a visitor changes
+ * only rows it created in this session. Reads and inserts go through a scoped database
+ * (scoped-db.ts), so a visitor sees the sample set plus its own drafts and nothing of another
+ * visitor's. Writes pass only through the list below, and a write on a row names the row it
+ * touches, which must carry this session's key. Issuing, sending, recording a payment and signing
+ * never run for a visitor: the web app calls the previews in /api/demo-app instead.
+ *
+ * The admin's "Open the sample set" session is the only one that changes the sample set. Its
+ * writes are audited, and each one refreshes the sample set's fingerprint.
  */
 
 const WRITE = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
-/** Writes a visitor may make. Everything else is a Settings write and is refused. */
-const ALLOWED: { method?: string; pattern: RegExp }[] = [
-  { pattern: /^\/api\/clients(\/|$)/ },
-  { pattern: /^\/api\/documents(\/|$)/ },
-  { pattern: /^\/api\/pdf\// },
-  { pattern: /^\/api\/sending\/documents\// },
-  { pattern: /^\/api\/expenses(\/(?!categories|settings|import)|$)/ },
-  { pattern: /^\/api\/contracts(\/(?!templates|services)|$)/ },
-  { pattern: /^\/api\/recurring(\/|$)/ },
-  { pattern: /^\/api\/ita\/(allocations|buyer|refresh)(\/|$)/ },
-  { pattern: /^\/api\/exports\// },
-  { pattern: /^\/api\/reports\// },
-  { method: 'POST', pattern: /^\/api\/legal-mode\/switch$/ },
-  { method: 'POST', pattern: /^\/api\/businesses$/ },
-  { method: 'PUT', pattern: /^\/api\/dashboard\/layout$/ },
+type Tagged = 'clients' | 'documents' | 'contracts' | 'expenses' | 'suppliers';
+
+interface Rule {
+  method: string;
+  pattern: RegExp;
+  /** The row the write touches: its table, and the path group holding its id. Absent: a create or a pure read. */
+  owns?: Tagged;
+}
+
+/** Writes a visitor may make. Everything else is refused as read-only. */
+const VISITOR_WRITES: Rule[] = [
+  { method: 'POST', pattern: /^\/api\/clients$/ },
+  { method: 'PATCH', pattern: /^\/api\/clients\/(\d+)$/, owns: 'clients' },
+  { method: 'POST', pattern: /^\/api\/clients\/(\d+)\/(activate|deactivate|contacts)$/, owns: 'clients' },
+  { method: 'PATCH', pattern: /^\/api\/clients\/(\d+)\/contacts\/\d+$/, owns: 'clients' },
+  { method: 'DELETE', pattern: /^\/api\/clients\/(\d+)\/contacts\/\d+$/, owns: 'clients' },
+  { method: 'POST', pattern: /^\/api\/documents$/ },
+  { method: 'PATCH', pattern: /^\/api\/documents\/(\d+)$/, owns: 'documents' },
+  { method: 'DELETE', pattern: /^\/api\/documents\/(\d+)$/, owns: 'documents' },
+  // A copy of a sample document is a new private draft. The source is only read.
+  { method: 'POST', pattern: /^\/api\/documents\/\d+\/duplicate$/ },
+  // Viewing a sample document's PDF stores it once, as a real owner's view does.
+  { method: 'POST', pattern: /^\/api\/pdf\/documents\/\d+\/(view|download)$/ },
+  { method: 'POST', pattern: /^\/api\/expenses\/upload$/ },
+  { method: 'POST', pattern: /^\/api\/expenses\/suppliers$/ },
+  { method: 'PATCH', pattern: /^\/api\/expenses\/suppliers\/(\d+)$/, owns: 'suppliers' },
+  { method: 'PATCH', pattern: /^\/api\/expenses\/(\d+)(\/review)?$/, owns: 'expenses' },
+  { method: 'POST', pattern: /^\/api\/expenses\/(\d+)\/status$/, owns: 'expenses' },
+  { method: 'POST', pattern: /^\/api\/contracts$/ },
+  { method: 'POST', pattern: /^\/api\/contracts\/preview$/ },
+  { method: 'PUT', pattern: /^\/api\/contracts\/(\d+)$/, owns: 'contracts' },
   { method: 'PATCH', pattern: /^\/api\/me\/preferences$/ },
-  { pattern: /^\/api\/demo-app\// },
+  // The previews check the draft's owner themselves.
+  { method: 'POST', pattern: /^\/api\/demo-app\// },
 ];
 
+/** Reads that write the sample set (the Tax Authority connection) are refused too. */
+const VISITOR_BLOCKED_READS = [/^\/api\/ita\/(connect|callback)(\/|$)/];
+
+export function visitorRule(method: string, path: string): Rule | null {
+  return VISITOR_WRITES.find((r) => r.method === method && r.pattern.test(path)) ?? null;
+}
+
+/** Kept for callers that only ask yes or no. */
 export function visitorMayWrite(method: string, path: string): boolean {
-  return ALLOWED.some((a) => (!a.method || a.method === method) && a.pattern.test(path));
+  return visitorRule(method, path) !== null;
 }
 
 /** Which cap a request counts against, if any. */
 export function capKindOf(method: string, path: string): CapKind | null {
   if (method === 'POST' && /^\/api\/documents$/.test(path)) return 'documents';
-  if (method === 'POST' && /^\/api\/documents\/\d+\/(convert|duplicate|revise|record-payment|credit)$/.test(path)) return 'documents';
+  if (method === 'POST' && /^\/api\/documents\/\d+\/duplicate$/.test(path)) return 'documents';
   if (/^\/api\/pdf\/documents\/\d+\/(pdf|view|download|draft\.pdf)$/.test(path)) return 'pdfs';
-  if (method === 'POST' && /^\/api\/contracts\/\d+\/send$/.test(path)) return 'pdfs';
-  if (method === 'POST' && /^\/api\/sending\/documents\/\d+\/(send|whatsapp-link)$/.test(path)) return 'pdfs';
+  if (method === 'POST' && /^\/api\/demo-app\/(documents|contracts|sign-preview)\//.test(path)) return 'pdfs';
   if (method === 'POST' && /^\/api\/expenses\/upload$/.test(path)) return 'uploads';
   if (method === 'POST' && /^\/api\/contracts$/.test(path)) return 'contracts';
-  if (method === 'POST' && /^\/api\/businesses$/.test(path)) return 'businesses';
   return null;
 }
 
-export const READ_ONLY_MESSAGE = 'Demo: settings are read-only. In your own Ledger you change this in Settings.';
+export const READ_ONLY_MESSAGE = 'Read-only in the demo. The sample data is shared by every visitor. Create a draft of your own to try this.';
+
+export class DemoReadOnlyError extends DomainError {
+  constructor() {
+    super('demo_read_only', READ_ONLY_MESSAGE, 403);
+  }
+}
+
+/** Refuses a write on a row this session did not create. Another visitor's row reads as missing. */
+export async function assertOwnRow(db: D1Database, table: Tagged, id: number, sessionKey: string): Promise<void> {
+  const row = await first<{ demo_session_id: string | null }>(db, `SELECT demo_session_id FROM ${table} WHERE id = ?`, id);
+  if (!row) return; // The route answers its own 404.
+  if (row.demo_session_id === sessionKey) return;
+  if (row.demo_session_id === null) throw new DemoReadOnlyError();
+  throw new NotFoundError(table === 'clients' ? 'Client' : table === 'documents' ? 'Document' : table === 'contracts' ? 'Contract' : table === 'expenses' ? 'Expense' : 'Supplier', id);
+}
 
 export function demoGuard(options: { fetchFn?: typeof fetch } = {}): MiddlewareHandler<AppEnv> {
   return async (c, next) => {
     const user = c.get('user');
     const demo = c.get('demo');
     if (!isDemo(c.env) || !user || !demo) return next();
-    // The outbox mailer files a client email under the business of this request.
-    c.env = { ...c.env, DEMO_BUSINESS_ID: String(user.businessId) };
     const method = c.req.method;
     const path = c.req.path;
+    const raw = c.env.DB;
+    // Every read sees the sample set plus this session's rows. The outbox files a client email
+    // under the business of this request.
+    c.env = { ...c.env, DB: scopedDb(raw, demo.admin ? null : demo.sessionKey), DEMO_BUSINESS_ID: String(user.businessId) };
     const notifier = slackNotifier(c.env.SLACK_WEBHOOK_URL, options.fetchFn ?? ((i, init) => fetch(i, init)));
 
     let kind: CapKind | null = null;
     if (demo.admin) {
-      if (WRITE.has(method)) await auditAs(c.env.DB, actorFrom(c), 'demo.admin_write', 'route', path, { method, admin: demo.adminEmail });
+      if (WRITE.has(method)) await auditAs(raw, actorFrom(c), 'demo.admin_write', 'route', path, { method, admin: demo.adminEmail });
     } else {
-      if (WRITE.has(method) && !visitorMayWrite(method, path)) throw new ForbiddenError(READ_ONLY_MESSAGE);
+      if (!demo.sessionKey) throw new ForbiddenError('Open the demo from its start page.');
+      if (VISITOR_BLOCKED_READS.some((p) => p.test(path))) throw new DemoReadOnlyError();
+      if (WRITE.has(method)) {
+        const rule = visitorRule(method, path);
+        if (!rule) throw new DemoReadOnlyError();
+        if (rule.owns) await assertOwnRow(raw, rule.owns, Number(rule.pattern.exec(path)![1]), demo.sessionKey);
+      }
       kind = capKindOf(method, path);
-      if (kind === 'businesses') {
-        const owned = (await first<{ n: number }>(c.env.DB, "SELECT COUNT(*) AS n FROM user_businesses WHERE user_id = ? AND role = 'owner'", user.id))!.n;
-        if (owned >= demoCaps(c.env).businesses) throw new DemoCapError('businesses');
-      } else if (kind) {
+      if (kind) {
         if (kind === 'uploads' && Number(c.req.header('Content-Length') ?? 0) > demoCaps(c.env).uploadBytes) {
           throw new DomainError('demo_upload_size', `Demo uploads are up to ${Math.round(demoCaps(c.env).uploadBytes / 1048576)} MB.`, 413);
         }
-        await checkCap(c.env, notifier, kind, demo.sandboxId);
+        await checkCap({ ...c.env, DB: raw }, notifier, kind, demo.sessionKey);
       }
     }
 
     await next();
 
-    if (kind && kind !== 'businesses' && c.res.status < 300) await countUse(c.env, kind, demo.sandboxId);
+    if (kind && c.res.status < 300) await countUse({ ...c.env, DB: raw }, kind, demo.sessionKey);
+    if (demo.admin && WRITE.has(method) && c.res.status < 300) await refreshFingerprint(raw, user.businessId);
     const type = c.res.headers.get('content-type') ?? '';
     if (type.startsWith('text/html') && (path.startsWith('/api/pdf/') || path.startsWith('/api/contracts/preview'))) {
       const html = injectWatermark(await c.res.text());

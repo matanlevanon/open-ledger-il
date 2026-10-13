@@ -1,16 +1,58 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { all, first } from '../../../src/core/db';
-import { copySandbox, ensureMasters, mastersCurrent } from '../../../src/modules/demo/sample';
+import { ensureMasters, fingerprintOf, mastersCurrent, refreshFingerprint, staleMasters, takeBuildLock } from '../../../src/modules/demo/sample';
 import { verifyPdf } from '../../../src/modules/signing';
 import { demoTestEnv } from './helpers';
 
-/** R26 task 2 and 4: the master sample set, and a sandbox copy timed against the 5-second budget. */
+/** R26 task 2, R29 task 6: the master sample set, built once under a lock. */
 const env = demoTestEnv();
 let masters: number[] = [];
+let racers: Awaited<ReturnType<typeof ensureMasters>>[] = [];
 
 beforeAll(async () => {
+  // Two first requests at once: one builds, the other is told to wait.
+  racers = await Promise.all([ensureMasters({ env }), ensureMasters({ env })]);
   masters = (await ensureMasters({ env })).businessIds;
-}, 120_000);
+}, 180_000);
+
+describe('the build', () => {
+  it('two concurrent first requests build the masters once', async () => {
+    expect(racers.filter((r) => r.ready && r.loaded)).toHaveLength(1);
+    expect(racers.filter((r) => !r.ready)).toHaveLength(1);
+    const names = await all<{ name_en: string; n: number }>(env.DB, "SELECT name_en, COUNT(*) AS n FROM businesses WHERE name_en IN ('Noa Levi Studio', 'Demo Studio Ltd') GROUP BY name_en");
+    expect(names.map((r) => r.n)).toEqual([1, 1]);
+    // The lock is released after the build.
+    expect(await first(env.DB, 'SELECT 1 FROM demo_build_lock')).toBeNull();
+  });
+
+  it('a running build holds the lock, and a stale lock is taken over', async () => {
+    const t = new Date('2026-10-13T10:00:00Z');
+    expect(await takeBuildLock(env.DB, 'first', t)).toBe(true);
+    expect(await takeBuildLock(env.DB, 'second', new Date(t.getTime() + 60_000))).toBe(false);
+    expect(await takeBuildLock(env.DB, 'third', new Date(t.getTime() + 11 * 60_000))).toBe(true);
+    await env.DB.prepare('DELETE FROM demo_build_lock').run();
+  });
+
+  it('lists a master only with its fingerprint, and sees a changed sample set', async () => {
+    const rows = await all<{ fingerprint: string | null }>(env.DB, 'SELECT fingerprint FROM demo_master_businesses');
+    expect(rows.every((r) => /^[0-9a-f]{64}$/.test(r.fingerprint ?? ''))).toBe(true);
+    expect(await staleMasters(env.DB)).toEqual([]);
+    // A visitor's draft is not part of the sample set.
+    await env.DB.prepare("INSERT INTO clients (name_en, country, currency, business_id, demo_session_id) VALUES ('Visitor draft client', 'IL', 'ILS', ?, 'aaaaaaaa-bbbb')").bind(masters[0]).run();
+    expect(await staleMasters(env.DB)).toEqual([]);
+    // A changed sample row is.
+    const client = (await first<{ id: number; name_en: string }>(env.DB, 'SELECT id, name_en FROM clients WHERE business_id = ? AND demo_session_id IS NULL ORDER BY id LIMIT 1', masters[0]))!;
+    await env.DB.prepare("UPDATE clients SET name_en = 'Changed' WHERE id = ?").bind(client.id).run();
+    expect((await staleMasters(env.DB)).map((s) => s.businessId)).toEqual([masters[0]]);
+    // An admin write becomes the new reference.
+    await refreshFingerprint(env.DB, masters[0]!);
+    expect(await staleMasters(env.DB)).toEqual([]);
+    await env.DB.prepare('UPDATE clients SET name_en = ? WHERE id = ?').bind(client.name_en, client.id).run();
+    await refreshFingerprint(env.DB, masters[0]!);
+    await env.DB.prepare("DELETE FROM clients WHERE demo_session_id = 'aaaaaaaa-bbbb'").run();
+    expect(await fingerprintOf(env.DB, masters[0]!)).toBe((await first<{ fingerprint: string }>(env.DB, 'SELECT fingerprint FROM demo_master_businesses WHERE business_id = ?', masters[0]))!.fingerprint);
+  });
+});
 
 describe('the master sample set', () => {
   it('loads two masters: an עוסק פטור and a company, once', async () => {
@@ -56,30 +98,5 @@ describe('the master sample set', () => {
     const ceiling = 12283300;
     expect(turnover / ceiling).toBeGreaterThan(0.5);
     expect(turnover / ceiling).toBeLessThan(0.7);
-  });
-});
-
-describe('a sandbox copy', () => {
-  // The demo target is under 5 seconds on Workers. A full parallel test run on a laptop
-  // slows this to 6 or more, so the test allows 15 and logs the real figure.
-  it('copies both masters through the normal finalize path in under 15 seconds', async () => {
-    const owner = { userId: (await first<{ id: number }>(env.DB, "INSERT INTO users (email, role) VALUES ('noauto-visitor-copy@sandbox.invalid', 'owner') RETURNING id"))!.id, email: 'noauto-visitor-copy@sandbox.invalid' };
-    const started = Date.now();
-    const ids = await copySandbox({ env }, owner);
-    const ms = Date.now() - started;
-    console.log(`sandbox copy: ${ms} ms`);
-    expect(ms).toBeLessThan(15000);
-    expect(ids).toHaveLength(2);
-    const masterDocs = (await first<{ n: number }>(env.DB, `SELECT COUNT(*) AS n FROM documents WHERE business_id = ? AND number IS NOT NULL`, masters[0]))!.n;
-    const copyDocs = (await first<{ n: number }>(env.DB, `SELECT COUNT(*) AS n FROM documents WHERE business_id = ? AND number IS NOT NULL`, ids[0]))!.n;
-    expect(copyDocs).toBe(masterDocs);
-    // Real numbering per sandbox: its own series, starting at 1, a hash chain of its own.
-    const first400 = await first<{ number: number; prev_hash: string | null }>(env.DB, "SELECT number, prev_hash FROM documents WHERE business_id = ? AND type = '400' ORDER BY number LIMIT 1", ids[0]);
-    expect(first400!.number).toBe(1);
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-    const newest = (await first<{ d: string }>(env.DB, 'SELECT MAX(date) AS d FROM documents WHERE business_id = ?', ids[0]))!.d;
-    expect(newest).toBe(yesterday);
-    expect((await first<{ n: number }>(env.DB, 'SELECT COUNT(*) AS n FROM contracts WHERE business_id = ?', ids[1]))!.n).toBe(2);
-    expect((await first<{ n: number }>(env.DB, 'SELECT COUNT(*) AS n FROM expenses WHERE business_id = ?', ids[1]))!.n).toBe(6);
   });
 });

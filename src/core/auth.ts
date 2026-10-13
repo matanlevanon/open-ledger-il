@@ -170,12 +170,12 @@ export function authenticate(options: AuthOptions = {}): MiddlewareHandler<AppEn
     const env = c.env;
     const token = c.req.header('Cf-Access-Jwt-Assertion');
     let email: string;
-    // R26: in demo mode the visitor's session cookie names a synthetic owner of their sandbox.
+    // R26, R29: in demo mode the session cookie names a synthetic visitor linked to the shared sample set.
     const demo = isDemo(env) ? await sessionFromCookie(env.DB, c.req.header('Cookie')) : null;
     if (isDemo(env) && !demo) throw new UnauthorizedError('Open the demo from its start page.');
     if (demo) {
       email = demo.email;
-      c.set('demo', { sandboxId: demo.sandboxId, admin: demo.admin, adminEmail: demo.adminEmail });
+      c.set('demo', { sessionKey: demo.sessionKey, admin: demo.admin, adminEmail: demo.adminEmail });
     } else if (token) {
       email = await emailFromAccessJwt(token, env, options);
     } else if (devBypassAllowed(env)) {

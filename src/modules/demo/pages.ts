@@ -1,7 +1,7 @@
 import type { Env } from '../../env';
 import { demoTexts } from './config';
 
-/** R26: the pages a visitor sees before the app: the gate (Screen A), the privacy notice, the code page. */
+/** R26, R29: the pages a visitor sees before the app: the gate (Screen A), the privacy notice, the code page, the preparing page. */
 
 export type Lang = 'en' | 'he';
 
@@ -28,7 +28,7 @@ a{color:var(--brand)}.err{color:var(--danger);font-size:14px;margin:10px 0 0}.li
 const G = {
   en: {
     title: (p: string) => `Try ${p}`,
-    lead: 'A full Ledger with sample clients, invoices and contracts. Create anything you like. Your copy resets every night at 03:00 Israel time.',
+    lead: 'A full Ledger with sample clients, invoices and contracts. The sample data is read-only. Your own drafts are private and deleted 30 minutes after you leave.',
     name: 'Name',
     namePh: 'Your name',
     email: 'Email',
@@ -40,7 +40,7 @@ const G = {
   },
   he: {
     title: (p: string) => `נסו את ${p}`,
-    lead: 'Ledger מלא עם לקוחות, חשבוניות והסכמים לדוגמה. צרו כל מה שתרצו. העותק שלכם מתאפס כל לילה ב-03:00 שעון ישראל.',
+    lead: 'Ledger מלא עם לקוחות, חשבוניות והסכמים לדוגמה. נתוני הדוגמה לקריאה בלבד. הטיוטות שלכם פרטיות ונמחקות 30 דקות אחרי שתצאו.',
     name: 'שם',
     namePh: 'השם שלך',
     email: 'אימייל',
@@ -116,8 +116,8 @@ export function privacyPageHtml(env: Env, lang: Lang): string {
       `<div class="card prose"><h1>הודעת פרטיות</h1>
 <p>ההדגמה של ${esc(t.product)} מופעלת על ידי ${esc(t.sender)}.</p>
 <h2>מה נשמר</h2><ul><li>השם והאימייל שהזנתם בכניסה.</li><li>כתובת ה-IP, סוג הדפדפן ושעת הכניסה.</li><li>התשובה לתיבת העדכונים, נוסח התיבה ושעת התשובה, ואם אישרתם או הסרתם את עצמכם.</li><li>מה שיצרתם בתוך ההדגמה.</li></ul>
-<h2>למה</h2><p>כדי לפתוח לכם עותק פרטי של ההדגמה, ולמנוע שימוש לרעה. עדכונים והצעות נשלחים רק אם סימנתם את התיבה ואישרתם במייל.</p>
-<h2>לכמה זמן</h2><p>מה שיצרתם בהדגמה נמחק כל לילה ב-03:00. השם, האימייל ותיעוד ההסכמה נשמרים עד שתבקשו למחוק אותם.</p>
+<h2>למה</h2><p>כדי לפתוח לכם את ההדגמה עם טיוטות פרטיות, ולמנוע שימוש לרעה. עדכונים והצעות נשלחים רק אם סימנתם את התיבה ואישרתם במייל.</p>
+<h2>לכמה זמן</h2><p>מה שיצרתם בהדגמה נמחק 30 דקות אחרי שיצאתם, ובכל מקרה כל לילה ב-03:00. השם, האימייל ותיעוד ההסכמה נשמרים עד שתבקשו למחוק אותם.</p>
 <h2>הסרה</h2><p>בכל מייל מאיתנו יש קישור הסרה.${contact ? ` אפשר גם לכתוב אל ${esc(contact)}.` : ''}</p>
 <p class="links"><a href="/?lang=he">חזרה</a> · <a href="/privacy?lang=en">English</a></p></div>`,
     );
@@ -128,10 +128,21 @@ export function privacyPageHtml(env: Env, lang: Lang): string {
     `<div class="card prose"><h1>Privacy notice</h1>
 <p>The ${esc(t.product)} demo is run by ${esc(t.sender)}.</p>
 <h2>What we store</h2><ul><li>The name and email you type at the gate.</li><li>Your IP address, browser type and the time you entered.</li><li>Your answer to the updates box, the exact text of the box and the time, and whether you confirmed or unsubscribed.</li><li>What you create inside the demo.</li></ul>
-<h2>Why</h2><p>To open a private copy of the demo for you and to stop abuse. Updates and offers go out only if you ticked the box and confirmed by email.</p>
-<h2>For how long</h2><p>What you create in the demo is deleted every night at 03:00 Israel time. Your name, email and consent record stay until you ask us to delete them.</p>
+<h2>Why</h2><p>To open the demo for you with private drafts and to stop abuse. Updates and offers go out only if you ticked the box and confirmed by email.</p>
+<h2>For how long</h2><p>What you create in the demo is deleted 30 minutes after you leave, and every night at 03:00 Israel time in any case. Your name, email and consent record stay until you ask us to delete them.</p>
 <h2>Unsubscribe</h2><p>Every email from us has an unsubscribe link.${contact ? ` You can also write to ${esc(contact)}.` : ''}</p>
 <p class="links"><a href="/?lang=en">Back</a> · <a href="/privacy?lang=he">עברית</a></p></div>`,
+  );
+}
+
+/** R29: shown while the sample data builds. It reloads itself every 5 seconds. */
+export function preparingPageHtml(lang: Lang): string {
+  const en = lang === 'en';
+  return shell(
+    lang,
+    en ? 'Preparing the sample data' : 'מכינים את נתוני הדוגמה',
+    `<div class="card"><h1>${en ? 'Preparing the sample data, one moment' : 'מכינים את נתוני הדוגמה, רגע אחד'}</h1><p class="muted">${en ? 'This page refreshes by itself.' : 'הדף מתרענן לבד.'}</p></div>`,
+    '<meta http-equiv="refresh" content="5">',
   );
 }
 

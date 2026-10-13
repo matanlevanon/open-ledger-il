@@ -94,6 +94,8 @@ export interface RenderDocument {
   kind: string;
   /** null before finalize: the preview route renders drafts with no number. */
   number: number | null;
+  /** R29: printed in place of the number. Only the demo's issue preview sets it, to "0000". */
+  numberText?: string;
   status: string;
   legalMode: 'patur' | 'murshe';
   /**

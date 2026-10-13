@@ -4,8 +4,8 @@
  *
  *   RESET_SECRET=... node scripts/seed-sample.mjs https://open-ledger-sample-reset.<you>.workers.dev
  *
- * It asks the reset Worker to run: visitor sandboxes are removed, then the masters load when they
- * are missing or older than the seed. Migration-safe: it never touches the schema, and the masters
+ * It asks the reset Worker to run: every visitor row and session is removed, then the masters load
+ * when they are missing, older than the seed, or changed (R29). Migration-safe: it never touches the schema, and the masters
  * load through the Ledger's own services, so numbering and the hash chain are real. Running it
  * twice changes nothing the second time.
  */

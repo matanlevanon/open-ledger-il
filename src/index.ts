@@ -11,10 +11,10 @@ import type { AppEnv, Env } from './env';
 import { modules as registeredModules } from './modules';
 import { isPublicApiPath } from './modules/sending/public-paths';
 import { mcpModule } from './modules/mcp';
-import { demoEnv, demoGuard, demoMisconfigured, isDemo } from './modules/demo';
+import { demoEnv, demoGuard, demoMisconfigured, isDemo, visitorReady } from './modules/demo';
 import { demoTexts } from './modules/demo/config';
 import { type AdminOptions, createDemoAdminRoutes } from './modules/demo/admin';
-import { gatePageHtml, misconfiguredPageHtml, privacyPageHtml } from './modules/demo/pages';
+import { gatePageHtml, misconfiguredPageHtml, preparingPageHtml, privacyPageHtml } from './modules/demo/pages';
 import { sessionFromCookie } from './modules/demo/session';
 import { dispatchScheduled } from './scheduled';
 
@@ -50,8 +50,12 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
     const lang = c.req.query('lang') === 'en' ? 'en' : 'he'; // The demo opens in Hebrew.
     if (path === '/privacy') return c.html(privacyPageHtml(c.env, lang));
     // Static files (scripts, styles, icons) load without a session. Pages need one.
-    if (/.[a-z0-9]+$/i.test(path) && !path.endsWith('.html')) return next();
-    if (c.req.method === 'GET' && !(await sessionFromCookie(c.env.DB, c.req.header('Cookie')))) return c.html(gatePageHtml(c.env, lang));
+    if (/\.[a-z0-9]+$/i.test(path) && !path.endsWith('.html')) return next();
+    if (c.req.method !== 'GET') return next();
+    const session = await sessionFromCookie(c.env.DB, c.req.header('Cookie'));
+    if (!session) return c.html(gatePageHtml(c.env, lang));
+    // R29: the sample data builds once. A visitor who arrives meanwhile waits on a page that reloads.
+    if (!session.admin && !(await visitorReady(c.env, session.userId))) return c.html(preparingPageHtml(lang), 503, { 'Retry-After': '5', 'Cache-Control': 'no-store' });
     return next();
   });
 
@@ -67,7 +71,7 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
     return authenticate(options.auth)(c, next);
   });
 
-  // R26: settings read-only, caps, the outbox and the watermark, for demo sessions only.
+  // R26, R29: the sample data read-only, private drafts, caps, the outbox and the watermark, for demo sessions only.
   api.use('*', demoGuard());
 
   api.get('/me', async (c) => {
@@ -85,7 +89,10 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
         businessId: user.businessId,
         businesses: user.businesses,
         // R26: the banner and the Settings lock read this. Absent outside demo mode.
-        ...(isDemo(c.env) ? { demo: { admin: c.get('demo')?.admin ?? false, ctaUrl: demoTexts(c.env).ctaUrl, product: demoTexts(c.env).product } } : {}),
+        // R29: ownKey tags this visitor's own rows, so the app knows which ones it may change.
+        ...(isDemo(c.env)
+          ? { demo: { admin: c.get('demo')?.admin ?? false, ctaUrl: demoTexts(c.env).ctaUrl, product: demoTexts(c.env).product, ownKey: c.get('demo')?.sessionKey ?? null } }
+          : {}),
       },
     });
   });

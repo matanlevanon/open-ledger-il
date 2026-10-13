@@ -63,7 +63,7 @@ export interface Env {
   /** R26: the marketing box text on the gate. Empty uses a neutral default that names DEMO_SENDER_NAME. */
   DEMO_CONSENT_TEXT_EN?: string;
   DEMO_CONSENT_TEXT_HE?: string;
-  /** R26: caps per sandbox per day, and per whole demo per day. Defaults in src/modules/demo/config.ts. */
+  /** R26: caps per visitor per day, and per whole demo per day. Defaults in src/modules/demo/config.ts. */
   DEMO_CAP_DOCUMENTS?: string;
   DEMO_CAP_PDFS?: string;
   DEMO_CAP_UPLOADS?: string;
@@ -94,8 +94,8 @@ export interface Env {
 export interface AppVariables {
   user: AuthUser;
   requestId: string;
-  /** R26: set for a demo session. admin = the sample set opened from /admin. */
-  demo?: { sandboxId: number | null; admin: boolean; adminEmail: string | null };
+  /** R26: set for a demo session. admin = the sample set opened from /admin. R29: sessionKey tags a visitor's own rows. */
+  demo?: { sessionKey: string | null; admin: boolean; adminEmail: string | null };
 }
 
 /** Hono generic for every app and sub-router in the Worker. */

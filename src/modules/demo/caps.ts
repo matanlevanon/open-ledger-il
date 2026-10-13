@@ -5,19 +5,18 @@ import type { Notifier } from '../ita/notify';
 import { type DemoCaps, demoCaps, demoDay } from './config';
 
 /**
- * R26 task 7: daily caps. Per sandbox: documents, PDFs, uploads, contracts, businesses. Per whole
- * demo: PDFs and new sandboxes. A cap reached answers with a plain message and alerts Slack once a
- * day per cap.
+ * R26 task 7, R29: daily caps. Per visitor session: documents, PDFs, uploads, contracts. Per whole
+ * demo: PDFs and entries ('sandboxes', the name the counter kept from R26). A cap reached answers
+ * with a plain message and alerts Slack once a day per cap.
  */
 
-export type CapKind = 'documents' | 'pdfs' | 'uploads' | 'contracts' | 'businesses' | 'sandboxes';
+export type CapKind = 'documents' | 'pdfs' | 'uploads' | 'contracts' | 'sandboxes';
 
 const MESSAGES: Record<CapKind, string> = {
-  documents: 'This demo copy reached its documents for today. It resets tonight at 03:00.',
+  documents: 'You reached the drafts you can create today in the demo. Try again tomorrow.',
   pdfs: 'The demo reached its PDFs for today. Try again tomorrow.',
-  uploads: 'This demo copy reached its uploads for today. It resets tonight at 03:00.',
-  contracts: 'This demo copy reached its contracts for today. It resets tonight at 03:00.',
-  businesses: 'A demo copy holds at most 3 businesses.',
+  uploads: 'You reached the uploads you can make today in the demo. Try again tomorrow.',
+  contracts: 'You reached the contracts you can create today in the demo. Try again tomorrow.',
   sandboxes: 'The demo is full for today. Try again tomorrow.',
 };
 
@@ -53,11 +52,11 @@ async function alertOnce(db: D1Database, notifier: Notifier, day: string, scope:
   if (res.changes > 0) await notifier.send(`:warning: Demo cap reached: ${kind} (${scope}) on ${day}.`);
 }
 
-/** Throws DemoCapError when the sandbox or the whole demo used its share of `kind` today. */
-export async function checkCap(env: Env, notifier: Notifier, kind: CapKind, sandboxId: number | null, now = new Date()): Promise<void> {
+/** Throws DemoCapError when the session or the whole demo used its share of `kind` today. */
+export async function checkCap(env: Env, notifier: Notifier, kind: CapKind, sessionKey: string | null, now = new Date()): Promise<void> {
   const caps = demoCaps(env);
   const day = demoDay(now);
-  const scopes = [...(sandboxId !== null ? [`sandbox:${sandboxId}`] : []), 'global'];
+  const scopes = [...(sessionKey !== null ? [`session:${sessionKey}`] : []), 'global'];
   for (const scope of scopes) {
     const limit = limitOf(caps, kind, scope);
     if (!Number.isFinite(limit)) continue;
@@ -68,8 +67,8 @@ export async function checkCap(env: Env, notifier: Notifier, kind: CapKind, sand
   }
 }
 
-export async function countUse(env: Env, kind: CapKind, sandboxId: number | null, now = new Date()): Promise<void> {
+export async function countUse(env: Env, kind: CapKind, sessionKey: string | null, now = new Date()): Promise<void> {
   const day = demoDay(now);
-  if (sandboxId !== null) await bump(env.DB, day, `sandbox:${sandboxId}`, kind);
+  if (sessionKey !== null) await bump(env.DB, day, `session:${sessionKey}`, kind);
   await bump(env.DB, day, 'global', kind);
 }

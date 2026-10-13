@@ -15,12 +15,15 @@ import { confirmConsent, forwardLeadEvents, queueLeadEvent, recordConsent, sendC
 import { gateMailer, latestOutbox } from './outbox';
 import type { Mailer } from '../sending/mailer';
 import { codePageHtml, gatePageHtml, type Lang, messagePageHtml } from './pages';
-import { openSandbox, sandboxToday } from './sandbox';
-import { createSession, sessionCookie, sessionFromCookie, sha256Hex } from './session';
+import { type PreviewOptions, previewRoutes } from './previews';
+import { checkCap, countUse } from './caps';
+import { DEMO_USER_DOMAIN } from './config';
+import { ensureMasters, mastersCurrent } from './sample';
+import { createSession, newSessionToken, sessionCookie, sessionFromCookie, sha256Hex } from './session';
 
 export { isDemo, demoMisconfigured, demoEnv } from './config';
 export { demoGuard } from './guard';
-export { ensureMasters, copySandbox } from './sample';
+export { ensureMasters } from './sample';
 
 export interface DemoOptions {
   documentsOptions?: DocumentsModuleOptions;
@@ -40,6 +43,55 @@ const enterInput = z.object({
 });
 
 const CODE_TTL_MS = 10 * 60_000;
+
+/** A visitor's live session for this lead, if one is still open. */
+async function liveSession(db: D1Database, leadId: number, now: Date) {
+  return first<{ token_hash: string; session_key: string; user_id: number }>(
+    db,
+    'SELECT token_hash, session_key, user_id FROM demo_sessions WHERE lead_id = ? AND admin = 0 AND session_key IS NOT NULL AND expires_at > ? ORDER BY last_seen_at DESC LIMIT 1',
+    leadId,
+    now.toISOString(),
+  );
+}
+
+/** Links the visitor to every master business. False while the masters are not ready. */
+export async function linkVisitor(env: Env, userId: number, documentsOptions?: DocumentsModuleOptions): Promise<boolean> {
+  if (!(await mastersCurrent(env.DB))) {
+    const built = await ensureMasters({ env, documentsOptions });
+    if (!built.ready) return false;
+  }
+  await run(env.DB, "INSERT OR IGNORE INTO user_businesses (user_id, business_id, role) SELECT ?, business_id, 'owner' FROM demo_master_businesses", userId);
+  // A visitor opens the sample businesses and nothing else.
+  await run(env.DB, 'DELETE FROM user_businesses WHERE user_id = ? AND business_id NOT IN (SELECT business_id FROM demo_master_businesses)', userId);
+  return true;
+}
+
+/** True when the visitor can open the app now. A visitor without the sample businesses is linked here. */
+export async function visitorReady(env: Env, userId: number): Promise<boolean> {
+  const linked = await first<{ n: number }>(
+    env.DB,
+    'SELECT COUNT(*) AS n FROM user_businesses ub JOIN demo_master_businesses m ON m.business_id = ub.business_id WHERE ub.user_id = ?',
+    userId,
+  );
+  if (linked && linked.n > 0 && (await mastersCurrent(env.DB))) return true;
+  await run(env.DB, 'DELETE FROM user_businesses WHERE user_id = ? AND business_id NOT IN (SELECT business_id FROM demo_master_businesses)', userId);
+  return linkVisitor(env, userId);
+}
+
+/**
+ * R29 task 1: instant entry. A synthetic visitor user, linked to the shared sample businesses, and
+ * a session. No copy. Masters still building: the session opens and the app shows the
+ * "Preparing the sample data" page until they are ready.
+ */
+async function openVisit(env: Env, deps: { documentsOptions?: DocumentsModuleOptions; notifier: Notifier; now: Date }, leadId: number | null): Promise<string> {
+  await checkCap(env, deps.notifier, 'sandboxes', null, deps.now);
+  const email = `visitor-${crypto.randomUUID()}@${DEMO_USER_DOMAIN}`;
+  const user = await run(env.DB, "INSERT INTO users (email, role) VALUES (?, 'owner')", email);
+  const { token } = await createSession(env.DB, { userId: user.lastRowId, leadId }, deps.now);
+  await linkVisitor(env, user.lastRowId, deps.documentsOptions);
+  await countUse(env, 'sandboxes', null, deps.now);
+  return token;
+}
 
 /** Every demo route answers 404 unless DEMO_MODE=1. Declared for the route guard (src/modules/access/route-guard.ts). */
 const demoOnly = Object.assign(
@@ -99,7 +151,7 @@ function sixDigits(): string {
  */
 export function createDemoModule(options: DemoOptions = {}): ModuleDef {
   const r = new Hono<AppEnv>();
-  const manual = declareManualAuth('demo gate: public, Turnstile and a rate of one sandbox per lead per day');
+  const manual = declareManualAuth('demo gate: public, Turnstile, a daily entry cap and an email code for a second browser');
   const fetchFn = options.fetchFn ?? ((i: RequestInfo | URL, init?: RequestInit) => fetch(i, init));
   const notifier = (env: Env): Notifier => slackNotifier(env.SLACK_WEBHOOK_URL, fetchFn);
   const now = () => (options.now ? options.now() : new Date());
@@ -129,12 +181,12 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
     }
     await forwardLeadEvents(c.env, fetchFn, 5);
 
-    // The same email on the same day reopens the same sandbox: from this browser at once, from
-    // another browser after an email code. Without email, another browser gets a new copy.
-    const existing = await sandboxToday(c.env.DB, lead.id, now());
+    // A visitor with a live session: this browser goes straight back in. Another browser gets an
+    // email code and takes the session over, drafts included. Without email, a new visit opens.
+    const existing = await liveSession(c.env.DB, lead.id, now());
     if (existing) {
       const session = await sessionFromCookie(c.env.DB, c.req.header('Cookie'), now());
-      if (session && session.sandboxId === existing.id) return new Response(null, { status: 303, headers: { Location: '/' } });
+      if (session && session.sessionKey === existing.session_key) return new Response(null, { status: 303, headers: { Location: '/' } });
       if (mailer) {
         const code = sixDigits();
         await run(c.env.DB, 'INSERT INTO demo_codes (lead_id, code_hash, expires_at) VALUES (?, ?, ?)', lead.id, await sha256Hex(`${lead.id}:${code}`), new Date(now().getTime() + CODE_TTL_MS).toISOString());
@@ -142,8 +194,7 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
         return c.html(codePageHtml(lang, lead.email));
       }
     }
-    const sandbox = await openSandbox(c.env, { documentsOptions: options.documentsOptions, notifier: notifier(c.env), now: options.now }, lead.id);
-    return redirectWithSession(await createSession(c.env.DB, { userId: sandbox.user_id, sandboxId: sandbox.id }, now()));
+    return redirectWithSession(await openVisit(c.env, { documentsOptions: options.documentsOptions, notifier: notifier(c.env), now: now() }, lead.id));
   });
 
   r.post('/verify', manual, async (c) => {
@@ -151,21 +202,24 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
     const lang: Lang = raw.lang === 'he' ? 'he' : 'en';
     const email = String(raw.email ?? '').trim().toLowerCase();
     const lead = await first<{ id: number }>(c.env.DB, 'SELECT id FROM demo_leads WHERE email = ?', email);
-    const sandbox = lead ? await sandboxToday(c.env.DB, lead.id, now()) : null;
+    const open = lead ? await liveSession(c.env.DB, lead.id, now()) : null;
     const code = await first<{ id: number; code_hash: string; expires_at: string; attempts: number }>(
       c.env.DB,
       'SELECT id, code_hash, expires_at, attempts FROM demo_codes WHERE lead_id = ? AND used_at IS NULL ORDER BY id DESC LIMIT 1',
       lead?.id ?? -1,
     );
     const wrong = (msg: string) => c.html(codePageHtml(lang, email, msg), 400);
-    if (!lead || !sandbox || !code) return wrong(lang === 'he' ? 'בקשו קוד חדש.' : 'Ask for a new code.');
+    if (!lead || !open || !code) return wrong(lang === 'he' ? 'בקשו קוד חדש.' : 'Ask for a new code.');
     if (code.attempts >= 5 || code.expires_at <= now().toISOString()) return wrong(lang === 'he' ? 'הקוד פג. התחילו מחדש.' : 'The code expired. Start over.');
     if ((await sha256Hex(`${lead.id}:${String(raw.code ?? '').trim()}`)) !== code.code_hash) {
       await run(c.env.DB, 'UPDATE demo_codes SET attempts = attempts + 1 WHERE id = ?', code.id);
       return wrong(lang === 'he' ? 'הקוד שגוי.' : 'The code is not right.');
     }
     await run(c.env.DB, 'UPDATE demo_codes SET used_at = ? WHERE id = ?', nowIso(), code.id);
-    return redirectWithSession(await createSession(c.env.DB, { userId: sandbox.user_id, sandboxId: sandbox.id }, now()));
+    // The session moves to this browser: a new cookie, the same key and drafts. The old cookie stops working.
+    const token = newSessionToken();
+    await run(c.env.DB, 'UPDATE demo_sessions SET token_hash = ? WHERE token_hash = ?', await sha256Hex(token), open.token_hash);
+    return redirectWithSession(token);
   });
 
   r.get('/confirm/:token', manual, async (c) => {
@@ -209,21 +263,23 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
 }
 
 /**
- * R26: /api/demo-app. For a signed-in demo visitor: the banner facts and the email previews.
+ * R26, R29: /api/demo-app. For a signed-in demo visitor: the banner facts, the email previews,
+ * and the previews that stand in for issuing, sending, recording a payment and signing.
  * Outside demo mode every route answers 404.
  */
-export function createDemoAppModule(): ModuleDef {
+export function createDemoAppModule(options: PreviewOptions = {}): ModuleDef {
   const r = new Hono<AppEnv>();
   r.use('*', demoOnly);
   r.get('/status', requireRole('owner', 'assistant', 'accountant'), (c) => {
     const texts = demoTexts(c.env);
     const demo = c.get('demo');
-    return c.json({ demo: true, admin: demo?.admin ?? false, ctaUrl: texts.ctaUrl, product: texts.product, resetsAt: '03:00' });
+    return c.json({ demo: true, admin: demo?.admin ?? false, ctaUrl: texts.ctaUrl, product: texts.product, idleMinutes: 30, ownKey: demo?.sessionKey ?? null });
   });
   r.get('/outbox', requireRole('owner', 'assistant', 'accountant'), async (c) => {
     const user = c.get('user');
     return c.json({ emails: await latestOutbox(c.env.DB, user.businesses.map((b) => b.id), Number(c.req.query('limit') ?? 1)) });
   });
+  r.route('/', previewRoutes(options));
   return { name: 'demo-app', basePath: '/demo-app', routes: r };
 }
 

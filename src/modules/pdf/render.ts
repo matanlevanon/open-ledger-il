@@ -93,7 +93,7 @@ function headerHtml(doc: RenderDocument): string {
  */
 function titleLineHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>): string {
   const typeName = lang === 'he' ? doc.typeNameHe : doc.typeNameEn;
-  const numberLine = doc.number === null ? esc(t.draft) : `${typeName} ${doc.number}`;
+  const numberLine = doc.number === null ? esc(t.draft) : `${typeName} ${doc.numberText ?? doc.number}`;
   const badge = doc.status !== 'draft' && doc.signed === true ? `<span class="badge">${ICONS.badge}${esc(t.digitallySigned)}</span>` : '';
   const dateLine = doc.number === null ? '' : `<span class="copy-word">${esc(copyLabel(lang, doc.isOriginal))}</span><span class="rule-sep">|</span>${formatDate(doc.date)}`;
   const createdFrom = doc.source
@@ -299,7 +299,7 @@ function signatureBlockHtml(doc: RenderDocument, t: Record<string, string>): str
 
 function footerHtml(lang: Lang, doc: RenderDocument, page: { number: number; of: number }, t: Record<string, string>): string {
   const typeName = lang === 'he' ? doc.typeNameHe : doc.typeNameEn;
-  const numberPart = doc.number === null ? t.draft : String(doc.number);
+  const numberPart = doc.number === null ? t.draft : (doc.numberText ?? String(doc.number));
   return `
 <div class="footer">
   <div>
@@ -317,7 +317,7 @@ function footerHtml(lang: Lang, doc: RenderDocument, page: { number: number; of:
  * `blText`. Numbers and amounts stay left-to-right, same as the plain English section.
  */
 function bilingualTitleLineHtml(doc: RenderDocument): string {
-  const numberLine = doc.number === null ? bl('draft') : `${blText(doc.typeNameEn, doc.typeNameHe)} ${doc.number}`;
+  const numberLine = doc.number === null ? bl('draft') : `${blText(doc.typeNameEn, doc.typeNameHe)} ${doc.numberText ?? doc.number}`;
   const badge = doc.status !== 'draft' && doc.signed === true ? `<span class="badge">${ICONS.badge}${bl('digitallySigned')}</span>` : '';
   const copyWord = doc.isOriginal ? blText('Original', 'מקור') : blText('Copy', 'העתק');
   const dateLine = doc.number === null ? '' : `<span class="copy-word">${copyWord}</span><span class="rule-sep">|</span>${formatDate(doc.date)}`;
@@ -491,7 +491,7 @@ function bilingualSignatureBlockHtml(doc: RenderDocument): string {
 }
 
 function bilingualFooterHtml(doc: RenderDocument, page: { number: number; of: number }): string {
-  const numberPart = doc.number === null ? bl('draft') : String(doc.number);
+  const numberPart = doc.number === null ? bl('draft') : (doc.numberText ?? String(doc.number));
   return `
 <div class="footer">
   <div>
@@ -608,7 +608,7 @@ export function renderDocument(doc: RenderDocument, variant: RenderVariant): str
 <html lang="${htmlLang}">
 <head>
 <meta charset="utf-8" />
-<title>${esc(title)}${doc.number !== null ? ` ${doc.number}` : ''}</title>
+<title>${esc(title)}${doc.number !== null ? ` ${doc.numberText ?? doc.number}` : ''}</title>
 <style>${documentStyles()}</style>
 </head>
 <body>

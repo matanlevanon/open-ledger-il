@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import worker, { israelHour, type ResetEnv } from '../../../tools/demo-reset/src/index';
+import { first } from '../../../src/core/db';
+import worker, { israelHour, onCron, resetDue, type ResetEnv } from '../../../tools/demo-reset/src/index';
 import { demoTestEnv } from './helpers';
 
-/** R26 task 9: the reset Worker's door. POST /run with the shared secret, 03:00 Israel time only. */
+/** R26 task 9, R29 task 5: the reset Worker. POST /run with the shared secret. One cron: the sweep every run, the reset at 03:00 Israel time once a night. */
 const env = { ...demoTestEnv(), RESET_SECRET: 'reset-secret-value' } as ResetEnv;
+const fakeFetch: typeof fetch = async () => new Response('ok');
 
 describe('open-ledger-sample-reset', () => {
   it('refuses /run without the shared secret, and anything else', async () => {
@@ -20,10 +22,26 @@ describe('open-ledger-sample-reset', () => {
     expect(body.mastersLoaded).toBe(true);
   }, 120_000);
 
-  it('the cron runs at 03:00 Israel time, summer and winter', () => {
+  it('israelHour reads summer and winter time', () => {
     expect(israelHour(new Date('2026-07-01T00:00:00Z'))).toBe(3);
     expect(israelHour(new Date('2026-07-01T01:00:00Z'))).toBe(4);
     expect(israelHour(new Date('2026-12-01T01:00:00Z'))).toBe(3);
     expect(israelHour(new Date('2026-12-01T00:00:00Z'))).toBe(2);
   });
+
+  it('every cron run sweeps, and the first run of the 03:00 hour also resets, once a night', async () => {
+    const before = (await first<{ n: number }>(env.DB, 'SELECT COUNT(*) AS n FROM demo_sweeps'))!.n;
+    const noon = await onCron(env, new Date('2026-10-13T09:00:00Z'), fakeFetch);
+    expect(noon.reset).toBeNull();
+    expect((await first<{ n: number }>(env.DB, 'SELECT COUNT(*) AS n FROM demo_sweeps'))!.n).toBe(before + 1);
+    // 03:00 in Israel on 14 Oct 2026 is 00:00 UTC (summer time).
+    const night = new Date('2026-10-14T00:00:00Z');
+    expect(await resetDue(env.DB, night)).toBe(true);
+    const first03 = await onCron(env, night, fakeFetch);
+    expect(first03.reset?.ok).toBe(true);
+    // Rows log the real time, so the second run in the same hour is checked against a cron row for that night.
+    await env.DB.prepare("UPDATE demo_resets SET started_at = ? WHERE id = (SELECT MAX(id) FROM demo_resets WHERE trigger_by = 'cron')").bind(night.toISOString()).run();
+    expect(await resetDue(env.DB, new Date('2026-10-14T00:15:00Z'))).toBe(false);
+    expect((await onCron(env, new Date('2026-10-14T00:15:00Z'), fakeFetch)).reset).toBeNull();
+  }, 120_000);
 });

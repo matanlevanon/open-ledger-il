@@ -8,12 +8,12 @@ import { slackNotifier } from '../ita/notify';
 import { usage } from './caps';
 import { demoCaps, demoDay, demoTexts, isDemo } from './config';
 import { consentHistory, forwardLeadEvents, unsubscribeLead } from './leads';
-import { lastReset, runReset } from './reset';
+import { lastReset, lastSweep, runReset } from './reset';
 import { ensureMasterOwner } from './sample';
 import { createSession, sessionCookie } from './session';
 
 /**
- * R26 task 8: the demo admin, at /admin (page) and /admin/api/* plus /api/admin/* (JSON). Every
+ * R26 task 8, R29 task 8: the demo admin, at /admin (page) and /admin/api/* plus /api/admin/* (JSON). Every
  * request needs a Cloudflare Access JWT for an email in ADMIN_EMAILS, checked here, the same way
  * the ITA broker's admin checks it. The Access app covers /admin and /api/admin.
  */
@@ -85,7 +85,7 @@ function adminPageHtml(env: Env, email: string): string {
 
 *{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font:15px/1.55 system-ui,"Segoe UI",sans-serif}
 main{max-width:1000px;margin:0 auto;padding:24px 16px 60px}.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:12px 0}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
 .stat{border:1px solid var(--line);border-radius:12px;padding:12px}.stat b{display:block;font-size:22px}.muted{color:var(--muted);font-size:13px}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:start;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-size:12px}
 button,a.btn{font:inherit;font-size:14px;border-radius:10px;padding:7px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none;display:inline-block}
@@ -95,7 +95,7 @@ input{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8
 </style></head><body><main>
 <div class="row" style="justify-content:space-between"><h1 style="margin:0;font-size:22px">${esc(product)} demo admin</h1><span class="muted">${esc(email)} · <a href="/cdn-cgi/access/logout">Sign out</a></span></div>
 <div class="card"><div class="stats" id="stats"></div>
-<div class="row"><input id="q" placeholder="Search name or email"><a class="btn" id="csv" href="/admin/api/leads.csv">Export CSV</a><button id="sample">Open the sample set as admin</button><button id="reset">Reset sandboxes now</button></div>
+<div class="row"><input id="q" placeholder="Search name or email"><a class="btn" id="csv" href="/admin/api/leads.csv">Export CSV</a><button id="sample">Open the sample set as admin</button><button id="reset">Reset now</button></div>
 <div class="wide"><table><thead><tr><th>Name</th><th>Email</th><th>First visit</th><th>Marketing</th><th>Webhook</th><th></th></tr></thead><tbody id="leads"></tbody></table></div>
 <p class="muted" id="last"></p><pre class="muted" id="history"></pre></div>
 <script>
@@ -107,14 +107,14 @@ function when(s){return s?new Date(s).toLocaleString('en-GB',{day:'numeric',mont
 function chip(l){if(l.unsubscribed_at)return'<span class="chip no">Unsubscribed '+when(l.unsubscribed_at)+'</span>';if(l.consent===1&&l.confirmed_at)return'<span class="chip yes">Confirmed '+when(l.confirmed_at)+'</span>';if(l.consent===1)return'<span class="chip yes">Opted in, not confirmed</span>';return'<span class="chip no">Not opted in</span>'}
 function load(){
 j('/admin/api/summary').then(function(s){
-$('stats').innerHTML='<div class="stat"><b>'+s.leads+'</b><span class="muted">Leads, total</span></div><div class="stat"><b>'+s.optInRate+'%</b><span class="muted">Opted in</span></div><div class="stat"><b>'+s.sandboxesToday+'</b><span class="muted">Sandboxes today</span></div><div class="stat"><b>'+s.pdfsToday+' / '+s.pdfCap+'</b><span class="muted">PDFs today / cap</span></div>';
-$('last').textContent=s.lastReset?('Last reset: '+when(s.lastReset.started_at)+', '+s.lastReset.message):'No reset yet.';});
+$('stats').innerHTML='<div class="stat"><b>'+s.visitorsToday+'</b><span class="muted">Visitors today</span></div><div class="stat"><b>'+s.activeSessions+'</b><span class="muted">Active sessions</span></div><div class="stat"><b>'+s.draftsToday+'</b><span class="muted">Drafts created today</span></div><div class="stat"><b>'+s.pdfsToday+' / '+s.pdfCap+'</b><span class="muted">PDFs today / cap</span></div><div class="stat"><b>'+s.leads+'</b><span class="muted">Leads, total</span></div><div class="stat"><b>'+s.optInRate+'%</b><span class="muted">Opted in</span></div>';
+$('last').textContent=(s.lastSweep?('Last sweep: '+when(s.lastSweep.started_at)+', '+s.lastSweep.message):'No sweep yet.')+' '+(s.lastReset?('Last reset: '+when(s.lastReset.started_at)+', '+s.lastReset.message):'No reset yet.');});
 j('/admin/api/leads?q='+encodeURIComponent($('q').value)).then(function(b){
 $('leads').innerHTML=b.leads.map(function(l){return'<tr><td>'+e(l.name)+'</td><td>'+e(l.email)+'</td><td>'+when(l.first_visit_at)+'</td><td>'+chip(l)+' <button data-h="'+l.id+'">History</button></td><td>'+e(l.webhook_status==='saved'?'Saved':l.webhook_status==='failed'?'Failed':l.webhook_status==='off'?'Off':'Pending')+(l.webhook_status==='failed'?' <button data-r="'+l.id+'">Retry</button>':'')+'</td><td>'+(l.consent===1&&!l.unsubscribed_at?'<button data-u="'+l.id+'">Unsubscribe</button>':'')+'</td></tr>'}).join('');});}
 $('leads').onclick=function(ev){var t=ev.target;if(t.dataset.u)j('/admin/api/leads/'+t.dataset.u+'/unsubscribe',{method:'POST'}).then(load);if(t.dataset.r)j('/admin/api/leads/'+t.dataset.r+'/retry',{method:'POST'}).then(load);if(t.dataset.h)j('/admin/api/leads/'+t.dataset.h+'/consents').then(function(b){$('history').textContent=b.consents.map(function(c){return when(c.given_at)+' · '+(c.consent?'yes':'no')+' · version '+c.text_version+(c.confirmed_at?' · confirmed '+when(c.confirmed_at):'')+(c.unsubscribed_at?' · unsubscribed '+when(c.unsubscribed_at):'')+'\\n  '+c.consent_text}).join('\\n')})};
 $('q').oninput=function(){$('csv').href='/admin/api/leads.csv?q='+encodeURIComponent($('q').value);load()};
 $('sample').onclick=function(){j('/admin/api/sample-session',{method:'POST'}).then(function(){location.href='/'})};
-$('reset').onclick=function(){if(!confirm('Remove every visitor sandbox now?'))return;$('reset').disabled=true;j('/admin/api/reset',{method:'POST'}).then(function(r){$('last').textContent='Reset: '+r.result.message}).catch(function(err){$('last').textContent=err.message}).then(function(){$('reset').disabled=false;load()})};
+$('reset').onclick=function(){if(!confirm('Remove every visitor draft and session now, and rebuild the sample data if it changed?'))return;$('reset').disabled=true;j('/admin/api/reset',{method:'POST'}).then(function(r){$('last').textContent='Reset: '+r.result.message}).catch(function(err){$('last').textContent=err.message}).then(function(){$('reset').disabled=false;load()})};
 load();})();
 </script></main></body></html>`;
 }
@@ -128,7 +128,7 @@ export function createDemoAdminRoutes(options: AdminOptions = {}): Hono<AppEnv> 
     if (!isDemo(c.env)) return c.text('Not found', 404);
     const email = await adminEmail(c.env, c.req.header('Cf-Access-Jwt-Assertion'), options);
     if (!email) throw new ForbiddenError('This page needs the admin sign-in.');
-    c.set('demo', { sandboxId: null, admin: true, adminEmail: email });
+    c.set('demo', { sessionKey: null, admin: true, adminEmail: email });
     return next();
   });
 
@@ -146,13 +146,17 @@ export function createDemoAdminRoutes(options: AdminOptions = {}): Hono<AppEnv> 
       'SELECT COUNT(*) AS n FROM demo_leads l JOIN demo_consents c ON c.id = (SELECT MAX(id) FROM demo_consents WHERE lead_id = l.id) WHERE c.consent = 1 AND c.unsubscribed_at IS NULL',
     ))!.n;
     const caps = demoCaps(c.env);
+    const active = (await first<{ n: number }>(db, 'SELECT COUNT(*) AS n FROM demo_sessions WHERE admin = 0 AND expires_at > ?', new Date().toISOString()))!.n;
     return c.json({
       leads: total,
       optInRate: total ? Math.round((optedIn / total) * 100) : 0,
-      sandboxesToday: await usage(db, day, 'global', 'sandboxes'),
-      sandboxCap: caps.dailySandboxes,
+      visitorsToday: await usage(db, day, 'global', 'sandboxes'),
+      visitorCap: caps.dailySandboxes,
+      activeSessions: active,
+      draftsToday: await usage(db, day, 'global', 'documents'),
       pdfsToday: await usage(db, day, 'global', 'pdfs'),
       pdfCap: caps.dailyPdfs,
+      lastSweep: await lastSweep(db),
       lastReset: await lastReset(db),
     });
   });
@@ -181,7 +185,7 @@ export function createDemoAdminRoutes(options: AdminOptions = {}): Hono<AppEnv> 
   api.post('/sample-session', async (c) => {
     const owner = await ensureMasterOwner(c.env.DB);
     const email = c.get('demo')!.adminEmail;
-    const token = await createSession(c.env.DB, { userId: owner.userId, sandboxId: null, admin: true, adminEmail: email });
+    const { token } = await createSession(c.env.DB, { userId: owner.userId, admin: true, adminEmail: email });
     await auditAs(c.env.DB, adminActor(c), 'demo.admin_sample_session', 'user', owner.userId);
     return c.json({ ok: true }, 200, { 'Set-Cookie': sessionCookie(token) });
   });

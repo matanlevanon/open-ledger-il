@@ -24,13 +24,13 @@ import { samplePng } from './png';
 import { TextPdfEngine } from './text-pdf';
 
 /**
- * R26: the master sample set (demo/seed/sample-set.json) and the sandbox copy.
+ * R26, R29: the master sample set (demo/seed/sample-set.json). Every visitor opens these same
+ * businesses, read-only. There is no per-visitor copy.
  *
- * Masters load once, and again when the seed version moves up. A sandbox copies the masters into
- * new businesses owned by the visitor's synthetic user: clients, services and templates, then every
- * document as a draft finalized through the normal finalize path, so numbering and the hash chain
- * are real for that sandbox. Expenses and contracts copy row by row and reuse the masters' stored
- * files, so no PDF renders during the copy.
+ * The masters load through the Ledger's own services, so numbering and the hash chain are real.
+ * They build once at a time, under a lock, and a business is listed in demo_master_businesses only
+ * after it is complete. A fingerprint taken then lets the nightly reset see a changed or broken
+ * sample set and rebuild only that.
  */
 
 type Spec = (typeof sampleSet.businesses)[number];
@@ -85,8 +85,8 @@ async function userFor(db: D1Database, owner: Owner, businessId: number): Promis
 
 /**
  * A business row, its default brand, a פטור legal mode, the base series and the owner grant: the
- * same rows Add business writes. The one-עוסק rule is the Ledger's rule for one real person. Demo
- * copies are not people, so the copy writes the rows itself.
+ * same rows Add business writes. The one-עוסק rule is the Ledger's rule for one real person. The
+ * sample businesses are not people, so the build writes the rows itself.
  */
 async function insertBusiness(db: D1Database, owner: Owner, spec: Spec): Promise<number> {
   const base = await all<{ id: string; doc_type: string; name_en: string; name_he: string | null; legal_mode: string | null }>(
@@ -120,7 +120,7 @@ async function insertBusiness(db: D1Database, owner: Owner, spec: Spec): Promise
       ]);
       return id;
     } catch (err) {
-      // Two sandboxes took the same id at once. Read the next free id and try again.
+      // Another business took the same id at once. Read the next free id and try again.
       if (attempt === 4 || !/UNIQUE|constraint/i.test(String(err instanceof Error ? err.message : err))) throw err;
     }
   }
@@ -418,8 +418,8 @@ async function addMasterContracts(env: Env, owner: Owner, businessId: number, sp
 // Masters
 // ---------------------------------------------------------------------------
 
-export async function masterBusinesses(db: D1Database): Promise<{ business_id: number; sample_key: string; seed_version: number }[]> {
-  return all(db, 'SELECT business_id, sample_key, seed_version FROM demo_master_businesses ORDER BY business_id');
+export async function masterBusinesses(db: D1Database): Promise<{ business_id: number; sample_key: string; seed_version: number; fingerprint: string | null }[]> {
+  return all(db, 'SELECT business_id, sample_key, seed_version, fingerprint FROM demo_master_businesses ORDER BY business_id');
 }
 
 /** True when both masters exist at the current seed version. */
@@ -447,174 +447,123 @@ async function buildBusiness(deps: SampleDeps, owner: Owner, spec: Spec, now: Da
   return { businessId, clients };
 }
 
-/**
- * Loads the masters when they are missing or older than the seed. An older master stays in the
- * database as an ordinary business: the next reset removes it with the sandboxes.
- */
-export async function ensureMasters(deps: SampleDeps): Promise<{ loaded: boolean; businessIds: number[] }> {
-  const db = deps.env.DB;
-  if (await mastersCurrent(db)) return { loaded: false, businessIds: (await masterBusinesses(db)).map((r) => r.business_id) };
-  const now = deps.now ? deps.now() : new Date();
-  const owner = await ensureMasterOwner(db);
-  const ids: number[] = [];
-  for (const spec of sampleSet.businesses) {
-    const { businessId, clients } = await buildBusiness(deps, owner, spec, now);
-    await addMasterExpenses(deps.env, businessId, spec, now);
-    await addMasterContracts(deps.env, owner, businessId, spec, clients, now);
-    await transaction(db, [
-      stmt(db, 'DELETE FROM demo_master_businesses WHERE sample_key = ?', spec.key),
-      stmt(db, 'INSERT INTO demo_master_businesses (business_id, sample_key, seed_version) VALUES (?, ?, ?)', businessId, spec.key, SAMPLE_VERSION),
-    ]);
-    ids.push(businessId);
-  }
-  return { loaded: true, businessIds: ids };
+// The fingerprint: the sample rows that matter, never a visitor's draft, never a viewed PDF's hash.
+const SAMPLE_ONLY = 'AND demo_session_id IS NULL';
+const FINGERPRINT_SQL = [
+  'SELECT id, name_en, name_he, tax_id, entity_type FROM businesses WHERE id = ?1',
+  `SELECT id, name_en, name_he, email, phone, country, currency FROM clients WHERE business_id = ?1 ${SAMPLE_ONLY} ORDER BY id`,
+  `SELECT id, type, series_id, number, status, date, client_id, total_minor, hash FROM documents WHERE business_id = ?1 ${SAMPLE_ONLY} ORDER BY id`,
+  `SELECT COUNT(*) AS n FROM document_lines WHERE document_id IN (SELECT id FROM documents WHERE business_id = ?1 ${SAMPLE_ONLY})`,
+  `SELECT COUNT(*) AS n FROM payments WHERE document_id IN (SELECT id FROM documents WHERE business_id = ?1 ${SAMPLE_ONLY})`,
+  `SELECT id, status, title, client_id, signed_pdf_sha256 FROM contracts WHERE business_id = ?1 ${SAMPLE_ONLY} ORDER BY id`,
+  `SELECT id, status, document_number, amount_minor FROM expenses WHERE business_id = ?1 ${SAMPLE_ONLY} ORDER BY id`,
+  'SELECT id, name, current_version FROM contract_templates WHERE business_id = ?1 ORDER BY id',
+];
+
+/** A SHA-256 over the sample rows of one master business. Pass the raw database, never a scoped one. */
+export async function fingerprintOf(db: D1Database, businessId: number): Promise<string> {
+  const parts: string[] = [];
+  for (const sql of FINGERPRINT_SQL) parts.push(JSON.stringify((await db.prepare(sql).bind(businessId).all()).results));
+  return sha256Hex(new TextEncoder().encode(parts.join('\n')));
 }
 
-// ---------------------------------------------------------------------------
-// Sandboxes
-// ---------------------------------------------------------------------------
-
-/** Copies the master's expenses: new rows in the sandbox business, the same stored receipt files. */
-async function copyExpenses(db: D1Database, masterId: number, businessId: number, now: Date, masterLoadedAt: string): Promise<void> {
-  const shift = Math.round((Date.parse(now.toISOString().slice(0, 10)) - Date.parse(masterLoadedAt.slice(0, 10))) / DAY);
-  const shiftDate = (d: string | null) => (d ? new Date(Date.parse(d) + shift * DAY).toISOString().slice(0, 10) : null);
-  const suppliers = new Map<number, number>();
-  for (const s of await all<{ id: number; name: string; country: string }>(db, 'SELECT id, name, country FROM suppliers WHERE business_id = ?', masterId)) {
-    suppliers.set(s.id, (await run(db, 'INSERT INTO suppliers (name, country, business_id) VALUES (?, ?, ?)', s.name, s.country, businessId)).lastRowId);
-  }
-  const rows = await all<Record<string, string | number | null>>(db, 'SELECT e.*, f.r2_key, f.filename, f.content_type, f.size_bytes, f.sha256 FROM expenses e JOIN expense_files f ON f.id = e.file_id WHERE e.business_id = ?', masterId);
-  for (const e of rows) {
-    const file = await run(db, "INSERT INTO expense_files (source, r2_key, filename, content_type, size_bytes, sha256, business_id) VALUES ('upload', ?, ?, ?, ?, ?, ?)", e.r2_key, e.filename, e.content_type, e.size_bytes, e.sha256, businessId);
-    const ex = await run(
-      db,
-      `INSERT INTO expenses (file_id, supplier_id, category_id, status, document_number, document_date, document_type, currency, amount_minor, vat_amount_minor, amount_ils_minor, fx_rate, fx_rate_date, fx_source, notes, business_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      file.lastRowId,
-      e.supplier_id === null ? null : suppliers.get(Number(e.supplier_id)) ?? null,
-      e.category_id,
-      e.status,
-      e.document_number,
-      shiftDate(e.document_date as string | null),
-      e.document_type,
-      e.currency,
-      e.amount_minor,
-      e.vat_amount_minor,
-      e.amount_ils_minor,
-      e.fx_rate,
-      shiftDate(e.fx_rate_date as string | null),
-      e.fx_source,
-      e.notes,
-      businessId,
-    );
-    await run(db, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', ex.lastRowId, file.lastRowId);
-  }
+/** After an admin write on the sample set: the change is intended, so it becomes the new reference. */
+export async function refreshFingerprint(db: D1Database, businessId: number): Promise<void> {
+  if (!(await first(db, 'SELECT 1 FROM demo_master_businesses WHERE business_id = ?', businessId))) return;
+  await run(db, 'UPDATE demo_master_businesses SET fingerprint = ? WHERE business_id = ?', await fingerprintOf(db, businessId), businessId);
 }
 
-/** Copies the master's contracts and their events. The stored PDFs are shared, never rendered. */
-async function copyContracts(db: D1Database, masterId: number, businessId: number, ownerId: number, clientMap: Map<number, number>): Promise<void> {
-  const templates = new Map<number, number>();
-  for (const t of await all<{ id: number; name: string }>(db, 'SELECT id, name FROM contract_templates WHERE business_id = ?', masterId)) {
-    const mine = await first<{ id: number }>(db, 'SELECT id FROM contract_templates WHERE business_id = ? AND name = ?', businessId, t.name);
-    if (mine) templates.set(t.id, mine.id);
-  }
-  for (const c of await all<Record<string, string | number | null>>(db, 'SELECT * FROM contracts WHERE business_id = ? ORDER BY id', masterId)) {
-    const clientId = clientMap.get(Number(c.client_id));
-    const templateId = templates.get(Number(c.template_id));
-    if (!clientId || !templateId) continue;
-    const ins = await run(
-      db,
-      `INSERT INTO contracts (business_id, client_id, template_id, template_version, kind, title, language, field_values_json, signer_name, signer_email, link_days, owner_sign, created_by, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      businessId,
-      clientId,
-      templateId,
-      c.template_version,
-      c.kind,
-      c.title,
-      c.language,
-      c.field_values_json,
-      c.signer_name,
-      c.signer_email,
-      c.link_days,
-      c.owner_sign,
-      ownerId,
-      c.created_at,
-    );
-    const id = ins.lastRowId;
-    const events = await all<Record<string, string | null>>(db, 'SELECT * FROM contract_events WHERE contract_id = ? ORDER BY id', c.id);
-    const statements: D1PreparedStatement[] = [
-      stmt(
-        db,
-        `UPDATE contracts SET status = 'sent', sent_at = ?, expires_at = ?, sent_pdf_r2_key = ?, sent_pdf_sha256 = ?, owner_signed_at = ?, owner_signed_by = ? WHERE id = ?`,
-        c.sent_at,
-        c.expires_at,
-        c.sent_pdf_r2_key,
-        c.sent_pdf_sha256,
-        c.owner_signed_at,
-        c.owner_signed_at ? ownerId : null,
-        id,
-      ),
-    ];
-    if (c.status === 'viewed' || c.status === 'signed') statements.push(stmt(db, "UPDATE contracts SET status = 'viewed', viewed_at = ? WHERE id = ?", c.viewed_at, id));
-    if (c.status === 'signed') {
-      statements.push(
-        stmt(
-          db,
-          `UPDATE contracts SET status = 'signed', signed_at = ?, signer_values_json = ?, signed_pdf_r2_key = ?, signed_pdf_sha256 = ?, signed_content_sha256 = ?, identity_method = ? WHERE id = ?`,
-          c.signed_at,
-          c.signer_values_json,
-          c.signed_pdf_r2_key,
-          c.signed_pdf_sha256,
-          c.signed_content_sha256,
-          c.identity_method,
-          id,
-        ),
-      );
-    }
-    for (const e of events) {
-      statements.push(
-        stmt(
-          db,
-          'INSERT INTO contract_events (contract_id, business_id, kind, actor_email, actor_role, ip, user_agent, details_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          id,
-          businessId,
-          e.kind,
-          e.actor_email,
-          e.actor_role,
-          e.ip,
-          e.user_agent,
-          e.details_json,
-          e.created_at,
-        ),
-      );
-    }
-    await transaction(db, statements);
-  }
+/** The seed's shape: at least the rows it lists. The admin may add, the seed never shrinks. */
+async function holdsSeed(db: D1Database, businessId: number, spec: Spec): Promise<boolean> {
+  const count = async (sql: string) => (await first<{ n: number }>(db, sql, businessId))!.n;
+  return (
+    (await count(`SELECT COUNT(*) AS n FROM clients WHERE business_id = ? ${SAMPLE_ONLY}`)) >= spec.clients.length &&
+    (await count(`SELECT COUNT(*) AS n FROM documents WHERE business_id = ? AND number IS NOT NULL ${SAMPLE_ONLY}`)) >= spec.documents.length &&
+    (await count(`SELECT COUNT(*) AS n FROM expenses WHERE business_id = ? ${SAMPLE_ONLY}`)) >= spec.expenses.length &&
+    (await count(`SELECT COUNT(*) AS n FROM contracts WHERE business_id = ? ${SAMPLE_ONLY}`)) >= spec.contracts.length
+  );
 }
 
 /**
- * A visitor's sandbox: both masters copied into new businesses the visitor's synthetic user owns.
- * Returns the new business ids in master order.
+ * The masters that no longer match: missing, older than the seed, short of the seed's rows, or
+ * changed since their fingerprint. A master without a fingerprint (built before R29) adopts its
+ * current one. Returns the sample keys to rebuild.
  */
-export async function copySandbox(deps: SampleDeps, owner: Owner): Promise<number[]> {
-  const db = deps.env.DB;
-  await ensureMasters(deps);
-  const now = deps.now ? deps.now() : new Date();
-  const masters = await all<{ business_id: number; sample_key: string; loaded_at: string }>(db, 'SELECT business_id, sample_key, loaded_at FROM demo_master_businesses ORDER BY business_id');
-  const ids: number[] = [];
+export async function staleMasters(db: D1Database): Promise<{ key: string; businessId: number | null }[]> {
+  const rows = await masterBusinesses(db);
+  const stale: { key: string; businessId: number | null }[] = [];
   for (const spec of sampleSet.businesses) {
-    const master = masters.find((m) => m.sample_key === spec.key)!;
-    const { businessId, clients } = await buildBusiness(deps, owner, spec, now);
-    const masterClients = await all<{ id: number; name_en: string }>(db, 'SELECT id, name_en FROM clients WHERE business_id = ?', master.business_id);
-    const clientMap = new Map<number, number>();
-    for (const mc of masterClients) {
-      const key = spec.clients.find((x) => x.nameEn === mc.name_en)?.key;
-      const mine = key ? clients.get(key) : undefined;
-      if (mine) clientMap.set(mc.id, mine);
+    const row = rows.find((r) => r.sample_key === spec.key);
+    if (!row || row.seed_version < SAMPLE_VERSION || !(await holdsSeed(db, row.business_id, spec))) {
+      stale.push({ key: spec.key, businessId: row?.business_id ?? null });
+      continue;
     }
-    await copyExpenses(db, master.business_id, businessId, now, master.loaded_at);
-    await copyContracts(db, master.business_id, businessId, owner.userId, clientMap);
-    ids.push(businessId);
+    const current = await fingerprintOf(db, row.business_id);
+    if (row.fingerprint === null) await run(db, 'UPDATE demo_master_businesses SET fingerprint = ? WHERE business_id = ?', current, row.business_id);
+    else if (row.fingerprint !== current) stale.push({ key: spec.key, businessId: row.business_id });
   }
-  return ids;
+  return stale;
+}
+
+/** A build that has not finished in this time died. The next request takes the lock over. */
+export const BUILD_LOCK_MS = 10 * 60_000;
+
+/** Takes the build lock. True for the one caller that got it. One statement, so two callers never both win. */
+export async function takeBuildLock(db: D1Database, holder: string, now = new Date()): Promise<boolean> {
+  await run(
+    db,
+    `INSERT INTO demo_build_lock (id, holder, started_at, expires_at) VALUES (1, ?, ?, ?)
+     ON CONFLICT (id) DO UPDATE SET holder = excluded.holder, started_at = excluded.started_at, expires_at = excluded.expires_at
+     WHERE demo_build_lock.expires_at <= excluded.started_at`,
+    holder,
+    now.toISOString(),
+    new Date(now.getTime() + BUILD_LOCK_MS).toISOString(),
+  );
+  return (await first<{ holder: string }>(db, 'SELECT holder FROM demo_build_lock WHERE id = 1'))?.holder === holder;
+}
+
+export async function releaseBuildLock(db: D1Database, holder: string): Promise<void> {
+  await run(db, 'DELETE FROM demo_build_lock WHERE id = 1 AND holder = ?', holder);
+}
+
+/** True while a build holds the lock. */
+export async function buildRunning(db: D1Database, now = new Date()): Promise<boolean> {
+  return (await first(db, 'SELECT 1 FROM demo_build_lock WHERE id = 1 AND expires_at > ?', now.toISOString())) !== null;
+}
+
+export type MastersResult = { ready: true; loaded: boolean; businessIds: number[] } | { ready: false; loaded: false; businessIds: number[] };
+
+/**
+ * Loads the masters that are missing or older than the seed, under the build lock. A caller that
+ * finds a build running gets ready: false and shows the "Preparing the sample data" page. A
+ * master is listed only once it is complete. An older one it replaces becomes an ordinary
+ * business, which the next reset removes.
+ */
+export async function ensureMasters(deps: SampleDeps): Promise<MastersResult> {
+  const db = deps.env.DB;
+  const listed = async () => (await masterBusinesses(db)).map((r) => r.business_id);
+  if (await mastersCurrent(db)) return { ready: true, loaded: false, businessIds: await listed() };
+  const holder = crypto.randomUUID();
+  if (!(await takeBuildLock(db, holder, deps.now ? deps.now() : new Date()))) return { ready: false, loaded: false, businessIds: [] };
+  try {
+    // Another caller may have finished between the first check and the lock.
+    if (await mastersCurrent(db)) return { ready: true, loaded: false, businessIds: await listed() };
+    const now = deps.now ? deps.now() : new Date();
+    const owner = await ensureMasterOwner(db);
+    const current = await masterBusinesses(db);
+    for (const spec of sampleSet.businesses) {
+      if (current.some((r) => r.sample_key === spec.key && r.seed_version >= SAMPLE_VERSION)) continue;
+      const { businessId, clients } = await buildBusiness(deps, owner, spec, now);
+      await addMasterExpenses(deps.env, businessId, spec, now);
+      await addMasterContracts(deps.env, owner, businessId, spec, clients, now);
+      const fingerprint = await fingerprintOf(db, businessId);
+      await transaction(db, [
+        stmt(db, 'DELETE FROM demo_master_businesses WHERE sample_key = ?', spec.key),
+        stmt(db, 'INSERT INTO demo_master_businesses (business_id, sample_key, seed_version, fingerprint) VALUES (?, ?, ?, ?)', businessId, spec.key, SAMPLE_VERSION, fingerprint),
+      ]);
+    }
+    return { ready: true, loaded: true, businessIds: await listed() };
+  } finally {
+    await releaseBuildLock(db, holder);
+  }
 }

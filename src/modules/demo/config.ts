@@ -3,8 +3,8 @@ import { DEMO_SIGNING_CERT_PEM, DEMO_SIGNING_KEY_PEM } from './demo-cert';
 
 /**
  * R26: demo mode. One Worker variable, DEMO_MODE=1, turns a Ledger into a public demo: the gate,
- * per-visitor sandboxes, the banner and watermark, a fake Tax Authority, email previews, caps and
- * the admin page. With DEMO_MODE unset, none of it runs. Names and texts come from variables, so
+ * one shared read-only sample set with private visitor drafts (R29), the banner and watermark, a
+ * fake Tax Authority, previews instead of issuing and sending, caps and the admin page. With DEMO_MODE unset, none of it runs. Names and texts come from variables, so
  * any Ledger can run its own demo.
  */
 
@@ -28,7 +28,7 @@ export interface DemoCaps {
   dailySandboxes: number;
 }
 
-/** Per sandbox per day, and per whole demo per day. Variables override every default. */
+/** Per visitor session per day, and per whole demo per day. Variables override every default. */
 export function demoCaps(env: Env): DemoCaps {
   return {
     documents: num(env.DEMO_CAP_DOCUMENTS, 50),
@@ -67,11 +67,13 @@ export function demoTexts(env: Env): DemoTexts {
 /** The domain synthetic demo users sign in under. Nothing is ever sent to it. */
 export const DEMO_USER_DOMAIN = 'sandbox.invalid';
 export const MASTER_OWNER_EMAIL = `sample-owner@${DEMO_USER_DOMAIN}`;
-export const visitorEmail = (sandboxId: number) => `visitor-${sandboxId}@${DEMO_USER_DOMAIN}`;
 
-/** Session cookie, 24 hours. */
+/** Session cookie. R29: a visitor session ends after 30 idle minutes, the admin's after 24 hours. */
 export const SESSION_COOKIE = 'ledger_demo';
 export const SESSION_HOURS = 24;
+export const SESSION_IDLE_MINUTES = 30;
+/** A request refreshes the idle clock at most this often, so reads do not write on every call. */
+export const SESSION_TOUCH_SECONDS = 60;
 
 /** A fixed token key for the fake Tax Authority's tokens. They carry nothing. */
 const DEMO_ITA_TOKEN_KEY = btoa(String.fromCharCode(...Array.from({ length: 32 }, (_, i) => (i * 7 + 3) % 256)));
@@ -118,7 +120,7 @@ export function demoEnv(env: Env): Env {
   } as Env;
 }
 
-/** Today in Israel, the day the caps and sandboxes count by. */
+/** Today in Israel, the day the caps and visits count by. */
 export function demoDay(now = new Date()): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
 }
