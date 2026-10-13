@@ -2,7 +2,7 @@
 
 Open-source invoicing, expenses and bookkeeping for Israeli businesses. Built for עוסק פטור and עוסק מורשה. Runs on your own Cloudflare account. Your data stays in your own database.
 
-The product page, in English and Hebrew, is published with GitHub Pages from the `/docs` folder. The link is in this repository's **About** box.
+Product page: [English](https://matanlevanon.github.io/open-ledger-il/) · [עברית](https://matanlevanon.github.io/open-ledger-il/he.html) · Live demo: [sampleledger.matanlevanon.com](https://sampleledger.matanlevanon.com)
 
 > **Not tax or legal advice.** You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant before you issue a real document.
 
@@ -10,7 +10,7 @@ The product page, in English and Hebrew, is published with GitHub Pages from the
 
 **Free, on your own.** Open Ledger IL is free to install and use, with no license fee and no usage limits. The setup guide, [docs/deploy.md](docs/deploy.md), walks you through it step by step: Cloudflare account, database, sign-in and the Tax Authority connection. Updates are published here for free. You apply them when you choose.
 
-**Set up for you.** Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪900, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself. Ask through the request form on the product page. The link is in this repository's **About** box.
+**Set up for you.** Prefer not to do it yourself? I install and deploy it on your own Cloudflare and Tax Authority accounts, and hand it over working. ₪699, one time. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself. Ask through the request form on the product page ([English](https://matanlevanon.github.io/open-ledger-il/#options) · [עברית](https://matanlevanon.github.io/open-ledger-il/he.html#options)).
 
 ## Who it is for
 
