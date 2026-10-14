@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The עוסק פטור ceiling · Open Ledger IL</title>
+<meta name="description" content="What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/osek-patur-ceiling/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/osek-patur-ceiling/">
+<meta property="og:site_name" content="Open Ledger IL">
+<meta property="og:title" content="The עוסק פטור ceiling · Open Ledger IL">
+<meta property="og:description" content="What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/">
+<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-osek-patur-ceiling.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The עוסק פטור ceiling · Open Ledger IL">
+<meta name="twitter:description" content="What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.">
+<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-osek-patur-ceiling.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
+  --text: #0f172a; --text-dim: #475569; --text-mute: #64748b; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
+  --orange: #d97706; --purple: #7c3aed; --radius: 16px; --maxw: 1120px; --shadow: 0 24px 60px -28px rgba(15,23,42,.35); color-scheme: light; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; white-space: nowrap; }
+.brand svg { width: 26px; height: 26px; flex: 0 0 auto; }
+.nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--text-dim); }
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--text); }
+.nav-end { display: flex; align-items: center; gap: 10px; }
+.lang { font-size: 14px; color: var(--text-dim); text-decoration: none; padding: 8px 10px; }
+.lang:hover { color: var(--text); }
+@media (max-width: 760px) { .nav-links { display: none; } }
+@media (max-width: 480px) { .nav-end .btn-sm { display: none; } }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s, background .15s; }
+.btn-primary { background: linear-gradient(180deg, var(--green), var(--green-2)); color: #ffffff; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(22,163,74,.7); }
+.btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
+.btn-ghost:hover { border-color: var(--text-mute); }
+.btn-sm { padding: 9px 16px; font-size: 14px; border-radius: 10px; }
+.hero { padding: 76px 0 44px; text-align: center; }
+.badge { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; margin-bottom: 22px; }
+.badge b { color: var(--green); font-weight: 600; }
+h1 { font-size: clamp(32px, 5.2vw, 54px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 16px; font-weight: 800; }
+.lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-dim); max-width: 680px; margin: 0 auto 28px; }
+.cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
+.shot { margin: 48px auto 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--surface); }
+.shot img { width: 100%; }
+.shot-cap { font-size: 13px; color: var(--text-mute); text-align: center; margin-top: 12px; }
+section { padding: 88px 0; }
+section + section { border-top: 1px solid var(--border-soft); }
+section.plain { padding-top: 24px; border-top: 0; }
+.sec-head { text-align: center; max-width: 620px; margin: 0 auto 40px; }
+.sec-head.sub { margin-top: 80px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+[dir=rtl] .eyebrow, [dir=rtl] th { letter-spacing: 0; }
+h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02em; margin: 0 0 10px; font-weight: 700; }
+.sec-head p { color: var(--text-dim); margin: 0; font-size: 17px; }
+.sec-head p:empty { display: none; }
+/* Hero links: three equal secondary buttons under the demo button. */
+.cta-links .btn { min-width: 0; }
+.btn-setup { border-color: rgba(22,163,74,.45); color: var(--green-2); }
+.btn-setup:hover { border-color: var(--green); }
+/* Highlights: six items, no boxes. */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 40px; max-width: 980px; margin: 0 auto; }
+@media (max-width: 860px) { .features { grid-template-columns: repeat(2, 1fr); gap: 28px 24px; } }
+@media (max-width: 520px) { .features { grid-template-columns: 1fr; } }
+.feat .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 12px; background: #e8efff; font-size: 18px; color: var(--blue); }
+.feat h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
+.feat p { margin: 0; color: var(--text-dim); font-size: 15px; }
+/* Every feature: closed groups the reader opens. */
+.flist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; max-width: 980px; margin: 0 auto; align-items: start; }
+@media (max-width: 760px) { .flist { grid-template-columns: 1fr; } }
+.fgroup { border-bottom: 1px solid var(--border); }
+.fgroup summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; font-weight: 600; font-size: 16px; }
+.fgroup summary::-webkit-details-marker { display: none; }
+.fgroup summary::after { content: '+'; margin-inline-start: auto; color: var(--text-mute); font-size: 20px; font-weight: 400; line-height: 1; }
+.fgroup[open] summary::after { content: '\2212'; }
+.fgroup .count { font-size: 12px; font-weight: 600; color: var(--text-mute); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
+.fgroup ul { list-style: none; margin: 0 0 16px; padding: 0; }
+.fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
+.fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+/* Phones, right under the main screenshot. */
+.phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; max-width: 1000px; margin: 0 auto; }
+@media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }
+.phone { margin: 0; }
+.phone .frame { background: #0a0f18; border-radius: 30px; padding: 8px; box-shadow: var(--shadow); }
+.phone img { width: 100%; height: auto; border-radius: 23px; }
+.phone figcaption { padding: 14px 4px 0; text-align: center; font-size: 13.5px; color: var(--text-mute); line-height: 1.45; }
+.phone figcaption b { display: block; color: var(--text); font-size: 15px; font-weight: 650; margin-bottom: 2px; }
+@media (max-width: 620px) { .phone .frame { border-radius: 22px; padding: 5px; } .phone img { border-radius: 18px; } .phone figcaption { font-size: 12px; } .phone figcaption b { font-size: 13.5px; } }
+/* Screenshots: image first, one caption line. */
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 28px; align-items: start; }
+@media (max-width: 820px) { .gallery { grid-template-columns: 1fr; } }
+.gcard { margin: 0; }
+.gcard img { width: 100%; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px -18px rgba(15,23,42,.35); }
+.gcard figcaption { padding: 12px 2px 0; color: var(--text-dim); font-size: 14.5px; }
+.gcard figcaption b { color: var(--text); font-weight: 650; }
+/* Rules: a checked list in two columns. */
+.rules { list-style: none; padding: 0; margin: 0 auto; max-width: 980px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px 40px; }
+@media (max-width: 760px) { .rules { grid-template-columns: 1fr; } }
+.rules li { position: relative; padding-inline-start: 34px; }
+.rules li::before { content: '\2713'; position: absolute; inset-inline-start: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: #dcfce7; color: var(--green-2); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.rules b { display: block; font-weight: 650; margin-bottom: 2px; }
+.rules span { color: var(--text-dim); font-size: 14.5px; }
+/* How it works: numbered steps without boxes. */
+.steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
+@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+.step { counter-increment: step; }
+.step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+.step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
+.step p { margin: 0; color: var(--text-dim); font-size: 15px; }
+.cmd { display: flex; align-items: center; gap: 12px; max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 12px 12px 16px; direction: ltr; }
+.cmd code { font-size: 13px; color: var(--text-dim); overflow-x: auto; white-space: nowrap; flex: 1; text-align: left; background: none; border: 0; padding: 0; }
+.cmd button { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
+.cmd button:hover { color: var(--text); border-color: var(--text-mute); }
+.cmd-note { font-size: 13px; color: var(--text-mute); margin-top: 10px; text-align: center; }
+table { width: 100%; max-width: 980px; margin: 0 auto; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: start; padding: 13px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--text-mute); font-weight: 600; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; }
+td:first-child { width: 36%; padding-inline-end: 18px; }
+td b { font-weight: 600; }
+td span { color: var(--text-dim); }
+.tag { display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-inline-start: 8px; border: 1px solid var(--border); color: var(--text-mute); vertical-align: 1px; }
+.tag.req { color: var(--green); border-color: rgba(22,163,74,.4); }
+@media (max-width: 620px) { td { display: block; border-bottom: 0; padding: 4px 0; width: auto !important; } tr { display: block; border-bottom: 1px solid var(--border); padding: 10px 0; } thead { display: none; } }
+/* Workers Paid, registration and limits, closed by default. */
+.more { max-width: 980px; margin: 28px auto 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.more summary { cursor: pointer; padding: 16px 20px; font-weight: 600; }
+.more-body { padding: 0 20px 18px; color: var(--text-dim); font-size: 14.5px; }
+.more-body h3 { color: var(--text); font-size: 15.5px; margin: 18px 0 6px; }
+.more-body p { margin: 0 0 8px; }
+.more-body ul { margin: 0; padding-inline-start: 20px; }
+.more-body li { margin: 4px 0; }
+.more-body a { color: var(--blue); }
+.refs { border-top: 1px solid var(--border-soft); margin-top: 12px; padding-top: 10px; font-size: 13px; color: var(--text-mute); }
+.refs b { color: var(--text-dim); font-weight: 600; }
+.refs ol { margin: 6px 0 0; padding-inline-start: 20px; }
+.refs q { color: var(--text-dim); unicode-bidi: isolate; }
+.more-body sup a { text-decoration: none; font-size: 11px; }
+.refs li:target { background: var(--surface-2); border-radius: 6px; }
+/* Pricing. */
+#options { background: var(--bg-2); }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1080px; margin: 0 auto; }
+@media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 520px; } }
+.plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
+.plans-2 { grid-template-columns: repeat(2, 1fr); max-width: 860px; }
+@media (max-width: 720px) { .plans-2 { grid-template-columns: 1fr; } }
+.plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
+.plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
+.price { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 14px; }
+.price span { font-size: 15px; font-weight: 500; color: var(--text-mute); }
+.plan ul { list-style: none; margin: 0 0 22px; padding: 0; flex: 1; }
+.plan li { position: relative; padding-inline-start: 22px; margin: 8px 0; color: var(--text-dim); font-size: 15px; }
+.plan li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+.final { text-align: center; }
+.final .cta { margin-top: 26px; margin-bottom: 0; }
+footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: var(--text-mute); font-size: 14px; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+.foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; }
+.foot a:hover { color: var(--text); }
+.toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.btn-lg { padding: 18px 36px; font-size: 18px; border-radius: 14px; }
+.cta-demo { margin-bottom: 10px; }
+.demo-note { font-size: 14px; color: var(--text-mute); margin: 0 0 22px; }
+@media (max-width: 640px) { .btn-demo { width: 100%; } .cta-links { flex-direction: column; } .cta-links .btn { width: 100%; } }
+.setup-form { max-width: 860px; margin: 24px auto 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; scroll-margin-top: 84px; }
+.setup-form h3 { grid-column: 1 / -1; margin: 0; }
+.setup-form label { display: grid; gap: 6px; font-size: 14px; color: var(--text-dim); }
+.setup-form .full { grid-column: 1 / -1; }
+.setup-form input, .setup-form select, .setup-form textarea { font: inherit; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); }
+.setup-form .hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.setup-form .status { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--text-dim); }
+@media (max-width: 640px) { .setup-form { grid-template-columns: 1fr; } }
+section[id] { scroll-margin-top: 64px; }
+
+.skip { position: absolute; inset-inline-start: -9999px; }
+.skip:focus { inset-inline-start: 12px; top: 12px; z-index: 60; background: var(--surface); padding: 8px 12px; border-radius: 8px; }
+.nav-links a[aria-current=page] { color: var(--text); font-weight: 600; }
+.page { padding: 40px 22px 8px; }
+.page h1 { font-size: clamp(30px, 4.4vw, 46px); }
+.page .lead { margin-inline: 0; }
+.crumbs { font-size: 13px; color: var(--text-mute); margin-bottom: 18px; }
+.crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; }
+.crumbs li + li::before { content: '/'; margin-inline-end: 6px; color: var(--border); }
+.crumbs a { text-decoration: none; color: var(--text-dim); }
+.prose { max-width: 760px; font-size: 16.5px; }
+.prose p, .prose li { color: var(--text-dim); }
+.prose h2 { font-size: 24px; margin: 34px 0 10px; }
+.prose h3 { font-size: 18px; margin: 24px 0 8px; }
+.prose a { color: var(--blue); }
+.prose a.btn-primary { color: #ffffff; }
+.prose a.btn-ghost { color: var(--text); }
+.prose ul, .prose ol { padding-inline-start: 22px; }
+.strip { background: var(--bg-2); }
+.strip .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.strip h2 { margin: 0 0 6px; }
+.strip p { margin: 0; color: var(--text-dim); max-width: 640px; }
+.points { list-style: none; padding: 0; margin: 0 auto 28px; max-width: 760px; text-align: start; }
+.points li { position: relative; padding-inline-start: 28px; margin: 10px 0; color: var(--text-dim); }
+.points li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+.demo-band { text-align: center; }
+.more-link { text-align: center; margin-top: 32px; }
+.more-link a { color: var(--blue); font-weight: 600; text-decoration: none; }
+.cert { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 820px) { .cert { grid-template-columns: 1fr; } }
+.cert img { width: 100%; height: auto; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); background: #fff; }
+.cert .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0; }
+.facts { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 26px; max-width: 860px; margin: 0 auto; }
+.facts h2 { font-size: 20px; margin: 0 0 10px; }
+.facts ul { margin: 0; padding-inline-start: 20px; color: var(--text-dim); }
+.facts li { margin: 6px 0; }
+.draft-bar { background: #fef3c7; border-bottom: 1px solid #fcd34d; color: #78350f; text-align: center; font-size: 14px; padding: 8px 16px; }
+.guide-list { list-style: none; padding: 0; margin: 0; max-width: 760px; }
+.guide-list li { border-bottom: 1px solid var(--border); padding: 16px 0; }
+.guide-list a { font-weight: 650; font-size: 18px; text-decoration: none; }
+.guide-list p { margin: 4px 0 0; color: var(--text-dim); }
+.changelog { direction: ltr; text-align: left; }
+.sources { font-size: 14px; }
+.faq dt { font-weight: 650; margin-top: 16px; }
+.faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="draft-bar" role="note">Draft. This guide is under review and not published yet.</div>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="8" fill="#141d2e" stroke="#26344b" stroke-width="1.5"/>
+        <rect x="8" y="6" width="16" height="20" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
+        <path d="M12 12h8M12 16h8" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 20h5" stroke="#9b6dff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Open Ledger IL
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a>
+    </nav>
+    <div class="nav-end">
+      <a class="lang" href="/he/guides/osek-patur-ceiling/" hreflang="he" lang="he">עברית</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il">View on GitHub</a>
+    </div>
+  </div>
+</header>
+<main id="top">
+  <div class="wrap page">
+    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">The עוסק פטור ceiling: how to track it and what happens when you cross it</li></ol></nav>
+    <h1>The עוסק פטור ceiling: how to track it and what happens when you cross it</h1>
+    <p class="lead">What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.</p>
+  </div>
+  <section class="plain">
+    <div class="wrap prose">
+      <p class="shot-cap" style="text-align:start">Updated 2026-10-14</p>
+      <p>An עוסק פטור is a business whose annual turnover stays under a ceiling set by law. The ceiling for 2026 is ₪122,833 <sup><a href="#src-1">[1]</a></sup>. It is updated every year in line with the index, and next year's figure is usually published around January <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>This guide covers how to track turnover through the year, and what happens the day it goes past the ceiling.</p>
+<h2 id="what-counts-as-turnover">What counts as turnover</h2>
+<p>Turnover is the total of your transactions, not your profit. As secondary sources summarise it, the test looks at expected turnover, not only money already received <sup><a href="#src-1">[1]</a></sup>. [TO CHECK] The wording of the law itself, since the secondary sources were not checked against the primary text.</p>
+<p>So adding up receipts is not enough. A payment request that is still open is money you expect, and it belongs in the picture now.</p>
+<h2 id="how-to-track-it-through-the-year">How to track it through the year</h2>
+<p>Good tracking rests on three figures:</p>
+<ol><li><b>Turnover to date</b>: the total of receipts since the start of the year.</li><li><b>Open requests</b>: payment requests and pro formas issued and not yet paid.</li><li><b>This year's ceiling</b>: the amount the law sets for the current year.</li></ol>
+<p>Add the first two and compare them with the third, and you see how much room is left. Set alerts before you reach the edge, for example at 70, 85 and 95 percent of the ceiling <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>The ceiling itself changes every year. A system that keeps the ceiling in a table, one row per year, needs no code change when the figure is updated <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="what-happens-when-you-cross-it">What happens when you cross it</h2>
+<p>As secondary sources summarise it <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>The switch is neither automatic nor on a fixed date.</b> It happens when turnover goes past the ceiling.</li><li><b>VAT applies from the moment you cross.</b> Earlier transactions stay exempt.</li><li><b>You tell the VAT office within 15 days of the event</b>, under regulation 8(a) of the VAT (registration) regulations <sup><a href="#src-2">[2]</a></sup>.</li></ul>
+<p>[TO CHECK] Whether the transaction that crosses the ceiling carries VAT in full, or only the part above the ceiling. The source document leaves this open too <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>After the switch, the business issues tax invoices, charges VAT and files VAT reports. Open payment requests issued before the switch are re-priced with VAT <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="what-to-do-before-you-get-there">What to do before you get there</h2>
+<ul><li><b>Look early.</b> When the room left is small, plan the timing of the switch with your accountant.</li><li><b>Watch open requests.</b> One large transaction can take you past the ceiling.</li><li><b>Get ready for tax invoices.</b> After the switch, a tax invoice above the threshold needs an allocation number from the Tax Authority <sup><a href="#src-1">[1]</a></sup>. Setting up that connection takes time.</li></ul>
+<h2 id="what-changes-the-day-after">What changes the day after</h2>
+<p>An עוסק מורשה works by other rules. Know them before you reach the ceiling <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>VAT</b>: the rate is 18%, from 1 January 2025 <sup><a href="#src-1">[1]</a></sup>.</li><li><b>A tax invoice within 14 days</b>: a service provider reporting on a cash basis issues a tax invoice within 14 days of receiving payment <sup><a href="#src-1">[1]</a></sup>.</li><li><b>Client details</b>: a tax invoice above a set amount before VAT needs the client's ID or VAT number <sup><a href="#src-1">[1]</a></sup>.</li><li><b>A periodic VAT report</b>: monthly or bi-monthly. Check with your accountant which applies to you <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<h2 id="the-switch-goes-one-way">The switch goes one way</h2>
+<p>An עוסק פטור that becomes מורשה does not go back through the system. The פטור document series close, and new series open for tax invoices, tax invoice/receipts and credit invoices <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="how-open-ledger-il-does-it">How Open Ledger IL does it</h2>
+<p>Open Ledger IL shows a ceiling meter on the dashboard: turnover to date plus open requests, against this year's ceiling. Alerts go out at 70, 85 and 95 percent, and when turnover plus open requests passes the ceiling. A receipt that would take turnover past the ceiling stops before it is issued, and the screen offers to confirm the switch with an effective date, to issue as פטור while you stay at or under the ceiling, or to cancel. After the switch, a 15-day task reminds you to tell the VAT office, and open payment requests are re-priced with VAT. Every alert and decision is logged.</p>
+      <div class="guide-cta">
+        <a class="btn btn-primary" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener" data-demo>Try the live demo</a>
+        <a class="btn btn-ghost" href="/pricing/">See pricing and setup</a>
+      </div>
+      <h2 id="faq">Questions and answers</h2>
+      <dl class="faq"><dt>What is the ceiling this year?</dt><dd>₪122,833 for 2026. The ceiling is updated every year.</dd><dt>Do I become מורשה on 1 January?</dt><dd>No. The switch happens when turnover goes past the ceiling, not on a fixed date.</dd><dt>Is the test based on money received?</dt><dd>Not only. The test looks at expected turnover, not only money already received.</dd><dt>How soon do I tell the VAT office?</dt><dd>Within 15 days of the event, under regulation 8(a) of the VAT registration regulations, as secondary sources summarise it.</dd><dt>What is the VAT rate after the switch?</dt><dd>18%, the rate in force from 1 January 2025.</dd></dl>
+      <h2 id="sources">Sources</h2>
+      <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.btl.gov.il/Laws1/02_0022_100001.pdf" rel="noopener">https://www.btl.gov.il/Laws1/02_0022_100001.pdf</a></li></ol>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a href="https://github.com/matanlevanon/open-ledger-il">GitHub</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md">Deploy guide</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md">Setup guide</a>
+      <a href="/license/">AGPL-3.0 licence</a>
+      <a href="/changelog/">Changelog</a>
+    </div>
+    <div>Self-hosted on Cloudflare Workers · Open source under AGPL-3.0 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+  </div>
+</footer>
+</body>
+</html>

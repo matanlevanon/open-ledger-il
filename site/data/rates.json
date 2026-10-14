@@ -1,0 +1,39 @@
+{
+  "year": 2026,
+  "checked": "2026-10-14",
+  "note": "Figures that change by year or by law. The guides read them from here as {{key}}, so one edit updates every page. Check each one against its source before a new year.",
+  "rates": {
+    "patur_ceiling": {
+      "value": 122833,
+      "unit": "ILS",
+      "year": 2026,
+      "label_en": "The עוסק פטור annual turnover ceiling",
+      "label_he": "תקרת המחזור השנתית של עוסק פטור",
+      "source": "docs/legal-requirements.md"
+    },
+    "vat_rate": {
+      "value": 18,
+      "unit": "percent",
+      "from": "2025-01-01",
+      "label_en": "The VAT rate",
+      "label_he": "שיעור המע\"מ",
+      "source": "docs/legal-requirements.md"
+    },
+    "workers_paid_price": {
+      "value": 5,
+      "unit": "USD",
+      "per": "month",
+      "label_en": "The starting price of the Cloudflare Workers Paid plan",
+      "label_he": "המחיר ההתחלתי של תוכנית Workers Paid של Cloudflare",
+      "source": "https://developers.cloudflare.com/workers/platform/pricing/"
+    },
+    "allocation_threshold": {
+      "value": 5000,
+      "unit": "ILS",
+      "from": "2026-06-01",
+      "label_en": "The amount before VAT above which a qualifying tax invoice needs an allocation number",
+      "label_he": "הסכום לפני מע\"מ שמעליו חשבונית מס מזכה צריכה מספר הקצאה",
+      "source": "https://www.gov.il/he/service/request-assignment-number-for-tax-invoice"
+    }
+  }
+}

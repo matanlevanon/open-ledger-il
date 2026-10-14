@@ -668,6 +668,113 @@ def key_facts(lang):
     return ''
 
 
+# ---------------------------------------------------------------------------------------------
+# Guides: scripts/guides/<lang>/<slug>.md, with front matter
+# ---------------------------------------------------------------------------------------------
+
+GUIDES_DIR = ROOT / 'scripts' / 'guides'
+MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+
+def load_rates():
+    path = OUT / 'data' / 'rates.json'
+    if not path.exists():
+        sys.exit('site/data/rates.json is missing. The guides read yearly figures from it.')
+    return json.loads(path.read_text(encoding='utf-8'))
+
+
+def token_values(lang, rates):
+    """Every {{token}} a guide may use, formatted for the language. One edit to rates.json updates them all."""
+    r = rates['rates']
+
+    def money(item):
+        sign = {'ILS': '₪', 'USD': '$'}[item['unit']]
+        return f'{sign}{item["value"]:,}'
+
+    def day(iso):
+        y, m, d = (int(x) for x in iso.split('-'))
+        return f'{d}.{m}.{y}' if lang == 'he' else f'{d} {MONTHS_EN[m - 1]} {y}'
+
+    return {
+        'repo': REPO, 'site': SITE_URL,
+        'patur_ceiling': money(r['patur_ceiling']), 'patur_ceiling_year': str(r['patur_ceiling']['year']),
+        'vat_rate': f'{r["vat_rate"]["value"]}%', 'vat_rate_from': day(r['vat_rate']['from']),
+        'allocation_threshold': money(r['allocation_threshold']), 'allocation_threshold_from': day(r['allocation_threshold']['from']),
+        'workers_paid_price': money(r['workers_paid_price']),
+    }
+
+
+def fill(text, values, where):
+    def sub(m):
+        key = m.group(1)
+        if key not in values:
+            sys.exit(f'{where}: unknown token {{{{{key}}}}}. Add it to site/data/rates.json and token_values().')
+        return values[key]
+    return re.sub(r'\{\{\s*([a-z_]+)\s*\}\}', sub, text)
+
+
+def seo_title(title):
+    """The <title>: the guide title when it fits, else the part before the colon and the brand."""
+    if len(title) < 60:
+        return title
+    short = title.split(':')[0].strip()
+    return f'{short} · Open Ledger IL' if len(short) + 17 < 60 else short[:59]
+
+
+def load_guides(rates):
+    guides = []
+    for lang in LANGS:
+        folder = GUIDES_DIR / lang
+        if not folder.exists():
+            continue
+        values = token_values(lang, rates)
+        for f in sorted(folder.glob('*.md')):
+            where = f'scripts/guides/{lang}/{f.name}'
+            meta, body = md.front_matter(f.read_text(encoding='utf-8'))
+            for key in ('title', 'description', 'updated'):
+                if not meta.get(key):
+                    sys.exit(f'{where}: front matter needs {key}.')
+            meta = json.loads(fill(json.dumps(meta, ensure_ascii=False), {k: v.replace('"', '\\"') for k, v in values.items()}, where))
+            body = fill(body, values, where)
+            # The page text a reader sees: the body and the questions and answers.
+            faq_text = ' '.join(str(x.get('q', '')) + ' ' + str(x.get('a', '')) for x in (meta.get('faq') or []) if isinstance(x, dict))
+            words = len(re.findall(r'\S+', md.plain(re.sub(r'^#+ ', '', body, flags=re.M)) + ' ' + faq_text))
+            guides.append(dict(
+                lang=lang, slug=f.stem, path=path_of(lang, 'guide', f.stem), title=str(meta['title']), desc=str(meta['description']),
+                published=meta.get('published') is True, updated=str(meta['updated']), sources=list(meta.get('sources') or []),
+                faq=list(meta.get('faq') or []), body=body, words=words, todo=body.count('[TO CHECK]'), file=where))
+    return guides
+
+
+def build_guide(g, guides):
+    lang = g['lang']
+    u = UI[lang]
+    pair = {x['lang']: x['path'] for x in guides if x['slug'] == g['slug']}
+    page = dict(lang=lang, key='guide', slug=g['slug'], path=g['path'], og=f'guide-{g["slug"]}', title=seo_title(g['title']),
+                desc=g['desc'], h1=g['title'], jsonld=[], md='', pair=pair, noindex=not g['published'], draft=not g['published'],
+                guide=g)
+    page['crumbs'] = [(PAGES[lang]['home']['crumb'], path_of(lang, 'home')), (PAGES[lang]['guides']['crumb'], path_of(lang, 'guides')), (g['title'], None)]
+    faq = ''.join(f'<dt>{E(item["q"])}</dt><dd>{E(item["a"])}</dd>' for item in g['faq'] if isinstance(item, dict))
+    sources = ''.join(f'<li id="src-{i + 1}"><a href="{E(s)}" rel="noopener">{E(s)}</a></li>' for i, s in enumerate(g['sources']))
+    updated = f'{u["guide_updated"]} {g["updated"]}'
+    main = page_intro(page, E(g['desc'])) + f'''
+  <section class="plain">
+    <div class="wrap prose">
+      <p class="shot-cap" style="text-align:start">{E(updated)}</p>
+      {md.to_html(g['body'])}
+      <div class="guide-cta">
+        <a class="btn btn-primary" {demo_attrs()}>{E(u['guide_cta_demo'])}</a>
+        <a class="btn btn-ghost" href="{path_of(lang, 'pricing')}">{E(u['guide_cta_pricing'])}</a>
+      </div>
+      <h2 id="faq">{E(u['guide_faq'])}</h2>
+      <dl class="faq">{faq}</dl>
+      <h2 id="sources">{E(u['guide_sources'])}</h2>
+      <ol class="sources">{sources}</ol>
+    </div>
+  </section>'''
+    return page, main, ''
+
+
 BUILDERS = {
     'home': build_home, 'features': build_features, 'pricing': build_pricing, 'registration': build_registration,
     'demo': build_demo, 'changelog': build_changelog, 'license': build_license,
@@ -718,7 +825,8 @@ def main():
     global ASSETS
     OUT.mkdir(exist_ok=True)
     ASSETS = Assets()
-    guides = []
+    rates = load_rates()
+    guides = load_guides(rates)
     built = []
     for lang in LANGS:
         for key in KEYS:
@@ -726,6 +834,8 @@ def main():
                 built.append(build_guides_index(lang, guides))
             else:
                 built.append(BUILDERS[key](lang))
+    for g in guides:
+        built.append(build_guide(g, guides))
     pages = [p for p, _, _ in built]
     check_meta(pages)
     written = set()
@@ -738,6 +848,11 @@ def main():
     og = [dict(file=f'og/{p["lang"]}-{p["og"]}.png', title=p['h1'] or PAGES[p['lang']]['home']['title'].split(':')[0],
                kicker=p['title'], lang=p['lang']) for p in pages]
     (REPORTS / 'og-pages.json').write_text(json.dumps(og, ensure_ascii=False, indent=1), encoding='utf-8')
+    report = [dict(file=g['file'], path=g['path'], words=g['words'], todo=g['todo'], published=g['published']) for g in guides]
+    (REPORTS / 'guides.json').write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding='utf-8')
+    for g in guides:
+        if not 600 <= g['words'] <= 1200:
+            print(f'note: {g["file"]} has {g["words"]} words, the target is 600 to 1,200')
     print(f'built {len(pages)} pages into {OUT}')
 
 
