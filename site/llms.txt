@@ -1,0 +1,30 @@
+# Open Ledger IL
+
+> Open Ledger IL (חשבונאות פתוחה) is open-source invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority under certificate 281801. It is free from source under the AGPL-3.0, or set up for you for ₪699 once.
+
+## Pages in English
+
+- [Open Ledger IL: invoices and books on your own Cloudflare](https://open-ledger.matanlevanon.com/): Open-source invoicing, receipts and bookkeeping for עוסק פטור and עוסק מורשה. Registered with the Israel Tax Authority. Runs on your Cloudflare.
+- [Open Ledger IL features: documents, reports, rules](https://open-ledger.matanlevanon.com/features/): Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.
+- [Open Ledger IL pricing: free, or set up for you](https://open-ledger.matanlevanon.com/pricing/): Run Open Ledger IL free from source, or have it set up for you for ₪699 once. What you need, how it works and the known limits.
+- [Open Ledger IL: Tax Authority certificate 281801](https://open-ledger.matanlevanon.com/registration/): Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. See the certificate.
+- [Open Ledger IL live demo: try it in your browser](https://open-ledger.matanlevanon.com/demo/): Open the Open Ledger IL demo: sample businesses, the real screens, private drafts and preview PDFs. No install. The sample data stays as it is.
+- [Open Ledger IL guides: invoicing for Israeli businesses](https://open-ledger.matanlevanon.com/guides/): Plain guides to Israeli invoicing: allocation numbers, the עוסק פטור ceiling, registered software, the unified file and which document is income.
+- [Open Ledger IL changelog: what changed in each version](https://open-ledger.matanlevanon.com/changelog/): Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.0.
+- [Open Ledger IL licence: AGPL-3.0, free from source](https://open-ledger.matanlevanon.com/license/): The Open Ledger IL code is free under the GNU AGPL-3.0. What you can do with it, what you owe others, and where to read the full text.
+
+## Pages in Hebrew
+
+- [Open Ledger IL: חשבוניות והנהלת חשבונות בענן שלך](https://open-ledger.matanlevanon.com/he/): מערכת קוד פתוח לחשבוניות, קבלות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.
+- [היכולות של Open Ledger IL: מסמכים, דוחות וכללים](https://open-ledger.matanlevanon.com/he/features/): כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.
+- [מחירים: Open Ledger IL בחינם או בהקמה עבורך](https://open-ledger.matanlevanon.com/he/pricing/): הפעלת Open Ledger IL בחינם מקוד המקור, או הקמה עבורך ב-₪699 חד פעמי. מה צריך, איך זה עובד ומה המגבלות.
+- [Open Ledger IL רשומה ברשות המסים: תעודה 281801](https://open-ledger.matanlevanon.com/he/registration/): Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. צפו בתעודה.
+- [הדגמה חיה של Open Ledger IL: נסו בדפדפן](https://open-ledger.matanlevanon.com/he/demo/): פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.
+- [מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל](https://open-ledger.matanlevanon.com/he/guides/): מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.
+- [יומן שינויים של Open Ledger IL: מה חדש בכל גרסה](https://open-ledger.matanlevanon.com/he/changelog/): כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+- [רישיון Open Ledger IL: AGPL-3.0, חינם מקוד המקור](https://open-ledger.matanlevanon.com/he/license/): הקוד של Open Ledger IL חופשי ברישיון GNU AGPL-3.0. מה מותר לעשות בו, מה חייבים לאחרים, ואיפה הנוסח המלא.
+
+## Optional
+
+- [Source code](https://github.com/matanlevanon/open-ledger-il): the repository, AGPL-3.0
+- [Full text of every page](https://open-ledger.matanlevanon.com/llms-full.txt): one Markdown file

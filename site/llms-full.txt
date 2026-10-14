@@ -1,0 +1,1194 @@
+**חינם** · קוד פתוח · רשומה ברשות המסים · גרסה 1.7.0
+
+# חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, על תשתית שבבעלותך.
+
+הצעות מחיר, קבלות, חשבוניות מס, חוזים והוצאות, עם מספור חוקי ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר שלך.
+
+[נסו את ההדגמה](https://sampleledger.matanlevanon.com)
+
+בלי התקנה. נתוני דוגמה, נפתח תוך שניות.
+
+[לקוד](https://github.com/matanlevanon/open-ledger-il) [למדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) [לאפשרויות ההתקנה](https://open-ledger.matanlevanon.com/he/pricing/)
+
+כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.
+
+## הנהלת החשבונות בכיס
+
+מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.
+
+**מהיר** מצלמים, בוחרים מהגלריה או פותחים מסמך חדש.
+
+**בדיקה ותיוק** Claude ממלא את השדות. אתה בודק ומתייק.
+
+**פעילות אחרונה** המסמכים וההוצאות האחרונים, עם סכום וסטטוס.
+
+**לוח בקרה** פריטים פתוחים ובאיחור, תזרים ותקרת עוסק פטור.
+
+מה היא עושה
+
+## כל מה שעסק ישראלי קטן מפיק ומתייק
+
+לעוסק פטור היום ולעוסק מורשה מחר.
+
+### כל סוגי המסמכים
+
+הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס, בעברית או בעברית ואנגלית.
+
+### מספור שלא נשבר
+
+סדרות בלי חורים, מסמך סופי נעול ו-PDF חתום.
+
+### מספרי הקצאה
+
+API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.
+
+### חוזים והזמנות עבודה
+
+הלקוח חותם בכל מסך. הזמנה חתומה הופכת לחשבון עסקה.
+
+### הוצאות ש-Claude קורא
+
+מצלמים קבלה או מייבאים חודש מ-Google Drive.
+
+### דוחות לרואה החשבון
+
+רווח והפסד, כרטסות, מבנה אחיד וכניסה לרואה החשבון.
+
+[לכל היכולות](https://open-ledger.matanlevanon.com/he/features/)
+
+## עובדות עיקריות
+
+- Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
+- היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
+- היא חינמית מקוד המקור, ברישיון AGPL-3.0.
+- הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי.
+- היא תומכת בעוסק פטור ובעוסק מורשה.
+- היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
+
+## חינם מקוד המקור, או הקמה עבורך
+
+הקוד חופשי ברישיון AGPL-3.0. לא רוצים להתקין לבד? אנחנו מקימים עבורך ב-₪699, חד פעמי, בלי מנוי.
+
+[למחירים ולאפשרויות ההתקנה](https://open-ledger.matanlevanon.com/he/pricing/)
+
+## קודם מנסים, אחר כך מתקינים
+
+- כל המבקרים רואים את אותם עסקי דוגמה: לקוחות, מסמכים, חוזים והוצאות.
+- יוצרים טיוטות משלכם. אף אחד אחר לא רואה אותן, והן נמחקות 30 דקות אחרי שיוצאים.
+- הפקה, שליחה, רישום תשלום וחתימה מציגים תצוגה מקדימה. ב-PDF לתצוגה מופיע המספר 0000 וסימן מים.
+
+[נסו את ההדגמה](https://sampleledger.matanlevanon.com)
+
+בלי התקנה. נתוני דוגמה, נפתח תוך שניות.
+
+Source: https://open-ledger.matanlevanon.com/he/
+
+
+---
+
+# כל היכולות
+
+לעוסק פטור היום ולעוסק מורשה מחר.
+
+רשימת יכולות
+
+## כל היכולות
+
+פתחו קבוצה כדי לראות מה קיים היום.
+
+מסמכים8
+
+- הצעות מחיר, דרישות תשלום וחשבונות עסקה
+- קבלות וקבלות זיכוי כעוסק פטור
+- חשבוניות מס, חשבוניות מס קבלה וחשבוניות זיכוי כעוסק מורשה
+- מסמכים באנגלית או בעברית ואנגלית
+- שכפול כל מסמך בלחיצה
+- הפקת קבלה מכל מסמך פתוח, עם התשלום כבר ממולא
+- תשלום בצ׳ק עם בנק, סניף ומספר חשבון
+- מחיקת טיוטה רק אחרי אישור
+
+מספור ותאימות6
+
+- סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך
+- מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב
+- PDF עם הלוגו והחתימה שלך, חתום בחתימה דיגיטלית PAdES
+- מספרי הקצאה מרשות המסים, ניסוי וייצור, עם תור ניסיונות חוזרים
+- מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה
+- מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך
+
+מטבע6
+
+- מסמכים בשקלים, דולרים, אירו ומטבעות נוספים
+- שערי בנק ישראל, נשמרים מדי יום
+- קבלה מקבלת את השער של המסמך שהיא משלמת
+- הקלדת שער משלך, או סימון "שער אחרון"
+- סכומים במטבע חוץ ובשקלים מודפסים כל אחד בעמודה שלו
+- יתרות הלקוח נשמרות במטבע שלו
+
+שליחה7
+
+- מייל עם נמען, CC ו-BCC בכל מסמך
+- רשימת CC לכל לקוח ורשימת BCC לעותק שלך
+- קישור וואטסאפ מקוצר שנפתח לעמוד תצוגה עם הלוגו שלך
+- ברכה מוכנה בעברית או באנגלית, לפי שפת הלקוח
+- הסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח
+- תזכורות תשלום לפני מועד התשלום ואחריו
+- אישור ברור אחרי שמסמך סומן כנשלח
+
+מסמכים חוזרים6
+
+- תזמון שבועי, חודשי, רבעוני או שנתי לריטיינרים ולחשבונות עסקה
+- תנאי תשלום בימים, לכל עותק
+- תאריך סיום לתזמון
+- הפקה ושליחה אוטומטית, או המתנה לאישורך
+- עמוד אישורים במחשב ובטלפון
+- הודעת Slack כשעותק ממתין לאישור
+
+לקוחות ולוח בקרה5
+
+- עמוד לכל לקוח עם אנשי קשר, מסמכים וכרטסת לכל מטבע
+- יתרות פתוחות, גיול ורשימת איחורים
+- הפקת קבלה ישירות מכרטיס האיחורים
+- תזרים, הכנסות לפי חודש ולקוחות מובילים
+- טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל
+
+חוזים והזמנות עבודה7
+
+- תבניות חוזה והזמנת עבודה עם שדות משלך, בעברית ובאנגלית
+- הסכם השירותים מצורף להזמנת העבודה הראשונה, חתימה אחת
+- הלקוח חותם בטלפון או במחשב: ממלא, חותם בציור ומאשר בקוד במייל
+- PDF חתום עם דף ראיות וחתימת PAdES מאושרת
+- מספרי הזמנות עבודה בסדרה משלהם, ממולאים אוטומטית
+- תזכורות חתימה, והעלאת חוזים שנחתמו מחוץ למערכת לכרטיס הלקוח
+- הפיכת הזמנת עבודה חתומה לחשבון עסקה
+
+מסמכי העסק4
+
+- תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור
+- Claude קורא את הסוג, השמות והתאריכים
+- התראה בלוח הבקרה לפני שמסמך פג תוקף
+- העוזר ורואה החשבון רואים את אותה רשימה
+
+הוצאות וייבוא5
+
+- העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום
+- ייבוא חודש שלם של הוצאות מ-Google Drive
+- ייבוא לקוחות ומסמכי עבר ממערכת אחרת
+- מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש
+- מסמך בלי שער מודפס מסומן כדי שתשלים אותו
+
+דוחות, ייצוא וגיבויים6
+
+- הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות לקוחות
+- הורדה כ-PDF, XLSX או CSV
+- חבילה חודשית לרואה החשבון וכניסה לרואה החשבון עם תאריך סיום ויומן גישה
+- קובץ במבנה אחיד גרסה 1.31 לרשות המסים
+- ייצוא PCN874 (עמודת מספר ההקצאה)
+- גיבוי רבעוני ל-R2 ול-Google Drive
+
+בטלפון4
+
+- מותקנת במסך הבית כמו אפליקציה
+- מסך "מהיר": צילום, גלריה, מסמך חדש ופעילות אחרונה
+- סרגל ניווט תחתון וטבלאות שהופכות לכרטיסים
+- תמונות שצולמו בלי קליטה עולות כשחוזרים לרשת
+
+צילומי מסך
+
+## מה מקבלים
+
+**מסמכים והקשרים ביניהם.** כל מסמך עם הסטטוס שלו, המסמכים שממנו נוצר או שנוצרו ממנו, ומה עוד פתוח.
+
+**דרישות תשלום שנסגרות.** רושמים תשלום והקבלה מקושרת לדרישה. תשלום חלקי משאיר את היתרה פתוחה.
+
+**לקוחות והכרטסת שלהם.** עמוד לכל לקוח עם אנשי קשר, סטטוס הסכמה, מסמכים וכרטסת רצה לפי מטבע.
+
+**הוצאות לבדיקה ותיוק.** מסמכים ש-Claude קרא נכנסים ל"חדש". בודקים ספק, סכום וקטגוריה ומתייקים.
+
+**דוחות לך ולרואה החשבון.** הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות. הורדה כ-PDF, XLSX או CSV.
+
+**העסק שלך, המיתוג שלך.** פרטי העסק, לוגו, חתימה, אמצעי תשלום ופרטי בנק שמודפסים על המסמכים.
+
+הכללים
+
+## שישה כללים שהקוד אוכף
+
+מסד הנתונים מסרב לשבור אותם.
+
+- **מסמך סופי לא משתנה** טעות מתקנים במסמך זיכוי או בביטול, לעולם לא בעריכה. טריגרים במסד הנתונים חוסמים עדכון של שורה סופית.
+- **מספר ניתן רק בהפקה** לטיוטה אין מספר, כך שטיוטה שנמחקה לא משאירה חור בסדרה.
+- **אין PDF לחשבונית מס בלי מספר הקצאה** כשרשות המסים דורשת מספר הקצאה, ה-PDF ממתין לו.
+- **דרישה והקבלה שלה נספרות פעם אחת** דרישת תשלום או חשבון עסקה הם חיוב, הקבלה היא ההכנסה. הדוחות אף פעם לא מחברים את שתיהן.
+- **שיעורים מתוארכים** מע"מ, תקרת עוסק פטור ושערי מטבע נשמרים עם התאריך שממנו הם חלים.
+- **ניסוי וייצור לא מתערבבים** פרטי הגישה, הטוקנים והמספרים של סביבת הניסוי והייצור ברשות המסים נשמרים בנפרד.
+
+Source: https://open-ledger.matanlevanon.com/he/features/
+
+
+---
+
+# מחירים ואפשרויות התקנה
+
+מחירים
+
+## להתקין בעצמך, או לקבל אותה מוקמת
+
+### חינם מקוד המקור
+
+חינם
+
+- בלי דמי רישיון ובלי מגבלת שימוש
+- רושמים אפליקציית API משלך ברשות המסים
+- מדריך התקנה שלב אחר שלב
+
+[למדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+
+### הקמה עבורך
+
+₪699 חד פעמי
+
+- אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך
+- רשות המסים: אפליקציית API משלך, או חיבור דרך MTN
+- נמסרת לך פועלת, עם שליטה מלאה בידיך
+- בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה
+
+לתיאום שיחה
+
+## עובדות עיקריות
+
+- Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
+- היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
+- היא חינמית מקוד המקור, ברישיון AGPL-3.0.
+- הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי.
+- היא תומכת בעוסק פטור ובעוסק מורשה.
+- היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
+
+איך זה עובד
+
+## שלושה שלבים למסמך הראשון
+
+אתה פורס עותק משלך. אף אחד אחר לא מריץ אותו ולא מחזיק את המידע שלך.
+
+1. **פריסת עותק משלך** יוצרים מסד נתונים D1 אחד ושני דליי R2, מחברים את ה-Worker ל-fork שלך ב-GitHub ומוסיפים דומיין. כל push ל-main נפרס.
+2. **נעילה** Cloudflare Access מכניס אותך עם המייל שלך. מוסיפים סודות: מפתח החתימה, מפתח המייל ופרטי רשות המסים כשאתה עוסק מורשה.
+3. **הגדרת העסק** פרטי העסק, לוגו, חתימה ומספר ההתחלה של כל סדרה, כדי שהמספור ימשיך מהמערכת הקודמת.
+
+`git clone https://github.com/matanlevanon/open-ledger-il.git`
+
+מתחילה בתוכנית Workers Free. ההקמה לוקחת אחר צהריים.
+
+## מה צריך
+
+מתחילים בתוכניות חינמיות.
+
+| דרישה | הערות |
+| --- | --- |
+| **חשבון Cloudflare** חובה | Workers Free מריץ אותה: ה-Worker, D1, R2, Browser Rendering ו-5 משימות מתוזמנות. Workers Paid, החל מ-5$ לחודש, מסיר את המגבלות שלמטה. |
+| **מפתח ותעודה לחתימת PDF** חובה | לחתימת PAdES על כל PDF. פקודה אחת יוצרת את שניהם, docs/deploy.md שלב 8. |
+| **Node.js ו-Wrangler** חובה | במחשב שלך, להרצת מיגרציות למסד הנתונים ולהגדרת סודות. |
+| **דומיין ב-Cloudflare** רשות | כתובת משלך למערכת, למשל ledger.example.com. בלי דומיין היא רצה בכתובת workers.dev החינמית. כדי לשלוח מייל מכתובת משלך צריך דומיין. |
+| **חשבון Resend** רשות | לשליחת מסמכים, תזכורות וחבילת רואה החשבון במייל. התוכנית החינמית מספיקה לעסק קטן. |
+| **פרטי גישה ל-API של רשות המסים** רשות | רק לעוסק מורשה, למספרי הקצאה על חשבוניות מס. |
+| **מפתח API של Anthropic** רשות | כדי ש-Claude יקרא הוצאות ומסמכי עבר. תשלום לפי שימוש, כמה סנטים למסמך. |
+| **חשבון שירות ב-Google Cloud** רשות | לייבוא הוצאות מ-Drive ולעותקי גיבוי. חינם. |
+
+Workers Paid ומגבלות ידועות
+
+### מתי לעבור ל-Workers Paid.
+
+המערכת משתמשת ב-5 משימות מתוזמנות, המקסימום ב-Workers Free. לתוכנית החינמית יש עוד שלוש מגבלות שכדאי להכיר:
+
+- זמן מעבד למשימה מתוזמנת: 10 מילישניות בתוכנית החינמית. רוב המשימות נכנסות. חבילת רואה החשבון החודשית והגיבוי הרבעוני בונים קבצים, והן אלה שכנראה ידרשו Paid.
+- Browser Rendering, שמפיק כל PDF: 10 דקות ביום בחינם, 10 שעות בחודש ב-Paid.
+- שחזור לנקודת זמן ב-D1: 7 ימים בחינם, 30 ימים ב-Paid. לספרים חוקיים, 30 ימים זה מה שצריך.
+
+### מה היא לא עושה
+
+- זה לא ייעוץ מס או ייעוץ משפטי. בדוק את ההגדרות עם רואה החשבון שלך לפני שאתה מפיק מסמך אמיתי.
+- עסק אחד לכל התקנה.
+- ישראל בלבד: סוגי המסמכים, המע"מ וכללי רשות המסים הם ישראליים.
+- המערכת רושמת תשלומים. היא לא סולקת כרטיסים ולא גובה כסף.
+- ייצוא PCN874 ממלא את עמודת מספר ההקצאה. שאר העמודות עדיין חלקיות.
+- אתה מריץ אותה: עדכונים, סודות וחשבון Cloudflare הם שלך.
+
+[צריך לרשום את התוכנה ברשות המסים?](https://open-ledger.matanlevanon.com/he/registration/)
+
+Source: https://open-ledger.matanlevanon.com/he/pricing/
+
+
+---
+
+# רשומה ברשות המסים
+
+הפרטים האישיים בתעודה מוסתרים.
+
+חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
+
+רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
+
+אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.
+
+מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות > הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.
+
+כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.
+
+[הורדת התעודה (PDF)](https://open-ledger.matanlevanon.com/assets/ita-registration-281801-v1.1.0.3f003bf8.pdf)[מאגר התוכנות הרשומות של רשות המסים](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+
+[עמוד רישום התוכנה ברשות המסים](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
+
+**מקורות**
+
+1. רשות המסים, "בקשה לרישום תוכנה המיועדת לניהול מערכת חשבונות ממוחשבת", עמוד השירות, עודכן 29.05.2025. מי חייב ברישום: יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם) [gov.il](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
+2. רשות המסים, מאגר התוכנות הרשומות לניהול מערכת חשבונות ממוחשבת. [gov.il](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+3. המסגרת החוקית: הוראות מס הכנסה (ניהול פנקסי חשבונות), התשל"ג-1973, הכללים למערכת ממוחשבת לפי הוראה 36.
+
+Source: https://open-ledger.matanlevanon.com/he/registration/
+
+
+---
+
+# נסו את ההדגמה
+
+ההדגמה החיה פותחת את המערכת האמיתית על עסקי דוגמה. אין מה להתקין.
+
+- כל המבקרים רואים את אותם עסקי דוגמה: לקוחות, מסמכים, חוזים והוצאות.
+- יוצרים טיוטות משלכם. אף אחד אחר לא רואה אותן, והן נמחקות 30 דקות אחרי שיוצאים.
+- הפקה, שליחה, רישום תשלום וחתימה מציגים תצוגה מקדימה. ב-PDF לתצוגה מופיע המספר 0000 וסימן מים.
+- נתוני הדוגמה לקריאה בלבד. השרת דוחה כל שינוי בהם.
+- ההדגמה נפתחת בעברית, בערכת הצבעים הבהירה.
+
+[נסו את ההדגמה](https://sampleledger.matanlevanon.com)
+
+בלי התקנה. נתוני דוגמה, נפתח תוך שניות.
+
+## הנהלת החשבונות בכיס
+
+מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.
+
+**מהיר** מצלמים, בוחרים מהגלריה או פותחים מסמך חדש.
+
+**בדיקה ותיוק** Claude ממלא את השדות. אתה בודק ומתייק.
+
+**פעילות אחרונה** המסמכים וההוצאות האחרונים, עם סכום וסטטוס.
+
+**לוח בקרה** פריטים פתוחים ובאיחור, תזרים ותקרת עוסק פטור.
+
+Source: https://open-ledger.matanlevanon.com/he/demo/
+
+
+---
+
+# מדריכים
+
+המדריכים נכתבים ועוברים בדיקה. הם יופיעו כאן אחרי הפרסום.
+
+Source: https://open-ledger.matanlevanon.com/he/guides/
+
+
+---
+
+# יומן שינויים
+
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+
+יומן השינויים נכתב באנגלית.
+
+## 1.7.0 (2026-10-14)
+
+### Documents
+
+- A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel column and the two-column totals now show only on a USD, EUR or GBP document.
+
+### Tax Authority connection
+
+- An install that signs in through a login broker now sends every Tax Authority call through that broker too: invoice approvals, details and decisions. The broker checks the install on each call, so pausing an install there stops it within minutes.
+- With a broker set, the install ignores its own relay settings. It needs no relay token.
+- Installs with their own ITA API app, with or without their own relay, work as before.
+
+### Login broker (tools/ita-auth)
+
+- New `/ita/*` route forwards an install's Tax Authority calls with the relay's path and header rules, through the relay when one is set. It never logs bodies or tokens.
+- Optional licence keys: with `LICENCE_URL` and `LICENCE_SECRET` set, an install registers with a licence key, and each call checks the licence, cached for 10 minutes. Each check reports the install name and its call count since the last check.
+- Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
+- The admin page shows each install's licence last 4, or "no licence".
+
+## 1.6.0 (2026-10-13)
+
+### Demo mode
+
+- Visitors enter at once. Every visitor reads the same sample businesses, and nothing is copied on entry.
+- The sample data is read-only for visitors. The server refuses every change to it, and the app says "Read-only in the demo" next to the buttons it hides.
+- Visitors keep private drafts: documents, clients, contracts and expense uploads. Nobody else sees them. They are deleted 30 minutes after the visitor leaves, and every night.
+- Issue, Send, Record payment and Sign show previews. A preview PDF carries the number 0000 and a watermark. Nothing is numbered, sent or stored as signed.
+- The reset Worker runs every 15 minutes. It sweeps ended visits, and at 03:00 Israel time it rebuilds the sample set if it changed. One build runs at a time.
+- The demo shows its own product name in the sidebar and in the browser tab.
+- The demo opens light and in Hebrew. The start page remembers the language picked there.
+- The start page now shows on every path, deep links included.
+- `/admin` runs on the Worker. `keep_vars` sits at the top level of `wrangler.toml`, so variables set in the dashboard survive a deploy.
+- Demo visitors see a working Tax Authority connection on the fake.
+
+### Dashboard
+
+- The Tax Authority card reads the real connection state, in English and Hebrew.
+
+### Database
+
+- Migration 2900: demo session tags on the demo tables, the build lock and the sweep log.
+
+## 1.5.0 (2026-10-13)
+
+### Contracts and work orders
+
+- Contracts and work orders with Fill & Sign: versioned templates in English and Hebrew, fields filled from the client and the business, a signing link with an email code, and a signed PDF with an evidence page and a certifying signature.
+- Two neutral starter templates: a Service Agreement with standing terms for the whole relationship, and a Work Order for each project. Have a lawyer review them before use.
+- A first engagement sends the Service Agreement and the Work Order as one PDF, signed once. The work order's terms date fills with the signing date.
+- Fields can number themselves from a starting value like `WO-{YYYY}-{NNN}`.
+- File a contract signed on paper or elsewhere, with its PDF. It is stored write-once.
+- Automatic signing reminders from the 07:00 run, set in Settings > Email > Reminders.
+- The new contract screen starts on the Work Order, marks missing fields in red and shows the error next to Send. Remind asks how to send. The contract page opens with an overview.
+- A pro forma made from a work order names its number in the notes.
+
+### Signing
+
+- The signing page shows the contract as a web page with a Sign button, light, and full width on a computer. The PDF has a Sign button in each client signature box until it is signed.
+- Signing codes last 15 minutes, a new code waits a minute, earlier codes keep working, and five wrong tries lock them.
+- Signing dates use the date in Israel.
+- Adobe Reader shows the certification as valid and the document as not modified.
+
+### Clients and reminders
+
+- A switch per client for automatic reminders, and a Reminders list on the client page.
+- Payment reminders respect the switch and are logged.
+- Reminders due on WhatsApp show on the dashboard.
+- Default payment methods per client, used first on a new document.
+- A Back link on every page below another. The contract Record card folds.
+
+### Demo mode
+
+- `DEMO_MODE=1` turns a Ledger into a public demo: a gate, a private sandbox per visitor, a watermark on every PDF, a fake Tax Authority, email previews, daily caps, an admin page and a nightly reset Worker. The same rules and locks as a real Ledger. See docs/demo-mode.md.
+- Lead capture is optional and posts to a webhook you choose. The consent text is a setting.
+
+## 1.4.0 (2026-10-13)
+
+### Business type
+
+- עוסק פטור, עוסק מורשה or חברה בע"מ, chosen on the first-run setup screen. Settings > Tax shows the type, and a פטור business switches to מורשה from there, with the word מורשה typed to confirm.
+- The switch is one way. Database triggers refuse any change back to פטור.
+- The dashboard follows the type: the ceiling card for פטור, the VAT due card with its period and report date for מורשה and companies.
+
+### Several businesses in one Ledger
+
+- One עוסק and any number of companies. Add a business from the top-bar switcher or Settings > Businesses. Each business has its own numbering, hash chain, Tax Authority login and exports.
+- Brands: the name, tagline and contacts a document prints, per business.
+- Roles per business: owner, assistant, accountant.
+
+### Business documents
+
+- Settings > Business documents: upload certificates, read the name and number from them, view, download, and share with a link that expires and can be revoked. Reminders before a certificate ends.
+
+### Other
+
+- Expense and invoice reading works with an Anthropic key or a Gemini key (AI_PROVIDER).
+- Settings > Updates checks for a new release, and a monthly check posts to Slack (UPDATE_REPO).
+- The business form accepts an empty email, and a refused save names the field.
+- Every file is written once, so the 7-year bucket lock never blocks the Ledger.
+- The ita-auth broker keeps its clients in D1, registers new installs by itself, and has an admin page.
+
+## 1.3.0 (2026-10-08)
+
+### Tax Authority (allocation numbers)
+
+- Login broker. tools/ita-auth is a Worker that keeps one ITA API app's client secret for several installs. An install with ITA_BROKER_URL, ITA_BROKER_CLIENT and ITA_BROKER_KEY signs in and renews through it, with no client id or secret of its own. Invoice calls still go straight to the ITA. Check route probes the broker too. docs/deploy.md, Option 4.
+- The production token call goes to ita-api.taxes.gov.il.
+- A "?" on Check route and Test renewal explains each one.
+
+### Layout
+
+- One page scroll instead of a scroll box inside the page. A footer on every screen.
+
+## 1.2.0 (2026-10-08)
+
+### Tax Authority (allocation numbers)
+
+- Manual mode. With no ITA API app set up, the Ledger never calls the Tax Authority. An invoice that needs an allocation number waits on the ITA screen. Copy details puts the invoice details on the clipboard for the ITA web app, and the number is typed back in. A number still missing after 24 hours raises one Slack alert. docs/deploy.md, Option 3.
+- Queue rows carry the client's VAT number and the total with VAT.
+
+## 1.1.0 (2026-10-07)
+
+### Tax Authority (allocation numbers)
+
+- Sandbox token and API calls moved to `ita-api.taxes.gov.il`, per the SHAAM address notice.
+- The login lasts 90 days. No nightly renewal: Slack reminders on days 75, 85 and 89, a banner from day 80, and a reconnect on day 90. The access token renews when a call needs it.
+- Check route tests the path to the Tax Authority without a login. Test renewal renews on demand. Both say which data center the call left from.
+- Refused logins and renewals record the Tax Authority's reason and the data center.
+- Optional relay with a fixed Israeli address, in `tools/ita-relay`, for when Cloudflare serves you from outside Israel. docs/deploy.md, "Reaching the Tax Authority", starts with the Cloudflare-only route.
+
+### Documents and money
+
+- A credit invoice's line carries the amount before VAT, so its lines add up to its subtotal. The refund keeps the full amount.
+- Unified file (מבנה אחיד) passes the Tax Authority checker's structure and totals checks. A demo file with the two printouts for software registration: `npm run demo:unified-file`.
+- A receipt takes the exchange rate of the document it pays. Imported documents keep the rate printed on them. A receipt rate typed by hand overrides both.
+- Recurring documents wait on an approvals page, with a Slack notice and payment terms.
+- CC and BCC on document emails, a short WhatsApp link with a preview, sortable document tables.
+- Create a receipt from the dashboard's Overdue and open card.
+- An owner switch turns document issuing off, for anyone who keeps issuing in their current system.
+
+### Interface
+
+- A collapsible Income section in the sidebar that remembers its state. Quick is "פעולות מהירות" in Hebrew.
+- A phone Quick page with receipt capture, issue buttons and recent activity.
+
+## 1.0.0 (2026-09-29)
+
+The first public release of MTN - Open Ledger IL: invoicing, expenses and books for an Israeli business, on your own Cloudflare account.
+
+### Documents
+
+- Quotes, payment requests, pro formas (חשבון עסקה), receipts and credit receipts as עוסק פטור.
+- Tax invoices, invoice/receipts and credit invoices as עוסק מורשה, with ITA allocation numbers (Israel Invoices API v2, sandbox and production, retry queue).
+- Legal numbering: one series per type, no gaps, no reuse, final documents never change. A hash chain and database triggers enforce both.
+- Signed PDFs (PAdES) with your logo and signature, English or bilingual.
+- Duplicate any document. Recurring documents, weekly to yearly, held for approval or issued and emailed automatically.
+- Email and WhatsApp sending with recorded digital-document consent, and payment reminders.
+
+### Money
+
+- Bank of Israel rates, cached daily. A rate carried from a payment request to its receipt.
+- Client ledgers where a demand is closed by the receipt that pays it, open items and aging.
+- The פטור ceiling meter with alerts and a guided switch to עוסק מורשה.
+
+### Expenses, reports and access
+
+- Expenses by upload or a monthly Google Drive import, read by Claude, reviewed and filed.
+- Income, expenses, profit and loss, services, per-client ledgers and a monthly accountant pack.
+- An accountant role with per-feature switches, an end date and an access log.
+- The unified file (מבנה אחיד), PCN874 (allocation-number column), quarterly backups.
+- Import of customers (CSV) and past documents (PDF), with a document type and a service each.
+
+### Running it
+
+- One Cloudflare Worker with D1 and R2, signed in through Cloudflare Access.
+- Five cron triggers, within the Workers Free plan limit.
+- A phone layout: bigger text and buttons, a bottom tab bar, tables shown as cards.
+- A product page in English and Hebrew, published from `/docs` with GitHub Pages.
+
+Source: https://open-ledger.matanlevanon.com/he/changelog/
+
+
+---
+
+# רישיון
+
+הקוד של Open Ledger IL הוא תוכנה חופשית ברישיון GNU Affero General Public License, גרסה 3 (AGPL-3.0).
+
+- משתמשים בו לעסק שלכם, בלי תשלום.
+- קוראים את הקוד ומשנים אותו.
+- משתפים עותקים, עם שינויים או בלי, באותו רישיון.
+- מריצים גרסה ששיניתם עבור אחרים ברשת? מציעים להם את קוד המקור שלה.
+- הקוד מגיע בלי אחריות.
+
+הקמה עבורך היא שירות בתשלום. היא לא משנה את רישיון הקוד.
+
+[לנוסח המלא של הרישיון](https://github.com/matanlevanon/open-ledger-il/blob/main/LICENSE)
+
+[רישיון AGPL-3.0 באתר gnu.org](https://www.gnu.org/licenses/agpl-3.0.html)
+
+Source: https://open-ledger.matanlevanon.com/he/license/
+
+
+---
+
+**Free** · Open source · Registered with the Israel Tax Authority · v1.7.0
+
+# Invoices, receipts and books for an Israeli business, on infrastructure you own.
+
+Quotes, receipts, tax invoices, contracts and expenses, with legal numbering and ITA allocation numbers. It runs in your own Cloudflare account. Your data stays yours.
+
+[Try the live demo](https://sampleledger.matanlevanon.com)
+
+No install. Sample data, opens in seconds.
+
+[Get the code](https://github.com/matanlevanon/open-ledger-il) [Read the deploy guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) [See setup options](https://open-ledger.matanlevanon.com/pricing/)
+
+All screenshots on this page use an invented demo business.
+
+## Your books in your pocket
+
+Install it on your home screen. It opens ready for the next receipt.
+
+**Quick** Take a photo, pick from the gallery or start a document.
+
+**Review and file** Claude fills in the fields. You check them and file.
+
+**Recent activity** The latest documents and expenses, with amount and status.
+
+**Dashboard** Open and overdue items, cash flow and the פטור ceiling.
+
+What it does
+
+## Everything a small Israeli business issues and files
+
+For a עוסק פטור today and a עוסק מורשה tomorrow.
+
+### Every Israeli document type
+
+Quotes, payment requests, receipts and tax invoices, in English or Hebrew and English.
+
+### Numbering that cannot break
+
+Gapless series, locked final documents and signed PDFs.
+
+### ITA allocation numbers
+
+Israel Invoices API v2, with a retry queue.
+
+### Contracts and work orders
+
+The client signs on any screen. A signed work order becomes a pro forma.
+
+### Expenses read by Claude
+
+Snap a receipt or import a month from Google Drive.
+
+### Reports for your accountant
+
+P&L, client ledgers, the unified file and an accountant login.
+
+[See every feature](https://open-ledger.matanlevanon.com/features/)
+
+## Key facts
+
+- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
+- It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
+- It is free from source under the AGPL-3.0 licence.
+- Having it set up for you costs ₪699, once, with no subscription.
+- It supports עוסק פטור and עוסק מורשה businesses.
+- It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
+
+## Free from source, or set up for you
+
+The code is free under AGPL-3.0. Prefer not to do it yourself? We set it up for you for ₪699, once, with no subscription.
+
+[See pricing and setup](https://open-ledger.matanlevanon.com/pricing/)
+
+## Try it before you install it
+
+- Every visitor reads the same sample businesses: clients, documents, contracts and expenses.
+- Create your own drafts. Nobody else sees them, and they are deleted 30 minutes after you leave.
+- Issue, Send, Record payment and Sign show previews. A preview PDF carries the number 0000 and a watermark.
+
+[Try the live demo](https://sampleledger.matanlevanon.com)
+
+No install. Sample data, opens in seconds.
+
+Source: https://open-ledger.matanlevanon.com/
+
+
+---
+
+# Every feature
+
+For a עוסק פטור today and a עוסק מורשה tomorrow.
+
+Feature list
+
+## Every feature
+
+Open a group to see what ships today.
+
+Documents8
+
+- Quotes, payment requests and pro formas (חשבון עסקה)
+- Receipts and credit receipts as עוסק פטור
+- Tax invoices, invoice/receipts and credit invoices as עוסק מורשה
+- English or bilingual Hebrew and English documents
+- Duplicate any document in one click
+- Create a receipt from any open document, with its payment filled in
+- Cheque payments with bank, branch and account number
+- Delete a draft only after you confirm
+
+Numbering and compliance6
+
+- One gapless series per document type, with your own starting numbers
+- Final documents locked by database triggers and a hash chain
+- PDF with your logo and signature, sealed with a PAdES digital signature
+- ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue
+- פטור ceiling meter with alerts and a guided switch to מורשה
+- Issuing on/off switch, to keep issuing in your current system
+
+Currency6
+
+- Documents in ILS, USD, EUR and other currencies
+- Bank of Israel rates, cached daily
+- A receipt takes the rate of the document it pays
+- Type your own rate, or tick "use latest rate"
+- Foreign and ILS totals printed in their own columns
+- Client balances kept in the client’s currency
+
+Sending7
+
+- Email with To, CC and BCC on every document
+- A CC list per client and a BCC copy list for your own records
+- WhatsApp short link that opens a preview page with your logo
+- A ready greeting in English or Hebrew, by the client’s language
+- Digital-document consent recorded per client
+- Payment reminders before and after the due date
+- A clear confirmation once a document is marked as sent
+
+Recurring documents6
+
+- Weekly, monthly, quarterly or yearly schedules for retainers and pro formas
+- Payment terms in days, set on each copy
+- An end date to stop the schedule
+- Issue and email on its own, or wait for your approval
+- Approvals page on the computer and the phone
+- Slack notice when a copy waits for approval
+
+Clients and dashboard5
+
+- A page per client with contacts, documents and a ledger per currency
+- Open balances, aging and an overdue list
+- Create a receipt straight from the overdue card
+- Cash flow, income by month and top clients
+- Sortable tables, newest first by default
+
+Contracts and work orders7
+
+- Contract and work order templates with fields you define, in English and Hebrew
+- Service Agreement included in the first work order, signed once
+- Client signs on the phone or the computer: fill in, draw, confirm with an email code
+- Signed PDF with an evidence page and a certified PAdES signature
+- Work order numbers on their own series, filled in for you
+- Signing reminders, and contracts signed elsewhere uploaded to the client record
+- Turn a signed work order into a pro forma
+
+Business documents4
+
+- VAT and company certificates, bookkeeping and withholding confirmations
+- Claude reads the type, names and dates
+- Expiry warnings on the dashboard
+- Your assistant and accountant open the same list
+
+Expenses and import5
+
+- Upload a receipt or snap a photo, Claude reads supplier, date and amount
+- Import a month of expenses from Google Drive
+- Import customers and past documents from another system
+- Imported documents keep the exchange rate printed on them, never a guessed one
+- Documents with no printed rate are flagged for you to fill in
+
+Reports, exports and backups6
+
+- Income, expenses, profit and loss, open items and client ledgers
+- Download as PDF, XLSX or CSV
+- Monthly accountant pack and an accountant login with an end date and access log
+- Unified file (מבנה אחיד) v1.31 for the Tax Authority
+- PCN874 export (allocation-number column)
+- Quarterly backups to R2 and Google Drive
+
+On your phone4
+
+- Installs on the home screen like an app
+- Quick page: photo, gallery, new document and recent activity
+- Bottom tab bar and tables that turn into cards
+- Photos taken offline upload when you are back online
+
+Screenshots
+
+## What you get
+
+**Documents and their relations.** Every document with its status, the documents it came from or led to, and what is still open.
+
+**Payment requests that close.** Record a payment and the receipt links back to the request. Partial payments keep the rest open.
+
+**Clients and their ledger.** One page per client with contacts, consent status, documents and a running ledger per currency.
+
+**Expenses to review and file.** Documents read by Claude land in New. Check the supplier, amount and category, then file.
+
+**Reports for you and your accountant.** Income, expenses, profit and loss, open items and ledgers. Download as PDF, XLSX or CSV.
+
+**Your business, your brand.** Business details, logo, signature, payment methods and bank details printed on your documents.
+
+The rules
+
+## Six rules the code enforces
+
+The database refuses to break them.
+
+- **A final document never changes** A mistake is fixed with a credit document or a cancellation, never an edit. Database triggers block updates to a final row.
+- **Numbers come only from finalize** Drafts carry no number, so a deleted draft never leaves a gap in the series.
+- **No tax invoice PDF without its allocation number** When the ITA requires a מספר הקצאה, the PDF waits for it.
+- **A demand and its receipt count once** A payment request or pro forma is a charge, the receipt is the income. Reports never add both.
+- **Rates are dated** VAT, the פטור ceiling and exchange rates are stored with the date they apply from.
+- **Sandbox and production never mix** ITA sandbox and production credentials, tokens and numbers are kept apart.
+
+Source: https://open-ledger.matanlevanon.com/features/
+
+
+---
+
+# Pricing and setup options
+
+Pricing
+
+## Install it yourself, or have it set up for you
+
+### Free from source
+
+Free
+
+- No license fee, no usage limits
+- You register your own ITA API app
+- Step-by-step setup guide
+
+[Read the setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+
+### Set up for you
+
+₪699 one time
+
+- We create every account for you, with your own emails
+- Tax Authority: your own ITA API app, or the connection through MTN
+- Handed over working, with full control to you
+- No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year
+
+Book a call
+
+## Key facts
+
+- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
+- It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
+- It is free from source under the AGPL-3.0 licence.
+- Having it set up for you costs ₪699, once, with no subscription.
+- It supports עוסק פטור and עוסק מורשה businesses.
+- It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
+
+How it works
+
+## Three steps to your first document
+
+You deploy your own copy. Nobody else runs it or holds your data.
+
+1. **Deploy your copy** Create one D1 database and two R2 buckets, connect the Worker to your fork on GitHub, and add your domain. Every push to main deploys.
+2. **Lock it down** Cloudflare Access signs you in with your own email. Add the secrets: the PDF signing key, the mail key, and ITA credentials when you are מורשה.
+3. **Set up the business** Business profile, logo, signature and the starting number of each series, so numbering continues from your previous system.
+
+`git clone https://github.com/matanlevanon/open-ledger-il.git`
+
+Starts on the Workers Free plan. Setup takes an afternoon.
+
+## What you need
+
+It starts on free tiers.
+
+| Requirement | Notes |
+| --- | --- |
+| **Cloudflare account** Required | Workers Free runs it: the Worker, D1, R2, Browser Rendering and 5 scheduled jobs. Workers Paid, from $5 a month, lifts the limits below. |
+| **PDF signing key and certificate** Required | For the PAdES signature on every PDF. One command makes both, docs/deploy.md step 8. |
+| **Node.js and Wrangler** Required | On your computer, to apply database migrations and set secrets. |
+| **A domain on Cloudflare** Optional | Your own ledger address, for example ledger.example.com. Without one, it runs on the free workers.dev address. Email from your own address still needs a domain. |
+| **Resend account** Optional | To email documents, reminders and the accountant pack. The free tier covers a small business. |
+| **ITA API credentials** Optional | Only as עוסק מורשה, for allocation numbers on tax invoices. |
+| **Anthropic API key** Optional | For Claude to read expenses and past documents. Pay per use, a few cents per document. |
+| **Google Cloud service account** Optional | For the Drive expense import and backup copies. Free. |
+
+Workers Paid and known limits
+
+### When to move to Workers Paid.
+
+The ledger uses 5 scheduled jobs, the most Workers Free allows. Free has three other limits worth knowing:
+
+- Cron CPU: 10 ms per scheduled run on Free. Most jobs fit. The monthly accountant pack and the quarterly backup build files and are the ones likely to need Paid.
+- Browser Rendering, which draws every PDF: 10 minutes a day on Free, 10 hours a month on Paid.
+- D1 point-in-time recovery: 7 days on Free, 30 days on Paid. For legal books, 30 days is the one to have.
+
+### What it will not do
+
+- It is not tax or legal advice. Check your setup with your accountant before you issue a real document.
+- One business per deployment.
+- Israel only: the document types, VAT and ITA rules are Israeli.
+- It records payments. It does not charge cards or collect money.
+- The PCN874 export fills the allocation-number column. The other columns are a stub.
+- You run it: updates, secrets and the Cloudflare bill are yours.
+
+[Do you need to register the software with the Tax Authority?](https://open-ledger.matanlevanon.com/registration/)
+
+Source: https://open-ledger.matanlevanon.com/pricing/
+
+
+---
+
+# Registered with the Israel Tax Authority
+
+Personal details on the certificate are hidden.
+
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. [2]
+
+The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
+
+You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.
+
+Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings > Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.
+
+To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.
+
+[Download the certificate (PDF)](https://open-ledger.matanlevanon.com/assets/ita-registration-281801-v1.1.0.3f003bf8.pdf)[The Tax Authority registry of registered software](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+
+[The ITA software registration page (Hebrew)](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
+
+**References**
+
+1. Israel Tax Authority, "Application to register software for a computerized accounting system", service page, updated 29.05.2025. Who must register: יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם) [gov.il](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
+2. Israel Tax Authority, registry of registered accounting software. [gov.il](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+3. Legal framework: Income Tax (Bookkeeping) Instructions, 1973, the computerized-system rules under instruction 36.
+
+Source: https://open-ledger.matanlevanon.com/registration/
+
+
+---
+
+# Try the live demo
+
+The live demo opens the real app on sample businesses. Nothing to install.
+
+- Every visitor reads the same sample businesses: clients, documents, contracts and expenses.
+- Create your own drafts. Nobody else sees them, and they are deleted 30 minutes after you leave.
+- Issue, Send, Record payment and Sign show previews. A preview PDF carries the number 0000 and a watermark.
+- The sample data is read-only. The server refuses every change to it.
+- It opens in Hebrew, in the light theme.
+
+[Try the live demo](https://sampleledger.matanlevanon.com)
+
+No install. Sample data, opens in seconds.
+
+## Your books in your pocket
+
+Install it on your home screen. It opens ready for the next receipt.
+
+**Quick** Take a photo, pick from the gallery or start a document.
+
+**Review and file** Claude fills in the fields. You check them and file.
+
+**Recent activity** The latest documents and expenses, with amount and status.
+
+**Dashboard** Open and overdue items, cash flow and the פטור ceiling.
+
+Source: https://open-ledger.matanlevanon.com/demo/
+
+
+---
+
+# Guides
+
+The guides are being written and reviewed. They will appear here once published.
+
+Source: https://open-ledger.matanlevanon.com/guides/
+
+
+---
+
+# Changelog
+
+Every release, newest first. The current version is 1.7.0.
+
+## 1.7.0 (2026-10-14)
+
+### Documents
+
+- A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel column and the two-column totals now show only on a USD, EUR or GBP document.
+
+### Tax Authority connection
+
+- An install that signs in through a login broker now sends every Tax Authority call through that broker too: invoice approvals, details and decisions. The broker checks the install on each call, so pausing an install there stops it within minutes.
+- With a broker set, the install ignores its own relay settings. It needs no relay token.
+- Installs with their own ITA API app, with or without their own relay, work as before.
+
+### Login broker (tools/ita-auth)
+
+- New `/ita/*` route forwards an install's Tax Authority calls with the relay's path and header rules, through the relay when one is set. It never logs bodies or tokens.
+- Optional licence keys: with `LICENCE_URL` and `LICENCE_SECRET` set, an install registers with a licence key, and each call checks the licence, cached for 10 minutes. Each check reports the install name and its call count since the last check.
+- Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
+- The admin page shows each install's licence last 4, or "no licence".
+
+## 1.6.0 (2026-10-13)
+
+### Demo mode
+
+- Visitors enter at once. Every visitor reads the same sample businesses, and nothing is copied on entry.
+- The sample data is read-only for visitors. The server refuses every change to it, and the app says "Read-only in the demo" next to the buttons it hides.
+- Visitors keep private drafts: documents, clients, contracts and expense uploads. Nobody else sees them. They are deleted 30 minutes after the visitor leaves, and every night.
+- Issue, Send, Record payment and Sign show previews. A preview PDF carries the number 0000 and a watermark. Nothing is numbered, sent or stored as signed.
+- The reset Worker runs every 15 minutes. It sweeps ended visits, and at 03:00 Israel time it rebuilds the sample set if it changed. One build runs at a time.
+- The demo shows its own product name in the sidebar and in the browser tab.
+- The demo opens light and in Hebrew. The start page remembers the language picked there.
+- The start page now shows on every path, deep links included.
+- `/admin` runs on the Worker. `keep_vars` sits at the top level of `wrangler.toml`, so variables set in the dashboard survive a deploy.
+- Demo visitors see a working Tax Authority connection on the fake.
+
+### Dashboard
+
+- The Tax Authority card reads the real connection state, in English and Hebrew.
+
+### Database
+
+- Migration 2900: demo session tags on the demo tables, the build lock and the sweep log.
+
+## 1.5.0 (2026-10-13)
+
+### Contracts and work orders
+
+- Contracts and work orders with Fill & Sign: versioned templates in English and Hebrew, fields filled from the client and the business, a signing link with an email code, and a signed PDF with an evidence page and a certifying signature.
+- Two neutral starter templates: a Service Agreement with standing terms for the whole relationship, and a Work Order for each project. Have a lawyer review them before use.
+- A first engagement sends the Service Agreement and the Work Order as one PDF, signed once. The work order's terms date fills with the signing date.
+- Fields can number themselves from a starting value like `WO-{YYYY}-{NNN}`.
+- File a contract signed on paper or elsewhere, with its PDF. It is stored write-once.
+- Automatic signing reminders from the 07:00 run, set in Settings > Email > Reminders.
+- The new contract screen starts on the Work Order, marks missing fields in red and shows the error next to Send. Remind asks how to send. The contract page opens with an overview.
+- A pro forma made from a work order names its number in the notes.
+
+### Signing
+
+- The signing page shows the contract as a web page with a Sign button, light, and full width on a computer. The PDF has a Sign button in each client signature box until it is signed.
+- Signing codes last 15 minutes, a new code waits a minute, earlier codes keep working, and five wrong tries lock them.
+- Signing dates use the date in Israel.
+- Adobe Reader shows the certification as valid and the document as not modified.
+
+### Clients and reminders
+
+- A switch per client for automatic reminders, and a Reminders list on the client page.
+- Payment reminders respect the switch and are logged.
+- Reminders due on WhatsApp show on the dashboard.
+- Default payment methods per client, used first on a new document.
+- A Back link on every page below another. The contract Record card folds.
+
+### Demo mode
+
+- `DEMO_MODE=1` turns a Ledger into a public demo: a gate, a private sandbox per visitor, a watermark on every PDF, a fake Tax Authority, email previews, daily caps, an admin page and a nightly reset Worker. The same rules and locks as a real Ledger. See docs/demo-mode.md.
+- Lead capture is optional and posts to a webhook you choose. The consent text is a setting.
+
+## 1.4.0 (2026-10-13)
+
+### Business type
+
+- עוסק פטור, עוסק מורשה or חברה בע"מ, chosen on the first-run setup screen. Settings > Tax shows the type, and a פטור business switches to מורשה from there, with the word מורשה typed to confirm.
+- The switch is one way. Database triggers refuse any change back to פטור.
+- The dashboard follows the type: the ceiling card for פטור, the VAT due card with its period and report date for מורשה and companies.
+
+### Several businesses in one Ledger
+
+- One עוסק and any number of companies. Add a business from the top-bar switcher or Settings > Businesses. Each business has its own numbering, hash chain, Tax Authority login and exports.
+- Brands: the name, tagline and contacts a document prints, per business.
+- Roles per business: owner, assistant, accountant.
+
+### Business documents
+
+- Settings > Business documents: upload certificates, read the name and number from them, view, download, and share with a link that expires and can be revoked. Reminders before a certificate ends.
+
+### Other
+
+- Expense and invoice reading works with an Anthropic key or a Gemini key (AI_PROVIDER).
+- Settings > Updates checks for a new release, and a monthly check posts to Slack (UPDATE_REPO).
+- The business form accepts an empty email, and a refused save names the field.
+- Every file is written once, so the 7-year bucket lock never blocks the Ledger.
+- The ita-auth broker keeps its clients in D1, registers new installs by itself, and has an admin page.
+
+## 1.3.0 (2026-10-08)
+
+### Tax Authority (allocation numbers)
+
+- Login broker. tools/ita-auth is a Worker that keeps one ITA API app's client secret for several installs. An install with ITA_BROKER_URL, ITA_BROKER_CLIENT and ITA_BROKER_KEY signs in and renews through it, with no client id or secret of its own. Invoice calls still go straight to the ITA. Check route probes the broker too. docs/deploy.md, Option 4.
+- The production token call goes to ita-api.taxes.gov.il.
+- A "?" on Check route and Test renewal explains each one.
+
+### Layout
+
+- One page scroll instead of a scroll box inside the page. A footer on every screen.
+
+## 1.2.0 (2026-10-08)
+
+### Tax Authority (allocation numbers)
+
+- Manual mode. With no ITA API app set up, the Ledger never calls the Tax Authority. An invoice that needs an allocation number waits on the ITA screen. Copy details puts the invoice details on the clipboard for the ITA web app, and the number is typed back in. A number still missing after 24 hours raises one Slack alert. docs/deploy.md, Option 3.
+- Queue rows carry the client's VAT number and the total with VAT.
+
+## 1.1.0 (2026-10-07)
+
+### Tax Authority (allocation numbers)
+
+- Sandbox token and API calls moved to `ita-api.taxes.gov.il`, per the SHAAM address notice.
+- The login lasts 90 days. No nightly renewal: Slack reminders on days 75, 85 and 89, a banner from day 80, and a reconnect on day 90. The access token renews when a call needs it.
+- Check route tests the path to the Tax Authority without a login. Test renewal renews on demand. Both say which data center the call left from.
+- Refused logins and renewals record the Tax Authority's reason and the data center.
+- Optional relay with a fixed Israeli address, in `tools/ita-relay`, for when Cloudflare serves you from outside Israel. docs/deploy.md, "Reaching the Tax Authority", starts with the Cloudflare-only route.
+
+### Documents and money
+
+- A credit invoice's line carries the amount before VAT, so its lines add up to its subtotal. The refund keeps the full amount.
+- Unified file (מבנה אחיד) passes the Tax Authority checker's structure and totals checks. A demo file with the two printouts for software registration: `npm run demo:unified-file`.
+- A receipt takes the exchange rate of the document it pays. Imported documents keep the rate printed on them. A receipt rate typed by hand overrides both.
+- Recurring documents wait on an approvals page, with a Slack notice and payment terms.
+- CC and BCC on document emails, a short WhatsApp link with a preview, sortable document tables.
+- Create a receipt from the dashboard's Overdue and open card.
+- An owner switch turns document issuing off, for anyone who keeps issuing in their current system.
+
+### Interface
+
+- A collapsible Income section in the sidebar that remembers its state. Quick is "פעולות מהירות" in Hebrew.
+- A phone Quick page with receipt capture, issue buttons and recent activity.
+
+## 1.0.0 (2026-09-29)
+
+The first public release of MTN - Open Ledger IL: invoicing, expenses and books for an Israeli business, on your own Cloudflare account.
+
+### Documents
+
+- Quotes, payment requests, pro formas (חשבון עסקה), receipts and credit receipts as עוסק פטור.
+- Tax invoices, invoice/receipts and credit invoices as עוסק מורשה, with ITA allocation numbers (Israel Invoices API v2, sandbox and production, retry queue).
+- Legal numbering: one series per type, no gaps, no reuse, final documents never change. A hash chain and database triggers enforce both.
+- Signed PDFs (PAdES) with your logo and signature, English or bilingual.
+- Duplicate any document. Recurring documents, weekly to yearly, held for approval or issued and emailed automatically.
+- Email and WhatsApp sending with recorded digital-document consent, and payment reminders.
+
+### Money
+
+- Bank of Israel rates, cached daily. A rate carried from a payment request to its receipt.
+- Client ledgers where a demand is closed by the receipt that pays it, open items and aging.
+- The פטור ceiling meter with alerts and a guided switch to עוסק מורשה.
+
+### Expenses, reports and access
+
+- Expenses by upload or a monthly Google Drive import, read by Claude, reviewed and filed.
+- Income, expenses, profit and loss, services, per-client ledgers and a monthly accountant pack.
+- An accountant role with per-feature switches, an end date and an access log.
+- The unified file (מבנה אחיד), PCN874 (allocation-number column), quarterly backups.
+- Import of customers (CSV) and past documents (PDF), with a document type and a service each.
+
+### Running it
+
+- One Cloudflare Worker with D1 and R2, signed in through Cloudflare Access.
+- Five cron triggers, within the Workers Free plan limit.
+- A phone layout: bigger text and buttons, a bottom tab bar, tables shown as cards.
+- A product page in English and Hebrew, published from `/docs` with GitHub Pages.
+
+Source: https://open-ledger.matanlevanon.com/changelog/
+
+
+---
+
+# Licence
+
+The Open Ledger IL code is free software under the GNU Affero General Public License, version 3 (AGPL-3.0).
+
+- Use it for your own business, at no cost.
+- Read the code and change it.
+- Share copies, changed or not, under the same licence.
+- Run a changed version for other people over a network, and you offer them its source code.
+- It comes with no warranty.
+
+Setting it up for you is a paid service. It does not change the licence of the code.
+
+[Read the full licence text](https://github.com/matanlevanon/open-ledger-il/blob/main/LICENSE)
+
+[The AGPL-3.0 on gnu.org](https://www.gnu.org/licenses/agpl-3.0.html)
+
+Source: https://open-ledger.matanlevanon.com/license/

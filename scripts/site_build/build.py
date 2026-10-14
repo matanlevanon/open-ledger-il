@@ -8,7 +8,7 @@ caches for a year (tools/site/src/index.js).
 """
 import hashlib, html, json, os, re, shutil, sys
 
-from . import md
+from . import md, to_md
 from .config import (CERTIFICATE, CLONE, CONFIG, DEMO_URL, DEPLOY, ITA_REG, ITA_REGISTRY, OUT, REPO, ROOT,
                      SETUP, SHOP_LIVE, SHOP_URL, SITE_URL, CONTACT_ENDPOINT, LICENSE, VERSION)
 from .pages_text import NAV, PAGES, UI
@@ -664,8 +664,13 @@ def build_license(lang):
 
 
 def key_facts(lang):
-    """Filled in by R32 task 6."""
-    return ''
+    """Plain sentences an AI answer can quote, on the home and pricing pages."""
+    u = UI[lang]
+    facts = list(u['facts']) + ([u['fact_shop']] if SHOP_LIVE else [])
+    items = ''.join(f'<li>{E(f)}</li>' for f in facts)
+    return f'''  <section class="plain" id="key-facts">
+    <div class="wrap"><div class="facts"><h2>{E(u['key_facts_h'])}</h2><ul>{items}</ul></div></div>
+  </section>'''
 
 
 # ---------------------------------------------------------------------------------------------
@@ -881,6 +886,74 @@ def prune(written):
             os.rmdir(folder)
 
 
+# ---------------------------------------------------------------------------------------------
+# Files for crawlers and AI answers
+# ---------------------------------------------------------------------------------------------
+
+def published(page):
+    return not page.get('noindex')
+
+
+def git_date(paths):
+    """The date of the last commit touching these paths, or None outside git (a fork's zip, say)."""
+    import subprocess
+    try:
+        out = subprocess.run(['git', 'log', '-1', '--format=%cs', '--', *paths], cwd=ROOT, capture_output=True, text=True, timeout=20)
+        return out.stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def lastmod(page, cache):
+    if page['key'] == 'guide':
+        return page['guide']['updated']
+    sources = {'changelog': ['CHANGELOG.md'], 'registration': ['site/assets/ita-registration-281801-v1.1.0.pdf', 'scripts/site_build']}.get(
+        page['key'], ['scripts/site_build', 'site.config.json'])
+    key = tuple(sources)
+    if key not in cache:
+        cache[key] = git_date(sources)
+    return cache[key]
+
+
+def sitemap(pages):
+    cache = {}
+    rows = []
+    for p in sorted(filter(published, pages), key=lambda x: (x['path'].startswith('/he/') is False, x['path'])):
+        alts = ''.join(f'\n    <xhtml:link rel="alternate" hreflang="{l}" href="{absolute(path)}"/>' for l, path in sorted(p['pair'].items()))
+        if p['pair'].get('he'):
+            alts += f'\n    <xhtml:link rel="alternate" hreflang="x-default" href="{absolute(p["pair"]["he"])}"/>'
+        mod = lastmod(p, cache)
+        mod_xml = f'\n    <lastmod>{mod}</lastmod>' if mod else ''
+        rows.append(f'  <url>\n    <loc>{absolute(p["path"])}</loc>{mod_xml}{alts}\n  </url>')
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+            + '\n'.join(rows) + '\n</urlset>\n')
+
+
+def robots():
+    # Every crawler is welcome, AI crawlers included.
+    return f'User-agent: *\nAllow: /\n\nSitemap: {absolute("/sitemap.xml")}\n'
+
+
+def llms_txt(pages):
+    """llms.txt, per llmstxt.org: a title, a summary, then links to every published page."""
+    u = UI['en']
+    intro = u['llms_intro'] + (u['llms_intro_shop'] if SHOP_LIVE else '')
+    sections = []
+    for lang, heading in (('en', 'Pages in English'), ('he', 'Pages in Hebrew')):
+        items = [p for p in pages if p['lang'] == lang and published(p) and p['key'] != 'guide']
+        lines = [f'- [{p["title"]}]({absolute(p["path"])}): {p["desc"]}' for p in items]
+        sections.append(f'## {heading}\n\n' + '\n'.join(lines))
+        guides = [p for p in pages if p['lang'] == lang and published(p) and p['key'] == 'guide']
+        if guides:
+            sections.append(f'## Guides in {"English" if lang == "en" else "Hebrew"}\n\n'
+                            + '\n'.join(f'- [{p["h1"]}]({absolute(p["path"])}): {p["desc"]}' for p in guides))
+    sections.append('## Optional\n\n'
+                    f'- [Source code]({REPO}): the repository, AGPL-3.0\n'
+                    f'- [Full text of every page]({absolute("/llms-full.txt")}): one Markdown file')
+    return f'# Open Ledger IL\n\n> {intro}\n\n' + '\n\n'.join(sections) + '\n'
+
+
 def main():
     global ASSETS
     OUT.mkdir(exist_ok=True)
@@ -900,9 +973,21 @@ def main():
     check_meta(pages)
     for p in pages:
         p['jsonld'] = jsonld(p)
+        p['md'] = published(p)
     written = set()
+    full = []
     for page, main_html, scripts in built:
-        write(page['path'] + 'index.html', document(page, main_html, scripts), written)
+        html_text = document(page, main_html, scripts)
+        write(page['path'] + 'index.html', html_text, written)
+        if page['md']:
+            text = to_md.main_markdown(html_text, SITE_URL, page['h1'] or page['title'])
+            text += f'\nSource: {absolute(page["path"])}\n'
+            write(page['path'] + 'index.md', text, written)
+            full.append(text)
+    write('/sitemap.xml', sitemap(pages), written)
+    write('/robots.txt', robots(), written)
+    write('/llms.txt', llms_txt(pages), written)
+    write('/llms-full.txt', '\n\n---\n\n'.join(full), written)
     write('/favicon.svg', FAVICON, written)
     write('/404.html', not_found(), written)
     prune(written)

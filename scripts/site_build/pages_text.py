@@ -125,6 +125,17 @@ UI = {
         license_full='Read the full licence text',
         license_gnu='The AGPL-3.0 on gnu.org',
         key_facts_h='Key facts',
+        facts=[
+            'Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.',
+            'It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.',
+            'It is free from source under the AGPL-3.0 licence.',
+            'Having it set up for you costs ₪699, once, with no subscription.',
+            'It supports עוסק פטור and עוסק מורשה businesses.',
+            'It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.',
+        ],
+        fact_shop='The connected installer, which you run yourself, costs ₪99, once.',
+        llms_intro='Open Ledger IL (חשבונאות פתוחה) is open-source invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority under certificate 281801. It is free from source under the AGPL-3.0, or set up for you for ₪699 once.',
+        llms_intro_shop=' The connected installer costs ₪99 once.',
         draft='Draft',
     ),
     'he': dict(
@@ -171,6 +182,15 @@ UI = {
         license_full='לנוסח המלא של הרישיון',
         license_gnu='רישיון AGPL-3.0 באתר gnu.org',
         key_facts_h='עובדות עיקריות',
+        facts=[
+            'Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.',
+            'היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.',
+            'היא חינמית מקוד המקור, ברישיון AGPL-3.0.',
+            'הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי.',
+            'היא תומכת בעוסק פטור ובעוסק מורשה.',
+            'היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.',
+        ],
+        fact_shop='תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי.',
         draft='טיוטה',
     ),
 }
