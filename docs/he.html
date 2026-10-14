@@ -150,6 +150,8 @@ td span { color: var(--text-dim); }
 .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1080px; margin: 0 auto; }
 @media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 520px; } }
 .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
+.plans-2 { grid-template-columns: repeat(2, 1fr); max-width: 860px; }
+@media (max-width: 720px) { .plans-2 { grid-template-columns: 1fr; } }
 .plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
 .plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
 .price { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 14px; }
@@ -568,9 +570,9 @@ section[id] { scroll-margin-top: 64px; }
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">מחירים</div>
-        <h2>חינם מקוד המקור, התקנה עצמית, או הקמה עבורך</h2>
+        <h2>להתקין בעצמך, או לקבל אותה מוקמת</h2>
       </div>
-      <div class="plans">
+      <div class="plans plans-2">
         <div class="plan">
           <h3>חינם מקוד המקור</h3>
           <div class="price">חינם</div>
@@ -580,16 +582,6 @@ section[id] { scroll-margin-top: 64px; }
             <li>מדריך התקנה שלב אחר שלב</li>
           </ul>
           <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
-        </div>
-        <div class="plan plan-main">
-          <h3>התקנה עצמית, מחוברת</h3>
-          <div class="price">₪99 <span>חד פעמי</span></div>
-          <ul>
-            <li>תוכנת התקנה ל-Windows מקימה הכול בחשבון Cloudflare שלך</li>
-            <li>חיבור לרשות המסים דרך MTN, בלי אפליקציית API משלך</li>
-            <li>מפתח רישיון אחד לעסק אחד</li>
-          </ul>
-          <a class="btn btn-primary" href="https://get.matanlevanon.com/buy?lang=he" target="_blank" rel="noopener">לרכישה והתקנה</a>
         </div>
         <div class="plan">
           <h3>הקמה עבורך</h3>

@@ -3,7 +3,7 @@ Builds the product site: docs/index.html (English) and docs/he.html (Hebrew), ne
 screenshots in docs/screenshots/. Run: python3 scripts/build-site.py docs
 GitHub Pages serves it: Settings > Pages > Deploy from a branch > main, /docs.
 """
-import html, json, os, sys
+import html, json, os, re, sys
 from pathlib import Path
 
 # The page names no account. GitHub links are built in the browser from the Pages address
@@ -21,6 +21,9 @@ DEMO_URL = 'https://sampleledger.matanlevanon.com'
 # The project's official shop for the licensed installer. scripts/leak-denylist.txt allows this
 # one hostname in this file, the two pages it builds and the README, nowhere else.
 SHOP_URL = 'https://get.matanlevanon.com'
+# The ₪99 card shows only when the shop is live. Set True once get.matanlevanon.com/buy works,
+# and uncomment the ₪99 paragraph in README.md.
+SHOP_LIVE = False
 # The version shown on the site comes from package.json, so a release bump updates it.
 VERSION = json.loads((Path(__file__).resolve().parent.parent / 'package.json').read_text(encoding='utf-8'))['version']
 
@@ -438,7 +441,7 @@ OPTIONS_EN = r'''  <section id="options">
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">Pricing</div>
-        <h2>Free from source, installed by you, or set up for you</h2>
+        <h2><!--H-->Free from source, installed by you, or set up for you<!--/H--></h2>
       </div>
       <div class="plans">
         <div class="plan">
@@ -451,6 +454,7 @@ OPTIONS_EN = r'''  <section id="options">
           </ul>
           <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">Read the setup guide</a>
         </div>
+<!--SHOP-->
         <div class="plan plan-main">
           <h3>Install it yourself, connected</h3>
           <div class="price">₪99 <span>one time</span></div>
@@ -461,6 +465,7 @@ OPTIONS_EN = r'''  <section id="options">
           </ul>
           <a class="btn btn-primary" href="__SHOP__/buy" target="_blank" rel="noopener">Buy and install</a>
         </div>
+<!--/SHOP-->
         <div class="plan">
           <h3>Set up for you</h3>
           <div class="price">₪699 <span>one time</span></div>
@@ -514,7 +519,7 @@ OPTIONS_HE = r'''  <section id="options">
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">מחירים</div>
-        <h2>חינם מקוד המקור, התקנה עצמית, או הקמה עבורך</h2>
+        <h2><!--H-->חינם מקוד המקור, התקנה עצמית, או הקמה עבורך<!--/H--></h2>
       </div>
       <div class="plans">
         <div class="plan">
@@ -527,6 +532,7 @@ OPTIONS_HE = r'''  <section id="options">
           </ul>
           <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
         </div>
+<!--SHOP-->
         <div class="plan plan-main">
           <h3>התקנה עצמית, מחוברת</h3>
           <div class="price">₪99 <span>חד פעמי</span></div>
@@ -537,6 +543,7 @@ OPTIONS_HE = r'''  <section id="options">
           </ul>
           <a class="btn btn-primary" href="__SHOP__/buy?lang=he" target="_blank" rel="noopener">לרכישה והתקנה</a>
         </div>
+<!--/SHOP-->
         <div class="plan">
           <h3>הקמה עבורך</h3>
           <div class="price">₪699 <span>חד פעמי</span></div>
@@ -737,6 +744,8 @@ td span { color: var(--text-dim); }
 .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1080px; margin: 0 auto; }
 @media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 520px; } }
 .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
+.plans-2 { grid-template-columns: repeat(2, 1fr); max-width: 860px; }
+@media (max-width: 720px) { .plans-2 { grid-template-columns: 1fr; } }
 .plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
 .plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
 .price { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 14px; }
@@ -766,6 +775,17 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 @media (max-width: 640px) { .setup-form { grid-template-columns: 1fr; } }
 section[id] { scroll-margin-top: 64px; }
 '''
+
+
+def options(c):
+    """The pricing section. Before the shop is live, the ₪99 card is left out and the other two share the row."""
+    html_ = (OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE).replace('__SHOP__', SHOP_URL)
+    if SHOP_LIVE:
+        return re.sub(r'<!--/?(SHOP|H)-->\n?', '', html_)
+    html_ = re.sub(r'<!--SHOP-->.*?<!--/SHOP-->\n', '', html_, flags=re.S)
+    two = 'Install it yourself, or have it set up for you' if c['lang'] == 'en' else 'להתקין בעצמך, או לקבל אותה מוקמת'
+    html_ = re.sub(r'<!--H-->.*?<!--/H-->', two, html_)
+    return html_.replace('<div class="plans">', '<div class="plans plans-2">')
 
 
 def page(c):
@@ -991,7 +1011,7 @@ def page(c):
     </div>
   </section>
 
-{(OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE).replace('__SHOP__', SHOP_URL)}  <section class="final">
+{options(c)}  <section class="final">
     <div class="wrap">
       <h2>{e(c['final_h'])}</h2>
       <p class="lead">{e(c['final_p'])}</p>
