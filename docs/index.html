@@ -147,8 +147,8 @@ td span { color: var(--text-dim); }
 .refs li:target { background: var(--surface-2); border-radius: 6px; }
 /* Pricing. */
 #options { background: var(--bg-2); }
-.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 860px; margin: 0 auto; }
-@media (max-width: 720px) { .plans { grid-template-columns: 1fr; } }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1080px; margin: 0 auto; }
+@media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 520px; } }
 .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
 .plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
 .plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
@@ -210,7 +210,7 @@ section[id] { scroll-margin-top: 64px; }
 <main id="top">
   <div class="wrap">
     <div class="hero">
-      <div class="badge"><b>Free</b> · Open source · Registered with the Israel Tax Authority · v1.6.0</div>
+      <div class="badge"><b>Free</b> · Open source · Registered with the Israel Tax Authority · v1.7.0</div>
       <h1>Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.</h1>
       <p class="lead">Quotes, receipts, tax invoices, contracts and expenses, with legal numbering and ITA allocation numbers. It runs in your own Cloudflare account. Your data stays yours.</p>
       <div class="cta cta-demo">
@@ -547,7 +547,7 @@ section[id] { scroll-margin-top: 64px; }
           <p>The ledger uses 5 scheduled jobs, the most Workers Free allows. Free has three other limits worth knowing:</p>
           <ul><li>Cron CPU: 10 ms per scheduled run on Free. Most jobs fit. The monthly accountant pack and the quarterly backup build files and are the ones likely to need Paid.</li><li>Browser Rendering, which draws every PDF: 10 minutes a day on Free, 10 hours a month on Paid.</li><li>D1 point-in-time recovery: 7 days on Free, 30 days on Paid. For legal books, 30 days is the one to have.</li></ul>
           <h3>Do you need to register the software with the Tax Authority?</h3>
-          <p>Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.6.0, and new versions are added to the certificate as they are filed. <sup><a href="#ref-2">[2]</a></sup></p><p>The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. <sup><a href="#ref-1">[1]</a></sup></p><p>You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.</p><p>Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings &gt; Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.</p><p>To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.</p>
+          <p>Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. <sup><a href="#ref-2">[2]</a></sup></p><p>The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. <sup><a href="#ref-1">[1]</a></sup></p><p>You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.</p><p>Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings &gt; Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.</p><p>To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.</p>
           <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">The ITA software registration page (Hebrew)</a></p>
           <div class="refs"><b>References</b><ol><li id="ref-1">Israel Tax Authority, &quot;Application to register software for a computerized accounting system&quot;, service page, updated 29.05.2025. Who must register: <q lang="he" dir="rtl">יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)</q> <a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">gov.il</a></li><li id="ref-2">Israel Tax Authority, registry of registered accounting software. <a href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">gov.il</a></li><li id="ref-3">Legal framework: Income Tax (Bookkeeping) Instructions, 1973, the computerized-system rules under instruction 36.</li></ol></div>
           <h3>What it will not do</h3>
@@ -568,20 +568,30 @@ section[id] { scroll-margin-top: 64px; }
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">Pricing</div>
-        <h2>Install it yourself, or have it set up for you</h2>
+        <h2>Free from source, installed by you, or set up for you</h2>
       </div>
       <div class="plans">
         <div class="plan">
-          <h3>Do it yourself</h3>
+          <h3>Free from source</h3>
           <div class="price">Free</div>
           <ul>
             <li>No license fee, no usage limits</li>
+            <li>You register your own ITA API app</li>
             <li>Step-by-step setup guide</li>
-            <li>Free updates, applied when you choose</li>
           </ul>
           <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">Read the setup guide</a>
         </div>
         <div class="plan plan-main">
+          <h3>Install it yourself, connected</h3>
+          <div class="price">₪99 <span>one time</span></div>
+          <ul>
+            <li>A Windows installer sets it up in your own Cloudflare account</li>
+            <li>Tax Authority connection through MTN, no ITA app of your own</li>
+            <li>One licence key for one business</li>
+          </ul>
+          <a class="btn btn-primary" href="https://get.matanlevanon.com/buy" target="_blank" rel="noopener">Buy and install</a>
+        </div>
+        <div class="plan">
           <h3>Set up for you</h3>
           <div class="price">₪699 <span>one time</span></div>
           <ul>
@@ -589,7 +599,7 @@ section[id] { scroll-margin-top: 64px; }
             <li>Handed over working, in your name</li>
             <li>No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year</li>
           </ul>
-          <a class="btn btn-primary" href="#setup-form">Ask for a setup</a>
+          <a class="btn btn-ghost" href="#setup-form">Book a call</a>
         </div>
       </div>
       <form class="setup-form" id="setup-form" novalidate>

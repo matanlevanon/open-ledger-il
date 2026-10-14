@@ -68,3 +68,5 @@ bd0385db
 allow-in:scripts/build-site.py,docs/index.html,docs/he.html,README.md:sampleledger.matanlevanon.com
 # The product page links in the README (GitHub Pages of this repository).
 allow-in:README.md:matanlevanon.github.io/open-ledger-il
+# The project's official shop for the licensed installer (R31). Allowed in the site builder, the two pages it builds and the README, nowhere else.
+allow-in:scripts/build-site.py,docs/index.html,docs/he.html,README.md:get.matanlevanon.com

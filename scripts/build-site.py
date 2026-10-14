@@ -18,6 +18,9 @@ CLONE = 'git clone https://github.com/OWNER/open-ledger-il.git'
 # The project's official live demo. scripts/leak-denylist.txt allows this one hostname in this
 # file and the two pages it builds, nowhere else.
 DEMO_URL = 'https://sampleledger.matanlevanon.com'
+# The project's official shop for the licensed installer. scripts/leak-denylist.txt allows this
+# one hostname in this file, the two pages it builds and the README, nowhere else.
+SHOP_URL = 'https://get.matanlevanon.com'
 # The version shown on the site comes from package.json, so a release bump updates it.
 VERSION = json.loads((Path(__file__).resolve().parent.parent / 'package.json').read_text(encoding='utf-8'))['version']
 
@@ -435,20 +438,30 @@ OPTIONS_EN = r'''  <section id="options">
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">Pricing</div>
-        <h2>Install it yourself, or have it set up for you</h2>
+        <h2>Free from source, installed by you, or set up for you</h2>
       </div>
       <div class="plans">
         <div class="plan">
-          <h3>Do it yourself</h3>
+          <h3>Free from source</h3>
           <div class="price">Free</div>
           <ul>
             <li>No license fee, no usage limits</li>
+            <li>You register your own ITA API app</li>
             <li>Step-by-step setup guide</li>
-            <li>Free updates, applied when you choose</li>
           </ul>
           <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">Read the setup guide</a>
         </div>
         <div class="plan plan-main">
+          <h3>Install it yourself, connected</h3>
+          <div class="price">₪99 <span>one time</span></div>
+          <ul>
+            <li>A Windows installer sets it up in your own Cloudflare account</li>
+            <li>Tax Authority connection through MTN, no ITA app of your own</li>
+            <li>One licence key for one business</li>
+          </ul>
+          <a class="btn btn-primary" href="__SHOP__/buy" target="_blank" rel="noopener">Buy and install</a>
+        </div>
+        <div class="plan">
           <h3>Set up for you</h3>
           <div class="price">₪699 <span>one time</span></div>
           <ul>
@@ -456,7 +469,7 @@ OPTIONS_EN = r'''  <section id="options">
             <li>Handed over working, in your name</li>
             <li>No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year</li>
           </ul>
-          <a class="btn btn-primary" href="#setup-form">Ask for a setup</a>
+          <a class="btn btn-ghost" href="#setup-form">Book a call</a>
         </div>
       </div>
       <form class="setup-form" id="setup-form" novalidate>
@@ -501,20 +514,30 @@ OPTIONS_HE = r'''  <section id="options">
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">מחירים</div>
-        <h2>להתקין בעצמך, או לקבל אותה מוקמת</h2>
+        <h2>חינם מקוד המקור, התקנה עצמית, או הקמה עבורך</h2>
       </div>
       <div class="plans">
         <div class="plan">
-          <h3>בעצמך</h3>
+          <h3>חינם מקוד המקור</h3>
           <div class="price">חינם</div>
           <ul>
             <li>בלי דמי רישיון ובלי מגבלת שימוש</li>
+            <li>רושמים אפליקציית API משלך ברשות המסים</li>
             <li>מדריך התקנה שלב אחר שלב</li>
-            <li>עדכונים בחינם, מתקינים מתי שרוצים</li>
           </ul>
           <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
         </div>
         <div class="plan plan-main">
+          <h3>התקנה עצמית, מחוברת</h3>
+          <div class="price">₪99 <span>חד פעמי</span></div>
+          <ul>
+            <li>תוכנת התקנה ל-Windows מקימה הכול בחשבון Cloudflare שלך</li>
+            <li>חיבור לרשות המסים דרך MTN, בלי אפליקציית API משלך</li>
+            <li>מפתח רישיון אחד לעסק אחד</li>
+          </ul>
+          <a class="btn btn-primary" href="__SHOP__/buy?lang=he" target="_blank" rel="noopener">לרכישה והתקנה</a>
+        </div>
+        <div class="plan">
           <h3>הקמה עבורך</h3>
           <div class="price">₪699 <span>חד פעמי</span></div>
           <ul>
@@ -522,7 +545,7 @@ OPTIONS_HE = r'''  <section id="options">
             <li>נמסרת לך פועלת, על שמך</li>
             <li>בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה</li>
           </ul>
-          <a class="btn btn-primary" href="#setup-form">לבקשת הקמה</a>
+          <a class="btn btn-ghost" href="#setup-form">לתיאום שיחה</a>
         </div>
       </div>
       <form class="setup-form" id="setup-form" novalidate>
@@ -711,8 +734,8 @@ td span { color: var(--text-dim); }
 .refs li:target { background: var(--surface-2); border-radius: 6px; }
 /* Pricing. */
 #options { background: var(--bg-2); }
-.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 860px; margin: 0 auto; }
-@media (max-width: 720px) { .plans { grid-template-columns: 1fr; } }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1080px; margin: 0 auto; }
+@media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 520px; } }
 .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
 .plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
 .plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
@@ -968,7 +991,7 @@ def page(c):
     </div>
   </section>
 
-{OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE}  <section class="final">
+{(OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE).replace('__SHOP__', SHOP_URL)}  <section class="final">
     <div class="wrap">
       <h2>{e(c['final_h'])}</h2>
       <p class="lead">{e(c['final_p'])}</p>

@@ -147,8 +147,8 @@ td span { color: var(--text-dim); }
 .refs li:target { background: var(--surface-2); border-radius: 6px; }
 /* Pricing. */
 #options { background: var(--bg-2); }
-.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 860px; margin: 0 auto; }
-@media (max-width: 720px) { .plans { grid-template-columns: 1fr; } }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1080px; margin: 0 auto; }
+@media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 520px; } }
 .plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
 .plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
 .plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
@@ -210,7 +210,7 @@ section[id] { scroll-margin-top: 64px; }
 <main id="top">
   <div class="wrap">
     <div class="hero">
-      <div class="badge"><b>חינם</b> · קוד פתוח · רשומה ברשות המסים · גרסה 1.6.0</div>
+      <div class="badge"><b>חינם</b> · קוד פתוח · רשומה ברשות המסים · גרסה 1.7.0</div>
       <h1>חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.</h1>
       <p class="lead">הצעות מחיר, קבלות, חשבוניות מס, חוזים והוצאות, עם מספור חוקי ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר שלך.</p>
       <div class="cta cta-demo">
@@ -547,7 +547,7 @@ section[id] { scroll-margin-top: 64px; }
           <p>המערכת משתמשת ב-5 משימות מתוזמנות, המקסימום ב-Workers Free. לתוכנית החינמית יש עוד שלוש מגבלות שכדאי להכיר:</p>
           <ul><li>זמן מעבד למשימה מתוזמנת: 10 מילישניות בתוכנית החינמית. רוב המשימות נכנסות. חבילת רואה החשבון החודשית והגיבוי הרבעוני בונים קבצים, והן אלה שכנראה ידרשו Paid.</li><li>Browser Rendering, שמפיק כל PDF: 10 דקות ביום בחינם, 10 שעות בחודש ב-Paid.</li><li>שחזור לנקודת זמן ב-D1: 7 ימים בחינם, 30 ימים ב-Paid. לספרים חוקיים, 30 ימים זה מה שצריך.</li></ul>
           <h3>צריך לרשום את התוכנה ברשות המסים?</h3>
-          <p>חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.6.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. <sup><a href="#ref-2">[2]</a></sup></p><p>רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. <sup><a href="#ref-1">[1]</a></sup></p><p>אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.</p><p>מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות &gt; הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.</p><p>כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.</p>
+          <p>חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. <sup><a href="#ref-2">[2]</a></sup></p><p>רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. <sup><a href="#ref-1">[1]</a></sup></p><p>אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.</p><p>מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות &gt; הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.</p><p>כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.</p>
           <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">עמוד רישום התוכנה ברשות המסים</a></p>
           <div class="refs"><b>מקורות</b><ol><li id="ref-1">רשות המסים, &quot;בקשה לרישום תוכנה המיועדת לניהול מערכת חשבונות ממוחשבת&quot;, עמוד השירות, עודכן 29.05.2025. מי חייב ברישום: <q lang="he" dir="rtl">יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)</q> <a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">gov.il</a></li><li id="ref-2">רשות המסים, מאגר התוכנות הרשומות לניהול מערכת חשבונות ממוחשבת. <a href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">gov.il</a></li><li id="ref-3">המסגרת החוקית: הוראות מס הכנסה (ניהול פנקסי חשבונות), התשל&quot;ג-1973, הכללים למערכת ממוחשבת לפי הוראה 36.</li></ol></div>
           <h3>מה היא לא עושה</h3>
@@ -568,20 +568,30 @@ section[id] { scroll-margin-top: 64px; }
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">מחירים</div>
-        <h2>להתקין בעצמך, או לקבל אותה מוקמת</h2>
+        <h2>חינם מקוד המקור, התקנה עצמית, או הקמה עבורך</h2>
       </div>
       <div class="plans">
         <div class="plan">
-          <h3>בעצמך</h3>
+          <h3>חינם מקוד המקור</h3>
           <div class="price">חינם</div>
           <ul>
             <li>בלי דמי רישיון ובלי מגבלת שימוש</li>
+            <li>רושמים אפליקציית API משלך ברשות המסים</li>
             <li>מדריך התקנה שלב אחר שלב</li>
-            <li>עדכונים בחינם, מתקינים מתי שרוצים</li>
           </ul>
           <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
         </div>
         <div class="plan plan-main">
+          <h3>התקנה עצמית, מחוברת</h3>
+          <div class="price">₪99 <span>חד פעמי</span></div>
+          <ul>
+            <li>תוכנת התקנה ל-Windows מקימה הכול בחשבון Cloudflare שלך</li>
+            <li>חיבור לרשות המסים דרך MTN, בלי אפליקציית API משלך</li>
+            <li>מפתח רישיון אחד לעסק אחד</li>
+          </ul>
+          <a class="btn btn-primary" href="https://get.matanlevanon.com/buy?lang=he" target="_blank" rel="noopener">לרכישה והתקנה</a>
+        </div>
+        <div class="plan">
           <h3>הקמה עבורך</h3>
           <div class="price">₪699 <span>חד פעמי</span></div>
           <ul>
@@ -589,7 +599,7 @@ section[id] { scroll-margin-top: 64px; }
             <li>נמסרת לך פועלת, על שמך</li>
             <li>בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה</li>
           </ul>
-          <a class="btn btn-primary" href="#setup-form">לבקשת הקמה</a>
+          <a class="btn btn-ghost" href="#setup-form">לתיאום שיחה</a>
         </div>
       </div>
       <form class="setup-form" id="setup-form" novalidate>
