@@ -2,7 +2,7 @@
 
 Open-source invoicing, expenses and bookkeeping for Israeli businesses. Built for עוסק פטור and עוסק מורשה. Runs on your own Cloudflare account. Your data stays in your own database.
 
-Website: [open-ledger.matanlevanon.com](https://open-ledger.matanlevanon.com/he/) ([English](https://open-ledger.matanlevanon.com/)) · Live demo: [sampleledger.matanlevanon.com](https://sampleledger.matanlevanon.com)
+Website: [open-ledger.matanlevanon.com](https://open-ledger.matanlevanon.com/he/) ([English](https://open-ledger.matanlevanon.com/) · [עברית](https://open-ledger.matanlevanon.com/he/)) · Live demo: [sampleledger.matanlevanon.com](https://sampleledger.matanlevanon.com)
 
 > **Not tax or legal advice.** You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant before you issue a real document.
 
