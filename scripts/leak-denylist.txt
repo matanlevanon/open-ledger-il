@@ -74,8 +74,5 @@ allow-in:site.config.json,scripts/build-site.py,site/**,README.md:github.com/mat
 allow-in:site.config.json,scripts/build-site.py,site/**,README.md:sampleledger.matanlevanon.com
 # The official shop for the licensed installer (R31).
 allow-in:site.config.json,scripts/build-site.py,site/**,README.md:get.matanlevanon.com
-# Until R32 task 9 turns them into redirect pages, the old GitHub Pages files keep the demo and
-# shop links, and the README keeps the old product page links.
-allow-in:docs/index.html,docs/he.html:sampleledger.matanlevanon.com
-allow-in:docs/index.html,docs/he.html:get.matanlevanon.com
-allow-in:README.md:matanlevanon.github.io/open-ledger-il
+# The old GitHub Pages files are redirect pages to the new site (R32 task 9).
+allow-in:docs/index.html,docs/he.html:open-ledger.matanlevanon.com

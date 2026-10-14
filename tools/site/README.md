@@ -43,6 +43,18 @@ example `open-ledger.example.com`. Put the same address in `siteUrl` in `site.co
 3. `curl -sI https://<your address>/` shows `Content-Security-Policy` and the `Link` header.
 4. `curl -sI https://open-ledger-site.<your subdomain>.workers.dev/` answers `301` to your address.
 
+## After the move
+
+The site used to be on GitHub Pages, from `/docs`. `docs/index.html` and `docs/he.html` are now
+small redirect pages, written by the same build: a canonical link to the new address, a meta
+refresh, a `location.replace` script and a visible link, all `noindex`. An old `#options` or
+`#features` link lands on the page that took over that section.
+
+1. Keep GitHub Pages on for 6 months, so old links and search results still land.
+2. After that, turn it off: repository Settings > Pages > Source: None.
+3. Point the repository About box website field at the new address.
+4. Use the new address in GitHub release notes from now on.
+
 ## Analytics, off until set
 
 `site.config.json` has two empty ids under `analytics`, so a fork sends nothing.

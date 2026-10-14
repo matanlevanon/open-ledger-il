@@ -2,7 +2,7 @@
 
 Open-source invoicing, expenses and bookkeeping for Israeli businesses. Built for עוסק פטור and עוסק מורשה. Runs on your own Cloudflare account. Your data stays in your own database.
 
-Product page: [English](https://matanlevanon.github.io/open-ledger-il/) · [עברית](https://matanlevanon.github.io/open-ledger-il/he.html) · Live demo: [sampleledger.matanlevanon.com](https://sampleledger.matanlevanon.com)
+Website: [open-ledger.matanlevanon.com](https://open-ledger.matanlevanon.com/he/) ([English](https://open-ledger.matanlevanon.com/)) · Live demo: [sampleledger.matanlevanon.com](https://sampleledger.matanlevanon.com)
 
 > **Not tax or legal advice.** You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant before you issue a real document.
 
@@ -14,7 +14,7 @@ Product page: [English](https://matanlevanon.github.io/open-ledger-il/) · [עב
 **Install it yourself, connected. ₪99, one time.** A Windows installer sets everything up in your own Cloudflare account, and the Tax Authority connection runs through MTN, so you need no ITA app of your own. One licence key for one business. Buy and install at [get.matanlevanon.com](https://get.matanlevanon.com/buy) ([עברית](https://get.matanlevanon.com/buy?lang=he)).
 -->
 
-**Set up for you. ₪699, one time.** Prefer not to do it yourself? I create every account for you with your own emails, install and deploy it, and hand it over working, with full control to you. The Tax Authority connection uses your own ITA API app, or the connection through MTN. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself. Book a call through the form on the product page ([English](https://matanlevanon.github.io/open-ledger-il/#options) · [עברית](https://matanlevanon.github.io/open-ledger-il/he.html#options)).
+**Set up for you. ₪699, one time.** Prefer not to do it yourself? I create every account for you with your own emails, install and deploy it, and hand it over working, with full control to you. The Tax Authority connection uses your own ITA API app, or the connection through MTN. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself. Book a call through the form on the pricing page ([English](https://open-ledger.matanlevanon.com/pricing/) · [עברית](https://open-ledger.matanlevanon.com/he/pricing/)).
 
 ## Who it is for
 

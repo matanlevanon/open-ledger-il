@@ -1048,6 +1048,10 @@ def main():
     write('/favicon.svg', FAVICON, written)
     write('/404.html', not_found(), written)
     prune(written)
+    # The old GitHub Pages files, now redirects. Written only for the real build, not a test build.
+    if OUT == ROOT / 'site':
+        for lang, name in (('en', 'index.html'), ('he', 'he.html')):
+            (ROOT / 'docs' / name).write_text(pages_redirect(lang), encoding='utf-8', newline='\n')
     REPORTS.mkdir(exist_ok=True)
     og = [dict(file=f'og/{p["lang"]}-{p["og"]}.png', title=p['h1'] or PAGES[p['lang']]['home']['title'].split(':')[0],
                kicker=p['title'], lang=p['lang']) for p in pages]
@@ -1058,6 +1062,41 @@ def main():
         if not 600 <= g['words'] <= 1200:
             print(f'note: {g["file"]} has {g["words"]} words, the target is 600 to 1,200')
     print(f'built {len(pages)} pages into {OUT}')
+
+
+PAGES_ANCHORS = {'options': 'pricing', 'setup-form': 'pricing', 'how': 'pricing', 'setup': 'pricing', 'features': 'features',
+                 'list': 'features', 'screens': 'features', 'rules': 'features', 'registration': 'registration', 'demo': 'demo'}
+
+
+def pages_redirect(lang):
+    """docs/index.html and docs/he.html: the GitHub Pages address sends visitors and crawlers to the
+    same page on the new site. An old #anchor lands on the page that took over that section."""
+    target = absolute(path_of(lang, 'home'))
+    base = path_of(lang, 'home')
+    anchors = json.dumps({k: absolute(path_of(lang, v)) for k, v in PAGES_ANCHORS.items()})
+    text = ('Open Ledger IL moved to' if lang == 'en' else 'Open Ledger IL עברה אל')
+    return f'''<!doctype html>
+<html lang="{lang}" dir="{'rtl' if lang == 'he' else 'ltr'}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<title>Open Ledger IL</title>
+<link rel="canonical" href="{target}">
+<meta http-equiv="refresh" content="0; url={target}">
+<script>
+(function () {{
+  var anchors = {anchors};
+  var key = location.hash.replace('#', '');
+  location.replace(anchors[key] ? anchors[key] + location.hash : '{target}');
+}})();
+</script>
+</head>
+<body>
+<p>{E(text)} <a href="{target}">{E(target)}</a></p>
+</body>
+</html>
+'''
 
 
 def not_found():
