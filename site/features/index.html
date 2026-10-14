@@ -86,17 +86,21 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .feat h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .feat p { margin: 0; color: var(--text-dim); font-size: 15px; }
 /* Every feature: closed groups the reader opens. */
-.flist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; max-width: 980px; margin: 0 auto; align-items: start; }
-@media (max-width: 760px) { .flist { grid-template-columns: 1fr; } }
-.fgroup { border-bottom: 1px solid var(--border); }
-.fgroup summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; font-weight: 600; font-size: 16px; }
-.fgroup summary::-webkit-details-marker { display: none; }
-.fgroup summary::after { content: '+'; margin-inline-start: auto; color: var(--text-mute); font-size: 20px; font-weight: 400; line-height: 1; }
-.fgroup[open] summary::after { content: '\2212'; }
-.fgroup .count { font-size: 12px; font-weight: 600; color: var(--text-mute); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
-.fgroup ul { list-style: none; margin: 0 0 16px; padding: 0; }
+.flist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 32px; max-width: 1080px; margin: 0 auto; align-items: start; }
+@media (max-width: 960px) { .flist { grid-template-columns: repeat(2, 1fr); } }
+/* Every group open, so crawlers and readers see the whole list. Headings line up across a row. */
+.fgroup { border-top: 2px solid var(--border); padding-top: 14px; }
+.fgroup h3 { margin: 0 0 10px; font-size: 16px; font-weight: 650; }
+.fgroup ul { list-style: none; margin: 0; padding: 0; }
 .fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
 .fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+/* Phones: two narrow columns, smaller text, so the list fits in a few screens. */
+@media (max-width: 640px) {
+  .flist { gap: 20px 16px; }
+  .fgroup { padding-top: 10px; }
+  .fgroup h3 { font-size: 14px; margin-bottom: 6px; }
+  .fgroup li { font-size: 12.5px; line-height: 1.4; margin: 4px 0; padding-inline-start: 16px; }
+}
 /* Phones, right under the main screenshot. */
 .phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; max-width: 1000px; margin: 0 auto; }
 @media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }
@@ -278,11 +282,11 @@ section[id] { scroll-margin-top: 64px; }
       <div class="sec-head">
         <div class="eyebrow">Feature list</div>
         <h2>Every feature</h2>
-        <p>Open a group to see what ships today.</p>
+        <p>What ships today, grouped by job.</p>
       </div>
       <div class="flist">
-        <details class="fgroup">
-          <summary>Documents<span class="count">8</span></summary>
+        <div class="fgroup">
+          <h3>Documents</h3>
           <ul>
             <li>Quotes, payment requests and pro formas (חשבון עסקה)</li>
             <li>Receipts and credit receipts as עוסק פטור</li>
@@ -293,9 +297,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>Cheque payments with bank, branch and account number</li>
             <li>Delete a draft only after you confirm</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Numbering and compliance<span class="count">6</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Numbering and compliance</h3>
           <ul>
             <li>One gapless series per document type, with your own starting numbers</li>
             <li>Final documents locked by database triggers and a hash chain</li>
@@ -304,9 +308,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>פטור ceiling meter with alerts and a guided switch to מורשה</li>
             <li>Issuing on/off switch, to keep issuing in your current system</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Currency<span class="count">6</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Currency</h3>
           <ul>
             <li>Documents in ILS, USD, EUR and other currencies</li>
             <li>Bank of Israel rates, cached daily</li>
@@ -315,9 +319,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>Foreign and ILS totals printed in their own columns</li>
             <li>Client balances kept in the client’s currency</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Sending<span class="count">7</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Sending</h3>
           <ul>
             <li>Email with To, CC and BCC on every document</li>
             <li>A CC list per client and a BCC copy list for your own records</li>
@@ -327,9 +331,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>Payment reminders before and after the due date</li>
             <li>A clear confirmation once a document is marked as sent</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Recurring documents<span class="count">6</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Recurring documents</h3>
           <ul>
             <li>Weekly, monthly, quarterly or yearly schedules for retainers and pro formas</li>
             <li>Payment terms in days, set on each copy</li>
@@ -338,9 +342,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>Approvals page on the computer and the phone</li>
             <li>Slack notice when a copy waits for approval</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Clients and dashboard<span class="count">5</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Clients and dashboard</h3>
           <ul>
             <li>A page per client with contacts, documents and a ledger per currency</li>
             <li>Open balances, aging and an overdue list</li>
@@ -348,9 +352,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>Cash flow, income by month and top clients</li>
             <li>Sortable tables, newest first by default</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Contracts and work orders<span class="count">7</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Contracts and work orders</h3>
           <ul>
             <li>Contract and work order templates with fields you define, in English and Hebrew</li>
             <li>Service Agreement included in the first work order, signed once</li>
@@ -360,18 +364,18 @@ section[id] { scroll-margin-top: 64px; }
             <li>Signing reminders, and contracts signed elsewhere uploaded to the client record</li>
             <li>Turn a signed work order into a pro forma</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Business documents<span class="count">4</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Business documents</h3>
           <ul>
             <li>VAT and company certificates, bookkeeping and withholding confirmations</li>
             <li>Claude reads the type, names and dates</li>
             <li>Expiry warnings on the dashboard</li>
             <li>Your assistant and accountant open the same list</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Expenses and import<span class="count">5</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Expenses and import</h3>
           <ul>
             <li>Upload a receipt or snap a photo, Claude reads supplier, date and amount</li>
             <li>Import a month of expenses from Google Drive</li>
@@ -379,9 +383,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>Imported documents keep the exchange rate printed on them, never a guessed one</li>
             <li>Documents with no printed rate are flagged for you to fill in</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>Reports, exports and backups<span class="count">6</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>Reports, exports and backups</h3>
           <ul>
             <li>Income, expenses, profit and loss, open items and client ledgers</li>
             <li>Download as PDF, XLSX or CSV</li>
@@ -390,16 +394,16 @@ section[id] { scroll-margin-top: 64px; }
             <li>PCN874 export (allocation-number column)</li>
             <li>Quarterly backups to R2 and Google Drive</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>On your phone<span class="count">4</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>On your phone</h3>
           <ul>
             <li>Installs on the home screen like an app</li>
             <li>Quick page: photo, gallery, new document and recent activity</li>
             <li>Bottom tab bar and tables that turn into cards</li>
             <li>Photos taken offline upload when you are back online</li>
           </ul>
-        </details>
+        </div>
       </div>
     </div>
   </section>

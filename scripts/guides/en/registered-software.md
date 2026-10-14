@@ -7,7 +7,6 @@ sources:
   - https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system
   - https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems
   - {{repo}}/blob/main/docs/legal-requirements.md
-  - {{site}}/assets/ita-registration-281801-v1.1.0.pdf
   - {{repo}}/blob/main/docs/israel-invoices-api.md
 faq:
   - q: I use software I wrote for my own business. Must I register it?
@@ -36,18 +35,18 @@ Three things follow from that wording:
 
 ## What registration says
 
-The Tax Authority issues a registration certificate with a number, the software name, the version registered and a validity period [4]. The certificate also says what registration does not mean: "אין ברישום התוכנה כדי לאשר את נכונות ביצועיה והתאמתה לניהול פנקסי חשבונות", registration does not confirm that the software works correctly or suits bookkeeping [4].
+The Tax Authority issues a registration certificate with a number, the software name, the version registered and a validity period [2]. The certificate also says what registration does not mean: "אין ברישום התוכנה כדי לאשר את נכונות ביצועיה והתאמתה לניהול פנקסי חשבונות", registration does not confirm that the software works correctly or suits bookkeeping [2].
 
 So registration is a condition for offering software to others. It is not an approval that the software calculates correctly. The books remain the business's responsibility, and the accountant checks them.
 
 ## Versions
 
-A certificate is issued for a specific version of the software [4]. When the producer releases new versions, it adds them to the registration as it files them [3]. [TO CHECK] The Tax Authority procedure for adding a new version to an existing certificate, and how long it takes to appear in the registry.
+A certificate is issued for a specific version of the software [2]. When the producer releases new versions, it adds them to the registration as it files them [3]. [TO CHECK] The Tax Authority procedure for adding a new version to an existing certificate, and how long it takes to appear in the registry.
 
 ## How to check that software is registered
 
 1. **Ask the producer for the certificate number.** A producer of registered software knows it, and usually publishes it.
-2. **Check the validity.** The certificate states the dates it is valid between [4].
+2. **Check the validity.** The certificate states the dates it is valid between [2].
 3. **Check the Tax Authority registry.** The Tax Authority keeps a registry of software registered for computerized accounting systems [2]. [TO CHECK] How to search the registry by software name or certificate number.
 4. **Check the version.** If the version you use is newer than the one on the certificate, ask the producer whether it has been added.
 
@@ -69,6 +68,6 @@ Registration is a starting point. Also ask:
 
 ## How Open Ledger IL does it
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028 [4]. The certificate was issued for version 1.1.0, and new versions are added to it as they are filed. The certificate, with personal details hidden, is on the registration page of this site, with a PDF download.
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028 [2]. The certificate was issued for version 1.1.0, and new versions are added to it as they are filed. You can check it in the Tax Authority's registry of registered software [2].
 
 The code is open, so you can check for yourself how the system locks, numbers and keeps documents.

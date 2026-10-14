@@ -86,17 +86,21 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .feat h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .feat p { margin: 0; color: var(--text-dim); font-size: 15px; }
 /* Every feature: closed groups the reader opens. */
-.flist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; max-width: 980px; margin: 0 auto; align-items: start; }
-@media (max-width: 760px) { .flist { grid-template-columns: 1fr; } }
-.fgroup { border-bottom: 1px solid var(--border); }
-.fgroup summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; font-weight: 600; font-size: 16px; }
-.fgroup summary::-webkit-details-marker { display: none; }
-.fgroup summary::after { content: '+'; margin-inline-start: auto; color: var(--text-mute); font-size: 20px; font-weight: 400; line-height: 1; }
-.fgroup[open] summary::after { content: '\2212'; }
-.fgroup .count { font-size: 12px; font-weight: 600; color: var(--text-mute); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
-.fgroup ul { list-style: none; margin: 0 0 16px; padding: 0; }
+.flist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 32px; max-width: 1080px; margin: 0 auto; align-items: start; }
+@media (max-width: 960px) { .flist { grid-template-columns: repeat(2, 1fr); } }
+/* Every group open, so crawlers and readers see the whole list. Headings line up across a row. */
+.fgroup { border-top: 2px solid var(--border); padding-top: 14px; }
+.fgroup h3 { margin: 0 0 10px; font-size: 16px; font-weight: 650; }
+.fgroup ul { list-style: none; margin: 0; padding: 0; }
 .fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
 .fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+/* Phones: two narrow columns, smaller text, so the list fits in a few screens. */
+@media (max-width: 640px) {
+  .flist { gap: 20px 16px; }
+  .fgroup { padding-top: 10px; }
+  .fgroup h3 { font-size: 14px; margin-bottom: 6px; }
+  .fgroup li { font-size: 12.5px; line-height: 1.4; margin: 4px 0; padding-inline-start: 16px; }
+}
 /* Phones, right under the main screenshot. */
 .phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; max-width: 1000px; margin: 0 auto; }
 @media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }

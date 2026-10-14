@@ -20,7 +20,7 @@ PAGES = {
             h1='Pricing and setup options', crumb='Pricing'),
         'registration': dict(
             title='Open Ledger IL: Tax Authority certificate 281801',
-            desc='Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. See the certificate.',
+            desc='Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.',
             h1='Registered with the Israel Tax Authority', crumb='Registration'),
         'demo': dict(
             title='Open Ledger IL live demo: try it in your browser',
@@ -54,7 +54,7 @@ PAGES = {
             h1='מחירים ואפשרויות התקנה', crumb='מחירים'),
         'registration': dict(
             title='Open Ledger IL רשומה ברשות המסים: תעודה 281801',
-            desc='Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. צפו בתעודה.',
+            desc='Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. אפשר לבדוק במאגר של רשות המסים.',
             h1='רשומה ברשות המסים', crumb='רישום'),
         'demo': dict(
             title='הדגמה חיה של Open Ledger IL: נסו בדפדפן',
@@ -99,10 +99,7 @@ UI = {
             'It opens in Hebrew, in the light theme.',
         ],
         demo_page_lead='The live demo opens the real app on sample businesses. Nothing to install.',
-        reg_cert_alt='Israel Tax Authority software registration certificate 281801 for Open Ledger IL, version 1.1.0, with personal details hidden',
-        reg_download='Download the certificate (PDF)',
         reg_registry='The Tax Authority registry of registered software',
-        reg_redacted='Personal details on the certificate are hidden.',
         guides_none='The guides are being written and reviewed. They will appear here once published.',
         guides_draft_bar='Draft. This guide is under review and not published yet.',
         guide_how='How Open Ledger IL does it',
@@ -156,10 +153,7 @@ UI = {
             'ההדגמה נפתחת בעברית, בערכת הצבעים הבהירה.',
         ],
         demo_page_lead='ההדגמה החיה פותחת את המערכת האמיתית על עסקי דוגמה. אין מה להתקין.',
-        reg_cert_alt='תעודת רישום תוכנה 281801 של רשות המסים עבור Open Ledger IL, מהדורה 1.1.0, עם פרטים אישיים מוסתרים',
-        reg_download='הורדת התעודה (PDF)',
         reg_registry='מאגר התוכנות הרשומות של רשות המסים',
-        reg_redacted='הפרטים האישיים בתעודה מוסתרים.',
         guides_none='המדריכים נכתבים ועוברים בדיקה. הם יופיעו כאן אחרי הפרסום.',
         guides_draft_bar='טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.',
         guide_how='איך Open Ledger IL עושה את זה',

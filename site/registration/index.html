@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Open Ledger IL: Tax Authority certificate 281801</title>
-<meta name="description" content="Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. See the certificate.">
+<meta name="description" content="Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.">
 <link rel="canonical" href="https://open-ledger.matanlevanon.com/registration/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/registration/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/registration/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/registration/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="Open Ledger IL: Tax Authority certificate 281801">
-<meta property="og:description" content="Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. See the certificate.">
+<meta property="og:description" content="Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://open-ledger.matanlevanon.com/registration/">
 <meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-registration.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Open Ledger IL: Tax Authority certificate 281801">
-<meta name="twitter:description" content="Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. See the certificate.">
+<meta name="twitter:description" content="Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.">
 <meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-registration.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
@@ -86,17 +86,21 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .feat h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .feat p { margin: 0; color: var(--text-dim); font-size: 15px; }
 /* Every feature: closed groups the reader opens. */
-.flist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; max-width: 980px; margin: 0 auto; align-items: start; }
-@media (max-width: 760px) { .flist { grid-template-columns: 1fr; } }
-.fgroup { border-bottom: 1px solid var(--border); }
-.fgroup summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; font-weight: 600; font-size: 16px; }
-.fgroup summary::-webkit-details-marker { display: none; }
-.fgroup summary::after { content: '+'; margin-inline-start: auto; color: var(--text-mute); font-size: 20px; font-weight: 400; line-height: 1; }
-.fgroup[open] summary::after { content: '\2212'; }
-.fgroup .count { font-size: 12px; font-weight: 600; color: var(--text-mute); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
-.fgroup ul { list-style: none; margin: 0 0 16px; padding: 0; }
+.flist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 32px; max-width: 1080px; margin: 0 auto; align-items: start; }
+@media (max-width: 960px) { .flist { grid-template-columns: repeat(2, 1fr); } }
+/* Every group open, so crawlers and readers see the whole list. Headings line up across a row. */
+.fgroup { border-top: 2px solid var(--border); padding-top: 14px; }
+.fgroup h3 { margin: 0 0 10px; font-size: 16px; font-weight: 650; }
+.fgroup ul { list-style: none; margin: 0; padding: 0; }
 .fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
 .fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+/* Phones: two narrow columns, smaller text, so the list fits in a few screens. */
+@media (max-width: 640px) {
+  .flist { gap: 20px 16px; }
+  .fgroup { padding-top: 10px; }
+  .fgroup h3 { font-size: 14px; margin-bottom: 6px; }
+  .fgroup li { font-size: 12.5px; line-height: 1.4; margin: 4px 0; padding-inline-start: 16px; }
+}
 /* Phones, right under the main screenshot. */
 .phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; max-width: 1000px; margin: 0 auto; }
 @media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }
@@ -275,11 +279,10 @@ section[id] { scroll-margin-top: 64px; }
     
   </div>
   <section class="plain">
-    <div class="wrap cert">
-      <div><picture><source type="image/webp" srcset="/assets/registration/certificate-281801.14f1e60f.webp"><img src="/assets/registration/certificate-281801.d08dbf04.png" alt="Israel Tax Authority software registration certificate 281801 for Open Ledger IL, version 1.1.0, with personal details hidden" width="1240" height="1754" loading="lazy" decoding="async"></picture><p class="shot-cap">Personal details on the certificate are hidden.</p></div>
+    <div class="wrap">
       <div class="prose">
         <p>Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. <sup><a href="#ref-2">[2]</a></sup></p><p>The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. <sup><a href="#ref-1">[1]</a></sup></p><p>You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.</p><p>Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings &gt; Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.</p><p>To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.</p>
-        <div class="actions"><a class="btn btn-primary" href="/assets/ita-registration-281801-v1.1.0.3f003bf8.pdf" download>Download the certificate (PDF)</a><a class="btn btn-ghost" href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">The Tax Authority registry of registered software</a></div>
+        <div class="actions"><a class="btn btn-ghost" href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">The Tax Authority registry of registered software</a></div>
         <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">The ITA software registration page (Hebrew)</a></p>
         <div class="refs"><b>References</b><ol><li id="ref-1">Israel Tax Authority, &quot;Application to register software for a computerized accounting system&quot;, service page, updated 29.05.2025. Who must register: <q lang="he" dir="rtl">יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)</q> <a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">gov.il</a></li><li id="ref-2">Israel Tax Authority, registry of registered accounting software. <a href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">gov.il</a></li><li id="ref-3">Legal framework: Income Tax (Bookkeeping) Instructions, 1973, the computerized-system rules under instruction 36.</li></ol></div>
       </div>

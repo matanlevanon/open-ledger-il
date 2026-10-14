@@ -29,7 +29,7 @@ EN = dict(
         ('∑', 'Reports for your accountant', 'P&L, client ledgers, the unified file and an accountant login.'),
     ],
     list_eyebrow='Feature list', list_h='Every feature',
-    list_p='Open a group to see what ships today.',
+    list_p='What ships today, grouped by job.',
     feature_list=[
         ('Documents', [
             'Quotes, payment requests and pro formas (חשבון עסקה)',
@@ -229,7 +229,7 @@ HE = dict(
         ('∑', 'דוחות לרואה החשבון', 'רווח והפסד, כרטסות, מבנה אחיד וכניסה לרואה החשבון.'),
     ],
     list_eyebrow='רשימת יכולות', list_h='כל היכולות',
-    list_p='פתחו קבוצה כדי לראות מה קיים היום.',
+    list_p='מה שקיים היום בקוד, לפי תחום.',
     feature_list=[
         ('מסמכים', [
             'הצעות מחיר, דרישות תשלום וחשבונות עסקה',

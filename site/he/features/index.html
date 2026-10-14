@@ -86,17 +86,21 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .feat h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .feat p { margin: 0; color: var(--text-dim); font-size: 15px; }
 /* Every feature: closed groups the reader opens. */
-.flist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; max-width: 980px; margin: 0 auto; align-items: start; }
-@media (max-width: 760px) { .flist { grid-template-columns: 1fr; } }
-.fgroup { border-bottom: 1px solid var(--border); }
-.fgroup summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; font-weight: 600; font-size: 16px; }
-.fgroup summary::-webkit-details-marker { display: none; }
-.fgroup summary::after { content: '+'; margin-inline-start: auto; color: var(--text-mute); font-size: 20px; font-weight: 400; line-height: 1; }
-.fgroup[open] summary::after { content: '\2212'; }
-.fgroup .count { font-size: 12px; font-weight: 600; color: var(--text-mute); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
-.fgroup ul { list-style: none; margin: 0 0 16px; padding: 0; }
+.flist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 32px; max-width: 1080px; margin: 0 auto; align-items: start; }
+@media (max-width: 960px) { .flist { grid-template-columns: repeat(2, 1fr); } }
+/* Every group open, so crawlers and readers see the whole list. Headings line up across a row. */
+.fgroup { border-top: 2px solid var(--border); padding-top: 14px; }
+.fgroup h3 { margin: 0 0 10px; font-size: 16px; font-weight: 650; }
+.fgroup ul { list-style: none; margin: 0; padding: 0; }
 .fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
 .fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+/* Phones: two narrow columns, smaller text, so the list fits in a few screens. */
+@media (max-width: 640px) {
+  .flist { gap: 20px 16px; }
+  .fgroup { padding-top: 10px; }
+  .fgroup h3 { font-size: 14px; margin-bottom: 6px; }
+  .fgroup li { font-size: 12.5px; line-height: 1.4; margin: 4px 0; padding-inline-start: 16px; }
+}
 /* Phones, right under the main screenshot. */
 .phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; max-width: 1000px; margin: 0 auto; }
 @media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }
@@ -278,11 +282,11 @@ section[id] { scroll-margin-top: 64px; }
       <div class="sec-head">
         <div class="eyebrow">רשימת יכולות</div>
         <h2>כל היכולות</h2>
-        <p>פתחו קבוצה כדי לראות מה קיים היום.</p>
+        <p>מה שקיים היום בקוד, לפי תחום.</p>
       </div>
       <div class="flist">
-        <details class="fgroup">
-          <summary>מסמכים<span class="count">8</span></summary>
+        <div class="fgroup">
+          <h3>מסמכים</h3>
           <ul>
             <li>הצעות מחיר, דרישות תשלום וחשבונות עסקה</li>
             <li>קבלות וקבלות זיכוי כעוסק פטור</li>
@@ -293,9 +297,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>תשלום בצ׳ק עם בנק, סניף ומספר חשבון</li>
             <li>מחיקת טיוטה רק אחרי אישור</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>מספור ותאימות<span class="count">6</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>מספור ותאימות</h3>
           <ul>
             <li>סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך</li>
             <li>מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב</li>
@@ -304,9 +308,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה</li>
             <li>מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>מטבע<span class="count">6</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>מטבע</h3>
           <ul>
             <li>מסמכים בשקלים, דולרים, אירו ומטבעות נוספים</li>
             <li>שערי בנק ישראל, נשמרים מדי יום</li>
@@ -315,9 +319,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>סכומים במטבע חוץ ובשקלים מודפסים כל אחד בעמודה שלו</li>
             <li>יתרות הלקוח נשמרות במטבע שלו</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>שליחה<span class="count">7</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>שליחה</h3>
           <ul>
             <li>מייל עם נמען, CC ו-BCC בכל מסמך</li>
             <li>רשימת CC לכל לקוח ורשימת BCC לעותק שלך</li>
@@ -327,9 +331,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>תזכורות תשלום לפני מועד התשלום ואחריו</li>
             <li>אישור ברור אחרי שמסמך סומן כנשלח</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>מסמכים חוזרים<span class="count">6</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>מסמכים חוזרים</h3>
           <ul>
             <li>תזמון שבועי, חודשי, רבעוני או שנתי לריטיינרים ולחשבונות עסקה</li>
             <li>תנאי תשלום בימים, לכל עותק</li>
@@ -338,9 +342,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>עמוד אישורים במחשב ובטלפון</li>
             <li>הודעת Slack כשעותק ממתין לאישור</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>לקוחות ולוח בקרה<span class="count">5</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>לקוחות ולוח בקרה</h3>
           <ul>
             <li>עמוד לכל לקוח עם אנשי קשר, מסמכים וכרטסת לכל מטבע</li>
             <li>יתרות פתוחות, גיול ורשימת איחורים</li>
@@ -348,9 +352,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>תזרים, הכנסות לפי חודש ולקוחות מובילים</li>
             <li>טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>חוזים והזמנות עבודה<span class="count">7</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>חוזים והזמנות עבודה</h3>
           <ul>
             <li>תבניות חוזה והזמנת עבודה עם שדות משלך, בעברית ובאנגלית</li>
             <li>הסכם השירותים מצורף להזמנת העבודה הראשונה, חתימה אחת</li>
@@ -360,18 +364,18 @@ section[id] { scroll-margin-top: 64px; }
             <li>תזכורות חתימה, והעלאת חוזים שנחתמו מחוץ למערכת לכרטיס הלקוח</li>
             <li>הפיכת הזמנת עבודה חתומה לחשבון עסקה</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>מסמכי העסק<span class="count">4</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>מסמכי העסק</h3>
           <ul>
             <li>תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור</li>
             <li>Claude קורא את הסוג, השמות והתאריכים</li>
             <li>התראה בלוח הבקרה לפני שמסמך פג תוקף</li>
             <li>העוזר ורואה החשבון רואים את אותה רשימה</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>הוצאות וייבוא<span class="count">5</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>הוצאות וייבוא</h3>
           <ul>
             <li>העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום</li>
             <li>ייבוא חודש שלם של הוצאות מ-Google Drive</li>
@@ -379,9 +383,9 @@ section[id] { scroll-margin-top: 64px; }
             <li>מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש</li>
             <li>מסמך בלי שער מודפס מסומן כדי שתשלים אותו</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>דוחות, ייצוא וגיבויים<span class="count">6</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>דוחות, ייצוא וגיבויים</h3>
           <ul>
             <li>הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות לקוחות</li>
             <li>הורדה כ-PDF, XLSX או CSV</li>
@@ -390,16 +394,16 @@ section[id] { scroll-margin-top: 64px; }
             <li>ייצוא PCN874 (עמודת מספר ההקצאה)</li>
             <li>גיבוי רבעוני ל-R2 ול-Google Drive</li>
           </ul>
-        </details>
-        <details class="fgroup">
-          <summary>בטלפון<span class="count">4</span></summary>
+        </div>
+        <div class="fgroup">
+          <h3>בטלפון</h3>
           <ul>
             <li>מותקנת במסך הבית כמו אפליקציה</li>
             <li>מסך &quot;מהיר&quot;: צילום, גלריה, מסמך חדש ופעילות אחרונה</li>
             <li>סרגל ניווט תחתון וטבלאות שהופכות לכרטיסים</li>
             <li>תמונות שצולמו בלי קליטה עולות כשחוזרים לרשת</li>
           </ul>
-        </details>
+        </div>
       </div>
     </div>
   </section>

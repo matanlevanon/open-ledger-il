@@ -1,7 +1,5 @@
 # Registered with the Israel Tax Authority
 
-Personal details on the certificate are hidden.
-
 Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
@@ -12,7 +10,7 @@ Prefer to stay on your current system? Keep issuing invoices and receipts there 
 
 To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.
 
-[Download the certificate (PDF)](https://open-ledger.matanlevanon.com/assets/ita-registration-281801-v1.1.0.3f003bf8.pdf)[The Tax Authority registry of registered software](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+[The Tax Authority registry of registered software](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
 
 [The ITA software registration page (Hebrew)](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
 

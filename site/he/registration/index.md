@@ -1,7 +1,5 @@
 # רשומה ברשות המסים
 
-הפרטים האישיים בתעודה מוסתרים.
-
 חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
 
 רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
@@ -12,7 +10,7 @@
 
 כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.
 
-[הורדת התעודה (PDF)](https://open-ledger.matanlevanon.com/assets/ita-registration-281801-v1.1.0.3f003bf8.pdf)[מאגר התוכנות הרשומות של רשות המסים](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+[מאגר התוכנות הרשומות של רשות המסים](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
 
 [עמוד רישום התוכנה ברשות המסים](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
 

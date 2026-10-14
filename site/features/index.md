@@ -6,9 +6,9 @@ Feature list
 
 ## Every feature
 
-Open a group to see what ships today.
+What ships today, grouped by job.
 
-Documents8
+### Documents
 
 - Quotes, payment requests and pro formas (חשבון עסקה)
 - Receipts and credit receipts as עוסק פטור
@@ -19,7 +19,7 @@ Documents8
 - Cheque payments with bank, branch and account number
 - Delete a draft only after you confirm
 
-Numbering and compliance6
+### Numbering and compliance
 
 - One gapless series per document type, with your own starting numbers
 - Final documents locked by database triggers and a hash chain
@@ -28,7 +28,7 @@ Numbering and compliance6
 - פטור ceiling meter with alerts and a guided switch to מורשה
 - Issuing on/off switch, to keep issuing in your current system
 
-Currency6
+### Currency
 
 - Documents in ILS, USD, EUR and other currencies
 - Bank of Israel rates, cached daily
@@ -37,7 +37,7 @@ Currency6
 - Foreign and ILS totals printed in their own columns
 - Client balances kept in the client’s currency
 
-Sending7
+### Sending
 
 - Email with To, CC and BCC on every document
 - A CC list per client and a BCC copy list for your own records
@@ -47,7 +47,7 @@ Sending7
 - Payment reminders before and after the due date
 - A clear confirmation once a document is marked as sent
 
-Recurring documents6
+### Recurring documents
 
 - Weekly, monthly, quarterly or yearly schedules for retainers and pro formas
 - Payment terms in days, set on each copy
@@ -56,7 +56,7 @@ Recurring documents6
 - Approvals page on the computer and the phone
 - Slack notice when a copy waits for approval
 
-Clients and dashboard5
+### Clients and dashboard
 
 - A page per client with contacts, documents and a ledger per currency
 - Open balances, aging and an overdue list
@@ -64,7 +64,7 @@ Clients and dashboard5
 - Cash flow, income by month and top clients
 - Sortable tables, newest first by default
 
-Contracts and work orders7
+### Contracts and work orders
 
 - Contract and work order templates with fields you define, in English and Hebrew
 - Service Agreement included in the first work order, signed once
@@ -74,14 +74,14 @@ Contracts and work orders7
 - Signing reminders, and contracts signed elsewhere uploaded to the client record
 - Turn a signed work order into a pro forma
 
-Business documents4
+### Business documents
 
 - VAT and company certificates, bookkeeping and withholding confirmations
 - Claude reads the type, names and dates
 - Expiry warnings on the dashboard
 - Your assistant and accountant open the same list
 
-Expenses and import5
+### Expenses and import
 
 - Upload a receipt or snap a photo, Claude reads supplier, date and amount
 - Import a month of expenses from Google Drive
@@ -89,7 +89,7 @@ Expenses and import5
 - Imported documents keep the exchange rate printed on them, never a guessed one
 - Documents with no printed rate are flagged for you to fill in
 
-Reports, exports and backups6
+### Reports, exports and backups
 
 - Income, expenses, profit and loss, open items and client ledgers
 - Download as PDF, XLSX or CSV
@@ -98,7 +98,7 @@ Reports, exports and backups6
 - PCN874 export (allocation-number column)
 - Quarterly backups to R2 and Google Drive
 
-On your phone4
+### On your phone
 
 - Installs on the home screen like an app
 - Quick page: photo, gallery, new document and recent activity

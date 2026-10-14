@@ -21,7 +21,6 @@ LANGS = ('he', 'en')
 KEYS = ('home', 'features', 'pricing', 'registration', 'demo', 'guides', 'changelog', 'license')
 HASHED = re.compile(r'\.[0-9a-f]{8}\.[a-z0-9]+$')
 REPORTS = ROOT / 'site-reports'
-CERT_PDF = 'ita-registration-281801-v1.1.0.pdf'
 
 PAGE_CSS = '''
 .skip { position: absolute; inset-inline-start: -9999px; }
@@ -405,12 +404,12 @@ def section_highlights(lang, more=True):
 def section_feature_list(lang):
     c = TEXT[lang]
     groups = '\n'.join(
-        f'''        <details class="fgroup">
-          <summary>{E(h)}<span class="count">{len(items)}</span></summary>
+        f'''        <div class="fgroup">
+          <h3>{E(h)}</h3>
           <ul>
 ''' + '\n'.join(f'            <li>{E(i)}</li>' for i in items) + '''
           </ul>
-        </details>''' for h, items in c['feature_list'])
+        </div>''' for h, items in c['feature_list'])
     return f'''  <section id="list" class="plain">
     <div class="wrap">
       <div class="sec-head">
@@ -647,16 +646,14 @@ def build_registration(lang):
         return f'<li id="ref-{i + 1}">{E(t)}{q}{a}</li>'
 
     reg_refs = ''.join(ref(i, *r) for i, r in enumerate(c['reg_refs']))
-    pdf = ASSETS.url(CERT_PDF) if ASSETS.exists(CERT_PDF) else None
-    picture = img('registration/certificate-281801.png', u['reg_cert_alt'], 1240, 1754) if ASSETS.exists('registration/certificate-281801.png') else ''
-    download = f'<a class="btn btn-primary" href="{pdf}" download>{E(u["reg_download"])}</a>' if pdf else ''
+    # The certificate itself is never published: the page states the registration in text and
+    # links to the Tax Authority's own registry.
     main = page_intro(page) + f'''
   <section class="plain">
-    <div class="wrap cert">
-      <div>{picture}<p class="shot-cap">{E(u['reg_redacted'])}</p></div>
+    <div class="wrap">
       <div class="prose">
         {paras}
-        <div class="actions">{download}<a class="btn btn-ghost" href="{ITA_REGISTRY}" rel="noopener">{E(u['reg_registry'])}</a></div>
+        <div class="actions"><a class="btn btn-ghost" href="{ITA_REGISTRY}" rel="noopener">{E(u['reg_registry'])}</a></div>
         <p><a href="{ITA_REG}" rel="noopener">{E(c['reg_link'])}</a></p>
         <div class="refs"><b>{E(c['reg_refs_h'])}</b><ol>{reg_refs}</ol></div>
       </div>
@@ -964,7 +961,7 @@ def git_date(paths):
 def lastmod(page, cache):
     if page['key'] == 'guide':
         return page['guide']['updated']
-    sources = {'changelog': ['CHANGELOG.md'], 'registration': ['site/assets/ita-registration-281801-v1.1.0.pdf', 'scripts/site_build']}.get(
+    sources = {'changelog': ['CHANGELOG.md'], 'registration': ['scripts/site_build']}.get(
         page['key'], ['scripts/site_build', 'site.config.json'])
     key = tuple(sources)
     if key not in cache:

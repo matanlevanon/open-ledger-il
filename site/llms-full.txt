@@ -94,9 +94,9 @@ Source: https://open-ledger.matanlevanon.com/he/
 
 ## כל היכולות
 
-פתחו קבוצה כדי לראות מה קיים היום.
+מה שקיים היום בקוד, לפי תחום.
 
-מסמכים8
+### מסמכים
 
 - הצעות מחיר, דרישות תשלום וחשבונות עסקה
 - קבלות וקבלות זיכוי כעוסק פטור
@@ -107,7 +107,7 @@ Source: https://open-ledger.matanlevanon.com/he/
 - תשלום בצ׳ק עם בנק, סניף ומספר חשבון
 - מחיקת טיוטה רק אחרי אישור
 
-מספור ותאימות6
+### מספור ותאימות
 
 - סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך
 - מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב
@@ -116,7 +116,7 @@ Source: https://open-ledger.matanlevanon.com/he/
 - מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה
 - מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך
 
-מטבע6
+### מטבע
 
 - מסמכים בשקלים, דולרים, אירו ומטבעות נוספים
 - שערי בנק ישראל, נשמרים מדי יום
@@ -125,7 +125,7 @@ Source: https://open-ledger.matanlevanon.com/he/
 - סכומים במטבע חוץ ובשקלים מודפסים כל אחד בעמודה שלו
 - יתרות הלקוח נשמרות במטבע שלו
 
-שליחה7
+### שליחה
 
 - מייל עם נמען, CC ו-BCC בכל מסמך
 - רשימת CC לכל לקוח ורשימת BCC לעותק שלך
@@ -135,7 +135,7 @@ Source: https://open-ledger.matanlevanon.com/he/
 - תזכורות תשלום לפני מועד התשלום ואחריו
 - אישור ברור אחרי שמסמך סומן כנשלח
 
-מסמכים חוזרים6
+### מסמכים חוזרים
 
 - תזמון שבועי, חודשי, רבעוני או שנתי לריטיינרים ולחשבונות עסקה
 - תנאי תשלום בימים, לכל עותק
@@ -144,7 +144,7 @@ Source: https://open-ledger.matanlevanon.com/he/
 - עמוד אישורים במחשב ובטלפון
 - הודעת Slack כשעותק ממתין לאישור
 
-לקוחות ולוח בקרה5
+### לקוחות ולוח בקרה
 
 - עמוד לכל לקוח עם אנשי קשר, מסמכים וכרטסת לכל מטבע
 - יתרות פתוחות, גיול ורשימת איחורים
@@ -152,7 +152,7 @@ Source: https://open-ledger.matanlevanon.com/he/
 - תזרים, הכנסות לפי חודש ולקוחות מובילים
 - טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל
 
-חוזים והזמנות עבודה7
+### חוזים והזמנות עבודה
 
 - תבניות חוזה והזמנת עבודה עם שדות משלך, בעברית ובאנגלית
 - הסכם השירותים מצורף להזמנת העבודה הראשונה, חתימה אחת
@@ -162,14 +162,14 @@ Source: https://open-ledger.matanlevanon.com/he/
 - תזכורות חתימה, והעלאת חוזים שנחתמו מחוץ למערכת לכרטיס הלקוח
 - הפיכת הזמנת עבודה חתומה לחשבון עסקה
 
-מסמכי העסק4
+### מסמכי העסק
 
 - תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור
 - Claude קורא את הסוג, השמות והתאריכים
 - התראה בלוח הבקרה לפני שמסמך פג תוקף
 - העוזר ורואה החשבון רואים את אותה רשימה
 
-הוצאות וייבוא5
+### הוצאות וייבוא
 
 - העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום
 - ייבוא חודש שלם של הוצאות מ-Google Drive
@@ -177,7 +177,7 @@ Source: https://open-ledger.matanlevanon.com/he/
 - מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש
 - מסמך בלי שער מודפס מסומן כדי שתשלים אותו
 
-דוחות, ייצוא וגיבויים6
+### דוחות, ייצוא וגיבויים
 
 - הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות לקוחות
 - הורדה כ-PDF, XLSX או CSV
@@ -186,7 +186,7 @@ Source: https://open-ledger.matanlevanon.com/he/
 - ייצוא PCN874 (עמודת מספר ההקצאה)
 - גיבוי רבעוני ל-R2 ול-Google Drive
 
-בטלפון4
+### בטלפון
 
 - מותקנת במסך הבית כמו אפליקציה
 - מסך "מהיר": צילום, גלריה, מסמך חדש ופעילות אחרונה
@@ -320,8 +320,6 @@ Source: https://open-ledger.matanlevanon.com/he/pricing/
 
 # רשומה ברשות המסים
 
-הפרטים האישיים בתעודה מוסתרים.
-
 חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
 
 רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
@@ -332,7 +330,7 @@ Source: https://open-ledger.matanlevanon.com/he/pricing/
 
 כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.
 
-[הורדת התעודה (PDF)](https://open-ledger.matanlevanon.com/assets/ita-registration-281801-v1.1.0.3f003bf8.pdf)[מאגר התוכנות הרשומות של רשות המסים](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+[מאגר התוכנות הרשומות של רשות המסים](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
 
 [עמוד רישום התוכנה ברשות המסים](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
 
@@ -694,9 +692,9 @@ Feature list
 
 ## Every feature
 
-Open a group to see what ships today.
+What ships today, grouped by job.
 
-Documents8
+### Documents
 
 - Quotes, payment requests and pro formas (חשבון עסקה)
 - Receipts and credit receipts as עוסק פטור
@@ -707,7 +705,7 @@ Documents8
 - Cheque payments with bank, branch and account number
 - Delete a draft only after you confirm
 
-Numbering and compliance6
+### Numbering and compliance
 
 - One gapless series per document type, with your own starting numbers
 - Final documents locked by database triggers and a hash chain
@@ -716,7 +714,7 @@ Numbering and compliance6
 - פטור ceiling meter with alerts and a guided switch to מורשה
 - Issuing on/off switch, to keep issuing in your current system
 
-Currency6
+### Currency
 
 - Documents in ILS, USD, EUR and other currencies
 - Bank of Israel rates, cached daily
@@ -725,7 +723,7 @@ Currency6
 - Foreign and ILS totals printed in their own columns
 - Client balances kept in the client’s currency
 
-Sending7
+### Sending
 
 - Email with To, CC and BCC on every document
 - A CC list per client and a BCC copy list for your own records
@@ -735,7 +733,7 @@ Sending7
 - Payment reminders before and after the due date
 - A clear confirmation once a document is marked as sent
 
-Recurring documents6
+### Recurring documents
 
 - Weekly, monthly, quarterly or yearly schedules for retainers and pro formas
 - Payment terms in days, set on each copy
@@ -744,7 +742,7 @@ Recurring documents6
 - Approvals page on the computer and the phone
 - Slack notice when a copy waits for approval
 
-Clients and dashboard5
+### Clients and dashboard
 
 - A page per client with contacts, documents and a ledger per currency
 - Open balances, aging and an overdue list
@@ -752,7 +750,7 @@ Clients and dashboard5
 - Cash flow, income by month and top clients
 - Sortable tables, newest first by default
 
-Contracts and work orders7
+### Contracts and work orders
 
 - Contract and work order templates with fields you define, in English and Hebrew
 - Service Agreement included in the first work order, signed once
@@ -762,14 +760,14 @@ Contracts and work orders7
 - Signing reminders, and contracts signed elsewhere uploaded to the client record
 - Turn a signed work order into a pro forma
 
-Business documents4
+### Business documents
 
 - VAT and company certificates, bookkeeping and withholding confirmations
 - Claude reads the type, names and dates
 - Expiry warnings on the dashboard
 - Your assistant and accountant open the same list
 
-Expenses and import5
+### Expenses and import
 
 - Upload a receipt or snap a photo, Claude reads supplier, date and amount
 - Import a month of expenses from Google Drive
@@ -777,7 +775,7 @@ Expenses and import5
 - Imported documents keep the exchange rate printed on them, never a guessed one
 - Documents with no printed rate are flagged for you to fill in
 
-Reports, exports and backups6
+### Reports, exports and backups
 
 - Income, expenses, profit and loss, open items and client ledgers
 - Download as PDF, XLSX or CSV
@@ -786,7 +784,7 @@ Reports, exports and backups6
 - PCN874 export (allocation-number column)
 - Quarterly backups to R2 and Google Drive
 
-On your phone4
+### On your phone
 
 - Installs on the home screen like an app
 - Quick page: photo, gallery, new document and recent activity
@@ -920,8 +918,6 @@ Source: https://open-ledger.matanlevanon.com/pricing/
 
 # Registered with the Israel Tax Authority
 
-Personal details on the certificate are hidden.
-
 Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
@@ -932,7 +928,7 @@ Prefer to stay on your current system? Keep issuing invoices and receipts there 
 
 To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.
 
-[Download the certificate (PDF)](https://open-ledger.matanlevanon.com/assets/ita-registration-281801-v1.1.0.3f003bf8.pdf)[The Tax Authority registry of registered software](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+[The Tax Authority registry of registered software](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
 
 [The ITA software registration page (Hebrew)](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
 
