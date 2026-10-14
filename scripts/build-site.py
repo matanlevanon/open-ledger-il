@@ -1,31 +1,48 @@
 """
-Builds the product site: docs/index.html (English) and docs/he.html (Hebrew), next to the
-screenshots in docs/screenshots/. Run: python3 scripts/build-site.py docs
-GitHub Pages serves it: Settings > Pages > Deploy from a branch > main, /docs.
+Builds the product site into site/, next to its assets in site/assets/.
+Run from the repository root: python3 scripts/build-site.py
+The Worker in tools/site serves site/ (tools/site/README.md).
 """
 import html, json, os, re, sys
 from pathlib import Path
 
-# The page names no account. GitHub links are built in the browser from the Pages address
-# (<owner>.github.io/<repo>/), so a fork's page points at the fork.
-REPO = '#" data-gh="'
-DEPLOY = '#" data-gh="/blob/main/docs/deploy.md'
-SETUP = '#" data-gh="/blob/main/docs/setup.md'
-LICENSE = '#" data-gh="/blob/main/LICENSE'
+ROOT = Path(__file__).resolve().parent.parent
+
+# Every address the site links to lives in site.config.json, so a fork changes one file.
+def load_config():
+    path = ROOT / 'site.config.json'
+    if not path.exists():
+        sys.exit('site.config.json is missing. Copy it from the repository and set siteUrl.')
+    cfg = json.loads(path.read_text(encoding='utf-8'))
+    if not str(cfg.get('siteUrl', '')).startswith('https://'):
+        sys.exit('site.config.json: set siteUrl to the site address, starting with https://.')
+    if not str(cfg.get('repoUrl', '')).startswith('https://'):
+        sys.exit('site.config.json: set repoUrl to the GitHub repository address.')
+    for key in ('siteUrl', 'repoUrl', 'demoUrl', 'shopUrl', 'contactEndpoint'):
+        cfg[key] = str(cfg.get(key, '')).rstrip('/')
+    cfg['shopLive'] = bool(cfg.get('shopLive'))
+    cfg['analytics'] = cfg.get('analytics') or {}
+    return cfg
+
+CONFIG = load_config()
+SITE_URL = CONFIG['siteUrl']
+REPO_URL = CONFIG['repoUrl']
+DEMO_URL = CONFIG['demoUrl']
+SHOP_URL = CONFIG['shopUrl']
+# The ₪99 card shows only when the shop is live. Set shopLive once the shop's buy page works,
+# and uncomment the ₪99 paragraph in README.md.
+SHOP_LIVE = CONFIG['shopLive']
+CONTACT_ENDPOINT = CONFIG['contactEndpoint']
+
+REPO = REPO_URL
+DEPLOY = f'{REPO_URL}/blob/main/docs/deploy.md'
+SETUP = f'{REPO_URL}/blob/main/docs/setup.md'
+LICENSE = f'{REPO_URL}/blob/main/LICENSE'
 ITA_REGISTRY = 'https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems'
 ITA_REG = 'https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system'
-CLONE = 'git clone https://github.com/OWNER/open-ledger-il.git'
-# The project's official live demo. scripts/leak-denylist.txt allows this one hostname in this
-# file and the two pages it builds, nowhere else.
-DEMO_URL = 'https://sampleledger.matanlevanon.com'
-# The project's official shop for the licensed installer. scripts/leak-denylist.txt allows this
-# one hostname in this file, the two pages it builds and the README, nowhere else.
-SHOP_URL = 'https://get.matanlevanon.com'
-# The ₪99 card shows only when the shop is live. Set True once get.matanlevanon.com/buy works,
-# and uncomment the ₪99 paragraph in README.md.
-SHOP_LIVE = False
+CLONE = f'git clone {REPO_URL}.git'
 # The version shown on the site comes from package.json, so a release bump updates it.
-VERSION = json.loads((Path(__file__).resolve().parent.parent / 'package.json').read_text(encoding='utf-8'))['version']
+VERSION = json.loads((ROOT / 'package.json').read_text(encoding='utf-8'))['version']
 
 LOGO = '''<svg viewBox="0 0 32 32" aria-hidden="true">
         <rect x="1" y="1" width="30" height="30" rx="8" fill="#141d2e" stroke="#26344b" stroke-width="1.5"/>
@@ -452,7 +469,7 @@ OPTIONS_EN = r'''  <section id="options">
             <li>You register your own ITA API app</li>
             <li>Step-by-step setup guide</li>
           </ul>
-          <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">Read the setup guide</a>
+          <a class="btn btn-ghost" href="__DEPLOY__">Read the setup guide</a>
         </div>
 <!--SHOP-->
         <div class="plan plan-main">
@@ -501,7 +518,7 @@ OPTIONS_EN = r'''  <section id="options">
           if (!d.get('name') || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { st.textContent = 'Add your name and a valid email.'; return; }
           var btn = f.querySelector('button'); btn.disabled = true; st.textContent = 'Sending...';
           var msg = 'Phone: ' + (d.get('phone') || '-') + '\nBusiness type: ' + d.get('type') + '\n\n' + (d.get('message') || '');
-          fetch('https://contact.matanlevanon.com/lead', {
+          fetch('__CONTACT__', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (en)' })
           }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
@@ -531,7 +548,7 @@ OPTIONS_HE = r'''  <section id="options">
             <li>רושמים אפליקציית API משלך ברשות המסים</li>
             <li>מדריך התקנה שלב אחר שלב</li>
           </ul>
-          <a class="btn btn-ghost" href="#" data-gh="/blob/main/docs/deploy.md">למדריך ההתקנה</a>
+          <a class="btn btn-ghost" href="__DEPLOY__">למדריך ההתקנה</a>
         </div>
 <!--SHOP-->
         <div class="plan plan-main">
@@ -580,7 +597,7 @@ OPTIONS_HE = r'''  <section id="options">
           if (!d.get('name') || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { st.textContent = 'נא למלא שם ואימייל תקין.'; return; }
           var btn = f.querySelector('button'); btn.disabled = true; st.textContent = 'שולח...';
           var msg = 'טלפון: ' + (d.get('phone') || '-') + '\nסוג העסק: ' + d.get('type') + '\n\n' + (d.get('message') || '');
-          fetch('https://contact.matanlevanon.com/lead', {
+          fetch('__CONTACT__', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)' })
           }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
@@ -600,14 +617,14 @@ IDS = ['features', 'screens', 'how', 'options']
 
 # Set in __main__ to the output folder. The Hebrew page uses a screenshot's -he variant
 # (dashboard-he.png next to dashboard.png) when one exists, and the English one otherwise.
-OUT = 'docs'
+OUT = 'site'
 
 
 def shot_src(c, name):
     if c['lang'] != 'en':
         base, ext = os.path.splitext(name)
         localized = f"{base}-{c['lang']}{ext}"
-        if os.path.exists(os.path.join(OUT, 'screenshots', localized)):
+        if os.path.exists(os.path.join(OUT, 'assets', 'screenshots', localized)):
             return localized
     return name
 
@@ -781,7 +798,7 @@ section[id] { scroll-margin-top: 64px; }
 
 def options(c):
     """The pricing section. Before the shop is live, the ₪99 card is left out and the other two share the row."""
-    html_ = (OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE).replace('__SHOP__', SHOP_URL)
+    html_ = (OPTIONS_EN if c['lang'] == 'en' else OPTIONS_HE).replace('__SHOP__', SHOP_URL).replace('__DEPLOY__', DEPLOY).replace('__CONTACT__', CONTACT_ENDPOINT)
     if SHOP_LIVE:
         return re.sub(r'<!--/?(SHOP|H)-->\n?', '', html_)
     html_ = re.sub(r'<!--SHOP-->.*?<!--/SHOP-->\n', '', html_, flags=re.S)
@@ -820,12 +837,12 @@ def page(c):
         </li>''' for h, p in c['steps'])
     shots = '\n'.join(
         f'''        <figure class="gcard">
-          <img src="screenshots/{shot_src(c, img)}" alt="{e(alt)}" loading="lazy">
+          <img src="assets/screenshots/{shot_src(c, img)}" alt="{e(alt)}" loading="lazy">
           <figcaption><b>{e(h)}.</b> {e(p)}</figcaption>
         </figure>''' for img, alt, h, p in c['shots'])
     phones = '\n'.join(
         f'''        <figure class="phone">
-          <div class="frame"><img src="screenshots/{shot_src(c, img)}" alt="{e(alt)}" loading="lazy" width="585" height="1266"></div>
+          <div class="frame"><img src="assets/screenshots/{shot_src(c, img)}" alt="{e(alt)}" loading="lazy" width="585" height="1266"></div>
           <figcaption><b>{e(h)}</b>{e(p)}</figcaption>
         </figure>''' for img, alt, h, p in c['phones'])
     # The first paragraph states the registration, so it points at reference 2, the registry. The second
@@ -860,7 +877,7 @@ def page(c):
 <meta property="og:title" content="Open Ledger IL">
 <meta property="og:description" content="{e(c['desc'])}">
 <meta property="og:type" content="website">
-<meta property="og:image" content="screenshots/{shot_src(c, 'dashboard.png')}">
+<meta property="og:image" content="assets/screenshots/{shot_src(c, 'dashboard.png')}">
 <link rel="alternate" hreflang="en" href="index.html">
 <link rel="alternate" hreflang="he" href="he.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -904,7 +921,7 @@ def page(c):
       </div>
 
       <div class="shot">
-        <img src="screenshots/{shot_src(c, 'dashboard.png')}" alt="{e(c['shot_alt'])}">
+        <img src="assets/screenshots/{shot_src(c, 'dashboard.png')}" alt="{e(c['shot_alt'])}">
       </div>
       <p class="shot-cap">{e(c['shot_cap'])}</p>
     </div>
@@ -1037,15 +1054,6 @@ def page(c):
 <div class="toast" id="toast" role="status">{e(c['copied'])}</div>
 
 <script>
-(function () {{
-  var owner = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : null;
-  var repo = location.pathname.split('/').filter(Boolean)[0] || 'open-ledger-il';
-  var base = owner ? 'https://github.com/' + owner + '/' + repo : null;
-  document.querySelectorAll('[data-gh]').forEach(function (a) {{
-    if (base) a.href = base + a.getAttribute('data-gh');
-  }});
-  if (base) document.getElementById('cmd').textContent = 'git clone ' + base + '.git';
-}})();
 document.getElementById('copy').addEventListener('click', async function () {{
   var text = document.getElementById('cmd').textContent;
   try {{ await navigator.clipboard.writeText(text); }}
@@ -1073,12 +1081,10 @@ FAVICON = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 '''
 
 if __name__ == '__main__':
-    out = sys.argv[1] if len(sys.argv) > 1 else 'docs'
+    out = sys.argv[1] if len(sys.argv) > 1 else str(ROOT / 'site')
     OUT = out
     os.makedirs(out, exist_ok=True)
     for c in (EN, HE):
         open(os.path.join(out, c['file']), 'w', encoding='utf-8', newline='\n').write(page(c))
     open(os.path.join(out, 'favicon.svg'), 'w', encoding='utf-8', newline='\n').write(FAVICON)
-    # Serve the files as they are. Without this, Pages runs Jekyll over the Markdown docs.
-    open(os.path.join(out, '.nojekyll'), 'w').write('')
     print('built', out)

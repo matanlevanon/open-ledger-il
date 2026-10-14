@@ -47,11 +47,11 @@ All screenshots come from the demo database (`npm run seed:demo`). Every name in
 
 | Dashboard | Documents |
 |---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Documents](docs/screenshots/documents.png) |
+| ![Dashboard](site/assets/screenshots/dashboard.png) | ![Documents](site/assets/screenshots/documents.png) |
 | **Expenses** | **Settings** |
-| ![Expenses](docs/screenshots/expenses.png) | ![Settings](docs/screenshots/settings-business.png) |
+| ![Expenses](site/assets/screenshots/expenses.png) | ![Settings](site/assets/screenshots/settings-business.png) |
 
-Sample PDFs, one of each document type: `docs/screenshots/pdf/`.
+Sample PDFs, one of each document type: `site/assets/pdf/`.
 
 ## Stack
 

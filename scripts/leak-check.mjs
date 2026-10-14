@@ -6,7 +6,8 @@
 //   fragment:<text>        a non-identifying, case-insensitive substring to refuse outright
 //   allow:<text>           an exact, case-insensitive string published on purpose (the setup
 //                          request address). It is removed from a line before the checks run.
-//   allow-in:<path>,<path>:<text>  the same, but only in the listed files (paths from the repo root)
+//   allow-in:<path>,<path>:<text>  the same, but only in the listed files (paths from the repo root,
+//                          * and ** globs allowed, for example site/**)
 // The script hashes candidate strings (words, word pairs and triples, dotted or dashed compound
 // tokens, and their prefixes) and compares. Binary files (PDF, PNG, fonts) are checked through
 // their printable strings, which covers PDF info and XMP metadata and PNG text chunks.
@@ -44,19 +45,34 @@ function loadDenylist() {
     } else if (line.startsWith('allow-in:')) {
       const rest = line.slice('allow-in:'.length);
       const sep = rest.indexOf(':');
-      allowedIn.push({ files: new Set(rest.slice(0, sep).split(',').map((f) => f.trim())), text: rest.slice(sep + 1).toLowerCase() });
+      const files = rest.slice(0, sep).split(',').map((f) => f.trim()).filter(Boolean);
+      allowedIn.push({ files: new Set(files), globs: files.filter((f) => f.includes('*')).map(globToRegExp), text: rest.slice(sep + 1).toLowerCase() });
     }
   }
   return { hashes, lengths: [...new Set(hashes.values())].sort((a, b) => a - b), fragments, allowed, allowedIn };
 }
 
+/** A path pattern from the repo root: ** matches any run of folders, * anything but a slash. */
+function globToRegExp(glob) {
+  const body = glob
+    .split('**')
+    .map((part) => part.split('*').map((s) => s.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('[^/]*'))
+    .join('.*');
+  return new RegExp(`^${body}$`);
+}
+
 const { hashes, lengths, fragments, allowed, allowedIn } = loadDenylist();
+
+/** True when an allow-in rule covers this file, by exact path or by glob. */
+function allowedFor(rule, file) {
+  return rule.files.has(file) || rule.globs.some((re) => re.test(file));
+}
 
 /** The line with every allowed string blanked out, lowercased. A file-scoped string counts only in its files. */
 function withoutAllowed(line, file) {
   let lower = line.toLowerCase();
   for (const a of allowed) lower = lower.split(a).join(' ');
-  for (const a of allowedIn) if (a.files.has(file)) lower = lower.split(a.text).join(' ');
+  for (const a of allowedIn) if (allowedFor(a, file)) lower = lower.split(a.text).join(' ');
   return lower;
 }
 const cache = new Map();

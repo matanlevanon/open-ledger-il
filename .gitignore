@@ -26,3 +26,6 @@ coverage/
 
 # Demo unified file output (scripts/demo-unified-file.mjs)
 demo/output/
+
+# Site build reports: Lighthouse JSON and screenshots (R32). Local only.
+site-reports/

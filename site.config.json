@@ -1,0 +1,12 @@
+{
+  "siteUrl": "https://open-ledger.matanlevanon.com",
+  "repoUrl": "https://github.com/matanlevanon/open-ledger-il",
+  "demoUrl": "https://sampleledger.matanlevanon.com",
+  "shopUrl": "https://get.matanlevanon.com",
+  "shopLive": false,
+  "contactEndpoint": "https://contact.matanlevanon.com/lead",
+  "analytics": {
+    "cfBeaconToken": "",
+    "ga4Id": ""
+  }
+}

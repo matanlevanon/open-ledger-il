@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Ledger IL - invoices and books for an Israeli business, on your own Cloudflare</title>
+<meta name="description" content="Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.">
+<meta property="og:title" content="Open Ledger IL">
+<meta property="og:description" content="Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/screenshots/dashboard.png">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="he" href="he.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
+  --text: #0f172a; --text-dim: #475569; --text-mute: #64748b; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
+  --orange: #d97706; --purple: #7c3aed; --radius: 16px; --maxw: 1120px; --shadow: 0 24px 60px -28px rgba(15,23,42,.35); color-scheme: light; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; white-space: nowrap; }
+.brand svg { width: 26px; height: 26px; flex: 0 0 auto; }
+.nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--text-dim); }
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--text); }
+.nav-end { display: flex; align-items: center; gap: 10px; }
+.lang { font-size: 14px; color: var(--text-dim); text-decoration: none; padding: 8px 10px; }
+.lang:hover { color: var(--text); }
+@media (max-width: 760px) { .nav-links { display: none; } }
+@media (max-width: 480px) { .nav-end .btn-sm { display: none; } }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s, background .15s; }
+.btn-primary { background: linear-gradient(180deg, var(--green), var(--green-2)); color: #ffffff; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(22,163,74,.7); }
+.btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
+.btn-ghost:hover { border-color: var(--text-mute); }
+.btn-sm { padding: 9px 16px; font-size: 14px; border-radius: 10px; }
+.hero { padding: 76px 0 44px; text-align: center; }
+.badge { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; margin-bottom: 22px; }
+.badge b { color: var(--green); font-weight: 600; }
+h1 { font-size: clamp(32px, 5.2vw, 54px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 16px; font-weight: 800; }
+.lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-dim); max-width: 680px; margin: 0 auto 28px; }
+.cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
+.shot { margin: 48px auto 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--surface); }
+.shot img { width: 100%; }
+.shot-cap { font-size: 13px; color: var(--text-mute); text-align: center; margin-top: 12px; }
+section { padding: 88px 0; }
+section + section { border-top: 1px solid var(--border-soft); }
+section.plain { padding-top: 24px; border-top: 0; }
+.sec-head { text-align: center; max-width: 620px; margin: 0 auto 40px; }
+.sec-head.sub { margin-top: 80px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+[dir=rtl] .eyebrow, [dir=rtl] th { letter-spacing: 0; }
+h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02em; margin: 0 0 10px; font-weight: 700; }
+.sec-head p { color: var(--text-dim); margin: 0; font-size: 17px; }
+.sec-head p:empty { display: none; }
+/* Hero links: three equal secondary buttons under the demo button. */
+.cta-links .btn { min-width: 0; }
+.btn-setup { border-color: rgba(22,163,74,.45); color: var(--green-2); }
+.btn-setup:hover { border-color: var(--green); }
+/* Highlights: six items, no boxes. */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 40px; max-width: 980px; margin: 0 auto; }
+@media (max-width: 860px) { .features { grid-template-columns: repeat(2, 1fr); gap: 28px 24px; } }
+@media (max-width: 520px) { .features { grid-template-columns: 1fr; } }
+.feat .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 12px; background: #e8efff; font-size: 18px; color: var(--blue); }
+.feat h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
+.feat p { margin: 0; color: var(--text-dim); font-size: 15px; }
+/* Every feature: closed groups the reader opens. */
+.flist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; max-width: 980px; margin: 0 auto; align-items: start; }
+@media (max-width: 760px) { .flist { grid-template-columns: 1fr; } }
+.fgroup { border-bottom: 1px solid var(--border); }
+.fgroup summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; font-weight: 600; font-size: 16px; }
+.fgroup summary::-webkit-details-marker { display: none; }
+.fgroup summary::after { content: '+'; margin-inline-start: auto; color: var(--text-mute); font-size: 20px; font-weight: 400; line-height: 1; }
+.fgroup[open] summary::after { content: '\2212'; }
+.fgroup .count { font-size: 12px; font-weight: 600; color: var(--text-mute); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
+.fgroup ul { list-style: none; margin: 0 0 16px; padding: 0; }
+.fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
+.fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+/* Phones, right under the main screenshot. */
+.phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; max-width: 1000px; margin: 0 auto; }
+@media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }
+.phone { margin: 0; }
+.phone .frame { background: #0a0f18; border-radius: 30px; padding: 8px; box-shadow: var(--shadow); }
+.phone img { width: 100%; height: auto; border-radius: 23px; }
+.phone figcaption { padding: 14px 4px 0; text-align: center; font-size: 13.5px; color: var(--text-mute); line-height: 1.45; }
+.phone figcaption b { display: block; color: var(--text); font-size: 15px; font-weight: 650; margin-bottom: 2px; }
+@media (max-width: 620px) { .phone .frame { border-radius: 22px; padding: 5px; } .phone img { border-radius: 18px; } .phone figcaption { font-size: 12px; } .phone figcaption b { font-size: 13.5px; } }
+/* Screenshots: image first, one caption line. */
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 28px; align-items: start; }
+@media (max-width: 820px) { .gallery { grid-template-columns: 1fr; } }
+.gcard { margin: 0; }
+.gcard img { width: 100%; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px -18px rgba(15,23,42,.35); }
+.gcard figcaption { padding: 12px 2px 0; color: var(--text-dim); font-size: 14.5px; }
+.gcard figcaption b { color: var(--text); font-weight: 650; }
+/* Rules: a checked list in two columns. */
+.rules { list-style: none; padding: 0; margin: 0 auto; max-width: 980px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px 40px; }
+@media (max-width: 760px) { .rules { grid-template-columns: 1fr; } }
+.rules li { position: relative; padding-inline-start: 34px; }
+.rules li::before { content: '\2713'; position: absolute; inset-inline-start: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: #dcfce7; color: var(--green-2); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.rules b { display: block; font-weight: 650; margin-bottom: 2px; }
+.rules span { color: var(--text-dim); font-size: 14.5px; }
+/* How it works: numbered steps without boxes. */
+.steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
+@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+.step { counter-increment: step; }
+.step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+.step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
+.step p { margin: 0; color: var(--text-dim); font-size: 15px; }
+.cmd { display: flex; align-items: center; gap: 12px; max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 12px 12px 16px; direction: ltr; }
+.cmd code { font-size: 13px; color: var(--text-dim); overflow-x: auto; white-space: nowrap; flex: 1; text-align: left; background: none; border: 0; padding: 0; }
+.cmd button { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
+.cmd button:hover { color: var(--text); border-color: var(--text-mute); }
+.cmd-note { font-size: 13px; color: var(--text-mute); margin-top: 10px; text-align: center; }
+table { width: 100%; max-width: 980px; margin: 0 auto; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: start; padding: 13px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--text-mute); font-weight: 600; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; }
+td:first-child { width: 36%; padding-inline-end: 18px; }
+td b { font-weight: 600; }
+td span { color: var(--text-dim); }
+.tag { display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-inline-start: 8px; border: 1px solid var(--border); color: var(--text-mute); vertical-align: 1px; }
+.tag.req { color: var(--green); border-color: rgba(22,163,74,.4); }
+@media (max-width: 620px) { td { display: block; border-bottom: 0; padding: 4px 0; width: auto !important; } tr { display: block; border-bottom: 1px solid var(--border); padding: 10px 0; } thead { display: none; } }
+/* Workers Paid, registration and limits, closed by default. */
+.more { max-width: 980px; margin: 28px auto 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.more summary { cursor: pointer; padding: 16px 20px; font-weight: 600; }
+.more-body { padding: 0 20px 18px; color: var(--text-dim); font-size: 14.5px; }
+.more-body h3 { color: var(--text); font-size: 15.5px; margin: 18px 0 6px; }
+.more-body p { margin: 0 0 8px; }
+.more-body ul { margin: 0; padding-inline-start: 20px; }
+.more-body li { margin: 4px 0; }
+.more-body a { color: var(--blue); }
+.refs { border-top: 1px solid var(--border-soft); margin-top: 12px; padding-top: 10px; font-size: 13px; color: var(--text-mute); }
+.refs b { color: var(--text-dim); font-weight: 600; }
+.refs ol { margin: 6px 0 0; padding-inline-start: 20px; }
+.refs q { color: var(--text-dim); unicode-bidi: isolate; }
+.more-body sup a { text-decoration: none; font-size: 11px; }
+.refs li:target { background: var(--surface-2); border-radius: 6px; }
+/* Pricing. */
+#options { background: var(--bg-2); }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1080px; margin: 0 auto; }
+@media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 520px; } }
+.plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
+.plans-2 { grid-template-columns: repeat(2, 1fr); max-width: 860px; }
+@media (max-width: 720px) { .plans-2 { grid-template-columns: 1fr; } }
+.plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
+.plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
+.price { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 14px; }
+.price span { font-size: 15px; font-weight: 500; color: var(--text-mute); }
+.plan ul { list-style: none; margin: 0 0 22px; padding: 0; flex: 1; }
+.plan li { position: relative; padding-inline-start: 22px; margin: 8px 0; color: var(--text-dim); font-size: 15px; }
+.plan li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+.final { text-align: center; }
+.final .cta { margin-top: 26px; margin-bottom: 0; }
+footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: var(--text-mute); font-size: 14px; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+.foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; }
+.foot a:hover { color: var(--text); }
+.toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.btn-lg { padding: 18px 36px; font-size: 18px; border-radius: 14px; }
+.cta-demo { margin-bottom: 10px; }
+.demo-note { font-size: 14px; color: var(--text-mute); margin: 0 0 22px; }
+@media (max-width: 640px) { .btn-demo { width: 100%; } .cta-links { flex-direction: column; } .cta-links .btn { width: 100%; } }
+.setup-form { max-width: 860px; margin: 24px auto 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; scroll-margin-top: 84px; }
+.setup-form h3 { grid-column: 1 / -1; margin: 0; }
+.setup-form label { display: grid; gap: 6px; font-size: 14px; color: var(--text-dim); }
+.setup-form .full { grid-column: 1 / -1; }
+.setup-form input, .setup-form select, .setup-form textarea { font: inherit; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); }
+.setup-form .hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.setup-form .status { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--text-dim); }
+@media (max-width: 640px) { .setup-form { grid-template-columns: 1fr; } }
+section[id] { scroll-margin-top: 64px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="8" fill="#141d2e" stroke="#26344b" stroke-width="1.5"/>
+        <rect x="8" y="6" width="16" height="20" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
+        <path d="M12 12h8M12 16h8" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 20h5" stroke="#9b6dff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Open Ledger IL
+    </a>
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#screens">Screenshots</a>
+      <a href="#how">How it works</a>
+      <a href="#options">Pricing</a>
+      <a href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">Demo</a>
+    </nav>
+    <div class="nav-end">
+      <a class="lang" href="he.html" hreflang="he" lang="he">עברית</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il">View on GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge"><b>Free</b> · Open source · Registered with the Israel Tax Authority · v1.7.0</div>
+      <h1>Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.</h1>
+      <p class="lead">Quotes, receipts, tax invoices, contracts and expenses, with legal numbering and ITA allocation numbers. It runs in your own Cloudflare account. Your data stays yours.</p>
+      <div class="cta cta-demo">
+        <a class="btn btn-primary btn-lg btn-demo" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">Try the live demo</a>
+      </div>
+      <p class="demo-note">No install. Sample data, opens in seconds.</p>
+      <div class="cta cta-links">
+        <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il">Get the code</a>
+        <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md">Read the deploy guide</a>
+        <a class="btn btn-ghost btn-setup" href="#options">See setup options</a>
+      </div>
+
+      <div class="shot">
+        <img src="assets/screenshots/dashboard.png" alt="The dashboard: open and overdue documents, cash flow, income by month and top clients">
+      </div>
+      <p class="shot-cap">All screenshots on this page use an invented demo business.</p>
+    </div>
+  </div>
+
+  <section id="mobile" class="plain">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Your books in your pocket</h2>
+        <p>Install it on your home screen. It opens ready for the next receipt.</p>
+      </div>
+      <div class="phones">
+        <figure class="phone">
+          <div class="frame"><img src="assets/screenshots/phone-quick.png" alt="Quick page with camera and gallery buttons and document shortcuts" loading="lazy" width="585" height="1266"></div>
+          <figcaption><b>Quick</b>Take a photo, pick from the gallery or start a document.</figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="assets/screenshots/phone-expense.png" alt="Expense review with the receipt photo and the fields Claude filled in" loading="lazy" width="585" height="1266"></div>
+          <figcaption><b>Review and file</b>Claude fills in the fields. You check them and file.</figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="assets/screenshots/phone-activity.png" alt="Recent activity list with documents and expenses" loading="lazy" width="585" height="1266"></div>
+          <figcaption><b>Recent activity</b>The latest documents and expenses, with amount and status.</figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="assets/screenshots/phone-dashboard.png" alt="Dashboard on a phone with quick actions and overdue items" loading="lazy" width="585" height="1266"></div>
+          <figcaption><b>Dashboard</b>Open and overdue items, cash flow and the פטור ceiling.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">What it does</div>
+        <h2>Everything a small Israeli business issues and files</h2>
+        <p>For a עוסק פטור today and a עוסק מורשה tomorrow.</p>
+      </div>
+      <div class="features">
+        <div class="feat">
+          <div class="ico" aria-hidden="true">▤</div>
+          <h3>Every Israeli document type</h3>
+          <p>Quotes, payment requests, receipts and tax invoices, in English or Hebrew and English.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">#</div>
+          <h3>Numbering that cannot break</h3>
+          <p>Gapless series, locked final documents and signed PDFs.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">✓</div>
+          <h3>ITA allocation numbers</h3>
+          <p>Israel Invoices API v2, with a retry queue.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">§</div>
+          <h3>Contracts and work orders</h3>
+          <p>The client signs on any screen. A signed work order becomes a pro forma.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">◉</div>
+          <h3>Expenses read by Claude</h3>
+          <p>Snap a receipt or import a month from Google Drive.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">∑</div>
+          <h3>Reports for your accountant</h3>
+          <p>P&amp;L, client ledgers, the unified file and an accountant login.</p>
+        </div>
+      </div>
+
+      <div class="sec-head sub" id="list">
+        <h2>Every feature</h2>
+        <p>Open a group to see what ships today.</p>
+      </div>
+      <div class="flist">
+        <details class="fgroup">
+          <summary>Documents<span class="count">8</span></summary>
+          <ul>
+            <li>Quotes, payment requests and pro formas (חשבון עסקה)</li>
+            <li>Receipts and credit receipts as עוסק פטור</li>
+            <li>Tax invoices, invoice/receipts and credit invoices as עוסק מורשה</li>
+            <li>English or bilingual Hebrew and English documents</li>
+            <li>Duplicate any document in one click</li>
+            <li>Create a receipt from any open document, with its payment filled in</li>
+            <li>Cheque payments with bank, branch and account number</li>
+            <li>Delete a draft only after you confirm</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Numbering and compliance<span class="count">6</span></summary>
+          <ul>
+            <li>One gapless series per document type, with your own starting numbers</li>
+            <li>Final documents locked by database triggers and a hash chain</li>
+            <li>PDF with your logo and signature, sealed with a PAdES digital signature</li>
+            <li>ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue</li>
+            <li>פטור ceiling meter with alerts and a guided switch to מורשה</li>
+            <li>Issuing on/off switch, to keep issuing in your current system</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Currency<span class="count">6</span></summary>
+          <ul>
+            <li>Documents in ILS, USD, EUR and other currencies</li>
+            <li>Bank of Israel rates, cached daily</li>
+            <li>A receipt takes the rate of the document it pays</li>
+            <li>Type your own rate, or tick &quot;use latest rate&quot;</li>
+            <li>Foreign and ILS totals printed in their own columns</li>
+            <li>Client balances kept in the client’s currency</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Sending<span class="count">7</span></summary>
+          <ul>
+            <li>Email with To, CC and BCC on every document</li>
+            <li>A CC list per client and a BCC copy list for your own records</li>
+            <li>WhatsApp short link that opens a preview page with your logo</li>
+            <li>A ready greeting in English or Hebrew, by the client’s language</li>
+            <li>Digital-document consent recorded per client</li>
+            <li>Payment reminders before and after the due date</li>
+            <li>A clear confirmation once a document is marked as sent</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Recurring documents<span class="count">6</span></summary>
+          <ul>
+            <li>Weekly, monthly, quarterly or yearly schedules for retainers and pro formas</li>
+            <li>Payment terms in days, set on each copy</li>
+            <li>An end date to stop the schedule</li>
+            <li>Issue and email on its own, or wait for your approval</li>
+            <li>Approvals page on the computer and the phone</li>
+            <li>Slack notice when a copy waits for approval</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Clients and dashboard<span class="count">5</span></summary>
+          <ul>
+            <li>A page per client with contacts, documents and a ledger per currency</li>
+            <li>Open balances, aging and an overdue list</li>
+            <li>Create a receipt straight from the overdue card</li>
+            <li>Cash flow, income by month and top clients</li>
+            <li>Sortable tables, newest first by default</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Contracts and work orders<span class="count">7</span></summary>
+          <ul>
+            <li>Contract and work order templates with fields you define, in English and Hebrew</li>
+            <li>Service Agreement included in the first work order, signed once</li>
+            <li>Client signs on the phone or the computer: fill in, draw, confirm with an email code</li>
+            <li>Signed PDF with an evidence page and a certified PAdES signature</li>
+            <li>Work order numbers on their own series, filled in for you</li>
+            <li>Signing reminders, and contracts signed elsewhere uploaded to the client record</li>
+            <li>Turn a signed work order into a pro forma</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Business documents<span class="count">4</span></summary>
+          <ul>
+            <li>VAT and company certificates, bookkeeping and withholding confirmations</li>
+            <li>Claude reads the type, names and dates</li>
+            <li>Expiry warnings on the dashboard</li>
+            <li>Your assistant and accountant open the same list</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Expenses and import<span class="count">5</span></summary>
+          <ul>
+            <li>Upload a receipt or snap a photo, Claude reads supplier, date and amount</li>
+            <li>Import a month of expenses from Google Drive</li>
+            <li>Import customers and past documents from another system</li>
+            <li>Imported documents keep the exchange rate printed on them, never a guessed one</li>
+            <li>Documents with no printed rate are flagged for you to fill in</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>Reports, exports and backups<span class="count">6</span></summary>
+          <ul>
+            <li>Income, expenses, profit and loss, open items and client ledgers</li>
+            <li>Download as PDF, XLSX or CSV</li>
+            <li>Monthly accountant pack and an accountant login with an end date and access log</li>
+            <li>Unified file (מבנה אחיד) v1.31 for the Tax Authority</li>
+            <li>PCN874 export (allocation-number column)</li>
+            <li>Quarterly backups to R2 and Google Drive</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>On your phone<span class="count">4</span></summary>
+          <ul>
+            <li>Installs on the home screen like an app</li>
+            <li>Quick page: photo, gallery, new document and recent activity</li>
+            <li>Bottom tab bar and tables that turn into cards</li>
+            <li>Photos taken offline upload when you are back online</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Screenshots</div>
+        <h2>What you get</h2>
+      </div>
+      <div class="gallery">
+        <figure class="gcard">
+          <img src="assets/screenshots/documents.png" alt="Documents list with status, related documents and open amounts" loading="lazy">
+          <figcaption><b>Documents and their relations.</b> Every document with its status, the documents it came from or led to, and what is still open.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/payment-requests.png" alt="Payment requests list with overdue and open totals" loading="lazy">
+          <figcaption><b>Payment requests that close.</b> Record a payment and the receipt links back to the request. Partial payments keep the rest open.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/clients.png" alt="Client page with details, contacts and ledger" loading="lazy">
+          <figcaption><b>Clients and their ledger.</b> One page per client with contacts, consent status, documents and a running ledger per currency.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/expenses.png" alt="Expenses list with suppliers and categories" loading="lazy">
+          <figcaption><b>Expenses to review and file.</b> Documents read by Claude land in New. Check the supplier, amount and category, then file.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/reports.png" alt="Reports catalog" loading="lazy">
+          <figcaption><b>Reports for you and your accountant.</b> Income, expenses, profit and loss, open items and ledgers. Download as PDF, XLSX or CSV.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/settings-business.png" alt="Business settings with logo and signature" loading="lazy">
+          <figcaption><b>Your business, your brand.</b> Business details, logo, signature, payment methods and bank details printed on your documents.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">The rules</div>
+        <h2>Six rules the code enforces</h2>
+        <p>The database refuses to break them.</p>
+      </div>
+      <ul class="rules">
+        <li>
+          <b>A final document never changes</b>
+          <span>A mistake is fixed with a credit document or a cancellation, never an edit. Database triggers block updates to a final row.</span>
+        </li>
+        <li>
+          <b>Numbers come only from finalize</b>
+          <span>Drafts carry no number, so a deleted draft never leaves a gap in the series.</span>
+        </li>
+        <li>
+          <b>No tax invoice PDF without its allocation number</b>
+          <span>When the ITA requires a מספר הקצאה, the PDF waits for it.</span>
+        </li>
+        <li>
+          <b>A demand and its receipt count once</b>
+          <span>A payment request or pro forma is a charge, the receipt is the income. Reports never add both.</span>
+        </li>
+        <li>
+          <b>Rates are dated</b>
+          <span>VAT, the פטור ceiling and exchange rates are stored with the date they apply from.</span>
+        </li>
+        <li>
+          <b>Sandbox and production never mix</b>
+          <span>ITA sandbox and production credentials, tokens and numbers are kept apart.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">How it works</div>
+        <h2>Three steps to your first document</h2>
+        <p>You deploy your own copy. Nobody else runs it or holds your data.</p>
+      </div>
+      <ol class="steps">
+        <li class="step">
+          <h3>Deploy your copy</h3>
+          <p>Create one D1 database and two R2 buckets, connect the Worker to your fork on GitHub, and add your domain. Every push to main deploys.</p>
+        </li>
+        <li class="step">
+          <h3>Lock it down</h3>
+          <p>Cloudflare Access signs you in with your own email. Add the secrets: the PDF signing key, the mail key, and ITA credentials when you are מורשה.</p>
+        </li>
+        <li class="step">
+          <h3>Set up the business</h3>
+          <p>Business profile, logo, signature and the starting number of each series, so numbering continues from your previous system.</p>
+        </li>
+      </ol>
+      <div class="cmd">
+        <code id="cmd">git clone https://github.com/matanlevanon/open-ledger-il.git</code>
+        <button id="copy" type="button">Copy</button>
+      </div>
+      <p class="cmd-note">Starts on the Workers Free plan. Setup takes an afternoon.</p>
+
+      <div class="sec-head sub" id="setup">
+        <h2>What you need</h2>
+        <p>It starts on free tiers.</p>
+      </div>
+      <table>
+        <thead><tr><th>Requirement</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><b>Cloudflare account</b><span class="tag req">Required</span></td><td><span>Workers Free runs it: the Worker, D1, R2, Browser Rendering and 5 scheduled jobs. Workers Paid, from $5 a month, lifts the limits below.</span></td></tr>
+          <tr><td><b>PDF signing key and certificate</b><span class="tag req">Required</span></td><td><span>For the PAdES signature on every PDF. One command makes both, docs/deploy.md step 8.</span></td></tr>
+          <tr><td><b>Node.js and Wrangler</b><span class="tag req">Required</span></td><td><span>On your computer, to apply database migrations and set secrets.</span></td></tr>
+          <tr><td><b>A domain on Cloudflare</b><span class="tag">Optional</span></td><td><span>Your own ledger address, for example ledger.example.com. Without one, it runs on the free workers.dev address. Email from your own address still needs a domain.</span></td></tr>
+          <tr><td><b>Resend account</b><span class="tag">Optional</span></td><td><span>To email documents, reminders and the accountant pack. The free tier covers a small business.</span></td></tr>
+          <tr><td><b>ITA API credentials</b><span class="tag">Optional</span></td><td><span>Only as עוסק מורשה, for allocation numbers on tax invoices.</span></td></tr>
+          <tr><td><b>Anthropic API key</b><span class="tag">Optional</span></td><td><span>For Claude to read expenses and past documents. Pay per use, a few cents per document.</span></td></tr>
+          <tr><td><b>Google Cloud service account</b><span class="tag">Optional</span></td><td><span>For the Drive expense import and backup copies. Free.</span></td></tr>
+        </tbody>
+      </table>
+      <details class="more" id="registration">
+        <summary>Workers Paid, Tax Authority registration and known limits</summary>
+        <div class="more-body">
+          <h3>When to move to Workers Paid.</h3>
+          <p>The ledger uses 5 scheduled jobs, the most Workers Free allows. Free has three other limits worth knowing:</p>
+          <ul><li>Cron CPU: 10 ms per scheduled run on Free. Most jobs fit. The monthly accountant pack and the quarterly backup build files and are the ones likely to need Paid.</li><li>Browser Rendering, which draws every PDF: 10 minutes a day on Free, 10 hours a month on Paid.</li><li>D1 point-in-time recovery: 7 days on Free, 30 days on Paid. For legal books, 30 days is the one to have.</li></ul>
+          <h3>Do you need to register the software with the Tax Authority?</h3>
+          <p>Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. <sup><a href="#ref-2">[2]</a></sup></p><p>The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. <sup><a href="#ref-1">[1]</a></sup></p><p>You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.</p><p>Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings &gt; Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.</p><p>To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.</p>
+          <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">The ITA software registration page (Hebrew)</a></p>
+          <div class="refs"><b>References</b><ol><li id="ref-1">Israel Tax Authority, &quot;Application to register software for a computerized accounting system&quot;, service page, updated 29.05.2025. Who must register: <q lang="he" dir="rtl">יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)</q> <a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">gov.il</a></li><li id="ref-2">Israel Tax Authority, registry of registered accounting software. <a href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">gov.il</a></li><li id="ref-3">Legal framework: Income Tax (Bookkeeping) Instructions, 1973, the computerized-system rules under instruction 36.</li></ol></div>
+          <h3>What it will not do</h3>
+          <ul>
+            <li>It is not tax or legal advice. Check your setup with your accountant before you issue a real document.</li>
+            <li>One business per deployment.</li>
+            <li>Israel only: the document types, VAT and ITA rules are Israeli.</li>
+            <li>It records payments. It does not charge cards or collect money.</li>
+            <li>The PCN874 export fills the allocation-number column. The other columns are a stub.</li>
+            <li>You run it: updates, secrets and the Cloudflare bill are yours.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="options">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Pricing</div>
+        <h2>Install it yourself, or have it set up for you</h2>
+      </div>
+      <div class="plans plans-2">
+        <div class="plan">
+          <h3>Free from source</h3>
+          <div class="price">Free</div>
+          <ul>
+            <li>No license fee, no usage limits</li>
+            <li>You register your own ITA API app</li>
+            <li>Step-by-step setup guide</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md">Read the setup guide</a>
+        </div>
+        <div class="plan">
+          <h3>Set up for you</h3>
+          <div class="price">₪699 <span>one time</span></div>
+          <ul>
+            <li>We create every account for you, with your own emails</li>
+            <li>Tax Authority: your own ITA API app, or the connection through MTN</li>
+            <li>Handed over working, with full control to you</li>
+            <li>No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year</li>
+          </ul>
+          <a class="btn btn-ghost" href="#setup-form">Book a call</a>
+        </div>
+      </div>
+      <form class="setup-form" id="setup-form" novalidate>
+        <h3>Ask for a setup</h3>
+        <label>Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>Business type<select name="type"><option>Osek patur (עוסק פטור)</option><option>Osek murshe (עוסק מורשה)</option><option>Company (חברה בע"מ)</option><option>Other</option></select></label>
+        <label class="full">Anything I should know<textarea name="message" rows="4"></textarea></label>
+        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>
+        <div class="full"><button class="btn btn-primary" type="submit">Send request</button></div>
+        <p class="status" role="status"></p>
+      </form>
+      <script>
+      (function () {
+        var f = document.getElementById('setup-form'); if (!f) return;
+        var st = f.querySelector('.status');
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var d = new FormData(f);
+          if (d.get('hp')) return;
+          var email = String(d.get('email') || '').trim();
+          if (!d.get('name') || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { st.textContent = 'Add your name and a valid email.'; return; }
+          var btn = f.querySelector('button'); btn.disabled = true; st.textContent = 'Sending...';
+          var msg = 'Phone: ' + (d.get('phone') || '-') + '\nBusiness type: ' + d.get('type') + '\n\n' + (d.get('message') || '');
+          fetch('https://contact.matanlevanon.com/lead', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (en)' })
+          }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
+            .then(function (ok) { st.textContent = ok ? 'Thanks. Your request reached me, and I will reply by email.' : 'The request did not go through. Try again in a minute.'; if (ok) f.reset(); })
+            .catch(function () { st.textContent = 'The request did not go through. Try again in a minute.'; })
+            .finally(function () { btn.disabled = false; });
+        });
+      })();
+      </script>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <h2>See it working first</h2>
+      <p class="lead">Open the demo, then read the code. Every rule is in the open.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg btn-demo" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">Try the live demo</a>
+        <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il">Get the code</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a href="https://github.com/matanlevanon/open-ledger-il">GitHub</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md">Deploy guide</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md">Setup guide</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/LICENSE">AGPL-3.0 licence</a>
+    </div>
+    <div>Self-hosted on Cloudflare Workers · Open source under AGPL-3.0 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status">Copied</div>
+
+<script>
+document.getElementById('copy').addEventListener('click', async function () {
+  var text = document.getElementById('cmd').textContent;
+  try { await navigator.clipboard.writeText(text); }
+  catch (err) {
+    var t = document.createElement('textarea');
+    t.value = text; document.body.appendChild(t); t.select();
+    document.execCommand('copy'); t.remove();
+  }
+  var toast = document.getElementById('toast');
+  toast.classList.add('on');
+  setTimeout(function () { toast.classList.remove('on'); }, 1600);
+});
+</script>
+</body>
+</html>

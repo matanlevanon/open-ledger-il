@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Ledger IL - חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, בענן Cloudflare שלך</title>
+<meta name="description" content="מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.">
+<meta property="og:title" content="Open Ledger IL">
+<meta property="og:description" content="מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/screenshots/dashboard-he.png">
+<link rel="alternate" hreflang="en" href="index.html">
+<link rel="alternate" hreflang="he" href="he.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
+  --text: #0f172a; --text-dim: #475569; --text-mute: #64748b; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
+  --orange: #d97706; --purple: #7c3aed; --radius: 16px; --maxw: 1120px; --shadow: 0 24px 60px -28px rgba(15,23,42,.35); color-scheme: light; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; white-space: nowrap; }
+.brand svg { width: 26px; height: 26px; flex: 0 0 auto; }
+.nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--text-dim); }
+.nav-links a { text-decoration: none; }
+.nav-links a:hover { color: var(--text); }
+.nav-end { display: flex; align-items: center; gap: 10px; }
+.lang { font-size: 14px; color: var(--text-dim); text-decoration: none; padding: 8px 10px; }
+.lang:hover { color: var(--text); }
+@media (max-width: 760px) { .nav-links { display: none; } }
+@media (max-width: 480px) { .nav-end .btn-sm { display: none; } }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s, background .15s; }
+.btn-primary { background: linear-gradient(180deg, var(--green), var(--green-2)); color: #ffffff; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(22,163,74,.7); }
+.btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
+.btn-ghost:hover { border-color: var(--text-mute); }
+.btn-sm { padding: 9px 16px; font-size: 14px; border-radius: 10px; }
+.hero { padding: 76px 0 44px; text-align: center; }
+.badge { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; margin-bottom: 22px; }
+.badge b { color: var(--green); font-weight: 600; }
+h1 { font-size: clamp(32px, 5.2vw, 54px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 16px; font-weight: 800; }
+.lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-dim); max-width: 680px; margin: 0 auto 28px; }
+.cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
+.shot { margin: 48px auto 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: var(--surface); }
+.shot img { width: 100%; }
+.shot-cap { font-size: 13px; color: var(--text-mute); text-align: center; margin-top: 12px; }
+section { padding: 88px 0; }
+section + section { border-top: 1px solid var(--border-soft); }
+section.plain { padding-top: 24px; border-top: 0; }
+.sec-head { text-align: center; max-width: 620px; margin: 0 auto 40px; }
+.sec-head.sub { margin-top: 80px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+[dir=rtl] .eyebrow, [dir=rtl] th { letter-spacing: 0; }
+h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02em; margin: 0 0 10px; font-weight: 700; }
+.sec-head p { color: var(--text-dim); margin: 0; font-size: 17px; }
+.sec-head p:empty { display: none; }
+/* Hero links: three equal secondary buttons under the demo button. */
+.cta-links .btn { min-width: 0; }
+.btn-setup { border-color: rgba(22,163,74,.45); color: var(--green-2); }
+.btn-setup:hover { border-color: var(--green); }
+/* Highlights: six items, no boxes. */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 40px; max-width: 980px; margin: 0 auto; }
+@media (max-width: 860px) { .features { grid-template-columns: repeat(2, 1fr); gap: 28px 24px; } }
+@media (max-width: 520px) { .features { grid-template-columns: 1fr; } }
+.feat .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 12px; background: #e8efff; font-size: 18px; color: var(--blue); }
+.feat h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
+.feat p { margin: 0; color: var(--text-dim); font-size: 15px; }
+/* Every feature: closed groups the reader opens. */
+.flist { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; max-width: 980px; margin: 0 auto; align-items: start; }
+@media (max-width: 760px) { .flist { grid-template-columns: 1fr; } }
+.fgroup { border-bottom: 1px solid var(--border); }
+.fgroup summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; font-weight: 600; font-size: 16px; }
+.fgroup summary::-webkit-details-marker { display: none; }
+.fgroup summary::after { content: '+'; margin-inline-start: auto; color: var(--text-mute); font-size: 20px; font-weight: 400; line-height: 1; }
+.fgroup[open] summary::after { content: '\2212'; }
+.fgroup .count { font-size: 12px; font-weight: 600; color: var(--text-mute); background: var(--surface-2); border-radius: 999px; padding: 1px 8px; }
+.fgroup ul { list-style: none; margin: 0 0 16px; padding: 0; }
+.fgroup li { position: relative; padding-inline-start: 22px; margin: 6px 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; }
+.fgroup li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+/* Phones, right under the main screenshot. */
+.phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; align-items: start; max-width: 1000px; margin: 0 auto; }
+@media (max-width: 900px) { .phones { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }
+.phone { margin: 0; }
+.phone .frame { background: #0a0f18; border-radius: 30px; padding: 8px; box-shadow: var(--shadow); }
+.phone img { width: 100%; height: auto; border-radius: 23px; }
+.phone figcaption { padding: 14px 4px 0; text-align: center; font-size: 13.5px; color: var(--text-mute); line-height: 1.45; }
+.phone figcaption b { display: block; color: var(--text); font-size: 15px; font-weight: 650; margin-bottom: 2px; }
+@media (max-width: 620px) { .phone .frame { border-radius: 22px; padding: 5px; } .phone img { border-radius: 18px; } .phone figcaption { font-size: 12px; } .phone figcaption b { font-size: 13.5px; } }
+/* Screenshots: image first, one caption line. */
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 28px; align-items: start; }
+@media (max-width: 820px) { .gallery { grid-template-columns: 1fr; } }
+.gcard { margin: 0; }
+.gcard img { width: 100%; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px -18px rgba(15,23,42,.35); }
+.gcard figcaption { padding: 12px 2px 0; color: var(--text-dim); font-size: 14.5px; }
+.gcard figcaption b { color: var(--text); font-weight: 650; }
+/* Rules: a checked list in two columns. */
+.rules { list-style: none; padding: 0; margin: 0 auto; max-width: 980px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px 40px; }
+@media (max-width: 760px) { .rules { grid-template-columns: 1fr; } }
+.rules li { position: relative; padding-inline-start: 34px; }
+.rules li::before { content: '\2713'; position: absolute; inset-inline-start: 0; top: 1px; width: 22px; height: 22px; border-radius: 50%; background: #dcfce7; color: var(--green-2); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.rules b { display: block; font-weight: 650; margin-bottom: 2px; }
+.rules span { color: var(--text-dim); font-size: 14.5px; }
+/* How it works: numbered steps without boxes. */
+.steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
+@media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+.step { counter-increment: step; }
+.step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+.step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
+.step p { margin: 0; color: var(--text-dim); font-size: 15px; }
+.cmd { display: flex; align-items: center; gap: 12px; max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 12px 12px 16px; direction: ltr; }
+.cmd code { font-size: 13px; color: var(--text-dim); overflow-x: auto; white-space: nowrap; flex: 1; text-align: left; background: none; border: 0; padding: 0; }
+.cmd button { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
+.cmd button:hover { color: var(--text); border-color: var(--text-mute); }
+.cmd-note { font-size: 13px; color: var(--text-mute); margin-top: 10px; text-align: center; }
+table { width: 100%; max-width: 980px; margin: 0 auto; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: start; padding: 13px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--text-mute); font-weight: 600; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; }
+td:first-child { width: 36%; padding-inline-end: 18px; }
+td b { font-weight: 600; }
+td span { color: var(--text-dim); }
+.tag { display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-inline-start: 8px; border: 1px solid var(--border); color: var(--text-mute); vertical-align: 1px; }
+.tag.req { color: var(--green); border-color: rgba(22,163,74,.4); }
+@media (max-width: 620px) { td { display: block; border-bottom: 0; padding: 4px 0; width: auto !important; } tr { display: block; border-bottom: 1px solid var(--border); padding: 10px 0; } thead { display: none; } }
+/* Workers Paid, registration and limits, closed by default. */
+.more { max-width: 980px; margin: 28px auto 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.more summary { cursor: pointer; padding: 16px 20px; font-weight: 600; }
+.more-body { padding: 0 20px 18px; color: var(--text-dim); font-size: 14.5px; }
+.more-body h3 { color: var(--text); font-size: 15.5px; margin: 18px 0 6px; }
+.more-body p { margin: 0 0 8px; }
+.more-body ul { margin: 0; padding-inline-start: 20px; }
+.more-body li { margin: 4px 0; }
+.more-body a { color: var(--blue); }
+.refs { border-top: 1px solid var(--border-soft); margin-top: 12px; padding-top: 10px; font-size: 13px; color: var(--text-mute); }
+.refs b { color: var(--text-dim); font-weight: 600; }
+.refs ol { margin: 6px 0 0; padding-inline-start: 20px; }
+.refs q { color: var(--text-dim); unicode-bidi: isolate; }
+.more-body sup a { text-decoration: none; font-size: 11px; }
+.refs li:target { background: var(--surface-2); border-radius: 6px; }
+/* Pricing. */
+#options { background: var(--bg-2); }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1080px; margin: 0 auto; }
+@media (max-width: 900px) { .plans { grid-template-columns: 1fr; max-width: 520px; } }
+.plan { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; }
+.plans-2 { grid-template-columns: repeat(2, 1fr); max-width: 860px; }
+@media (max-width: 720px) { .plans-2 { grid-template-columns: 1fr; } }
+.plan-main { border: 2px solid var(--green); box-shadow: 0 20px 50px -30px rgba(22,163,74,.6); }
+.plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
+.price { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 14px; }
+.price span { font-size: 15px; font-weight: 500; color: var(--text-mute); }
+.plan ul { list-style: none; margin: 0 0 22px; padding: 0; flex: 1; }
+.plan li { position: relative; padding-inline-start: 22px; margin: 8px 0; color: var(--text-dim); font-size: 15px; }
+.plan li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
+.final { text-align: center; }
+.final .cta { margin-top: 26px; margin-bottom: 0; }
+footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: var(--text-mute); font-size: 14px; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
+.foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; }
+.foot a:hover { color: var(--text); }
+.toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.btn-lg { padding: 18px 36px; font-size: 18px; border-radius: 14px; }
+.cta-demo { margin-bottom: 10px; }
+.demo-note { font-size: 14px; color: var(--text-mute); margin: 0 0 22px; }
+@media (max-width: 640px) { .btn-demo { width: 100%; } .cta-links { flex-direction: column; } .cta-links .btn { width: 100%; } }
+.setup-form { max-width: 860px; margin: 24px auto 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; display: grid; gap: 14px; grid-template-columns: 1fr 1fr; scroll-margin-top: 84px; }
+.setup-form h3 { grid-column: 1 / -1; margin: 0; }
+.setup-form label { display: grid; gap: 6px; font-size: 14px; color: var(--text-dim); }
+.setup-form .full { grid-column: 1 / -1; }
+.setup-form input, .setup-form select, .setup-form textarea { font: inherit; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); }
+.setup-form .hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.setup-form .status { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--text-dim); }
+@media (max-width: 640px) { .setup-form { grid-template-columns: 1fr; } }
+section[id] { scroll-margin-top: 64px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="8" fill="#141d2e" stroke="#26344b" stroke-width="1.5"/>
+        <rect x="8" y="6" width="16" height="20" rx="2.5" fill="none" stroke="#4f93ff" stroke-width="2"/>
+        <path d="M12 12h8M12 16h8" stroke="#35c46a" stroke-width="2" stroke-linecap="round"/>
+        <path d="M12 20h5" stroke="#9b6dff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Open Ledger IL
+    </a>
+    <nav class="nav-links">
+      <a href="#features">יכולות</a>
+      <a href="#screens">צילומי מסך</a>
+      <a href="#how">איך זה עובד</a>
+      <a href="#options">מחירים</a>
+      <a href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">הדגמה</a>
+    </nav>
+    <div class="nav-end">
+      <a class="lang" href="index.html" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il">לקוד ב-GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge"><b>חינם</b> · קוד פתוח · רשומה ברשות המסים · גרסה 1.7.0</div>
+      <h1>חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.</h1>
+      <p class="lead">הצעות מחיר, קבלות, חשבוניות מס, חוזים והוצאות, עם מספור חוקי ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר שלך.</p>
+      <div class="cta cta-demo">
+        <a class="btn btn-primary btn-lg btn-demo" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">נסו את ההדגמה</a>
+      </div>
+      <p class="demo-note">בלי התקנה. נתוני דוגמה, נפתח תוך שניות.</p>
+      <div class="cta cta-links">
+        <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il">לקוד</a>
+        <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md">למדריך ההתקנה</a>
+        <a class="btn btn-ghost btn-setup" href="#options">לאפשרויות ההתקנה</a>
+      </div>
+
+      <div class="shot">
+        <img src="assets/screenshots/dashboard-he.png" alt="לוח הבקרה: מסמכים פתוחים ובאיחור, תזרים, הכנסות לפי חודש ולקוחות מובילים">
+      </div>
+      <p class="shot-cap">כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.</p>
+    </div>
+  </div>
+
+  <section id="mobile" class="plain">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>הנהלת החשבונות בכיס</h2>
+        <p>מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.</p>
+      </div>
+      <div class="phones">
+        <figure class="phone">
+          <div class="frame"><img src="assets/screenshots/phone-quick-he.png" alt="מסך מהיר עם כפתורי מצלמה וגלריה וקיצורי מסמכים" loading="lazy" width="585" height="1266"></div>
+          <figcaption><b>מהיר</b>מצלמים, בוחרים מהגלריה או פותחים מסמך חדש.</figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="assets/screenshots/phone-expense-he.png" alt="בדיקת הוצאה עם צילום הקבלה והשדות ש-Claude מילא" loading="lazy" width="585" height="1266"></div>
+          <figcaption><b>בדיקה ותיוק</b>Claude ממלא את השדות. אתה בודק ומתייק.</figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="assets/screenshots/phone-activity-he.png" alt="רשימת פעילות אחרונה עם מסמכים והוצאות" loading="lazy" width="585" height="1266"></div>
+          <figcaption><b>פעילות אחרונה</b>המסמכים וההוצאות האחרונים, עם סכום וסטטוס.</figcaption>
+        </figure>
+        <figure class="phone">
+          <div class="frame"><img src="assets/screenshots/phone-dashboard-he.png" alt="לוח הבקרה בטלפון עם פעולות מהירות ופריטים באיחור" loading="lazy" width="585" height="1266"></div>
+          <figcaption><b>לוח בקרה</b>פריטים פתוחים ובאיחור, תזרים ותקרת עוסק פטור.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">מה היא עושה</div>
+        <h2>כל מה שעסק ישראלי קטן מפיק ומתייק</h2>
+        <p>לעוסק פטור היום ולעוסק מורשה מחר.</p>
+      </div>
+      <div class="features">
+        <div class="feat">
+          <div class="ico" aria-hidden="true">▤</div>
+          <h3>כל סוגי המסמכים</h3>
+          <p>הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס, בעברית או בעברית ואנגלית.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">#</div>
+          <h3>מספור שלא נשבר</h3>
+          <p>סדרות בלי חורים, מסמך סופי נעול ו-PDF חתום.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">✓</div>
+          <h3>מספרי הקצאה</h3>
+          <p>API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">§</div>
+          <h3>חוזים והזמנות עבודה</h3>
+          <p>הלקוח חותם בכל מסך. הזמנה חתומה הופכת לחשבון עסקה.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">◉</div>
+          <h3>הוצאות ש-Claude קורא</h3>
+          <p>מצלמים קבלה או מייבאים חודש מ-Google Drive.</p>
+        </div>
+        <div class="feat">
+          <div class="ico" aria-hidden="true">∑</div>
+          <h3>דוחות לרואה החשבון</h3>
+          <p>רווח והפסד, כרטסות, מבנה אחיד וכניסה לרואה החשבון.</p>
+        </div>
+      </div>
+
+      <div class="sec-head sub" id="list">
+        <h2>כל היכולות</h2>
+        <p>פתחו קבוצה כדי לראות מה קיים היום.</p>
+      </div>
+      <div class="flist">
+        <details class="fgroup">
+          <summary>מסמכים<span class="count">8</span></summary>
+          <ul>
+            <li>הצעות מחיר, דרישות תשלום וחשבונות עסקה</li>
+            <li>קבלות וקבלות זיכוי כעוסק פטור</li>
+            <li>חשבוניות מס, חשבוניות מס קבלה וחשבוניות זיכוי כעוסק מורשה</li>
+            <li>מסמכים באנגלית או בעברית ואנגלית</li>
+            <li>שכפול כל מסמך בלחיצה</li>
+            <li>הפקת קבלה מכל מסמך פתוח, עם התשלום כבר ממולא</li>
+            <li>תשלום בצ׳ק עם בנק, סניף ומספר חשבון</li>
+            <li>מחיקת טיוטה רק אחרי אישור</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>מספור ותאימות<span class="count">6</span></summary>
+          <ul>
+            <li>סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך</li>
+            <li>מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב</li>
+            <li>PDF עם הלוגו והחתימה שלך, חתום בחתימה דיגיטלית PAdES</li>
+            <li>מספרי הקצאה מרשות המסים, ניסוי וייצור, עם תור ניסיונות חוזרים</li>
+            <li>מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה</li>
+            <li>מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>מטבע<span class="count">6</span></summary>
+          <ul>
+            <li>מסמכים בשקלים, דולרים, אירו ומטבעות נוספים</li>
+            <li>שערי בנק ישראל, נשמרים מדי יום</li>
+            <li>קבלה מקבלת את השער של המסמך שהיא משלמת</li>
+            <li>הקלדת שער משלך, או סימון &quot;שער אחרון&quot;</li>
+            <li>סכומים במטבע חוץ ובשקלים מודפסים כל אחד בעמודה שלו</li>
+            <li>יתרות הלקוח נשמרות במטבע שלו</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>שליחה<span class="count">7</span></summary>
+          <ul>
+            <li>מייל עם נמען, CC ו-BCC בכל מסמך</li>
+            <li>רשימת CC לכל לקוח ורשימת BCC לעותק שלך</li>
+            <li>קישור וואטסאפ מקוצר שנפתח לעמוד תצוגה עם הלוגו שלך</li>
+            <li>ברכה מוכנה בעברית או באנגלית, לפי שפת הלקוח</li>
+            <li>הסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח</li>
+            <li>תזכורות תשלום לפני מועד התשלום ואחריו</li>
+            <li>אישור ברור אחרי שמסמך סומן כנשלח</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>מסמכים חוזרים<span class="count">6</span></summary>
+          <ul>
+            <li>תזמון שבועי, חודשי, רבעוני או שנתי לריטיינרים ולחשבונות עסקה</li>
+            <li>תנאי תשלום בימים, לכל עותק</li>
+            <li>תאריך סיום לתזמון</li>
+            <li>הפקה ושליחה אוטומטית, או המתנה לאישורך</li>
+            <li>עמוד אישורים במחשב ובטלפון</li>
+            <li>הודעת Slack כשעותק ממתין לאישור</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>לקוחות ולוח בקרה<span class="count">5</span></summary>
+          <ul>
+            <li>עמוד לכל לקוח עם אנשי קשר, מסמכים וכרטסת לכל מטבע</li>
+            <li>יתרות פתוחות, גיול ורשימת איחורים</li>
+            <li>הפקת קבלה ישירות מכרטיס האיחורים</li>
+            <li>תזרים, הכנסות לפי חודש ולקוחות מובילים</li>
+            <li>טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>חוזים והזמנות עבודה<span class="count">7</span></summary>
+          <ul>
+            <li>תבניות חוזה והזמנת עבודה עם שדות משלך, בעברית ובאנגלית</li>
+            <li>הסכם השירותים מצורף להזמנת העבודה הראשונה, חתימה אחת</li>
+            <li>הלקוח חותם בטלפון או במחשב: ממלא, חותם בציור ומאשר בקוד במייל</li>
+            <li>PDF חתום עם דף ראיות וחתימת PAdES מאושרת</li>
+            <li>מספרי הזמנות עבודה בסדרה משלהם, ממולאים אוטומטית</li>
+            <li>תזכורות חתימה, והעלאת חוזים שנחתמו מחוץ למערכת לכרטיס הלקוח</li>
+            <li>הפיכת הזמנת עבודה חתומה לחשבון עסקה</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>מסמכי העסק<span class="count">4</span></summary>
+          <ul>
+            <li>תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור</li>
+            <li>Claude קורא את הסוג, השמות והתאריכים</li>
+            <li>התראה בלוח הבקרה לפני שמסמך פג תוקף</li>
+            <li>העוזר ורואה החשבון רואים את אותה רשימה</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>הוצאות וייבוא<span class="count">5</span></summary>
+          <ul>
+            <li>העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום</li>
+            <li>ייבוא חודש שלם של הוצאות מ-Google Drive</li>
+            <li>ייבוא לקוחות ומסמכי עבר ממערכת אחרת</li>
+            <li>מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש</li>
+            <li>מסמך בלי שער מודפס מסומן כדי שתשלים אותו</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>דוחות, ייצוא וגיבויים<span class="count">6</span></summary>
+          <ul>
+            <li>הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות לקוחות</li>
+            <li>הורדה כ-PDF, XLSX או CSV</li>
+            <li>חבילה חודשית לרואה החשבון וכניסה לרואה החשבון עם תאריך סיום ויומן גישה</li>
+            <li>קובץ במבנה אחיד גרסה 1.31 לרשות המסים</li>
+            <li>ייצוא PCN874 (עמודת מספר ההקצאה)</li>
+            <li>גיבוי רבעוני ל-R2 ול-Google Drive</li>
+          </ul>
+        </details>
+        <details class="fgroup">
+          <summary>בטלפון<span class="count">4</span></summary>
+          <ul>
+            <li>מותקנת במסך הבית כמו אפליקציה</li>
+            <li>מסך &quot;מהיר&quot;: צילום, גלריה, מסמך חדש ופעילות אחרונה</li>
+            <li>סרגל ניווט תחתון וטבלאות שהופכות לכרטיסים</li>
+            <li>תמונות שצולמו בלי קליטה עולות כשחוזרים לרשת</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">צילומי מסך</div>
+        <h2>מה מקבלים</h2>
+      </div>
+      <div class="gallery">
+        <figure class="gcard">
+          <img src="assets/screenshots/documents.png" alt="רשימת מסמכים עם סטטוס, מסמכים קשורים ויתרות" loading="lazy">
+          <figcaption><b>מסמכים והקשרים ביניהם.</b> כל מסמך עם הסטטוס שלו, המסמכים שממנו נוצר או שנוצרו ממנו, ומה עוד פתוח.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/payment-requests.png" alt="רשימת דרישות תשלום עם סכומים פתוחים ובאיחור" loading="lazy">
+          <figcaption><b>דרישות תשלום שנסגרות.</b> רושמים תשלום והקבלה מקושרת לדרישה. תשלום חלקי משאיר את היתרה פתוחה.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/clients.png" alt="עמוד לקוח עם פרטים, אנשי קשר וכרטסת" loading="lazy">
+          <figcaption><b>לקוחות והכרטסת שלהם.</b> עמוד לכל לקוח עם אנשי קשר, סטטוס הסכמה, מסמכים וכרטסת רצה לפי מטבע.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/expenses-he.png" alt="רשימת הוצאות עם ספקים וקטגוריות" loading="lazy">
+          <figcaption><b>הוצאות לבדיקה ותיוק.</b> מסמכים ש-Claude קרא נכנסים ל&quot;חדש&quot;. בודקים ספק, סכום וקטגוריה ומתייקים.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/reports.png" alt="קטלוג הדוחות" loading="lazy">
+          <figcaption><b>דוחות לך ולרואה החשבון.</b> הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות. הורדה כ-PDF, XLSX או CSV.</figcaption>
+        </figure>
+        <figure class="gcard">
+          <img src="assets/screenshots/settings-business.png" alt="הגדרות העסק עם לוגו וחתימה" loading="lazy">
+          <figcaption><b>העסק שלך, המיתוג שלך.</b> פרטי העסק, לוגו, חתימה, אמצעי תשלום ופרטי בנק שמודפסים על המסמכים.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">הכללים</div>
+        <h2>שישה כללים שהקוד אוכף</h2>
+        <p>מסד הנתונים מסרב לשבור אותם.</p>
+      </div>
+      <ul class="rules">
+        <li>
+          <b>מסמך סופי לא משתנה</b>
+          <span>טעות מתקנים במסמך זיכוי או בביטול, לעולם לא בעריכה. טריגרים במסד הנתונים חוסמים עדכון של שורה סופית.</span>
+        </li>
+        <li>
+          <b>מספר ניתן רק בהפקה</b>
+          <span>לטיוטה אין מספר, כך שטיוטה שנמחקה לא משאירה חור בסדרה.</span>
+        </li>
+        <li>
+          <b>אין PDF לחשבונית מס בלי מספר הקצאה</b>
+          <span>כשרשות המסים דורשת מספר הקצאה, ה-PDF ממתין לו.</span>
+        </li>
+        <li>
+          <b>דרישה והקבלה שלה נספרות פעם אחת</b>
+          <span>דרישת תשלום או חשבון עסקה הם חיוב, הקבלה היא ההכנסה. הדוחות אף פעם לא מחברים את שתיהן.</span>
+        </li>
+        <li>
+          <b>שיעורים מתוארכים</b>
+          <span>מע&quot;מ, תקרת עוסק פטור ושערי מטבע נשמרים עם התאריך שממנו הם חלים.</span>
+        </li>
+        <li>
+          <b>ניסוי וייצור לא מתערבבים</b>
+          <span>פרטי הגישה, הטוקנים והמספרים של סביבת הניסוי והייצור ברשות המסים נשמרים בנפרד.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">איך זה עובד</div>
+        <h2>שלושה שלבים למסמך הראשון</h2>
+        <p>אתה פורס עותק משלך. אף אחד אחר לא מריץ אותו ולא מחזיק את המידע שלך.</p>
+      </div>
+      <ol class="steps">
+        <li class="step">
+          <h3>פריסת עותק משלך</h3>
+          <p>יוצרים מסד נתונים D1 אחד ושני דליי R2, מחברים את ה-Worker ל-fork שלך ב-GitHub ומוסיפים דומיין. כל push ל-main נפרס.</p>
+        </li>
+        <li class="step">
+          <h3>נעילה</h3>
+          <p>Cloudflare Access מכניס אותך עם המייל שלך. מוסיפים סודות: מפתח החתימה, מפתח המייל ופרטי רשות המסים כשאתה עוסק מורשה.</p>
+        </li>
+        <li class="step">
+          <h3>הגדרת העסק</h3>
+          <p>פרטי העסק, לוגו, חתימה ומספר ההתחלה של כל סדרה, כדי שהמספור ימשיך מהמערכת הקודמת.</p>
+        </li>
+      </ol>
+      <div class="cmd">
+        <code id="cmd">git clone https://github.com/matanlevanon/open-ledger-il.git</code>
+        <button id="copy" type="button">העתקה</button>
+      </div>
+      <p class="cmd-note">מתחילה בתוכנית Workers Free. ההקמה לוקחת אחר צהריים.</p>
+
+      <div class="sec-head sub" id="setup">
+        <h2>מה צריך</h2>
+        <p>מתחילים בתוכניות חינמיות.</p>
+      </div>
+      <table>
+        <thead><tr><th>דרישה</th><th>הערות</th></tr></thead>
+        <tbody>
+          <tr><td><b>חשבון Cloudflare</b><span class="tag req">חובה</span></td><td><span>Workers Free מריץ אותה: ה-Worker, D1, R2, Browser Rendering ו-5 משימות מתוזמנות. Workers Paid, החל מ-5$ לחודש, מסיר את המגבלות שלמטה.</span></td></tr>
+          <tr><td><b>מפתח ותעודה לחתימת PDF</b><span class="tag req">חובה</span></td><td><span>לחתימת PAdES על כל PDF. פקודה אחת יוצרת את שניהם, docs/deploy.md שלב 8.</span></td></tr>
+          <tr><td><b>Node.js ו-Wrangler</b><span class="tag req">חובה</span></td><td><span>במחשב שלך, להרצת מיגרציות למסד הנתונים ולהגדרת סודות.</span></td></tr>
+          <tr><td><b>דומיין ב-Cloudflare</b><span class="tag">רשות</span></td><td><span>כתובת משלך למערכת, למשל ledger.example.com. בלי דומיין היא רצה בכתובת workers.dev החינמית. כדי לשלוח מייל מכתובת משלך צריך דומיין.</span></td></tr>
+          <tr><td><b>חשבון Resend</b><span class="tag">רשות</span></td><td><span>לשליחת מסמכים, תזכורות וחבילת רואה החשבון במייל. התוכנית החינמית מספיקה לעסק קטן.</span></td></tr>
+          <tr><td><b>פרטי גישה ל-API של רשות המסים</b><span class="tag">רשות</span></td><td><span>רק לעוסק מורשה, למספרי הקצאה על חשבוניות מס.</span></td></tr>
+          <tr><td><b>מפתח API של Anthropic</b><span class="tag">רשות</span></td><td><span>כדי ש-Claude יקרא הוצאות ומסמכי עבר. תשלום לפי שימוש, כמה סנטים למסמך.</span></td></tr>
+          <tr><td><b>חשבון שירות ב-Google Cloud</b><span class="tag">רשות</span></td><td><span>לייבוא הוצאות מ-Drive ולעותקי גיבוי. חינם.</span></td></tr>
+        </tbody>
+      </table>
+      <details class="more" id="registration">
+        <summary>Workers Paid, רישום ברשות המסים ומגבלות ידועות</summary>
+        <div class="more-body">
+          <h3>מתי לעבור ל-Workers Paid.</h3>
+          <p>המערכת משתמשת ב-5 משימות מתוזמנות, המקסימום ב-Workers Free. לתוכנית החינמית יש עוד שלוש מגבלות שכדאי להכיר:</p>
+          <ul><li>זמן מעבד למשימה מתוזמנת: 10 מילישניות בתוכנית החינמית. רוב המשימות נכנסות. חבילת רואה החשבון החודשית והגיבוי הרבעוני בונים קבצים, והן אלה שכנראה ידרשו Paid.</li><li>Browser Rendering, שמפיק כל PDF: 10 דקות ביום בחינם, 10 שעות בחודש ב-Paid.</li><li>שחזור לנקודת זמן ב-D1: 7 ימים בחינם, 30 ימים ב-Paid. לספרים חוקיים, 30 ימים זה מה שצריך.</li></ul>
+          <h3>צריך לרשום את התוכנה ברשות המסים?</h3>
+          <p>חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. <sup><a href="#ref-2">[2]</a></sup></p><p>רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. <sup><a href="#ref-1">[1]</a></sup></p><p>אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.</p><p>מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות &gt; הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.</p><p>כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.</p>
+          <p><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">עמוד רישום התוכנה ברשות המסים</a></p>
+          <div class="refs"><b>מקורות</b><ol><li id="ref-1">רשות המסים, &quot;בקשה לרישום תוכנה המיועדת לניהול מערכת חשבונות ממוחשבת&quot;, עמוד השירות, עודכן 29.05.2025. מי חייב ברישום: <q lang="he" dir="rtl">יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם)</q> <a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener">gov.il</a></li><li id="ref-2">רשות המסים, מאגר התוכנות הרשומות לניהול מערכת חשבונות ממוחשבת. <a href="https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems" rel="noopener">gov.il</a></li><li id="ref-3">המסגרת החוקית: הוראות מס הכנסה (ניהול פנקסי חשבונות), התשל&quot;ג-1973, הכללים למערכת ממוחשבת לפי הוראה 36.</li></ol></div>
+          <h3>מה היא לא עושה</h3>
+          <ul>
+            <li>זה לא ייעוץ מס או ייעוץ משפטי. בדוק את ההגדרות עם רואה החשבון שלך לפני שאתה מפיק מסמך אמיתי.</li>
+            <li>עסק אחד לכל התקנה.</li>
+            <li>ישראל בלבד: סוגי המסמכים, המע&quot;מ וכללי רשות המסים הם ישראליים.</li>
+            <li>המערכת רושמת תשלומים. היא לא סולקת כרטיסים ולא גובה כסף.</li>
+            <li>ייצוא PCN874 ממלא את עמודת מספר ההקצאה. שאר העמודות עדיין חלקיות.</li>
+            <li>אתה מריץ אותה: עדכונים, סודות וחשבון Cloudflare הם שלך.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="options">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">מחירים</div>
+        <h2>להתקין בעצמך, או לקבל אותה מוקמת</h2>
+      </div>
+      <div class="plans plans-2">
+        <div class="plan">
+          <h3>חינם מקוד המקור</h3>
+          <div class="price">חינם</div>
+          <ul>
+            <li>בלי דמי רישיון ובלי מגבלת שימוש</li>
+            <li>רושמים אפליקציית API משלך ברשות המסים</li>
+            <li>מדריך התקנה שלב אחר שלב</li>
+          </ul>
+          <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md">למדריך ההתקנה</a>
+        </div>
+        <div class="plan">
+          <h3>הקמה עבורך</h3>
+          <div class="price">₪699 <span>חד פעמי</span></div>
+          <ul>
+            <li>אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך</li>
+            <li>רשות המסים: אפליקציית API משלך, או חיבור דרך MTN</li>
+            <li>נמסרת לך פועלת, עם שליטה מלאה בידיך</li>
+            <li>בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה</li>
+          </ul>
+          <a class="btn btn-ghost" href="#setup-form">לתיאום שיחה</a>
+        </div>
+      </div>
+      <form class="setup-form" id="setup-form" novalidate>
+        <h3>לבקשת הקמה</h3>
+        <label>שם<input name="name" autocomplete="name" required></label>
+        <label>אימייל<input name="email" type="email" autocomplete="email" required></label>
+        <label>טלפון<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>סוג העסק<select name="type"><option>עוסק פטור</option><option>עוסק מורשה</option><option>חברה בע"מ</option><option>אחר</option></select></label>
+        <label class="full">משהו שכדאי שאדע<textarea name="message" rows="4"></textarea></label>
+        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>
+        <div class="full"><button class="btn btn-primary" type="submit">שליחת בקשה</button></div>
+        <p class="status" role="status"></p>
+      </form>
+      <script>
+      (function () {
+        var f = document.getElementById('setup-form'); if (!f) return;
+        var st = f.querySelector('.status');
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var d = new FormData(f);
+          if (d.get('hp')) return;
+          var email = String(d.get('email') || '').trim();
+          if (!d.get('name') || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { st.textContent = 'נא למלא שם ואימייל תקין.'; return; }
+          var btn = f.querySelector('button'); btn.disabled = true; st.textContent = 'שולח...';
+          var msg = 'טלפון: ' + (d.get('phone') || '-') + '\nסוג העסק: ' + d.get('type') + '\n\n' + (d.get('message') || '');
+          fetch('https://contact.matanlevanon.com/lead', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)' })
+          }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
+            .then(function (ok) { st.textContent = ok ? 'תודה. הבקשה הגיעה אליי, ואחזור אליך באימייל.' : 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; if (ok) f.reset(); })
+            .catch(function () { st.textContent = 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; })
+            .finally(function () { btn.disabled = false; });
+        });
+      })();
+      </script>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <h2>קודם רואים אותה עובדת</h2>
+      <p class="lead">פותחים את ההדגמה, ואז קוראים את הקוד. כל כלל גלוי.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg btn-demo" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener">נסו את ההדגמה</a>
+        <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il">לקוד</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <a href="https://github.com/matanlevanon/open-ledger-il">GitHub</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md">מדריך הגדרה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/LICENSE">רישיון AGPL-3.0</a>
+    </div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד פתוח ברישיון AGPL-3.0 · לא קשור ל-Cloudflare או לרשות המסים</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status">הועתק</div>
+
+<script>
+document.getElementById('copy').addEventListener('click', async function () {
+  var text = document.getElementById('cmd').textContent;
+  try { await navigator.clipboard.writeText(text); }
+  catch (err) {
+    var t = document.createElement('textarea');
+    t.value = text; document.body.appendChild(t); t.select();
+    document.execCommand('copy'); t.remove();
+  }
+  var toast = document.getElementById('toast');
+  toast.classList.add('on');
+  setTimeout(function () { toast.classList.remove('on'); }, 1600);
+});
+</script>
+</body>
+</html>

@@ -64,9 +64,18 @@ allow:open-ledger@matanlevanon.com
 allow:Built by Matan Levanon
 allow:נבנה על ידי מתן לבנון
 bd0385db
-# The project's official live demo. Allowed in the site builder, the two pages it builds and the README, nowhere else.
-allow-in:scripts/build-site.py,docs/index.html,docs/he.html,README.md:sampleledger.matanlevanon.com
-# The product page links in the README (GitHub Pages of this repository).
+# The project's own addresses (R32). Each is allowed only in the site config, the site builder, the
+# built site and the README, nowhere else. The fragments above still fail everywhere else.
+# The product site.
+allow-in:site.config.json,scripts/build-site.py,site/**,README.md:open-ledger.matanlevanon.com
+# The public repository.
+allow-in:site.config.json,scripts/build-site.py,site/**,README.md:github.com/matanlevanon/open-ledger-il
+# The official live demo.
+allow-in:site.config.json,scripts/build-site.py,site/**,README.md:sampleledger.matanlevanon.com
+# The official shop for the licensed installer (R31).
+allow-in:site.config.json,scripts/build-site.py,site/**,README.md:get.matanlevanon.com
+# Until R32 task 9 turns them into redirect pages, the old GitHub Pages files keep the demo and
+# shop links, and the README keeps the old product page links.
+allow-in:docs/index.html,docs/he.html:sampleledger.matanlevanon.com
+allow-in:docs/index.html,docs/he.html:get.matanlevanon.com
 allow-in:README.md:matanlevanon.github.io/open-ledger-il
-# The project's official shop for the licensed installer (R31). Allowed in the site builder, the two pages it builds and the README, nowhere else.
-allow-in:scripts/build-site.py,docs/index.html,docs/he.html,README.md:get.matanlevanon.com
