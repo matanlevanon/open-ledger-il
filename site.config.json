@@ -8,5 +8,8 @@
   "analytics": {
     "cfBeaconToken": "",
     "ga4Id": ""
+  },
+  "searchVerification": {
+    "googleFile": "googleacc359f8514c5442.html"
   }
 }

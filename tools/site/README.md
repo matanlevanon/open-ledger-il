@@ -55,6 +55,13 @@ refresh, a `location.replace` script and a visible link, all `noindex`. An old `
 3. Point the repository About box website field at the new address.
 4. Use the new address in GitHub release notes from now on.
 
+## Search Console verification
+
+Put the file name Google gives you in `site.config.json` under `searchVerification.googleFile`,
+for example `google1234abcd.html`. The Worker answers that one path with the line Google expects,
+without the redirect the static assets would add. A Domain property verified through DNS needs
+no file: leave it empty.
+
 ## Analytics, off until set
 
 `site.config.json` has two empty ids under `analytics`, so a fork sends nothing.

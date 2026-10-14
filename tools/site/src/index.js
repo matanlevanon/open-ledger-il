@@ -6,6 +6,8 @@
  *   2. 301 from the GitHub Pages era paths: /index.html, /he.html, /docs/*.
  *   3. Security headers on every reply, with a Content-Security-Policy that allows only this site,
  *      the analytics hosts set in site.config.json and the contact endpoint. Fonts are self-hosted.
+ *   5. The search console verification file named in searchVerification.googleFile, served as
+ *      Google expects it, with no redirect. Empty: no such file.
  *   4. Cache headers: hashed assets one year immutable, other assets a day, pages 10 minutes, and
  *      a Link header with the hreflang alternates on the two home pages.
  * Every address comes from site.config.json at the repository root, so a fork changes one file.
@@ -57,6 +59,16 @@ export function contentSecurityPolicy(cfg = config) {
 
 const CSP = contentSecurityPolicy();
 
+/** Google Search Console's HTML file check: `/<name>.html` answering `google-site-verification: <name>.html`. */
+export function verificationFor(url, cfg = config) {
+  const file = String(cfg.searchVerification?.googleFile ?? '').trim();
+  if (!/^google[0-9a-f]+\.html$/.test(file) || url.pathname !== `/${file}`) return null;
+  return new Response(`google-site-verification: ${file}`, {
+    status: 200,
+    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=3600' },
+  });
+}
+
 const redirect = (to) => new Response(null, { status: 301, headers: { Location: to, 'Cache-Control': 'public, max-age=3600' } });
 
 /** The 301 for this request, or null. */
@@ -105,6 +117,8 @@ export default {
     const url = new URL(request.url);
     const moved = redirectFor(url);
     if (moved) return withHeaders(moved, url.pathname);
+    const verification = verificationFor(url);
+    if (verification) return verification;
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       return withHeaders(new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } }), url.pathname);
     }

@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
 import config from '../../../site.config.json';
-import worker, { contentSecurityPolicy } from '../src/index.js';
+import worker, { contentSecurityPolicy, verificationFor } from '../src/index.js';
 
 const SITE = config.siteUrl.replace(/\/+$/, '');
 const REPO = config.repoUrl.replace(/\/+$/, '');
@@ -75,6 +75,21 @@ describe('headers', () => {
     expect(link).toContain(`<${SITE}/he/>; rel="alternate"; hreflang="he"`);
     expect(link).toContain('hreflang="x-default"');
     expect((await get(`${SITE}/favicon.svg`)).headers.get('Link')).toBeNull();
+  });
+});
+
+describe('search console verification', () => {
+  it('serves the Google verification file with no redirect', async () => {
+    const file = config.searchVerification?.googleFile;
+    if (!file) return;
+    const res = await get(`${SITE}/${file}`);
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe(`google-site-verification: ${file}`);
+  });
+
+  it('serves nothing when the config has no file', () => {
+    const url = new URL(`${SITE}/google0123abcd.html`);
+    expect(verificationFor(url, { searchVerification: { googleFile: '' } })).toBeNull();
   });
 });
 
