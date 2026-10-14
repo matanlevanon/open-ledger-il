@@ -55,4 +55,9 @@ for (const p of all) {
   execFileSync(chrome, ['--headless', '--disable-gpu', '--hide-scrollbars', '--force-device-scale-factor=1', '--allow-file-access-from-files', '--virtual-time-budget=3000', '--window-size=1200,630', `--screenshot=${out}`, pathToFileURL(html).href], { stdio: 'ignore' });
   console.log('rendered', p.file);
 }
+// The 512x512 logo the Organization structured data points at.
+const logoHtml = join(work, 'logo.html');
+writeFileSync(logoHtml, `<!doctype html><html><head><style>html,body{margin:0;width:512px;height:512px;background:transparent}svg{display:block}</style></head><body>${logo.replace('width="72" height="72"', 'width="512" height="512"')}</body></html>`);
+execFileSync(chrome, ['--headless', '--disable-gpu', '--hide-scrollbars', '--force-device-scale-factor=1', '--default-background-color=00000000', '--window-size=512,512', `--screenshot=${join(ROOT, 'site', 'assets', 'logo.png')}`, pathToFileURL(logoHtml).href], { stdio: 'ignore' });
+console.log('rendered logo.png');
 rmSync(work, { recursive: true, force: true });

@@ -775,6 +775,66 @@ def build_guide(g, guides):
     return page, main, ''
 
 
+# ---------------------------------------------------------------------------------------------
+# Structured data (JSON-LD), schema.org types only
+# ---------------------------------------------------------------------------------------------
+
+ORG_ID = SITE_URL + '/#organization'
+SITE_ID = SITE_URL + '/#website'
+
+
+def jsonld(page):
+    """The JSON-LD blocks for a page: Organization and WebSite on every page, then per page type."""
+    lang = page['lang']
+    url = absolute(page['path'])
+    blocks = [
+        {'@context': 'https://schema.org', '@type': 'Organization', '@id': ORG_ID, 'name': 'Open Ledger IL',
+         'url': absolute('/'), 'logo': absolute('/assets/logo.png'), 'sameAs': [REPO]},
+        {'@context': 'https://schema.org', '@type': 'WebSite', '@id': SITE_ID, 'name': 'Open Ledger IL', 'url': absolute('/'),
+         'inLanguage': ['he', 'en'], 'publisher': {'@id': ORG_ID}},
+    ]
+    if page['key'] in ('home', 'pricing'):
+        offers = [
+            {'@type': 'Offer', 'name': 'Free from source' if lang == 'en' else 'חינם מקוד המקור', 'price': '0', 'priceCurrency': 'ILS'},
+            {'@type': 'Offer', 'name': 'Set up for you' if lang == 'en' else 'הקמה עבורך', 'price': '699', 'priceCurrency': 'ILS'},
+        ]
+        if SHOP_LIVE:
+            offers.insert(1, {'@type': 'Offer', 'name': 'Install it yourself, connected' if lang == 'en' else 'התקנה עצמית, מחוברת',
+                              'price': '99', 'priceCurrency': 'ILS', 'url': SHOP_URL + '/buy'})
+        blocks.append({
+            '@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': 'Open Ledger IL',
+            'alternateName': 'חשבונאות פתוחה', 'url': absolute(path_of(lang, 'home')), 'description': page['desc'],
+            'applicationCategory': 'BusinessApplication', 'operatingSystem': 'Web', 'softwareVersion': VERSION,
+            'inLanguage': ['he', 'en'], 'license': 'https://www.gnu.org/licenses/agpl-3.0.html', 'offers': offers,
+            'publisher': {'@id': ORG_ID}, 'screenshot': absolute(ASSETS.url(shot(lang, 'dashboard.png'))),
+        })
+    if page['key'] != 'home':
+        items = []
+        for i, (label, path) in enumerate(page['crumbs']):
+            items.append({'@type': 'ListItem', 'position': i + 1, 'name': label, 'item': absolute(path) if path else url})
+        blocks.append({'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': items})
+    if page['key'] == 'registration':
+        about = ('Israel Tax Authority software registration certificate 281801 for Open Ledger IL (חשבונאות פתוחה), '
+                 'software for a computerized accounting system, issued for version 1.1.0, valid from 7 Oct 2026 to 31 Oct 2028.')
+        if lang == 'he':
+            about = ('תעודת רישום תוכנה 281801 של רשות המסים עבור Open Ledger IL (חשבונאות פתוחה), תוכנה לניהול מערכת חשבונות ממוחשבת, '
+                     'הונפקה למהדורה 1.1.0, בתוקף מ-7.10.2026 עד 31.10.2028.')
+        blocks.append({'@context': 'https://schema.org', '@type': 'WebPage', 'name': page['title'], 'url': url, 'inLanguage': lang,
+                       'description': about, 'isPartOf': {'@id': SITE_ID}, 'publisher': {'@id': ORG_ID}})
+    if page['key'] == 'guide':
+        g = page['guide']
+        blocks.append({
+            '@context': 'https://schema.org', '@type': 'Article', 'headline': g['title'][:110], 'description': g['desc'],
+            'inLanguage': lang, 'dateModified': g['updated'], 'mainEntityOfPage': url, 'url': url,
+            'image': og_image(page), 'author': {'@id': ORG_ID}, 'publisher': {'@id': ORG_ID},
+        })
+        questions = [q for q in g['faq'] if isinstance(q, dict) and q.get('q') and q.get('a')]
+        if questions:
+            blocks.append({'@context': 'https://schema.org', '@type': 'FAQPage', 'inLanguage': lang, 'mainEntity': [
+                {'@type': 'Question', 'name': q['q'], 'acceptedAnswer': {'@type': 'Answer', 'text': q['a']}} for q in questions]})
+    return blocks
+
+
 BUILDERS = {
     'home': build_home, 'features': build_features, 'pricing': build_pricing, 'registration': build_registration,
     'demo': build_demo, 'changelog': build_changelog, 'license': build_license,
@@ -838,6 +898,8 @@ def main():
         built.append(build_guide(g, guides))
     pages = [p for p, _, _ in built]
     check_meta(pages)
+    for p in pages:
+        p['jsonld'] = jsonld(p)
     written = set()
     for page, main_html, scripts in built:
         write(page['path'] + 'index.html', document(page, main_html, scripts), written)
