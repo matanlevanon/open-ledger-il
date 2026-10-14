@@ -1,0 +1,23 @@
+# open-ledger-site: serves the product site built into site/ (tools/site/README.md).
+# Workers Builds deploys it from this repository on every push:
+#   npx wrangler deploy --config tools/site/wrangler.toml
+# No routes or domains here. Add the custom domain in the dashboard, so a fork deploys this file
+# unchanged. Every address the site uses is in site.config.json at the repository root.
+name = "open-ledger-site"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+workers_dev = true
+# The workers.dev address answers with a 301 to siteUrl (src/index.js), so one host is indexed.
+preview_urls = false
+
+[assets]
+directory = "../../site"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"
+# The script runs first on every path: it redirects the www. and workers.dev hosts and old paths,
+# and adds the security, cache and hreflang headers to every reply.
+run_worker_first = true
+
+[observability]
+enabled = true

@@ -1080,6 +1080,28 @@ FAVICON = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 </svg>
 '''
 
+NOT_FOUND = f'''<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>העמוד לא נמצא · Page not found · Open Ledger IL</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>{CSS}
+.nf {{ padding: 96px 0; text-align: center; }}</style>
+</head>
+<body>
+<main class="wrap nf">
+  <h1>העמוד לא נמצא</h1>
+  <p class="lead">הכתובת השתנתה או שאינה קיימת. <a href="/he/">לעמוד הבית</a></p>
+  <p class="lead" lang="en" dir="ltr">This page does not exist. <a href="/">Go to the home page</a></p>
+</main>
+</body>
+</html>
+'''
+
+
 if __name__ == '__main__':
     out = sys.argv[1] if len(sys.argv) > 1 else str(ROOT / 'site')
     OUT = out
@@ -1087,4 +1109,5 @@ if __name__ == '__main__':
     for c in (EN, HE):
         open(os.path.join(out, c['file']), 'w', encoding='utf-8', newline='\n').write(page(c))
     open(os.path.join(out, 'favicon.svg'), 'w', encoding='utf-8', newline='\n').write(FAVICON)
+    open(os.path.join(out, '404.html'), 'w', encoding='utf-8', newline='\n').write(NOT_FOUND)
     print('built', out)
