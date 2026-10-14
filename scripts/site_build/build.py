@@ -248,6 +248,7 @@ def header(page):
         current = ' aria-current="page"' if page['key'] == key or (page['key'] == 'guide' and key == 'guides') else ''
         links.append(f'<a href="{path_of(lang, key)}"{current}>{E(label)}</a>')
     switch_to = (page.get('pair') or {}).get(other) or path_of(other, 'home')
+    menu_label = E('Menu' if lang == 'en' else 'תפריט')
     return f'''<header>
   <div class="wrap nav">
     <a class="brand" href="{path_of(lang, 'home')}">
@@ -260,9 +261,25 @@ def header(page):
     <div class="nav-end">
       <a class="lang" href="{switch_to}" hreflang="{other}" lang="{other}">{E(UI[lang]['switch'])}</a>
       <a class="btn btn-ghost btn-sm" href="{REPO}">{E(TEXT[lang]['github'])}</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="{menu_label}"><span aria-hidden="true"></span></button>
     </div>
   </div>
-</header>'''
+  <nav class="mobile-nav" id="mobile-nav" aria-label="{menu_label}">
+    {''.join(links)}
+    <a href="{switch_to}" hreflang="{other}" lang="{other}">{E(UI[lang]['switch'])}</a>
+    <a href="{REPO}">{E(TEXT[lang]['github'])}</a>
+  </nav>
+</header>
+<script>
+(function () {{
+  var b = document.querySelector('.menu-btn'), n = document.getElementById('mobile-nav');
+  if (!b || !n) return;
+  function set(open) {{ b.setAttribute('aria-expanded', String(open)); n.classList.toggle('open', open); }}
+  b.addEventListener('click', function () {{ set(b.getAttribute('aria-expanded') !== 'true'); }});
+  n.addEventListener('click', function (e) {{ if (e.target.closest('a')) set(false); }});
+  document.addEventListener('keydown', function (e) {{ if (e.key === 'Escape') set(false); }});
+}})();
+</script>'''
 
 
 def footer(page):
@@ -275,7 +292,9 @@ def footer(page):
         (path_of(lang, 'changelog'), PAGES[lang]['changelog']['crumb']),
     ]
     links = '\n      '.join(f'<a href="{u}">{E(t)}</a>' for u, t in items)
+    pages = ''.join(f'<a href="{path_of(lang, key)}">{E(label)}</a>' for key, label in [('home', 'Home' if lang == 'en' else 'בית')] + list(NAV[lang]))
     return f'''<footer>
+  <nav class="wrap foot-pages" aria-label="{E('Pages' if lang == 'en' else 'עמודים')}">{pages}</nav>
   <div class="wrap foot">
     <div>
       {links}

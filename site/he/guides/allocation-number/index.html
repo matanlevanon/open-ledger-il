@@ -48,6 +48,22 @@ header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86
 .lang { font-size: 14px; color: var(--text-dim); text-decoration: none; padding: 8px 10px; }
 .lang:hover { color: var(--text); }
 @media (max-width: 760px) { .nav-links { display: none; } }
+/* Phones: a menu button opens the same links in a panel under the sticky header. */
+.menu-btn { display: none; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); cursor: pointer; align-items: center; justify-content: center; padding: 0; }
+.menu-btn span, .menu-btn span::before, .menu-btn span::after { display: block; width: 18px; height: 2px; background: var(--text); border-radius: 2px; position: relative; content: ''; transition: transform .2s, opacity .2s; }
+.menu-btn span::before { position: absolute; top: -6px; }
+.menu-btn span::after { position: absolute; top: 6px; }
+.menu-btn[aria-expanded=true] span { background: transparent; }
+.menu-btn[aria-expanded=true] span::before { transform: translateY(6px) rotate(45deg); }
+.menu-btn[aria-expanded=true] span::after { transform: translateY(-6px) rotate(-45deg); }
+.mobile-nav { display: none; }
+@media (max-width: 760px) {
+  .menu-btn { display: inline-flex; }
+  .nav-end .lang { display: none; }
+  .mobile-nav.open { display: block; border-top: 1px solid var(--border-soft); background: var(--surface); box-shadow: 0 12px 24px -16px rgba(15,23,42,.35); }
+  .mobile-nav a { display: flex; align-items: center; min-height: 48px; padding: 0 22px; text-decoration: none; color: var(--text); font-size: 16px; border-bottom: 1px solid var(--border-soft); }
+  .mobile-nav a[aria-current=page] { font-weight: 650; color: var(--blue); }
+}
 @media (max-width: 480px) { .nav-end .btn-sm { display: none; } }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s, background .15s; }
 .btn-primary { background: linear-gradient(180deg, var(--green), var(--green-2)); color: #ffffff; }
@@ -177,6 +193,9 @@ td span { color: var(--text-dim); }
 .final { text-align: center; }
 .final .cta { margin-top: 26px; margin-bottom: 0; }
 footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: var(--text-mute); font-size: 14px; }
+.foot-pages { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-bottom: 18px; }
+.foot-pages a { color: var(--text); text-decoration: none; font-weight: 600; padding: 8px 0; }
+.foot-pages a:hover { color: var(--blue); }
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
 .foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; display: inline-block; padding: 6px 0; }
 .foot a:hover { color: var(--text); }
@@ -271,9 +290,25 @@ section[id] { scroll-margin-top: 64px; }
     <div class="nav-end">
       <a class="lang" href="/guides/allocation-number/" hreflang="en" lang="en">English</a>
       <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/he/features/">יכולות</a><a href="/he/pricing/">מחירים</a><a href="/he/registration/">רישום</a><a href="/he/demo/">הדגמה</a><a href="/he/guides/" aria-current="page">מדריכים</a>
+    <a href="/guides/allocation-number/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il">לקוד ב-GitHub</a>
+  </nav>
 </header>
+<script>
+(function () {
+  var b = document.querySelector('.menu-btn'), n = document.getElementById('mobile-nav');
+  if (!b || !n) return;
+  function set(open) { b.setAttribute('aria-expanded', String(open)); n.classList.toggle('open', open); }
+  b.addEventListener('click', function () { set(b.getAttribute('aria-expanded') !== 'true'); });
+  n.addEventListener('click', function (e) { if (e.target.closest('a')) set(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
+})();
+</script>
 <main id="top">
   <div class="wrap page">
     <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/he/">דף הבית</a></li><li><a href="/he/guides/">מדריכים</a></li><li aria-current="page">מספר הקצאה: מה זה, מתי חובה ואיך מקבלים אותו אוטומטית</li></ol></nav>
@@ -319,6 +354,7 @@ section[id] { scroll-margin-top: 64px; }
   </section>
 </main>
 <footer>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/he/">בית</a><a href="/he/features/">יכולות</a><a href="/he/pricing/">מחירים</a><a href="/he/registration/">רישום</a><a href="/he/demo/">הדגמה</a><a href="/he/guides/">מדריכים</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il">GitHub</a>
