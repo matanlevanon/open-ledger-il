@@ -241,6 +241,8 @@ const MAX_ITA_BODY = 1_000_000;
 
 /** Licence answers per client name: { ok, at }. In memory, per isolate, 10 minutes. */
 const licenceCache = new Map();
+/** /ita/* calls per client since its last licence check, reported to the licence service as usage. */
+const callsSince = new Map();
 
 /** True when the client's licence is still good. A client with no licence id needs no check. */
 async function licenceOk(env, client) {
@@ -249,10 +251,13 @@ async function licenceOk(env, client) {
   if (!svc) return true;
   const cached = licenceCache.get(client.name);
   if (cached && Date.now() - cached.at < LICENCE_TTL_MS) return cached.ok;
+  const calls = callsSince.get(client.name) ?? 0;
   try {
-    const r = await callLicence(svc, '/licence/check', { licenceId: client.licence_id, accountId: client.account_id, taxId: client.tax_id });
+    const r = await callLicence(svc, '/licence/check', { licenceId: client.licence_id, accountId: client.account_id, taxId: client.tax_id, client: client.name, calls });
     const ok = r.status === 200 && r.body?.ok === true;
     licenceCache.set(client.name, { ok, at: Date.now() });
+    // Reported, so these calls are not counted again. Calls made during the check stay counted.
+    if (r.status === 200) callsSince.set(client.name, Math.max(0, (callsSince.get(client.name) ?? 0) - calls));
     return ok;
   } catch {
     // The licence service is down: keep the last answer, if there is one, rather than stop invoices.
@@ -290,6 +295,7 @@ async function itaProxy(env, request, url) {
     if (body.byteLength > MAX_ITA_BODY) return fail(413, 'Body too large.');
   }
   await db(env).prepare(`UPDATE clients SET last_seen_at = ${NOW} WHERE name = ?`).bind(client.name).run();
+  if (client.licence_id) callsSince.set(client.name, (callsSince.get(client.name) ?? 0) + 1);
   const started = Date.now();
   let res;
   try {

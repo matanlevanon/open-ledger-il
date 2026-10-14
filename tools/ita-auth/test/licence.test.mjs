@@ -27,6 +27,7 @@ const licences = new Map([
   ['OL-EEEE-FFFF-GGGG-HHHH', { id: 2, status: 'new' }],
 ]);
 let checkCalls = 0;
+const checkBodies = [];
 let shopDown = false;
 function shop(path, body, headers) {
   if (headers.get('X-Shop-Secret') !== SHOP_SECRET) return Response.json({ ok: false, error: 'unauthorized', message: 'Wrong secret.' }, { status: 401 });
@@ -39,6 +40,7 @@ function shop(path, body, headers) {
   }
   if (path === '/licence/check') {
     checkCalls++;
+    checkBodies.push(body);
     const l = [...licences.values()].find((x) => x.id === body.licenceId);
     return Response.json({ ok: !!l && l.status === 'bound' && l.accountId === body.accountId && l.taxId === body.taxId, status: l?.status ?? 'unknown' });
   }
@@ -123,6 +125,8 @@ const realNow = Date.now;
 Date.now = () => realNow() + 11 * 60_000;
 r = await ita(withShop, four.name, four.key);
 ok(r.status === 403, 'revoked mid-session: refused after the cache expires');
+const usage = checkBodies.at(-1);
+ok(usage.client === four.name && usage.calls === 2, `each check reports the install name and its calls since the last check (${usage.client}, ${usage.calls})`);
 licences.set('OL-JJJJ-KKKK-MMMM-NNNN', { id: 3, status: 'new' });
 r = await regLicence(withShop, { origin: 'https://ledger.five.co.il', licence: 'OL-JJJJ-KKKK-MMMM-NNNN', accountId: ACCT_A, taxId: '000000026' });
 const five = await r.json();

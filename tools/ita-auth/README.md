@@ -97,6 +97,10 @@ licence is still good, and keeps the answer for 10 minutes. A revoked licence
 stops working within 10 minutes. If the licence service does not answer, the
 last answer stands. An install with no answer yet gets a 503.
 
+Each check also sends the install's name and the number of `/ita/*` calls it
+made since the last check, so the licence service can show usage. Only the
+count is sent, never a call's content.
+
 The admin page shows each install's licence last 4, or "no licence".
 
 ### Phasing out the relay token from installs

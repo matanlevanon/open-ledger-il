@@ -17,7 +17,8 @@
 - New `/ita/*` route forwards an install's Tax Authority calls with the relay's path and header
   rules, through the relay when one is set. It never logs bodies or tokens.
 - Optional licence keys: with `LICENCE_URL` and `LICENCE_SECRET` set, an install registers with a
-  licence key, and each call checks the licence, cached for 10 minutes.
+  licence key, and each call checks the licence, cached for 10 minutes. Each check reports the
+  install name and its call count since the last check.
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
 
