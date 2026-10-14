@@ -5,7 +5,7 @@
  *   1. 301 from the www. host and from the workers.dev address to siteUrl, so one host is indexed.
  *   2. 301 from the GitHub Pages era paths: /index.html, /he.html, /docs/*.
  *   3. Security headers on every reply, with a Content-Security-Policy that allows only this site,
- *      Google Fonts, the analytics hosts set in site.config.json and the contact endpoint.
+ *      the analytics hosts set in site.config.json and the contact endpoint. Fonts are self-hosted.
  *   4. Cache headers: hashed assets one year immutable, other assets a day, pages 10 minutes, and
  *      a Link header with the hreflang alternates on the two home pages.
  * Every address comes from site.config.json at the repository root, so a fork changes one file.
@@ -44,8 +44,8 @@ export function contentSecurityPolicy(cfg = config) {
   return [
     "default-src 'self'",
     `script-src ${script.join(' ')}`,
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self'",
     `img-src ${img.join(' ')}`,
     `connect-src ${connect.join(' ')}`,
     "frame-ancestors 'none'",

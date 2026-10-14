@@ -9,13 +9,13 @@ LOGO = '''<svg viewBox="0 0 32 32" aria-hidden="true">
 
 CSS = '''
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
-  --text: #0f172a; --text-dim: #475569; --text-mute: #64748b; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
+  --text: #0f172a; --text-dim: #475569; --text-mute: #566477; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
   --orange: #d97706; --purple: #7c3aed; --radius: 16px; --maxw: 1120px; --shadow: 0 24px 60px -28px rgba(15,23,42,.35); color-scheme: light; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
 header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
@@ -38,7 +38,7 @@ header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86
 .btn-sm { padding: 9px 16px; font-size: 14px; border-radius: 10px; }
 .hero { padding: 76px 0 44px; text-align: center; }
 .badge { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; margin-bottom: 22px; }
-.badge b { color: var(--green); font-weight: 600; }
+.badge b { color: var(--green-2); font-weight: 600; }
 h1 { font-size: clamp(32px, 5.2vw, 54px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 16px; font-weight: 800; }
 .lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-dim); max-width: 680px; margin: 0 auto 28px; }
 .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
@@ -120,7 +120,7 @@ td:first-child { width: 36%; padding-inline-end: 18px; }
 td b { font-weight: 600; }
 td span { color: var(--text-dim); }
 .tag { display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-inline-start: 8px; border: 1px solid var(--border); color: var(--text-mute); vertical-align: 1px; }
-.tag.req { color: var(--green); border-color: rgba(22,163,74,.4); }
+.tag.req { color: var(--green-2); border-color: rgba(22,163,74,.4); }
 @media (max-width: 620px) { td { display: block; border-bottom: 0; padding: 4px 0; width: auto !important; } tr { display: block; border-bottom: 1px solid var(--border); padding: 10px 0; } thead { display: none; } }
 /* Workers Paid, registration and limits, closed by default. */
 .more { max-width: 980px; margin: 28px auto 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
@@ -155,7 +155,7 @@ td span { color: var(--text-dim); }
 .final .cta { margin-top: 26px; margin-bottom: 0; }
 footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: var(--text-mute); font-size: 14px; }
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
-.foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; }
+.foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; display: inline-block; padding: 6px 0; }
 .foot a:hover { color: var(--text); }
 .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }

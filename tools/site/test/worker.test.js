@@ -55,6 +55,8 @@ describe('headers', () => {
     expect(plain).toContain(`connect-src 'self' ${contact}`);
     expect(plain).not.toContain('cloudflareinsights');
     expect(plain).not.toContain('googletagmanager');
+    expect(plain).not.toContain('fonts.g');
+    expect(plain).toContain("font-src 'self'");
     const both = contentSecurityPolicy({ ...config, analytics: { cfBeaconToken: 't', ga4Id: 'G-X' } });
     expect(both).toContain('https://static.cloudflareinsights.com');
     expect(both).toContain('https://www.googletagmanager.com');

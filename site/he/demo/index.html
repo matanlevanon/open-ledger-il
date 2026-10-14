@@ -24,18 +24,17 @@
 <meta name="twitter:description" content="פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.">
 <meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/he-demo.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
+<style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
-  --text: #0f172a; --text-dim: #475569; --text-mute: #64748b; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
+  --text: #0f172a; --text-dim: #475569; --text-mute: #566477; --blue: #2563eb; --blue-soft: #2563eb; --green: #16a34a; --green-2: #15803d;
   --orange: #d97706; --purple: #7c3aed; --radius: 16px; --maxw: 1120px; --shadow: 0 24px 60px -28px rgba(15,23,42,.35); color-scheme: light; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
 header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
@@ -58,7 +57,7 @@ header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86
 .btn-sm { padding: 9px 16px; font-size: 14px; border-radius: 10px; }
 .hero { padding: 76px 0 44px; text-align: center; }
 .badge { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; margin-bottom: 22px; }
-.badge b { color: var(--green); font-weight: 600; }
+.badge b { color: var(--green-2); font-weight: 600; }
 h1 { font-size: clamp(32px, 5.2vw, 54px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 16px; font-weight: 800; }
 .lead { font-size: clamp(16px, 2vw, 19px); color: var(--text-dim); max-width: 680px; margin: 0 auto 28px; }
 .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
@@ -140,7 +139,7 @@ td:first-child { width: 36%; padding-inline-end: 18px; }
 td b { font-weight: 600; }
 td span { color: var(--text-dim); }
 .tag { display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; margin-inline-start: 8px; border: 1px solid var(--border); color: var(--text-mute); vertical-align: 1px; }
-.tag.req { color: var(--green); border-color: rgba(22,163,74,.4); }
+.tag.req { color: var(--green-2); border-color: rgba(22,163,74,.4); }
 @media (max-width: 620px) { td { display: block; border-bottom: 0; padding: 4px 0; width: auto !important; } tr { display: block; border-bottom: 1px solid var(--border); padding: 10px 0; } thead { display: none; } }
 /* Workers Paid, registration and limits, closed by default. */
 .more { max-width: 980px; margin: 28px auto 0; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
@@ -175,7 +174,7 @@ td span { color: var(--text-dim); }
 .final .cta { margin-top: 26px; margin-bottom: 0; }
 footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: var(--text-mute); font-size: 14px; }
 .foot { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; }
-.foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; }
+.foot a { color: var(--text-dim); text-decoration: none; margin-inline-end: 18px; display: inline-block; padding: 6px 0; }
 .foot a:hover { color: var(--text); }
 .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 14px; transition: opacity .2s, transform .2s; }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
@@ -236,6 +235,9 @@ section[id] { scroll-margin-top: 64px; }
 .guide-list p { margin: 4px 0 0; color: var(--text-dim); }
 .changelog { direction: ltr; text-align: left; }
 .sources { font-size: 14px; }
+.sources li { margin: 6px 0; }
+.sources a { display: inline-block; padding: 4px 0; word-break: break-all; }
+.crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
@@ -279,7 +281,7 @@ section[id] { scroll-margin-top: 64px; }
       <p class="demo-note">בלי התקנה. נתוני דוגמה, נפתח תוך שניות.</p>
     </div>
   </section>
-  <div class="wrap"><div class="shot"><img src="/assets/screenshots/dashboard-he.c4a7384a.png" alt="לוח הבקרה: מסמכים פתוחים ובאיחור, תזרים, הכנסות לפי חודש ולקוחות מובילים" width="1440" height="900" loading="lazy" decoding="async"></div></div>
+  <div class="wrap"><div class="shot"><picture><source type="image/webp" srcset="/assets/screenshots/dashboard-he.ec69e5fb.webp"><img src="/assets/screenshots/dashboard-he.c4a7384a.png" alt="לוח הבקרה: מסמכים פתוחים ובאיחור, תזרים, הכנסות לפי חודש ולקוחות מובילים" width="1440" height="960" loading="lazy" decoding="async"></picture></div></div>
   <section id="mobile" class="plain">
     <div class="wrap">
       <div class="sec-head">
@@ -288,19 +290,19 @@ section[id] { scroll-margin-top: 64px; }
       </div>
       <div class="phones">
         <figure class="phone">
-          <div class="frame"><img src="/assets/screenshots/phone-quick-he.8a62416f.png" alt="מסך מהיר עם כפתורי מצלמה וגלריה וקיצורי מסמכים" width="585" height="1266" loading="lazy" decoding="async"></div>
+          <div class="frame"><picture><source type="image/webp" srcset="/assets/screenshots/phone-quick-he.2fb16b16.webp"><img src="/assets/screenshots/phone-quick-he.8a62416f.png" alt="מסך מהיר עם כפתורי מצלמה וגלריה וקיצורי מסמכים" width="585" height="1266" loading="lazy" decoding="async"></picture></div>
           <figcaption><b>מהיר</b>מצלמים, בוחרים מהגלריה או פותחים מסמך חדש.</figcaption>
         </figure>
         <figure class="phone">
-          <div class="frame"><img src="/assets/screenshots/phone-expense-he.fbed775d.png" alt="בדיקת הוצאה עם צילום הקבלה והשדות ש-Claude מילא" width="585" height="1266" loading="lazy" decoding="async"></div>
+          <div class="frame"><picture><source type="image/webp" srcset="/assets/screenshots/phone-expense-he.3cb8a2d7.webp"><img src="/assets/screenshots/phone-expense-he.fbed775d.png" alt="בדיקת הוצאה עם צילום הקבלה והשדות ש-Claude מילא" width="585" height="1266" loading="lazy" decoding="async"></picture></div>
           <figcaption><b>בדיקה ותיוק</b>Claude ממלא את השדות. אתה בודק ומתייק.</figcaption>
         </figure>
         <figure class="phone">
-          <div class="frame"><img src="/assets/screenshots/phone-activity-he.28a94302.png" alt="רשימת פעילות אחרונה עם מסמכים והוצאות" width="585" height="1266" loading="lazy" decoding="async"></div>
+          <div class="frame"><picture><source type="image/webp" srcset="/assets/screenshots/phone-activity-he.960554a3.webp"><img src="/assets/screenshots/phone-activity-he.28a94302.png" alt="רשימת פעילות אחרונה עם מסמכים והוצאות" width="585" height="1266" loading="lazy" decoding="async"></picture></div>
           <figcaption><b>פעילות אחרונה</b>המסמכים וההוצאות האחרונים, עם סכום וסטטוס.</figcaption>
         </figure>
         <figure class="phone">
-          <div class="frame"><img src="/assets/screenshots/phone-dashboard-he.6d15a3d8.png" alt="לוח הבקרה בטלפון עם פעולות מהירות ופריטים באיחור" width="585" height="1266" loading="lazy" decoding="async"></div>
+          <div class="frame"><picture><source type="image/webp" srcset="/assets/screenshots/phone-dashboard-he.d72a5256.webp"><img src="/assets/screenshots/phone-dashboard-he.6d15a3d8.png" alt="לוח הבקרה בטלפון עם פעולות מהירות ופריטים באיחור" width="585" height="1266" loading="lazy" decoding="async"></picture></div>
           <figcaption><b>לוח בקרה</b>פריטים פתוחים ובאיחור, תזרים ותקרת עוסק פטור.</figcaption>
         </figure>
       </div>

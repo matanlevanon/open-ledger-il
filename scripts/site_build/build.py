@@ -67,6 +67,9 @@ PAGE_CSS = '''
 .guide-list p { margin: 4px 0 0; color: var(--text-dim); }
 .changelog { direction: ltr; text-align: left; }
 .sources { font-size: 14px; }
+.sources li { margin: 6px 0; }
+.sources a { display: inline-block; padding: 4px 0; word-break: break-all; }
+.crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
@@ -131,17 +134,32 @@ def shot(lang, name):
     return f'screenshots/{name}'
 
 
+def png_size(rel):
+    """Width and height from the PNG header, so every image reserves its space before it loads."""
+    with open(OUT / 'assets' / rel, 'rb') as f:
+        head = f.read(24)
+    if head[:8] != b'\x89PNG\r\n\x1a\n':
+        return None, None
+    return int.from_bytes(head[16:20], 'big'), int.from_bytes(head[20:24], 'big')
+
+
 def img(rel, alt, width=None, height=None, lazy=True, priority=False, cls=''):
+    """A <picture> with the WebP copy when there is one, and the PNG as the fallback."""
+    w, h = png_size(rel) if rel.endswith('.png') else (width, height)
     attrs = [f'src="{ASSETS.url(rel)}"', f'alt="{E(alt)}"']
-    if width and height:
-        attrs.append(f'width="{width}" height="{height}"')
+    if w and h:
+        attrs.append(f'width="{w}" height="{h}"')
     if lazy and not priority:
         attrs.append('loading="lazy" decoding="async"')
     if priority:
         attrs.append('fetchpriority="high"')
     if cls:
         attrs.append(f'class="{cls}"')
-    return '<img ' + ' '.join(attrs) + '>'
+    tag = '<img ' + ' '.join(attrs) + '>'
+    webp = rel[:-4] + '.webp'
+    if rel.endswith('.png') and ASSETS.exists(webp):
+        return f'<picture><source type="image/webp" srcset="{ASSETS.url(webp)}">{tag}</picture>'
+    return tag
 
 
 # ---------------------------------------------------------------------------------------------
@@ -194,14 +212,24 @@ def head(page):
 <meta name="twitter:description" content="{desc}">
 <meta name="twitter:image" content="{image}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-{fonts_head()}<style>{CSS}{PAGE_CSS}</style>
+{fonts_head(lang)}<style>{CSS}{PAGE_CSS}</style>
 {jsonld}{analytics_head()}'''
 
 
-def fonts_head():
-    return ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
-            '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-            '<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">\n')
+HEBREW_RANGE = 'U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F'
+LATIN_RANGE = ('U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,'
+               'U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD')
+
+
+def fonts_head(lang='en'):
+    """Heebo, self-hosted as two variable WOFF2 subsets (SIL OFL, site/assets/fonts/OFL.txt).
+    No call to Google Fonts. The page's own script is preloaded."""
+    he, en = ASSETS.url('fonts/heebo-hebrew.woff2'), ASSETS.url('fonts/heebo-latin.woff2')
+    face = ("@font-face{{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;"
+            "src:url({0}) format('woff2');unicode-range:{1}}}")
+    preload = he if lang == 'he' else en
+    return (f'<link rel="preload" href="{preload}" as="font" type="font/woff2" crossorigin>\n'
+            f'<style>{face.format(he, HEBREW_RANGE)}{face.format(en, LATIN_RANGE)}</style>\n')
 
 
 def analytics_head():
