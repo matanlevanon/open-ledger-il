@@ -470,8 +470,9 @@ OPTIONS_EN = r'''  <section id="options">
           <h3>Set up for you</h3>
           <div class="price">₪699 <span>one time</span></div>
           <ul>
-            <li>Installed on your own Cloudflare and Tax Authority accounts</li>
-            <li>Handed over working, in your name</li>
+            <li>We create every account for you, with your own emails</li>
+            <li>Tax Authority: your own ITA API app, or the connection through MTN</li>
+            <li>Handed over working, with full control to you</li>
             <li>No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year</li>
           </ul>
           <a class="btn btn-ghost" href="#setup-form">Book a call</a>
@@ -548,8 +549,9 @@ OPTIONS_HE = r'''  <section id="options">
           <h3>הקמה עבורך</h3>
           <div class="price">₪699 <span>חד פעמי</span></div>
           <ul>
-            <li>מותקנת בחשבונות Cloudflare ורשות המסים שלך</li>
-            <li>נמסרת לך פועלת, על שמך</li>
+            <li>אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך</li>
+            <li>רשות המסים: אפליקציית API משלך, או חיבור דרך MTN</li>
+            <li>נמסרת לך פועלת, עם שליטה מלאה בידיך</li>
             <li>בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה</li>
           </ul>
           <a class="btn btn-ghost" href="#setup-form">לתיאום שיחה</a>
