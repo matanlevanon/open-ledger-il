@@ -2,6 +2,10 @@
 
 ## 1.7.0 (2026-10-14)
 
+### Documents
+- A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel
+  column and the two-column totals now show only on a USD, EUR or GBP document.
+
 ### Tax Authority connection
 - An install that signs in through a login broker now sends every Tax Authority call through
   that broker too: invoice approvals, details and decisions. The broker checks the install on

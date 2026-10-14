@@ -130,9 +130,18 @@ function clientHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>):
 </div>`;
 }
 
+/**
+ * A shekel column, and the two-column totals under the table, print only on a foreign-currency
+ * document with a shekel amount. A shekel document carries totalIlsMinor too, equal to its total,
+ * and must print one total column.
+ */
+function showsIls(doc: RenderDocument): doc is RenderDocument & { totalIlsMinor: number } {
+  return doc.currency !== 'ILS' && doc.totalIlsMinor !== null;
+}
+
 function itemsHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>): string {
   const symbol = currencySymbol(doc.currency);
-  const showIls = doc.totalIlsMinor !== null;
+  const showIls = showsIls(doc);
   const rows = doc.lines
     .map((line) => {
       const description = lang === 'he' ? esc(line.descriptionHe ?? line.descriptionEn) : esc(line.descriptionEn);
@@ -176,7 +185,7 @@ function convertLineToIls(doc: RenderDocument, lineTotalMinor: number): number {
  * same ratio, display only; the shekel total is the document's own.
  */
 function itemsTotalsFootHtml(doc: RenderDocument, labels: { subtotal: string; vat: string; total: string }): string {
-  if (doc.totalIlsMinor === null) return '';
+  if (!showsIls(doc)) return '';
   const symbol = currencySymbol(doc.currency);
   const ilsSubtotal = convertLineToIls(doc, doc.subtotalMinor);
   const row = (label: string, foreign: number, ils: number) =>
@@ -206,17 +215,17 @@ function totalsHtml(doc: RenderDocument, t: Record<string, string>): string {
   <td class="numeric"><span class="grand-amount">${formatAmount(doc.totalMinor, doc.currency)}</span> <span class="grand-ccy">${symbol}</span></td>
 </tr>`;
   const ilsRow =
-    doc.totalIlsMinor !== null
+    showsIls(doc)
       ? `<tr class="grand"><td></td><td class="numeric"><span class="grand-amount">${formatAmount(doc.totalIlsMinor, 'ILS')}</span> <span class="grand-ccy">₪</span></td></tr>`
       : '';
   // docs/currency-and-fx.md: "The rate and the rate date print on every receipt and tax
   // invoice", so both stay even though the SUMIT reference only shows the rate.
   const rateRow =
-    doc.totalIlsMinor !== null && doc.fxRate
+    showsIls(doc) && doc.fxRate
       ? `<tr><td>${esc(t.documentExchangeRate)}</td><td class="numeric">${esc(currencySymbol(doc.currency))}1&nbsp;&nbsp;=&nbsp;&nbsp;${doc.fxRate.replace(/0+$/, '').replace(/\.$/, '')}₪${doc.fxRateDate ? ` (${formatDate(doc.fxRateDate)})` : ''}</td></tr>`
       : '';
   // With shekels shown, subtotal, VAT and both totals already sit under their columns in the items table.
-  if (doc.totalIlsMinor !== null) return rateRow ? `<table class="totals">${rateRow}</table>` : '';
+  if (showsIls(doc)) return rateRow ? `<table class="totals">${rateRow}</table>` : '';
   return `
 <table class="totals">
   <tr><td>${esc(t.subtotal)}</td><td class="numeric">${symbol} ${formatAmount(doc.subtotalMinor, doc.currency)}</td></tr>
@@ -256,7 +265,7 @@ ${lines}`;
 function paymentMethodTableHtml(doc: RenderDocument, lang: Lang, t: Record<string, string>): string {
   if (doc.payments.length === 0) return '';
   const symbol = currencySymbol(doc.currency);
-  const showIls = doc.payments.some((p) => p.amountIlsMinor !== null);
+  const showIls = doc.currency !== 'ILS' && doc.payments.some((p) => p.amountIlsMinor !== null);
   const groups = new Map<string, { amountMinor: number; amountIlsMinor: number }>();
   for (const p of doc.payments) {
     const key = p.methodDetail ? p.methodDetail.displayName : (PAYMENT_METHOD_LABELS[lang][p.method] ?? p.method);
@@ -368,7 +377,7 @@ function bilingualClientHtml(doc: RenderDocument): string {
 
 function bilingualItemsHtml(doc: RenderDocument): string {
   const symbol = currencySymbol(doc.currency);
-  const showIls = doc.totalIlsMinor !== null;
+  const showIls = showsIls(doc);
   const rows = doc.lines
     .map((line) => {
       const description = esc(line.descriptionEn);
@@ -414,16 +423,16 @@ function bilingualTotalsHtml(doc: RenderDocument): string {
   <td class="numeric"><span class="grand-amount">${formatAmount(doc.totalMinor, doc.currency)}</span> <span class="grand-ccy">${symbol}</span></td>
 </tr>`;
   const ilsRow =
-    doc.totalIlsMinor !== null
+    showsIls(doc)
       ? `<tr class="grand"><td></td><td class="numeric"><span class="grand-amount">${formatAmount(doc.totalIlsMinor, 'ILS')}</span> <span class="grand-ccy">₪</span></td></tr>`
       : '';
   // R18 task 3's own example pairs this label with the plain "שער חליפין", not the more specific
   // LABELS.he.documentExchangeRate ("שער חליפין למסמך") used in the single-language sections.
   const rateRow =
-    doc.totalIlsMinor !== null && doc.fxRate
+    showsIls(doc) && doc.fxRate
       ? `<tr><td>${blText(LABELS.en.documentExchangeRate ?? '', 'שער חליפין')}</td><td class="numeric">${esc(currencySymbol(doc.currency))}1&nbsp;&nbsp;=&nbsp;&nbsp;${doc.fxRate.replace(/0+$/, '').replace(/\.$/, '')}₪${doc.fxRateDate ? ` (${formatDate(doc.fxRateDate)})` : ''}</td></tr>`
       : '';
-  if (doc.totalIlsMinor !== null) return rateRow ? `<table class="totals">${rateRow}</table>` : '';
+  if (showsIls(doc)) return rateRow ? `<table class="totals">${rateRow}</table>` : '';
   return `
 <table class="totals">
   <tr><td>${bl('subtotal')}</td><td class="numeric">${symbol} ${formatAmount(doc.subtotalMinor, doc.currency)}</td></tr>
@@ -454,7 +463,7 @@ ${lines}`;
 function bilingualPaymentMethodTableHtml(doc: RenderDocument): string {
   if (doc.payments.length === 0) return '';
   const symbol = currencySymbol(doc.currency);
-  const showIls = doc.payments.some((p) => p.amountIlsMinor !== null);
+  const showIls = doc.currency !== 'ILS' && doc.payments.some((p) => p.amountIlsMinor !== null);
   const groups = new Map<string, { amountMinor: number; amountIlsMinor: number }>();
   for (const p of doc.payments) {
     const key = p.methodDetail ? p.methodDetail.displayName : (PAYMENT_METHOD_LABELS.en[p.method] ?? p.method);
