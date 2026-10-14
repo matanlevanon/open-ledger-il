@@ -233,7 +233,12 @@ def fonts_head(lang='en'):
 
 
 def analytics_head():
+    """Nothing unless site.config.json sets an id, so a fork sends nothing by default."""
     return ''
+
+
+GA4_ID = re.compile(r'^G-[A-Z0-9]{4,20}$')
+CF_TOKEN = re.compile(r'^[0-9a-f]{32}$')
 
 
 def header(page):
@@ -309,7 +314,31 @@ def document(page, main, scripts=''):
 
 
 def analytics_body(page):
-    return ''
+    """Cloudflare Web Analytics when cfBeaconToken is set. GA4 when ga4Id is set, with IP
+    anonymised, no Google signals and no ad personalisation, and two events: setup_request on a
+    sent setup form (the form script fires it) and demo_click on every demo button."""
+    a = CONFIG['analytics']
+    out = ''
+    token = str(a.get('cfBeaconToken') or '').strip()
+    if token:
+        if not CF_TOKEN.match(token):
+            sys.exit('site.config.json: analytics.cfBeaconToken must be the 32-character token from Cloudflare Web Analytics.')
+        beacon = json.dumps({'token': token})
+        out += f"<script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" data-cf-beacon='{beacon}'></script>\n"
+    ga = str(a.get('ga4Id') or '').strip()
+    if ga:
+        if not GA4_ID.match(ga):
+            sys.exit('site.config.json: analytics.ga4Id must look like G-XXXXXXXXXX.')
+        out += (f'<script async src="https://www.googletagmanager.com/gtag/js?id={ga}"></script>\n'
+                '<script>\nwindow.dataLayer = window.dataLayer || [];\n'
+                'function gtag() { dataLayer.push(arguments); }\n'
+                "gtag('js', new Date());\n"
+                f"gtag('config', '{ga}', {{ anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false }});\n"
+                "document.addEventListener('click', function (e) {\n"
+                "  var a = e.target.closest && e.target.closest('[data-demo]');\n"
+                "  if (a) gtag('event', 'demo_click', { page_path: location.pathname });\n"
+                '});\n</script>\n')
+    return out
 
 
 def page_intro(page, lead=''):

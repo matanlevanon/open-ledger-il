@@ -2,15 +2,16 @@
 The site config. Every address the site links to lives in site.config.json at the repository root,
 so a fork changes one file.
 """
-import json, sys
+import json, os, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-OUT = ROOT / 'site'
+# SITE_OUT and SITE_CONFIG let a test build into another folder with another config.
+OUT = Path(os.environ['SITE_OUT']) if os.environ.get('SITE_OUT') else ROOT / 'site'
 
 
 def load_config():
-    path = ROOT / 'site.config.json'
+    path = Path(os.environ['SITE_CONFIG']) if os.environ.get('SITE_CONFIG') else ROOT / 'site.config.json'
     if not path.exists():
         sys.exit('site.config.json is missing. Copy it from the repository and set siteUrl.')
     cfg = json.loads(path.read_text(encoding='utf-8'))

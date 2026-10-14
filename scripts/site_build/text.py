@@ -475,7 +475,7 @@ OPTIONS_EN = r'''  <section id="options">
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (en)' })
           }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
-            .then(function (ok) { st.textContent = ok ? 'Thanks. Your request reached me, and I will reply by email.' : 'The request did not go through. Try again in a minute.'; if (ok) f.reset(); })
+            .then(function (ok) { st.textContent = ok ? 'Thanks. Your request reached me, and I will reply by email.' : 'The request did not go through. Try again in a minute.'; if (ok) { f.reset(); if (window.gtag) window.gtag('event', 'setup_request'); } })
             .catch(function () { st.textContent = 'The request did not go through. Try again in a minute.'; })
             .finally(function () { btn.disabled = false; });
         });
@@ -554,7 +554,7 @@ OPTIONS_HE = r'''  <section id="options">
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)' })
           }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
-            .then(function (ok) { st.textContent = ok ? 'תודה. הבקשה הגיעה אליי, ואחזור אליך באימייל.' : 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; if (ok) f.reset(); })
+            .then(function (ok) { st.textContent = ok ? 'תודה. הבקשה הגיעה אליי, ואחזור אליך באימייל.' : 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; if (ok) { f.reset(); if (window.gtag) window.gtag('event', 'setup_request'); } })
             .catch(function () { st.textContent = 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; })
             .finally(function () { btn.disabled = false; });
         });

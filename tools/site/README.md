@@ -43,6 +43,18 @@ example `open-ledger.example.com`. Put the same address in `siteUrl` in `site.co
 3. `curl -sI https://<your address>/` shows `Content-Security-Policy` and the `Link` header.
 4. `curl -sI https://open-ledger-site.<your subdomain>.workers.dev/` answers `301` to your address.
 
+## Analytics, off until set
+
+`site.config.json` has two empty ids under `analytics`, so a fork sends nothing.
+
+- `cfBeaconToken`: the token of a Cloudflare Web Analytics site. The pages load the beacon.
+- `ga4Id`: a GA4 measurement id (`G-...`). The pages load GA4 with IP anonymised, no Google
+  signals and no ad personalisation, and send two events: `setup_request` when the setup form
+  is sent, and `demo_click` on every demo button.
+
+The Worker's Content-Security-Policy allows each analytics host only when its id is set. Rebuild
+and deploy after you set one.
+
 ## Develop
 
 From the repository root:
