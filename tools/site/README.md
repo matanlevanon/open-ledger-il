@@ -27,7 +27,7 @@ In the Cloudflare dashboard: Workers & Pages > Create > Import a repository > yo
 | Root directory | `/` |
 | Build command | `python3 scripts/build-site.py` |
 | Deploy command | `npx wrangler deploy --config tools/site/wrangler.toml` |
-| Build watch paths | `site/*`, `scripts/build-site.py`, `site.config.json`, `tools/site/*` |
+| Build watch paths | `site/*`, `scripts/build-site.py`, `scripts/site_build/*`, `scripts/guides/*`, `site.config.json`, `tools/site/*`, `CHANGELOG.md` |
 
 Every push to `main` that touches those paths builds and deploys the site.
 

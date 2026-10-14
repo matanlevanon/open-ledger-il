@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DENYLIST = join(ROOT, 'scripts', 'leak-denylist.txt');
-const SKIP_DIRS = new Set(['.git', 'node_modules', '.wrangler', 'dist', 'coverage', '.claude']);
+const SKIP_DIRS = new Set(['.git', 'node_modules', '.wrangler', 'dist', 'coverage', '.claude', '__pycache__']);
 const SKIP_FILES = new Set([DENYLIST]);
 const BINARY = /\.(pdf|png|jpe?g|gif|webp|ico|woff2?|ttf|otf|zip|gz)$/i;
 const MAX_NGRAM = 3;

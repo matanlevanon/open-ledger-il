@@ -29,3 +29,6 @@ demo/output/
 
 # Site build reports: Lighthouse JSON and screenshots (R32). Local only.
 site-reports/
+
+# Python bytecode from scripts/build-site.py. Local only.
+__pycache__/
