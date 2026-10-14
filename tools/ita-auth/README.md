@@ -2,8 +2,9 @@
 
 A login broker for Open Ledger IL installs that share one ITA API app. The
 app's client secret lives only in this Worker. Each install signs in and
-renews its tokens through it, and sends its invoices straight to the Tax
-Authority with its own access token.
+renews its tokens through it. From Open Ledger IL 1.7.0 each install also
+sends its invoice calls through it, with its own access token. The broker
+checks the install on every call, so a pause takes effect at once.
 
 Use it when you set up the Ledger for several businesses on one approved ITA
 app. A business that registers its own app does not need it: give that
@@ -54,6 +55,8 @@ refusals use the key `broker_error`.
 | `ITA_RELAY_URL`, `ITA_RELAY_CLIENT_ID`, `ITA_RELAY_CLIENT_SECRET` | Optional. The Israeli relay (tools/ita-relay), since the Tax Authority turns some Cloudflare locations away |
 | `ITA_CLIENT_ID_SANDBOX`, `ITA_CLIENT_SECRET_SANDBOX` | Optional. A sandbox app for testing |
 | `PUBLIC_URL` | Optional, a plain variable. The broker's own address. Default: the address the request came in on |
+| `LICENCE_URL` | Optional, a plain variable. A licence service with `/licence/activate` and `/licence/check`, see Licence keys |
+| `LICENCE_SECRET` | Optional, with `LICENCE_URL`. Sent to the licence service as `X-Shop-Secret` |
 
 The relay accepts only the service tokens on its own allowlist. Add the
 broker's service token there, or give the broker the same one the Ledger uses.
@@ -65,6 +68,8 @@ The installs allowed to use the broker live in a D1 database, bound as `DB`.
 1. Create it once: Storage & Databases > D1 > Create, named `ita-auth-clients`.
    Put its id in `wrangler.toml`.
 2. Run `migrations/0001_clients.sql` once, in the database's Console tab.
+3. Run `migrations/0002_licences.sql` once, the same way. It adds the licence
+   columns. Installs already listed keep working with no licence.
 
 ### Adding an install
 
@@ -73,6 +78,41 @@ and the install's address. The broker makes a key, keeps only its hash,
 and returns the name and key once. The installer stores them in the install
 as `ITA_BROKER_CLIENT` and `ITA_BROKER_KEY`. Nobody sees or types the key.
 Running the installer again for the same address gives that install a new key.
+
+### Licence keys
+
+Optional. Set `LICENCE_URL` and `LICENCE_SECRET` when installs should
+register with a licence key instead of the admin secret. The installer then
+calls `POST /register` with no admin header and a JSON body
+`{ origin, business, licence, accountId, taxId }`. The broker calls
+`<LICENCE_URL>/licence/activate` with the key, the Cloudflare account id, the
+business tax number and the address, and registers the install only when the
+answer is 200. A refusal passes through with its status and message, for
+example 409 when the key is already used by another install.
+
+The broker stores the licence id, the key's last 4, the account id and the
+tax number on the client row. It never stores the key. On every `/ita/*` call
+from a licensed install it asks `<LICENCE_URL>/licence/check` whether the
+licence is still good, and keeps the answer for 10 minutes. A revoked licence
+stops working within 10 minutes. If the licence service does not answer, the
+last answer stands. An install with no answer yet gets a 503.
+
+The admin page shows each install's licence last 4, or "no licence".
+
+### Phasing out the relay token from installs
+
+Before 1.7.0 every broker install held the relay's service token and called
+the Tax Authority itself. From 1.7.0 a broker install sends every call here,
+and only the broker needs the relay token:
+
+1. Give the broker the relay settings (`ITA_RELAY_URL`,
+   `ITA_RELAY_CLIENT_ID`, `ITA_RELAY_CLIENT_SECRET`) if it does not have them.
+2. Update every broker install to Open Ledger IL 1.7.0 or later. A 1.7.0
+   install ignores its own relay settings once `ITA_BROKER_URL` is set.
+3. Check the broker logs show `ita client=...` lines for each install.
+4. Rotate the relay's service token: make a new one for the broker, put it on
+   the relay's allowlist and on the broker, then delete the old one. Old
+   installs that still call the relay directly stop working at this step.
 
 ### Pausing an install
 
@@ -95,6 +135,7 @@ so the page stays closed if the Access app is ever removed.
 | `GET /authorize?client=&environment=&state=` | Starts the sign-in |
 | `GET /callback` | The Tax Authority's return address |
 | `POST /token` | Code exchange and renewal. Headers `X-Ita-Broker-Client` and `X-Ita-Broker-Key` |
-| `POST /register` | Adds an install. Header `X-Ita-Broker-Admin`, JSON `{ origin, business }` |
+| `POST /register` | Adds an install. Header `X-Ita-Broker-Admin`, JSON `{ origin, business }`. Or no header, JSON `{ origin, business, licence, accountId, taxId }` |
+| `GET` or `POST /ita/<openapi\|ita-api>/shaam/<env>/...` | A Tax Authority call from an install. Headers `X-Ita-Client` and `X-Ita-Client-Key`. Same path and header rules as tools/ita-relay |
 | `GET /admin` | The client list, with Pause and Resume |
 | `GET /health` | `{"ok":true}` |

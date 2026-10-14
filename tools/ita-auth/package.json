@@ -7,6 +7,6 @@
   "license": "AGPL-3.0-only",
   "scripts": {
     "deploy": "wrangler deploy",
-    "test": "node test/broker.test.mjs"
+    "test": "node test/broker.test.mjs && node test/licence.test.mjs"
   }
 }

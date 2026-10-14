@@ -3,8 +3,9 @@
  *
  * The app's client secret lives only here, as a Worker secret. Each Ledger install is a client
  * of this broker: it sends its users to /authorize for the ITA sign-in, and it calls /token to
- * trade the one-time code for tokens and to renew them. Invoice calls never pass here. Each
- * Ledger sends those straight to the ITA with its own access token.
+ * trade the one-time code for tokens and to renew them. From Open Ledger IL 1.7.0 its invoice
+ * calls pass here too, through /ita/*, with its own access token. The broker checks the install
+ * on every call and forwards it, through the relay when one is set.
  *
  * Routes
  *   GET  /authorize?client=<name>&environment=<sandbox|production>&state=<ledger state>
@@ -16,8 +17,13 @@
  *        grant_type=refresh_token&refresh_token=...&environment=...
  *        Adds the client credentials and returns the ITA reply as it came, status included.
  *   POST /register  header X-Ita-Broker-Admin, JSON body { origin, business }
+ *        or JSON body { origin, business, licence, accountId, taxId } with no header, checked
+ *        with the licence service (LICENCE_URL) when one is set.
  *        Adds a Ledger install, or gives an existing one a new key. Returns { name, key }. The
  *        installer calls this, so nobody creates keys by hand.
+ *   GET|POST /ita/<openapi|ita-api>/shaam/<env>/...   headers X-Ita-Client and X-Ita-Client-Key
+ *        Forwards a Tax Authority call for an active install with a good licence, same path,
+ *        three headers (Authorization, Content-Type, Accept), no redirects. Bodies never logged.
  *   GET  /admin, POST /admin/clients/<name>/pause | resume
  *        The client list, behind Cloudflare Access. Pause blocks a client at once and keeps its row.
  *   GET  /health
@@ -30,6 +36,7 @@
  *   ACCESS_TEAM_DOMAIN, ACCESS_AUD, ADMIN_EMAILS   the Access app in front of /admin
  *   ITA_CLIENT_ID_PRODUCTION, ITA_CLIENT_SECRET_PRODUCTION   (and _SANDBOX, optional)
  *   ITA_RELAY_URL, ITA_RELAY_CLIENT_ID, ITA_RELAY_CLIENT_SECRET   optional Israeli relay
+ *   LICENCE_URL, LICENCE_SECRET     optional licence service (/licence/activate, /licence/check)
  *
  * Errors the broker itself raises use the key broker_error, never error, so a Ledger route
  * check never mistakes them for a reply from the ITA. Tokens are never logged.
@@ -222,20 +229,137 @@ async function token(env, request) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Tax Authority calls from installs, forwarded with the same rules as tools/ita-relay
+// ---------------------------------------------------------------------------
+
+const ITA_TARGETS = { openapi: 'https://openapi.taxes.gov.il', 'ita-api': 'https://ita-api.taxes.gov.il' };
+const ITA_PATH_RE = /^\/ita\/(openapi|ita-api)(\/shaam\/(?:tsandbox|production)\/[A-Za-z0-9._~\-/]+)$/;
+const ITA_PASS_HEADERS = ['authorization', 'content-type', 'accept'];
+const LICENCE_TTL_MS = 10 * 60_000;
+const MAX_ITA_BODY = 1_000_000;
+
+/** Licence answers per client name: { ok, at }. In memory, per isolate, 10 minutes. */
+const licenceCache = new Map();
+
+/** True when the client's licence is still good. A client with no licence id needs no check. */
+async function licenceOk(env, client) {
+  if (!client.licence_id) return true;
+  const svc = licenceService(env);
+  if (!svc) return true;
+  const cached = licenceCache.get(client.name);
+  if (cached && Date.now() - cached.at < LICENCE_TTL_MS) return cached.ok;
+  try {
+    const r = await callLicence(svc, '/licence/check', { licenceId: client.licence_id, accountId: client.account_id, taxId: client.tax_id });
+    const ok = r.status === 200 && r.body?.ok === true;
+    licenceCache.set(client.name, { ok, at: Date.now() });
+    return ok;
+  } catch {
+    // The licence service is down: keep the last answer, if there is one, rather than stop invoices.
+    if (cached) return cached.ok;
+    throw new Error('licence service unreachable');
+  }
+}
+
+async function itaProxy(env, request, url) {
+  const name = request.headers.get('X-Ita-Client') ?? '';
+  const key = request.headers.get('X-Ita-Client-Key') ?? '';
+  const client = name && name.length <= 80
+    ? await db(env).prepare("SELECT name, key_sha256, licence_id, account_id, tax_id FROM clients WHERE name = ? AND status = 'active'").bind(name).first()
+    : null;
+  if (!client || !key || !sameText(await sha256Hex(key), client.key_sha256.toLowerCase())) return fail(401, 'Unknown client, wrong key or paused install.');
+  let ok;
+  try {
+    ok = await licenceOk(env, client);
+  } catch {
+    return fail(503, 'The licence service did not answer. Try again in a minute.');
+  }
+  if (!ok) return fail(403, 'The licence for this install is not active. Contact the person who set it up.');
+
+  const m = ITA_PATH_RE.exec(url.pathname);
+  if (!m || url.pathname.includes('..')) return fail(404, 'Not a Tax Authority path.');
+  if (request.method !== 'GET' && request.method !== 'POST') return fail(405, 'GET and POST only.');
+  const headers = new Headers();
+  for (const h of ITA_PASS_HEADERS) {
+    const v = request.headers.get(h);
+    if (v) headers.set(h, v);
+  }
+  let body;
+  if (request.method === 'POST') {
+    body = await request.arrayBuffer();
+    if (body.byteLength > MAX_ITA_BODY) return fail(413, 'Body too large.');
+  }
+  await db(env).prepare(`UPDATE clients SET last_seen_at = ${NOW} WHERE name = ?`).bind(client.name).run();
+  const started = Date.now();
+  let res;
+  try {
+    res = await itaFetch(env)(`${ITA_TARGETS[m[1]]}${m[2]}${url.search}`, { method: request.method, headers, body, redirect: 'manual', signal: AbortSignal.timeout(30_000) });
+  } catch (err) {
+    console.log(`ita client=${client.name} ${request.method} ${m[1]}${m[2]} upstream-error ${err?.name ?? 'Error'}`);
+    return fail(502, 'The Tax Authority did not answer the broker.');
+  }
+  const out = await res.arrayBuffer();
+  // Path and status only. Never the body, never a header value.
+  console.log(`ita client=${client.name} ${request.method} ${m[1]}${m[2]} ${res.status} ${out.byteLength}B ${Date.now() - started}ms`);
+  return new Response(out, { status: res.status, headers: { 'Content-Type': res.headers.get('Content-Type') ?? 'application/octet-stream', 'Cache-Control': 'no-store' } });
+}
+
 const NOW = "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')";
 const slug = (host) => host.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'ledger';
 
-/** The installer adds a Ledger install here. The key is made here and returned once. */
+/** The licence service, when LICENCE_URL and LICENCE_SECRET are both set. Null otherwise. */
+function licenceService(env) {
+  const url = (env.LICENCE_URL ?? '').trim().replace(/\/+$/, '');
+  const secret = (env.LICENCE_SECRET ?? '').trim();
+  return url && secret ? { url, secret } : null;
+}
+
+async function callLicence(svc, path, payload) {
+  const res = await fetch(`${svc.url}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Shop-Secret': svc.secret },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15_000),
+  });
+  const body = await res.json().catch(() => ({}));
+  return { status: res.status, body };
+}
+
+/**
+ * The installer adds a Ledger install here. The key is made here and returned once.
+ * Two ways in: the admin secret (REGISTER_SECRET), or a licence key with the Cloudflare account
+ * id and the business tax number, checked with the licence service when one is set.
+ */
 async function register(env, request) {
-  const secret = (env.REGISTER_SECRET ?? '').trim();
-  if (secret.length < 32) return fail(503, 'Registration is not set up on this broker.');
-  const given = request.headers.get('X-Ita-Broker-Admin') ?? '';
-  if (!given || !sameText(await sha256Hex(given), await sha256Hex(secret))) return fail(401, 'Wrong or missing admin secret.');
   let body;
   try {
     body = await request.json();
   } catch {
     return fail(400, 'Send a JSON body with origin and business.');
+  }
+  const secret = (env.REGISTER_SECRET ?? '').trim();
+  const given = request.headers.get('X-Ita-Broker-Admin') ?? '';
+  const admin = secret.length >= 32 && given !== '' && sameText(await sha256Hex(given), await sha256Hex(secret));
+  if (given && !admin) return fail(401, 'Wrong or missing admin secret.');
+  const svc = licenceService(env);
+  const licenceKey = String(body?.licence ?? '').trim();
+  if (!admin && !licenceKey) return fail(secret.length >= 32 || svc ? 401 : 503, secret.length >= 32 || svc ? 'Send a licence key or the admin secret.' : 'Registration is not set up on this broker.');
+  if (!admin && !svc) return fail(503, 'Licence keys are not set up on this broker.');
+  let licence = null;
+  if (licenceKey && svc) {
+    const accountId = String(body?.accountId ?? '').trim().toLowerCase();
+    const taxId = String(body?.taxId ?? '').trim();
+    let r;
+    try {
+      r = await callLicence(svc, '/licence/activate', { key: licenceKey, accountId, taxId, origin: String(body?.origin ?? '') });
+    } catch {
+      return fail(502, 'The licence service did not answer. Try again in a minute.');
+    }
+    if (r.status !== 200 || !r.body?.ok) {
+      console.log(`register licence refused ${r.status} ${String(r.body?.error ?? '').slice(0, 40)}`);
+      return json(r.status >= 400 && r.status < 500 ? r.status : 502, { broker_error: String(r.body?.message ?? 'The licence was refused.'), error: r.body?.error ?? 'licence_refused' });
+    }
+    licence = { id: Number(r.body.licenceId), last4: licenceKey.replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase(), accountId, taxId };
   }
   let origin;
   try {
@@ -250,13 +374,18 @@ async function register(env, request) {
   const hash = await sha256Hex(key);
   const d = db(env);
 
+  const lic = licence ?? { id: null, last4: null, accountId: null, taxId: null };
   const existing = await d.prepare('SELECT name, status FROM clients WHERE origin = ?').bind(origin).first();
   if (existing) {
     if (existing.status !== 'active') return fail(403, 'This install is paused. Resume it on the broker admin page first.');
     await d.batch([
-      d.prepare(`UPDATE clients SET key_sha256 = ?, business = COALESCE(?, business), updated_at = ${NOW} WHERE name = ?`).bind(hash, business, existing.name),
+      d.prepare(
+        `UPDATE clients SET key_sha256 = ?, business = COALESCE(?, business), licence_id = COALESCE(?, licence_id), licence_last4 = COALESCE(?, licence_last4),
+         account_id = COALESCE(?, account_id), tax_id = COALESCE(?, tax_id), updated_at = ${NOW} WHERE name = ?`,
+      ).bind(hash, business, lic.id, lic.last4, lic.accountId, lic.taxId, existing.name),
       d.prepare("INSERT INTO client_events (client, action, by) VALUES (?, 'key renewed', 'installer')").bind(existing.name),
     ]);
+    licenceCache.delete(existing.name);
     console.log(`register client=${existing.name} renewed`);
     return json(200, { name: existing.name, key, renewed: true });
   }
@@ -264,7 +393,16 @@ async function register(env, request) {
   let name = base;
   for (let i = 2; await d.prepare('SELECT 1 FROM clients WHERE name = ?').bind(name).first(); i++) name = `${base}-${i}`;
   await d.batch([
-    d.prepare('INSERT INTO clients (name, origin, business, key_sha256) VALUES (?, ?, ?, ?)').bind(name, origin, business, hash),
+    d.prepare('INSERT INTO clients (name, origin, business, key_sha256, licence_id, licence_last4, account_id, tax_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(
+      name,
+      origin,
+      business,
+      hash,
+      lic.id,
+      lic.last4,
+      lic.accountId,
+      lic.taxId,
+    ),
     d.prepare("INSERT INTO client_events (client, action, by) VALUES (?, 'registered', 'installer')").bind(name),
   ]);
   console.log(`register client=${name} new`);
@@ -302,12 +440,12 @@ async function accessEmail(env, request) {
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 
 async function adminPage(env, email) {
-  const { results } = await db(env).prepare('SELECT name, origin, business, status, created_at, last_seen_at FROM clients ORDER BY created_at DESC').all();
+  const { results } = await db(env).prepare('SELECT name, origin, business, status, created_at, last_seen_at, licence_last4 FROM clients ORDER BY created_at DESC').all();
   const day = (t) => (t ? esc(String(t).slice(0, 10)) : 'never');
   const rows = (results ?? []).map((c) => `<tr class="${c.status}">
   <td><b>${esc(c.business || c.name)}</b><br><span>${esc(c.name)}</span></td>
   <td><a href="${esc(c.origin)}" target="_blank" rel="noopener">${esc(new URL(c.origin).hostname)}</a></td>
-  <td>${c.status === 'active' ? 'Active' : 'Paused'}</td>
+  <td>${c.status === 'active' ? 'Active' : 'Paused'}</td><td>${c.licence_last4 ? `…${esc(c.licence_last4)}` : 'no licence'}</td>
   <td>${day(c.created_at)}</td><td>${day(c.last_seen_at)}</td>
   <td><form method="post" action="/admin/clients/${encodeURIComponent(c.name)}/${c.status === 'active' ? 'pause' : 'resume'}">
   <button>${c.status === 'active' ? 'Pause' : 'Resume'}</button></form></td></tr>`).join('');
@@ -317,10 +455,10 @@ body{margin:0;font:15px/1.5 "Segoe UI",system-ui,sans-serif;background:#f6f5f2;c
 h1{font-size:22px;margin:0 0 4px}p{color:#6b6a66;margin:0 0 18px}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e3e1db;border-radius:12px;overflow:hidden}
 th,td{text-align:left;padding:10px 12px;border-bottom:1px solid #e3e1db;font-size:14px;vertical-align:top}th{font-size:12px;color:#6b6a66;font-weight:600}
 td span{color:#6b6a66;font-size:12px}tr.paused td{color:#6b6a66}button{font:inherit;font-size:13px;border-radius:8px;padding:5px 12px;border:1px solid #e3e1db;background:#fff;cursor:pointer}
-tr.active button{border-color:#c0362c;color:#c0362c}a{color:#1f5fd1}.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}a.out{font-size:14px;border:1px solid #e3e1db;border-radius:8px;padding:5px 12px;background:#fff;text-decoration:none;color:#1d1d1b}@media(max-width:640px){th:nth-child(4),td:nth-child(4){display:none}}</style></head>
+tr.active button{border-color:#c0362c;color:#c0362c}a{color:#1f5fd1}.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}a.out{font-size:14px;border:1px solid #e3e1db;border-radius:8px;padding:5px 12px;background:#fff;text-decoration:none;color:#1d1d1b}@media(max-width:640px){th:nth-child(5),td:nth-child(5){display:none}}</style></head>
 <body><main><div class="top"><h1>Login broker clients</h1><a class="out" href="/cdn-cgi/access/logout">Sign out</a></div><p>Signed in as ${esc(email)}. Pause blocks a client at once. Resume brings it back with the same key.</p>
-<table><thead><tr><th>Business</th><th>Address</th><th>Status</th><th>Added</th><th>Last used</th><th></th></tr></thead>
-<tbody>${rows || '<tr><td colspan="6">No clients yet. The installer adds them.</td></tr>'}</tbody></table></main></body></html>`, {
+<table><thead><tr><th>Business</th><th>Address</th><th>Status</th><th>Licence</th><th>Added</th><th>Last used</th><th></th></tr></thead>
+<tbody>${rows || '<tr><td colspan="7">No clients yet. The installer adds them.</td></tr>'}</tbody></table></main></body></html>`, {
     headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY' },
   });
 }
@@ -346,6 +484,7 @@ export default {
       if (request.method === 'GET' && url.pathname === '/callback') return await callback(env, url);
       if (request.method === 'POST' && url.pathname === '/token') return await token(env, request);
       if (request.method === 'POST' && url.pathname === '/register') return await register(env, request);
+      if (url.pathname.startsWith('/ita/')) return await itaProxy(env, request, url);
       if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
         const email = await accessEmail(env, request);
         if (!email) return fail(403, 'Sign in through Cloudflare Access with an admin email.');

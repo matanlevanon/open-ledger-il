@@ -3,7 +3,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { createHash, generateKeyPairSync, sign } from 'node:crypto';
 import broker from '../src/index.js';
-const sq = new DatabaseSync(':memory:'); sq.exec(readFileSync(new URL('../migrations/0001_clients.sql', import.meta.url), 'utf8'));
+const sq = new DatabaseSync(':memory:'); for (const f of ['0001_clients.sql', '0002_licences.sql']) sq.exec(readFileSync(new URL(`../migrations/${f}`, import.meta.url), 'utf8'));
 const stmt = (sql, args = []) => ({
   bind: (...a) => stmt(sql, a),
   first: async () => sq.prepare(sql).get(...args) ?? null,
