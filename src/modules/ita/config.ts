@@ -109,14 +109,29 @@ const RELAY_HOSTS: Record<string, string> = {
  * The fetch the ITA module uses for server-side calls (token, renewal, invoices).
  *
  * A Worker runs in whichever Cloudflare data center takes the request, often outside Israel,
- * and the Tax Authority refuses some of those calls with a bare 403. Two routes:
- *   1. ITA_RELAY_URL set: a relay with an Israeli address, with the Access service token headers.
- *   2. Unset: a direct call from wherever this Worker runs.
+ * and the Tax Authority refuses some of those calls with a bare 403. Three routes:
+ *   1. ITA_BROKER_URL set: the login broker forwards the call (<broker>/ita/<openapi|ita-api>/...),
+ *      with this install's broker name and key. The broker checks the install on every call and
+ *      reaches the Tax Authority through its own relay. The relay settings here are ignored.
+ *   2. ITA_RELAY_URL set: a relay with an Israeli address, with the Access service token headers.
+ *   3. Neither: a direct call from wherever this Worker runs.
  * The browser sign-in (authorize) never passes here: it runs in the user's own browser.
  */
 export function relayedFetch(env: ItaEnv, base: typeof fetch): typeof fetch {
   // R26: every ITA server call passes here. In demo mode the fake Tax Authority answers instead of the network.
   if ((env.DEMO_MODE ?? '').trim() === '1') return demoItaFetch(Number(env.DEMO_ITA_DELAY_MS ?? 2000));
+  const broker = itaBroker(env);
+  if (broker) {
+    return (input, init) => {
+      const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
+      const prefix = RELAY_HOSTS[url.hostname];
+      if (!prefix) return base(input, init);
+      const headers = new Headers(init?.headers);
+      headers.set('X-Ita-Client', broker.client);
+      headers.set('X-Ita-Client-Key', broker.key);
+      return base(`${broker.url}/ita/${prefix}${url.pathname}${url.search}`, { ...init, headers });
+    };
+  }
   const relay = (env.ITA_RELAY_URL ?? '').trim().replace(/\/+$/, '');
   if (!relay) return base;
   const id = (env.ITA_RELAY_CLIENT_ID ?? '').trim();

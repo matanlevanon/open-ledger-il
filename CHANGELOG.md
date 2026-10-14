@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.7.0 (2026-10-14)
+
+### Tax Authority connection
+- An install that signs in through a login broker now sends every Tax Authority call through
+  that broker too: invoice approvals, details and decisions. The broker checks the install on
+  each call, so pausing an install there stops it within minutes.
+- With a broker set, the install ignores its own relay settings. It needs no relay token.
+- Installs with their own ITA API app, with or without their own relay, work as before.
+
 ## 1.6.0 (2026-10-13)
 
 ### Demo mode

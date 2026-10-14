@@ -451,8 +451,9 @@ When someone runs several installs on one ITA API app, the app's client secret s
 a small Worker called ita-auth (tools/ita-auth/README.md). Your install gets three settings from
 them instead of a client id and secret: ITA_BROKER_URL, ITA_BROKER_CLIENT and ITA_BROKER_KEY.
 
-The broker handles the sign-in and the token renewal only. Invoices go straight from your Worker
-to the Tax Authority with your own access token, so the broker never sees them. You still sign in
+The broker handles the sign-in and the token renewal. From 1.7.0 it also forwards every Tax
+Authority call from your Worker, with your own access token. It checks your install on each call,
+never stores or logs what passes, and ignores any relay settings on your install. You still sign in
 with your own user code and one-time code, and the ITA consent screen names the broker's app.
 Check route shows a third line, Through the login broker.
 
