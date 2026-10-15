@@ -13,7 +13,8 @@
   --color-band: 240 240 238;
   --color-ink: 38 38 36;
   --color-muted: 107 107 104;
-  --color-line: 222 222 218;
+  --color-rule-emwo2u: 222 222 218;
+  --color-line: var(--color-rule-emwo2u);
 
   /* Brand moments and destructive actions only (CLAUDE.md-style UI-copy discipline extends to
      color: red is never a default interactive color). Darkened from the reference's #E63946 for

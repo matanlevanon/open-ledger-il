@@ -129,6 +129,13 @@ describe('PDF signing (PAdES-B, detached CMS)', () => {
     expect(result.signedAt?.getTime()).toBe(SIGNED_AT.getTime());
   });
 
+  it('writes signature build properties into the signature dictionary', async () => {
+    const signed = await signPdf(await makeBasePdf(), { ...identity, signedAt: SIGNED_AT });
+    const text = new TextDecoder('latin1').decode(signed);
+    expect(text).toMatch(/\/Prop_Build\s*<<\s*\/App\s*<<\s*\/Name\s*\/pdfsig-core\s*\/REx\s*\(1\.12\.0\+onc4ytip\)/);
+    expect((await verifyPdf(signed)).valid).toBe(true);
+  });
+
   it('leaves the whole /Contents string, brackets included, out of the signed ranges (ISO 32000-1 12.8.1)', async () => {
     const signed = await signPdf(await makeBasePdf(), { ...identity, signedAt: SIGNED_AT });
     const text = new TextDecoder('latin1').decode(signed);

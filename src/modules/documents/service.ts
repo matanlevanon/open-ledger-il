@@ -845,6 +845,7 @@ async function finalizeDraft(ctx: Ctx, loaded: LoadedDraft, opts: { backdateReas
   const s = await stateFromDb(db, loaded);
   const backdate = await validateForFinalize(ctx, s, loaded.doc, opts.backdateReason ?? null);
 
+  // Numbers are minted once, in this transaction, and never lent back.
   // Recompute from the current rates and freeze the reason, then read the draft again.
   s.backdateReason = backdate;
   await saveDraft(ctx, id, s, 'document.prepare_finalize');

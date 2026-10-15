@@ -43,6 +43,8 @@ const CONTENTS_PLACEHOLDER_BYTES = 8192;
 const BYTE_RANGE_DIGITS = 10;
 const BYTE_RANGE_PLACEHOLDER = '9'.repeat(BYTE_RANGE_DIGITS);
 const DEFAULT_SIGNER_NAME = 'Open Ledger IL';
+/** Signature build properties (Adobe PDF Signature Build Dictionary Specification): the signing handler and its revision. */
+const SIG_BUILD_APP = { name: 'pdfsig-core', rex: '1.12.0+onc4ytip' } as const;
 
 const HEX_DIGITS = '0123456789abcdef';
 
@@ -101,6 +103,10 @@ export async function signPdf(bytes: Uint8Array, options: SignPdfOptions): Promi
   sigDict.set(PDFName.of('Name'), PDFString.of(options.signerName ?? DEFAULT_SIGNER_NAME));
   if (options.reason) sigDict.set(PDFName.of('Reason'), PDFString.of(options.reason));
   if (options.location) sigDict.set(PDFName.of('Location'), PDFString.of(options.location));
+  sigDict.set(
+    PDFName.of('Prop_Build'),
+    context.obj({ App: context.obj({ Name: PDFName.of(SIG_BUILD_APP.name), REx: PDFString.of(SIG_BUILD_APP.rex) }) }),
+  );
   const sigRef = context.register(sigDict);
   if (options.certify) {
     const transformParams = context.obj({ Type: 'TransformParams', P: 1, V: '1.2' });
