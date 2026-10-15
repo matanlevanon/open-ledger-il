@@ -181,7 +181,6 @@ EN = dict(
         'Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings > Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.',
         'To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.',
     ],
-    reg_link='The ITA software registration page (Hebrew)',
     reg_refs_h='References',
     reg_refs=[
         ('Israel Tax Authority, "Application to register software for a computerized accounting system", service page, updated 29.05.2025. Who must register:', ITA_REG, 'gov.il'),
@@ -381,7 +380,6 @@ HE = dict(
         'מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות > הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.',
         'כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.',
     ],
-    reg_link='עמוד רישום התוכנה ברשות המסים',
     reg_refs_h='מקורות',
     reg_refs=[
         ('רשות המסים, "בקשה לרישום תוכנה המיועדת לניהול מערכת חשבונות ממוחשבת", עמוד השירות, עודכן 29.05.2025. מי חייב ברישום:', ITA_REG, 'gov.il'),

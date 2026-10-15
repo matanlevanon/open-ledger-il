@@ -12,8 +12,6 @@ To get ITA API credentials for allocation numbers as עוסק מורשה, you st
 
 [The Tax Authority registry of registered software](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
 
-[The ITA software registration page (Hebrew)](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
-
 **References**
 
 1. Israel Tax Authority, "Application to register software for a computerized accounting system", service page, updated 29.05.2025. Who must register: יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם) [gov.il](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)

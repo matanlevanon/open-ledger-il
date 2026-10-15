@@ -12,8 +12,6 @@
 
 [מאגר התוכנות הרשומות של רשות המסים](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
 
-[עמוד רישום התוכנה ברשות המסים](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
-
 **מקורות**
 
 1. רשות המסים, "בקשה לרישום תוכנה המיועדת לניהול מערכת חשבונות ממוחשבת", עמוד השירות, עודכן 29.05.2025. מי חייב ברישום: יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם) [gov.il](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)

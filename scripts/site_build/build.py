@@ -673,7 +673,6 @@ def build_registration(lang):
       <div class="prose">
         {paras}
         <div class="actions"><a class="btn btn-ghost" href="{ITA_REGISTRY}" rel="noopener">{E(u['reg_registry'])}</a></div>
-        <p><a href="{ITA_REG}" rel="noopener">{E(c['reg_link'])}</a></p>
         <div class="refs"><b>{E(c['reg_refs_h'])}</b><ol>{reg_refs}</ol></div>
       </div>
     </div>
