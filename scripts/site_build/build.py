@@ -730,7 +730,7 @@ def build_license(lang):
       <ul>{points}</ul>
       <p>{E(u['license_service'])}</p>
       <p><a href="{LICENSE}">{E(u['license_full'])}</a></p>
-      <p><a href="https://www.gnu.org/licenses/agpl-3.0.html" rel="noopener">{E(u['license_gnu'])}</a></p>
+      <p><a href="https://fsl.software/" rel="noopener">{E(u['license_gnu'])}</a></p>
     </div>
   </section>'''
     return page, main, ''
@@ -883,7 +883,7 @@ def jsonld(page):
             '@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': 'Open Ledger IL',
             'alternateName': 'חשבונאות פתוחה', 'url': absolute(path_of(lang, 'home')), 'description': page['desc'],
             'applicationCategory': 'BusinessApplication', 'operatingSystem': 'Web', 'softwareVersion': VERSION,
-            'inLanguage': ['he', 'en'], 'license': 'https://www.gnu.org/licenses/agpl-3.0.html', 'offers': offers,
+            'inLanguage': ['he', 'en'], 'license': 'https://fsl.software/FSL-1.1-ALv2.template.md', 'offers': offers,
             'publisher': {'@id': ORG_ID}, 'screenshot': absolute(ASSETS.url(shot(lang, 'dashboard.png'))),
         })
     if page['key'] != 'home':
@@ -1022,7 +1022,7 @@ def llms_txt(pages):
             sections.append(f'## Guides in {"English" if lang == "en" else "Hebrew"}\n\n'
                             + '\n'.join(f'- [{p["h1"]}]({absolute(p["path"])}): {p["desc"]}' for p in guides))
     sections.append('## Optional\n\n'
-                    f'- [Source code]({REPO}): the repository, AGPL-3.0\n'
+                    f'- [Source code]({REPO}): the repository, FSL-1.1-ALv2\n'
                     f'- [Full text of every page]({absolute("/llms-full.txt")}): one Markdown file')
     return f'# Open Ledger IL\n\n> {intro}\n\n' + '\n\n'.join(sections) + '\n'
 

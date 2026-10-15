@@ -69,10 +69,10 @@ export const common = {
   'nav.about': 'About',
 
   'about.title': 'MTN - Open Ledger IL',
-  'about.what': 'An open-source invoicing, expenses and bookkeeping system for Israeli עוסק פטור and עוסק מורשה businesses. It runs on your own Cloudflare account. Your data stays in your own database.',
+  'about.what': 'A source-available invoicing, expenses and bookkeeping system for Israeli עוסק פטור and עוסק מורשה businesses. It runs on your own Cloudflare account. Your data stays in your own database.',
   'about.noticeTitle': 'Not tax or legal advice',
   'about.notice': 'This software is not tax or legal advice. You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant.',
-  'about.license': 'Licensed under the GNU Affero General Public License v3.0. Copyright MTN.',
+  'about.license': 'Licensed under the Functional Source License 1.1 (FSL-1.1-ALv2). Copyright MTN.',
   'nav.createNew': 'Create new',
   'nav.createQuote': 'Quote',
   'nav.createPaymentRequest': 'Payment Request',

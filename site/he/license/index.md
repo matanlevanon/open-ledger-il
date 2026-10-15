@@ -1,17 +1,18 @@
 # רישיון
 
-הקוד של Open Ledger IL הוא תוכנה חופשית ברישיון GNU Affero General Public License, גרסה 3 (AGPL-3.0).
+הקוד של Open Ledger IL מופץ ברישיון Functional Source License, גרסה 1.1, עם Apache 2.0 כרישיון עתידי (FSL-1.1-ALv2).
 
 - משתמשים בו לעסק שלכם, בלי תשלום.
 - קוראים את הקוד ומשנים אותו.
 - משתפים עותקים, עם שינויים או בלי, באותו רישיון.
-- מריצים גרסה ששיניתם עבור אחרים ברשת? מציעים להם את קוד המקור שלה.
+- אסור למכור את הקוד, לארח אותו עבור אחרים, או להציע אותו במוצר או בשירות שמתחרה ב-Open Ledger IL או בשירותים בתשלום של MTN.
+- כל גרסה עוברת לרישיון Apache 2.0 שנתיים אחרי שהיא יוצאת.
 - הקוד מגיע בלי אחריות.
 
 הקמה עבורך היא שירות בתשלום. היא לא משנה את רישיון הקוד.
 
 [לנוסח המלא של הרישיון](https://github.com/matanlevanon/open-ledger-il/blob/main/LICENSE)
 
-[רישיון AGPL-3.0 באתר gnu.org](https://www.gnu.org/licenses/agpl-3.0.html)
+[רישיון FSL באתר fsl.software](https://fsl.software/)
 
 Source: https://open-ledger.matanlevanon.com/he/license/

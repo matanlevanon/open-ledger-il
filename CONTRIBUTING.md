@@ -30,4 +30,4 @@ Conventional commits: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`. The me
 
 ## License
 
-By contributing, you agree your contribution ships under the GNU Affero General Public License v3.0.
+By contributing, you agree your contribution ships under the Functional Source License 1.1, Apache 2.0 future license (FSL-1.1-ALv2), and that MTN may license it under other terms.

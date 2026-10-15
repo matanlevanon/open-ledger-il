@@ -1,4 +1,4 @@
-**Free** · Open source · Registered with the Israel Tax Authority · v1.7.0
+**Free** · Source available · Registered with the Israel Tax Authority · v1.7.0
 
 # Invoices, receipts and books for an Israeli business, on infrastructure you own.
 
@@ -60,14 +60,14 @@ P&L, client ledgers, the unified file and an accountant login.
 
 - Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
-- It is free from source under the AGPL-3.0 licence.
+- It is free for your own business under the FSL-1.1 licence.
 - Having it set up for you costs ₪699, once, with no subscription.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
 
 ## Free from source, or set up for you
 
-The code is free under AGPL-3.0. Prefer not to do it yourself? We set it up for you for ₪699, once, with no subscription.
+The code is free for your own business. Prefer not to do it yourself? We set it up for you for ₪699, once, with no subscription.
 
 [See pricing and setup](https://open-ledger.matanlevanon.com/pricing/)
 

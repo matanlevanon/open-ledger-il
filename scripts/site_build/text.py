@@ -7,9 +7,9 @@ from .config import DEPLOY, ITA_REG, ITA_REGISTRY, SETUP, VERSION
 EN = dict(
     lang='en', dir='ltr', file='index.html', other='he.html', other_label='עברית',
     title='Open Ledger IL - invoices and books for an Israeli business, on your own Cloudflare',
-    desc='Open-source invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.',
+    desc='Source-available invoicing, receipts, expenses and bookkeeping for עוסק פטור and עוסק מורשה. Legal numbering, signed PDFs, ITA allocation numbers. Runs on your own Cloudflare account.',
     nav=['Features', 'Screenshots', 'How it works', 'Pricing'], github='View on GitHub',
-    badge='<b>Free</b> · Open source · Registered with the Israel Tax Authority · v' + VERSION,
+    badge='<b>Free</b> · Source available · Registered with the Israel Tax Authority · v' + VERSION,
     h1='Invoices, receipts and books for an Israeli business,<br>on infrastructure you own.',
     lead='Quotes, receipts, tax invoices, contracts and expenses, with legal numbering and ITA allocation numbers. It runs in your own Cloudflare account. Your data stays yours.',
     cta=['Get the code', 'Read the deploy guide', 'See setup options'], copy='Copy', copied='Copied',
@@ -200,16 +200,16 @@ EN = dict(
     ],
     final_h='See it working first',
     final_p='Open the demo, then read the code. Every rule is in the open.',
-    foot_links=['GitHub', 'Deploy guide', 'Setup guide', 'AGPL-3.0 licence'],
-    foot_note='Self-hosted on Cloudflare Workers · Open source under AGPL-3.0 · Not affiliated with Cloudflare or the Israel Tax Authority',
+    foot_links=['GitHub', 'Deploy guide', 'Setup guide', 'FSL-1.1 licence'],
+    foot_note='Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority',
 )
 
 HE = dict(
     lang='he', dir='rtl', file='he.html', other='index.html', other_label='English',
     title='Open Ledger IL - חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, בענן Cloudflare שלך',
-    desc='מערכת קוד פתוח לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.',
+    desc='מערכת בקוד מקור גלוי לחשבוניות, קבלות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. מספור חוקי, PDF חתום ומספרי הקצאה מרשות המסים. רצה בחשבון Cloudflare שלך.',
     nav=['יכולות', 'צילומי מסך', 'איך זה עובד', 'מחירים'], github='לקוד ב-GitHub',
-    badge='<b>חינם</b> · קוד פתוח · רשומה ברשות המסים · גרסה ' + VERSION,
+    badge='<b>חינם</b> · קוד מקור גלוי · רשומה ברשות המסים · גרסה ' + VERSION,
     h1='חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי,<br>על תשתית שבבעלותך.',
     lead='הצעות מחיר, קבלות, חשבוניות מס, חוזים והוצאות, עם מספור חוקי ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר שלך.',
     cta=['לקוד', 'למדריך ההתקנה', 'לאפשרויות ההתקנה'], copy='העתקה', copied='הועתק',
@@ -400,8 +400,8 @@ HE = dict(
     ],
     final_h='קודם רואים אותה עובדת',
     final_p='פותחים את ההדגמה, ואז קוראים את הקוד. כל כלל גלוי.',
-    foot_links=['GitHub', 'מדריך פריסה', 'מדריך הגדרה', 'רישיון AGPL-3.0'],
-    foot_note='מאוחסן ב-Cloudflare Workers · קוד פתוח ברישיון AGPL-3.0 · לא קשור ל-Cloudflare או לרשות המסים',
+    foot_links=['GitHub', 'מדריך פריסה', 'מדריך הגדרה', 'רישיון FSL-1.1'],
+    foot_note='מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים',
 )
 
 

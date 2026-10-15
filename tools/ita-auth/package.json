@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "ITA login broker: keeps one ITA API app's client secret for several Open Ledger IL installs",
-  "license": "AGPL-3.0-only",
+  "license": "FSL-1.1-ALv2",
   "scripts": {
     "deploy": "wrangler deploy",
     "test": "node test/broker.test.mjs && node test/licence.test.mjs"

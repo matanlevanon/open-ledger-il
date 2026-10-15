@@ -1,6 +1,6 @@
 # MTN - Open Ledger IL
 
-Open-source invoicing, expenses and bookkeeping for Israeli businesses. Built for עוסק פטור and עוסק מורשה. Runs on your own Cloudflare account. Your data stays in your own database.
+Source-available invoicing, expenses and bookkeeping for Israeli businesses. Built for עוסק פטור and עוסק מורשה. Runs on your own Cloudflare account. Your data stays in your own database.
 
 Website: [open-ledger.matanlevanon.com](https://open-ledger.matanlevanon.com/he/) ([English](https://open-ledger.matanlevanon.com/) · [עברית](https://open-ledger.matanlevanon.com/he/)) · Live demo: [sampleledger.matanlevanon.com](https://sampleledger.matanlevanon.com)
 
@@ -104,4 +104,8 @@ See `CONTRIBUTING.md` and `SECURITY.md`. Run `node scripts/leak-check.mjs` befor
 
 ## License
 
-GNU Affero General Public License v3.0. See `LICENSE`. Copyright MTN.
+Functional Source License, version 1.1, with Apache 2.0 as the future license (FSL-1.1-ALv2). See `LICENSE`. Copyright MTN.
+
+- Use it for your own business, at no cost. Read the code and change it.
+- You may not sell it, host it for others or offer it inside a product or service that competes with Open Ledger IL or with the paid MTN services built on it.
+- Each version becomes available under the Apache License 2.0 two years after its release.

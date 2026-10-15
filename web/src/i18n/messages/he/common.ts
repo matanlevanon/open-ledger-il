@@ -67,10 +67,10 @@ export const common: Record<keyof typeof en, string> = {
   'nav.about': 'אודות',
 
   'about.title': 'MTN - Open Ledger IL',
-  'about.what': 'מערכת קוד פתוח לחשבוניות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה בישראל. היא רצה בחשבון Cloudflare שלך. הנתונים נשארים במסד הנתונים שלך.',
+  'about.what': 'מערכת בקוד מקור גלוי לחשבוניות, הוצאות והנהלת חשבונות לעוסק פטור ולעוסק מורשה בישראל. היא רצה בחשבון Cloudflare שלך. הנתונים נשארים במסד הנתונים שלך.',
   'about.noticeTitle': 'אין זה ייעוץ מס או ייעוץ משפטי',
   'about.notice': 'תוכנה זו אינה ייעוץ מס או ייעוץ משפטי. האחריות לעמידה בדין הישראלי ובדרישות רשות המסים חלה עליך. בדוק את ההגדרות עם רואה החשבון שלך.',
-  'about.license': 'ברישיון GNU Affero General Public License v3.0. זכויות יוצרים MTN.',
+  'about.license': 'ברישיון Functional Source License 1.1 (FSL-1.1-ALv2). זכויות יוצרים MTN.',
   'nav.createNew': 'חדש',
   'nav.createQuote': 'הצעת מחיר',
   'nav.createPaymentRequest': 'דרישת תשלום',

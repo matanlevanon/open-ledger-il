@@ -65,6 +65,6 @@ test('home and pricing carry the key facts block', () => {
     const p = all.find((x) => x.path === path);
     assert.ok(p.html.includes('id="key-facts"'), `${path}: key facts`);
     assert.match(p.html, /281801/);
-    assert.match(p.html, /AGPL-3\.0/);
+    assert.match(p.html, /FSL-1\.1/);
   }
 });
