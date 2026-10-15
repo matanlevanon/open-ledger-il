@@ -938,6 +938,28 @@ def check_meta(pages):
         sys.exit('Page metadata:\n  ' + '\n  '.join(problems))
 
 
+EXTERNAL_A = re.compile(r'<a\b[^>]*>')
+SITE_HOST = re.sub(r'^https?://', '', SITE_URL).split('/')[0]
+
+
+def external_new_tab(text):
+    """Every link to another host opens in a new tab, with rel="noopener"."""
+    def fix(m):
+        tag = m.group(0)
+        href = re.search(r'\shref="(https?://[^"/]+)', tag)
+        if not href or re.sub(r'^https?://', '', href.group(1)) == SITE_HOST:
+            return tag
+        if ' target=' not in tag:
+            tag = tag[:-1] + ' target="_blank">'
+        rel = re.search(r'\srel="([^"]*)"', tag)
+        if not rel:
+            tag = tag[:-1] + ' rel="noopener">'
+        elif 'noopener' not in rel.group(1).split():
+            tag = tag.replace(rel.group(0), f' rel="{rel.group(1)} noopener"')
+        return tag
+    return EXTERNAL_A.sub(fix, text)
+
+
 def write(rel, text, written):
     path = OUT / rel.lstrip('/')
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -1050,7 +1072,7 @@ def main():
     written = set()
     full = []
     for page, main_html, scripts in built:
-        html_text = document(page, main_html, scripts)
+        html_text = external_new_tab(document(page, main_html, scripts))
         write(page['path'] + 'index.html', html_text, written)
         if page['md']:
             text = to_md.main_markdown(html_text, SITE_URL, page['h1'] or page['title'])

@@ -84,3 +84,17 @@ test('every page has one h1, a canonical to itself, and a title and description 
     assert.match(p.html, /<meta property="og:image" content="https:\/\/[^"]+\.png">/, `${p.path}: og:image`);
   }
 });
+
+test('every link to another site opens in a new tab with rel noopener', () => {
+  let count = 0;
+  for (const p of all) {
+    for (const tag of p.html.match(/<a\b[^>]*>/g) ?? []) {
+      const href = /\shref="(https?:\/\/[^"]+)"/.exec(tag)?.[1];
+      if (!href || href.startsWith(SITE_URL)) continue;
+      count++;
+      assert.match(tag, /\starget="_blank"/, `${p.path}: ${tag}`);
+      assert.match(tag, /\srel="[^"]*\bnoopener\b/, `${p.path}: ${tag}`);
+    }
+  }
+  assert.ok(count > 10, `only ${count} external links checked`);
+});
