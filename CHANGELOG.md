@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.7.0 (2026-10-14)
+## 1.6.0 (2026-10-13)
 
 ### Documents
 - A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel
@@ -21,8 +21,6 @@
   install name and its call count since the last check.
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
-
-## 1.6.0 (2026-10-13)
 
 ### Demo mode
 - Visitors enter at once. Every visitor reads the same sample businesses, and nothing is copied

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>יומן שינויים של Open Ledger IL: מה חדש בכל גרסה</title>
-<meta name="description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.">
+<meta name="description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.">
 <link rel="canonical" href="https://open-ledger.matanlevanon.com/he/changelog/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/changelog/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/changelog/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/he/changelog/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="יומן שינויים של Open Ledger IL: מה חדש בכל גרסה">
-<meta property="og:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.">
+<meta property="og:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://open-ledger.matanlevanon.com/he/changelog/">
 <meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/he-changelog.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="יומן שינויים של Open Ledger IL: מה חדש בכל גרסה">
-<meta name="twitter:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.">
+<meta name="twitter:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.">
 <meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/he-changelog.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
@@ -310,17 +310,16 @@ section[id] { scroll-margin-top: 64px; }
   <div class="wrap page">
     <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/he/">דף הבית</a></li><li aria-current="page">יומן שינויים</li></ol></nav>
     <h1>יומן שינויים</h1>
-    <p class="lead">כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.</p>
+    <p class="lead">כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.</p>
   </div>
   <section class="plain">
-    <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="1-7-0-2026-10-14">1.7.0 (2026-10-14)</h2>
+    <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="1-6-0-2026-10-13">1.6.0 (2026-10-13)</h2>
 <h3 id="documents">Documents</h3>
 <ul><li>A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel column and the two-column totals now show only on a USD, EUR or GBP document.</li></ul>
 <h3 id="tax-authority-connection">Tax Authority connection</h3>
 <ul><li>An install that signs in through a login broker now sends every Tax Authority call through that broker too: invoice approvals, details and decisions. The broker checks the install on each call, so pausing an install there stops it within minutes.</li><li>With a broker set, the install ignores its own relay settings. It needs no relay token.</li><li>Installs with their own ITA API app, with or without their own relay, work as before.</li></ul>
 <h3 id="login-broker-tools-ita-auth">Login broker (tools/ita-auth)</h3>
 <ul><li>New <code>/ita/*</code> route forwards an install's Tax Authority calls with the relay's path and header rules, through the relay when one is set. It never logs bodies or tokens.</li><li>Optional licence keys: with <code>LICENCE_URL</code> and <code>LICENCE_SECRET</code> set, an install registers with a licence key, and each call checks the licence, cached for 10 minutes. Each check reports the install name and its call count since the last check.</li><li>Migration <code>0002_licences.sql</code> adds the licence columns. Installs with no licence keep working.</li><li>The admin page shows each install's licence last 4, or "no licence".</li></ul>
-<h2 id="1-6-0-2026-10-13">1.6.0 (2026-10-13)</h2>
 <h3 id="demo-mode">Demo mode</h3>
 <ul><li>Visitors enter at once. Every visitor reads the same sample businesses, and nothing is copied on entry.</li><li>The sample data is read-only for visitors. The server refuses every change to it, and the app says "Read-only in the demo" next to the buttons it hides.</li><li>Visitors keep private drafts: documents, clients, contracts and expense uploads. Nobody else sees them. They are deleted 30 minutes after the visitor leaves, and every night.</li><li>Issue, Send, Record payment and Sign show previews. A preview PDF carries the number 0000 and a watermark. Nothing is numbered, sent or stored as signed.</li><li>The reset Worker runs every 15 minutes. It sweeps ended visits, and at 03:00 Israel time it rebuilds the sample set if it changed. One build runs at a time.</li><li>The demo shows its own product name in the sidebar and in the browser tab.</li><li>The demo opens light and in Hebrew. The start page remembers the language picked there.</li><li>The start page now shows on every path, deep links included.</li><li><code>/admin</code> runs on the Worker. <code>keep_vars</code> sits at the top level of <code>wrangler.toml</code>, so variables set in the dashboard survive a deploy.</li><li>Demo visitors see a working Tax Authority connection on the fake.</li></ul>
 <h3 id="dashboard">Dashboard</h3>

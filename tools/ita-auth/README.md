@@ -2,7 +2,7 @@
 
 A login broker for Open Ledger IL installs that share one ITA API app. The
 app's client secret lives only in this Worker. Each install signs in and
-renews its tokens through it. From Open Ledger IL 1.7.0 each install also
+renews its tokens through it. From Open Ledger IL 1.6.0 each install also
 sends its invoice calls through it, with its own access token. The broker
 checks the install on every call, so a pause takes effect at once.
 
@@ -105,13 +105,13 @@ The admin page shows each install's licence last 4, or "no licence".
 
 ### Phasing out the relay token from installs
 
-Before 1.7.0 every broker install held the relay's service token and called
-the Tax Authority itself. From 1.7.0 a broker install sends every call here,
+Before 1.6.0 every broker install held the relay's service token and called
+the Tax Authority itself. From 1.6.0 a broker install sends every call here,
 and only the broker needs the relay token:
 
 1. Give the broker the relay settings (`ITA_RELAY_URL`,
    `ITA_RELAY_CLIENT_ID`, `ITA_RELAY_CLIENT_SECRET`) if it does not have them.
-2. Update every broker install to Open Ledger IL 1.7.0 or later. A 1.7.0
+2. Update every broker install to Open Ledger IL 1.6.0 or later. A 1.6.0
    install ignores its own relay settings once `ITA_BROKER_URL` is set.
 3. Check the broker logs show `ita client=...` lines for each install.
 4. Rotate the relay's service token: make a new one for the broker, put it on

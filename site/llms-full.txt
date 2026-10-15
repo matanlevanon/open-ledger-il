@@ -1,4 +1,4 @@
-**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.7.0
+**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.6.0
 
 # חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, על תשתית שבבעלותך.
 
@@ -320,7 +320,7 @@ Source: https://open-ledger.matanlevanon.com/he/pricing/
 
 # רשומה ברשות המסים
 
-חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
+חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.6.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
 
 רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
 
@@ -387,11 +387,11 @@ Source: https://open-ledger.matanlevanon.com/he/guides/
 
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
 
 יומן השינויים נכתב באנגלית.
 
-## 1.7.0 (2026-10-14)
+## 1.6.0 (2026-10-13)
 
 ### Documents
 
@@ -409,8 +409,6 @@ Source: https://open-ledger.matanlevanon.com/he/guides/
 - Optional licence keys: with `LICENCE_URL` and `LICENCE_SECRET` set, an install registers with a licence key, and each call checks the licence, cached for 10 minutes. Each check reports the install name and its call count since the last check.
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
-
-## 1.6.0 (2026-10-13)
 
 ### Demo mode
 
@@ -597,7 +595,7 @@ Source: https://open-ledger.matanlevanon.com/he/license/
 
 ---
 
-**Free** · Source available · Registered with the Israel Tax Authority · v1.7.0
+**Free** · Source available · Registered with the Israel Tax Authority · v1.6.0
 
 # Invoices, receipts and books for an Israeli business, on infrastructure you own.
 
@@ -919,7 +917,7 @@ Source: https://open-ledger.matanlevanon.com/pricing/
 
 # Registered with the Israel Tax Authority
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. [2]
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.6.0, and new versions are added to the certificate as they are filed. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
 
@@ -986,9 +984,9 @@ Source: https://open-ledger.matanlevanon.com/guides/
 
 # Changelog
 
-Every release, newest first. The current version is 1.7.0.
+Every release, newest first. The current version is 1.6.0.
 
-## 1.7.0 (2026-10-14)
+## 1.6.0 (2026-10-13)
 
 ### Documents
 
@@ -1006,8 +1004,6 @@ Every release, newest first. The current version is 1.7.0.
 - Optional licence keys: with `LICENCE_URL` and `LICENCE_SECRET` set, an install registers with a licence key, and each call checks the licence, cached for 10 minutes. Each check reports the install name and its call count since the last check.
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
-
-## 1.6.0 (2026-10-13)
 
 ### Demo mode
 

@@ -3,7 +3,7 @@
  *
  * The app's client secret lives only here, as a Worker secret. Each Ledger install is a client
  * of this broker: it sends its users to /authorize for the ITA sign-in, and it calls /token to
- * trade the one-time code for tokens and to renew them. From Open Ledger IL 1.7.0 its invoice
+ * trade the one-time code for tokens and to renew them. From Open Ledger IL 1.6.0 its invoice
  * calls pass here too, through /ita/*, with its own access token. The broker checks the install
  * on every call and forwards it, through the relay when one is set.
  *

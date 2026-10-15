@@ -1,8 +1,8 @@
 # Changelog
 
-Every release, newest first. The current version is 1.7.0.
+Every release, newest first. The current version is 1.6.0.
 
-## 1.7.0 (2026-10-14)
+## 1.6.0 (2026-10-13)
 
 ### Documents
 
@@ -20,8 +20,6 @@ Every release, newest first. The current version is 1.7.0.
 - Optional licence keys: with `LICENCE_URL` and `LICENCE_SECRET` set, an install registers with a licence key, and each call checks the licence, cached for 10 minutes. Each check reports the install name and its call count since the last check.
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
-
-## 1.6.0 (2026-10-13)
 
 ### Demo mode
 

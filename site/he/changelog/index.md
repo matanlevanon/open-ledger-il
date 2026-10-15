@@ -1,10 +1,10 @@
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
 
 יומן השינויים נכתב באנגלית.
 
-## 1.7.0 (2026-10-14)
+## 1.6.0 (2026-10-13)
 
 ### Documents
 
@@ -22,8 +22,6 @@
 - Optional licence keys: with `LICENCE_URL` and `LICENCE_SECRET` set, an install registers with a licence key, and each call checks the licence, cached for 10 minutes. Each check reports the install name and its call count since the last check.
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
-
-## 1.6.0 (2026-10-13)
 
 ### Demo mode
 
