@@ -385,6 +385,30 @@ Source: https://open-ledger.matanlevanon.com/he/guides/
 
 ---
 
+# עזרה
+
+הוראות צעד אחר צעד, לפי הסדר שבו תצטרכו אותן. בהתקנה ראשונה, התחילו מלמעלה.
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)הכניסה הראשונה ללדג'ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)מחברים את הלדג'ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)סדר המסמכים בלדג'ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)סולק גובה את הכסף והלדג'ר מוציא את הקבלות, ידנית או אוטומטית, בלי שני מסמכים לאותו תשלום.
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)חיבור Resend כדי שהלדג'ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
+
+Source: https://open-ledger.matanlevanon.com/he/help/
+
+
+---
+
 # יומן שינויים
 
 כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
@@ -982,6 +1006,30 @@ Source: https://open-ledger.matanlevanon.com/guides/
 
 ---
 
+# Help
+
+Step-by-step instructions, in the order you need them. Start at the top if this is your first install.
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)The accounts, details and 30 minutes you need before you run the Open Ledger IL installer, and which parts are optional.
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)Sign in to your Ledger for the first time, fill in the business profile, logo, signature and numbering, and check one receipt before you go live.
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)Sign the Ledger in to the Israel Tax Authority once, so tax invoices get their allocation numbers by themselves, and reconnect every 90 days.
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)Use a card payment provider for collecting money and the Ledger for the receipts, by hand or automatically, without two documents for one payment.
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
+
+Source: https://open-ledger.matanlevanon.com/help/
+
+
+---
+
 # Changelog
 
 Every release, newest first. The current version is 1.6.0.
@@ -1186,3 +1234,1741 @@ Setting it up for you is a paid service. It does not change the licence of the c
 [The FSL on fsl.software](https://fsl.software/)
 
 Source: https://open-ledger.matanlevanon.com/license/
+
+
+---
+
+# לפני ההתקנה: מה צריך להכין
+
+החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.
+
+עודכן 2026-10-17
+
+התקנה ראשונה לוקחת בערך 30 דקות. רוב הזמן הולך על פתיחת חשבונות. כדאי להכין את אלה מראש.
+
+## חובה
+
+- **מחשב Windows.** תוכנת ההתקנה רצה על Windows 10 או 11. אחרי ההתקנה הלדג'ר נפתח בכל דפדפן, בכל מחשב ובטלפון.
+- **מפתח הרישיון** מהמייל של הרכישה. הוא נראה כך: `OL-XXXX-XXXX-XXXX-XXXX`. מפתח אחד לעסק אחד.
+- **פרטי העסק:** שם העסק כפי שיופיע על המסמכים, המייל של הבעלים, ומספר העוסק בן 9 הספרות (ת"ז לעוסק יחיד, ח.פ. לחברה). המפתח עובד רק למספר הזה.
+- **כתובת מייל שאתם קוראים.** היא הכניסה של הבעלים. Cloudflare שולח אליה קוד חד פעמי בכל כניסה.
+- **כרטיס אשראי.** Cloudflare מבקש כרטיס כדי להפעיל שני שירותים חינמיים, Zero Trust ו-R2. התוכניות החינמיות עולות $0 ולא יורד שום חיוב.
+
+## לא חובה
+
+אפשר להוסיף כל אחד מאלה בזמן ההתקנה או אחריה.
+
+- **דומיין**, למשל acme.co.il, שכבר נמצא בחשבון Cloudflare שלכם. בלי דומיין, הלדג'ר עולה על כתובת חינמית של Cloudflare שנגמרת ב-workers.dev. ראו [דומיין או workers.dev](https://open-ledger.matanlevanon.com/he/help/install/).
+- **מפתח API של Gemini או Anthropic**, כדי שהלדג'ר יקרא בשבילכם קבלות וחשבוניות של ספקים. בלי מפתח, מקלידים את פרטי ההוצאה ביד.
+- **מפתח API של Resend**, כדי שהלדג'ר ישלח מסמכים ללקוחות במייל. Resend דורש דומיין. בלי דומיין, מורידים כל PDF או שולחים בוואטסאפ.
+- **Webhook של Slack**, להתראות כמו כניסה לרשות המסים שעומדת להסתיים.
+
+## של מי מה
+
+הכול נוצר בחשבונות שלכם ועל שמכם: חשבון Cloudflare, מסד הנתונים, הקבצים. ל-MTN אין גישה לנתונים שלכם. הקשר היחיד ל-MTN הוא החיבור לרשות המסים במהדורה המחוברת, שמעביר את בקשות מספרי ההקצאה דרך האפליקציה המאושרת של MTN.
+
+## הצעד הבא
+
+[התקנה עם תוכנת ההתקנה](https://open-ledger.matanlevanon.com/he/help/install/).
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/before-you-start/
+
+
+---
+
+# יצירת ה-API token ב-Cloudflare
+
+שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
+
+עודכן 2026-10-17
+
+הטוקן הוא סיסמה עם הרשאות מוגבלות. הוא מאפשר לתוכנת ההתקנה ליצור את הלדג'ר בחשבון Cloudflare שלכם. מוחקים אותו אחרי ההתקנה.
+
+## פותחים את עמוד הטוקנים
+
+1. פותחים את dash.cloudflare.com/profile/api-tokens בלשונית חדשה. משאירים את תוכנת ההתקנה פתוחה.
+2. לוחצים **Create Token**.
+3. גוללים לתחתית רשימת התבניות. מוצאים **Custom token** ולוחצים **Get started**.
+4. Token name: כל שם, למשל `Ledger install`.
+
+## מוסיפים את שורות ההרשאה
+
+לכל שורה שלוש תיבות: הסוג (**Account** או **Zone**), ההרשאה, והרמה (**Read** או **Edit**). השורה הראשונה כבר קיימת. לכל שורה נוספת לוחצים **+ Add more**.
+
+מוסיפים את שש השורות האלה:
+
+1. Account | Workers Scripts | Edit
+2. Account | D1 | Edit
+3. Account | Workers R2 Storage | Edit
+4. Account | Access: Apps and Policies | Edit
+5. Account | Access: Organizations, Identity Providers, and Groups | Read
+6. Account | Account Settings | Read
+
+רק אם יש בחשבון דומיין, מוסיפים עוד שלוש:
+
+1. Zone | Zone | Read
+2. Zone | Workers Routes | Edit
+3. Zone | DNS | Edit
+
+איך יודעים אם יש דומיין: ב-dash.cloudflare.com, ברשימה **Domains** (בתפריטים ישנים **Websites**). בחשבון חדש אין.
+
+## Account Resources ו-Zone Resources
+
+1. מתחת להרשאות, ב-**Account Resources**, בוחרים **Include** ואז את החשבון של העסק.
+2. **Zone Resources** מופיע רק אחרי שמוסיפים שורת Zone. עם דומיין: **Include**, אחר כך **Specific zone**, ואז הדומיין שהלדג'ר ישתמש בו. בלי דומיין לא הוספתם שורות Zone, אז החלק הזה לא מופיע. מדלגים.
+3. **Client IP Address Filtering** ו-**TTL**: משאירים ריק.
+
+## יוצרים ומעתיקים
+
+1. לוחצים **Continue to summary** ואז **Create Token**.
+2. לוחצים **Copy** ליד הטוקן. Cloudflare מציג אותו פעם אחת. אם הוא אבד, יוצרים חדש באותה דרך.
+3. מדביקים בתוכנת ההתקנה ולוחצים **Check token**.
+
+## אם Check token נכשל
+
+- **חסרה הרשאה:** ההודעה אומרת איזו. עורכים את הטוקן בעמוד הטוקנים, מוסיפים את השורה, שומרים ולוחצים **Check token** שוב. הטוקן עצמו לא משתנה.
+- **חשבון לא נכון:** ה-**Account Resources** של הטוקן מצביע על חשבון אחר. עורכים ובוחרים את הנכון.
+- **הודבק עם רווח:** מעתיקים שוב עם כפתור **Copy**.
+- **Zero Trust או R2 עוד לא הופעלו:** מסיימים קודם את שלב 1 בתוכנת ההתקנה.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/cloudflare-token/
+
+
+---
+
+# חיבור Claude או אפליקציית AI אחרת (MCP)
+
+נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
+
+עודכן 2026-10-17
+
+עם MCP מחובר, שואלים את Claude דברים כמו "כמה Acme חייבים לי" או "תכין דרישת תשלום על 3 שעות ייעוץ", ו-Claude עובד בלדג'ר שלכם. Claude יוצר טיוטות, ומסיים מסמך רק אחרי שאתם מאשרים.
+
+## מה צריך
+
+- **הכתובת:** כתובת הלדג'ר עם `/mcp` בסוף, למשל `https://ledger.acme.co.il/mcp`.
+- **הטוקן:** מוצג פעם אחת במסך האחרון של תוכנת ההתקנה.
+
+## Claude Desktop
+
+1. במסך האחרון של תוכנת ההתקנה לחצתם **Download for Claude Desktop**. הקובץ `claude-desktop-<הכתובת שלכם>.json` נמצא בתיקיית ההורדות.
+2. ב-Claude Desktop: **Settings > Developer > Edit Config**. נפתח הקובץ `claude_desktop_config.json`.
+3. מעתיקים את הרשומה `open-ledger` מהקובץ שהורדתם לתוך `mcpServers` בקובץ הזה. שומרים.
+4. מפעילים מחדש את Claude Desktop. צריך Node.js במחשב, מ-nodejs.org.
+
+## Claude Code
+
+לוחצים **Download for Claude Code** במסך האחרון של תוכנת ההתקנה ושומרים את הקובץ בשם `.mcp.json` בתיקייה שבה עובדים. או מוסיפים שרת עם הכתובת והכותרת `Authorization: Bearer <token>`.
+
+## הטוקן אבד
+
+Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הישן מפסיק לעבוד באותו רגע.
+
+### בלדג'ר
+
+1. פותחים **Settings > MCP**. רק בעלים רואים את הלשונית הזו.
+2. לוחצים **Make a new token**, ואז **Make the token** לאישור.
+3. מעתיקים את הטוקן, או לוחצים **Download for Claude Desktop** או **Download for Claude Code**. הוא מוצג פעם אחת.
+4. מכניסים אותו להגדרות של Claude ומפעילים אותו מחדש.
+
+באותה לשונית מופיעה כתובת ה-MCP עם כפתור **Copy**, מתי הטוקן היה בשימוש לאחרונה, ומתג שמכבה את ה-MCP לכל האפליקציות.
+
+### אין עדיין לשונית MCP
+
+הלשונית קיימת בלדג'רים שעודכנו אחרי 17 באוקטובר 2026. בלדג'ר ישן, מעדכנים קודם, ראו [עדכונים](https://open-ledger.matanlevanon.com/he/help/updates-backups/). או קובעים את הטוקן ב-Cloudflare:
+
+1. מחפשים בתיקיית ההורדות קובץ `claude-desktop-....json`. אם הוא שם, הטוקן הישן בתוכו ואין צורך בשום דבר נוסף.
+2. אחרת יוצרים טוקן ב-PowerShell במחשב שלכם:
+
+`$b = New-Object byte 32; Security.Cryptography.RandomNumberGenerator::Create().GetBytes($b); Convert::ToBase64String($b)`
+
+1. ב-dash.cloudflare.com: **Workers & Pages**, לוחצים **mtn-open-ledger**, ואז **Settings > Variables and Secrets**. עורכים את **MCP_TOKEN**, מדביקים את השורה שהודפסה ולוחצים **Deploy**.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/connect-claude/
+
+
+---
+
+# שליחת מסמכים במייל, בלי ספאם
+
+חיבור Resend כדי שהלדג'ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.
+
+עודכן 2026-10-17
+
+הלדג'ר שולח מיילים דרך Resend, שירות שליחה עם תוכנית חינמית. Resend שולח רק מדומיין שלכם ומאומת. בלי דומיין, מורידים כל PDF או משתמשים בכפתור הוואטסאפ בעמוד המסמך.
+
+## הגדרת Resend
+
+1. נרשמים ב-resend.com.
+2. פותחים **Domains**, לוחצים **Add Domain** ומקלידים את הדומיין, למשל `acme.co.il`.
+3. Resend מציג רשומות DNS: אחת או שתיים ל-DKIM, אחת ל-SPF, ו-MX על תת-דומיין `send.`. מוסיפים אותן איפה שה-DNS של הדומיין מנוהל. ב-Cloudflare, Resend מציע להוסיף אותן בשבילכם.
+4. מחכים ל-**Verified**. דקות, לפעמים שעה.
+5. פותחים **API Keys**, לוחצים **Create API Key**, בוחרים **Sending access** ומעתיקים את המפתח. הוא מתחיל ב-`re_`.
+6. נותנים אותו ללדג'ר בשלב התוספות של תוכנת ההתקנה, או אחר כך כסוד `MAIL_API_KEY` יחד עם המשתנה `MAIL_FROM`, ראו [הוספה או החלפה של מפתח](https://open-ledger.matanlevanon.com/he/help/keys-later/).
+
+`MAIL_FROM` הוא השם והכתובת שהלקוחות רואים, למשל `Acme Ltd <billing@acme.co.il>`. הכתובת חייבת להיות על הדומיין המאומת.
+
+## איך לא להגיע לספאם
+
+1. **DMARC.** מוסיפים רשומת TXT בשם `_dmarc` עם הערך `v=DMARC1; p=none;`. אחרי שבועיים של דוחות נקיים, משנים `p=none` ל-`p=quarantine`. ג'ימייל ויאהו מצפים לרשומת DMARC מכל שולח.
+2. **מכבים מעקב.** ב-Resend, **Domains >** הדומיין שלכם **> Configuration**: מכבים open tracking ו-click tracking. פיקסלים של מעקב וקישורים מוחלפים דוחפים מיילים לקידומי מכירות ולספאם.
+3. **כתובת שעונים ממנה.** שולחים מכתובת שמקבלת מייל, כמו `billing@` עם תיבה או הפניה מאחוריה. תשובות מראות לג'ימייל שאנשים רוצים את המייל שלכם.
+4. **שולח אחד רק למסמכים.** לא שולחים ניוזלטרים מהכתובת ששולחת קבלות.
+5. **בודקים פעם אחת.** שולחים קבלה לג'ימייל שלכם, פותחים, לוחצים על שלוש הנקודות, **Show original**, ובודקים ש-SPF, DKIM ו-DMARC מראים **PASS**.
+
+## המייל הראשון ללקוח
+
+הלדג'ר מבקש הסכמה של הלקוח לפני המסמך הדיגיטלי הראשון. בקשו מהלקוח להוסיף את הכתובת שלכם לאנשי הקשר, והבאים יגיעו לתיבה הראשית.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/email/
+
+
+---
+
+# הכנסת הוצאות ללדג'ר
+
+העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.
+
+עודכן 2026-10-17
+
+## העלאה
+
+הדרך המהירה.
+
+1. פותחים **Expenses** ולוחצים **Upload expense**.
+2. בוחרים קובץ: PDF, JPG או PNG. בטלפון, מצלמים את הקבלה.
+3. עם מפתח Gemini או Anthropic, הלדג'ר קורא ספק, תאריך, סכומים ומע"מ וממלא אותם. בודקים ושומרים.
+4. בלי מפתח, מקלידים את הפרטים לבד.
+
+להוספת מפתח קריאה אחרי ההתקנה ראו [הוספה או החלפה של מפתח](https://open-ledger.matanlevanon.com/he/help/keys-later/).
+
+## חודש מגוגל דרייב
+
+למי שכבר שומר קבלות בדרייב, בתיקייה לכל חודש בשם `YYYY-MM`, למשל `2026-10`.
+
+1. עוקבים אחרי הגדרת הדרייב במאגר הקוד: פרויקט ב-Google Cloud, הפעלת Drive API ו-Sheets API, Service Account, ושיתוף תיקיית ההוצאות איתו כעורך. המדריך הוא `docs/drive-expenses-setup.md` ב-GitHub.
+2. נותנים ללדג'ר את מפתח ה-JSON של ה-Service Account כסוד `GOOGLE_SERVICE_ACCOUNT_JSON`, ראו [הוספה או החלפה של מפתח](https://open-ledger.matanlevanon.com/he/help/keys-later/).
+3. ב-**Settings > Expenses** מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי `/folders/`, ולוחצים **Save folder**.
+4. ב-**Expenses** בוחרים חודש ולוחצים **Import month**. כל קובץ נקרא עם AI ומחכה לבדיקה שלכם. הרצה כפולה לא מכפילה כלום.
+5. לייבוא כל בוקר, מפעילים **Daily sync** ב-**Settings > Expenses**.
+
+## בקרוב: העברת קבלות במייל
+
+אנחנו בונים כתובת מייל פרטית לכל לדג'ר. מגדירים כלל אחד בג'ימייל או באאוטלוק שמעביר אליה קבלות, וכל קבלה מגיעה ל-**Expenses** כשהיא כבר נקראה ומחכה לבדיקה. בלי דרייב, בלי Google Cloud. העמוד הזה יסביר את ההגדרה כשהיא תעלה.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/expenses/
+
+
+---
+
+# מהצעת מחיר לקבלה: המסמכים הראשונים
+
+סדר המסמכים בלדג'ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.
+
+עודכן 2026-10-17
+
+## הסדר
+
+1. **הצעת מחיר (Quote):** המחיר שאתם מציעים. בלי משמעות מס.
+2. **דרישת תשלום (Payment request):** מבקשת את הכסף. גם בלי משמעות מס.
+3. **קבלה**, ולעוסק מורשה **חשבונית מס קבלה:** יוצאת כשהכסף מגיע. זה המסמך שנחשב הכנסה.
+
+מדלגים על מה שלא צריך. לקוח ששילם כבר מקבל קבלה מיד.
+
+## דרישת תשלום
+
+1. לוחצים **Create new** ואז **Payment Request**.
+2. בוחרים לקוח או מוסיפים חדש. מוסיפים שורות: שירות מ-**Services** או טקסט חופשי, כמות ומחיר.
+3. מסמנים את אמצעי התשלום שיופיעו.
+4. לוחצים **Save and finalize**. הסיום נותן מספר ונועל את המסמך.
+5. שולחים: במייל מעמוד המסמך, בכפתור הוואטסאפ, או מורידים PDF.
+
+## כשהכסף מגיע
+
+1. פותחים את דרישת התשלום. ברשימה יש לה כפתור **Record payment**.
+2. ממלאים איך ומתי הלקוח שילם ואת הסכום.
+3. מאשרים. הלדג'ר מוציא קבלה ממוספרת וחתומה ומקשר אותה לדרישה.
+4. שולחים את הקבלה באותה דרך.
+
+## טעויות
+
+- **לפני ששלחתם:Cancel** בעמוד המסמך.
+- **אחרי ששלחתם:** מסמך סופי לא משתנה. פותחים את הקבלה ולוחצים **Issue credit** על כולה או על חלק ממנה.
+
+## חיוב חודשי
+
+לריטיינר חודשי, **Income > Recurring** מוציא דרישת תשלום או קבלה כל חודש, ושולח אותה אם בוחרים **Issue and send automatically**.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/first-invoice/
+
+
+---
+
+# כניסה ראשונה והגדרות
+
+הכניסה הראשונה ללדג'ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.
+
+עודכן 2026-10-17
+
+## כניסה
+
+1. פותחים את כתובת הלדג'ר מהמסך האחרון של תוכנת ההתקנה או מקובץ הסיכום על שולחן העבודה.
+2. Cloudflare מציג עמוד כניסה. מקלידים את המייל של הבעלים ולוחצים **Send me a code**.
+3. מעתיקים את הקוד מהמייל ומדביקים. נכנסתם.
+
+כל כניסה עובדת כך. מי שהמייל שלו לא ברשימה לא מגיע ללדג'ר בכלל, Cloudflare עוצר אותו קודם.
+
+## פרטי העסק
+
+הכניסה הראשונה פותחת את מסך ההגדרה. הלדג'ר לא יוצר אף מסמך עד שהשדות החובה מלאים: שם העסק באנגלית ובעברית, מספר העוסק והכתובת. אותו טופס נמצא ב-**Settings > Business**.
+
+שדות רשות מודפסים על המסמכים כשהם מלאים: שורת תיאור, מייל, טלפון, אתר, ובדרישות תשלום גם פרטי בנק וקישורי תשלום.
+
+## לוגו וחתימה
+
+- **Settings > Business > Logo > Upload image.** קובץ PNG, JPEG, WebP או SVG, עד 2MB.
+- **Settings > Signature > Signature image > Upload image.** הכי טוב PNG עם רקע שקוף. החתימה מודפסת מעל שורת החותם בכל מסמך.
+
+## מספור, אם עבדתם קודם בתוכנה אחרת
+
+ב-**Settings > Numbering** יש סדרה לכל סוג מסמך, וכל סדרה מתחילה ב-1. אם הוצאתם השנה קבלות או חשבוניות בתוכנה אחרת, קובעים לכל סדרה את המספר הבא אחרי האחרון שהוצאתם שם.
+
+עושים את זה לפני המסמך הראשון בסדרה. מספר ההתחלה ננעל ברגע שמסמך מקבל מספר, והלדג'ר לא מאפשר לשנות אותו אחר כך.
+
+## אמצעי תשלום
+
+**Settings > Payment methods.** מוסיפים את הדרכים שבהן לקוחות משלמים לכם: העברה בנקאית עם פרטי החשבון, ביט, כרטיס, קישור תשלום. דרישות תשלום מציגות את מה שסימנתם.
+
+## בדיקה לפני שמתחילים
+
+1. מוציאים קבלה אחת לעצמכם על סכום קטן.
+2. פותחים את העותק ללקוח ואת העותק המתויק. בודקים כותרת, מספר עוסק, לוגו וחתימה.
+3. בודקים עם רואה החשבון: אילו סוגי מסמכים צריך, את סוג העסק, ושליחת מסמכים דיגיטלית.
+
+## הצעד הבא
+
+[מהצעת מחיר לקבלה](https://open-ledger.matanlevanon.com/he/help/first-invoice/).
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/first-sign-in/
+
+
+---
+
+# התקנת Open Ledger IL צעד אחר צעד
+
+כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
+
+עודכן 2026-10-17
+
+קודם קראו את [לפני ההתקנה](https://open-ledger.matanlevanon.com/he/help/before-you-start/). השאירו את מייל הרכישה פתוח, צריך ממנו את המפתח ואת קישור ההורדה.
+
+## 1. מורידים ופותחים את תוכנת ההתקנה
+
+1. לוחצים על קישור ההורדה במייל הרכישה. הקובץ הוא `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, בערך 100MB.
+2. הקישור עובד 72 שעות ו-5 הורדות. אם הוא כבר לא עובד, פותחים אותו בכל זאת ולוחצים **Email me a fresh link**.
+3. לוחצים פעמיים על הקובץ. Windows מציג **Windows protected your PC**. לוחצים **More info** ואז **Run anyway**. הקובץ עדיין לא חתום בתעודה בתשלום, ולכן Windows מזהיר על כל עותק חדש.
+4. תוכנת ההתקנה נפתחת בדפדפן. משאירים פתוחים את הלשונית ואת החלון השחור הקטן עד הסוף. סגירה של אחד מהם עוצרת את ההתקנה.
+
+## 2. מפתח רישיון ופרטי העסק
+
+1. מדביקים את מפתח הרישיון ואת מספר העוסק.
+2. ממלאים שם עסק, מייל של הבעלים וסוג עסק: עוסק פטור, עוסק מורשה או חברה בע"מ. הלדג'ר שואל שוב במסך הראשון שלו, אז טעות כאן קלה לתיקון.
+3. תחת **More people who may sign in** מוסיפים את רואה החשבון או מייל נוסף שלכם, אחד בכל שורה. אפשר להוסיף אנשים גם אחר כך, ראו [גישה לרואה חשבון](https://open-ledger.matanlevanon.com/he/help/users/).
+
+## 3. חשבון Cloudflare
+
+הלדג'ר רץ בחשבון Cloudflare שלכם. תוכנת ההתקנה מציגה שלושה שלבים, לפי הסדר.
+
+1. **אין עדיין חשבון Cloudflare?** נרשמים ב-dash.cloudflare.com/sign-up עם המייל של העסק ומאשרים את המייל. מדלגים על ההצעה להוסיף אתר.
+2. **מפעילים Zero Trust ו-R2.** לוחצים **Show me how** בשלב הזה. שניהם חינמיים ושניהם מבקשים כרטיס. לא יוצרים bucket, תוכנת ההתקנה עושה את זה. מסמנים **I did it**.
+3. **יוצרים API token.** לפי [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/). כאן רוב האנשים נתקעים. מסמנים **I did it**.
+4. מדביקים את הטוקן ולוחצים **Check token**. בוחרים את החשבון.
+
+## 4. דומיין או workers.dev
+
+אחרי בדיקת הטוקן, תוכנת ההתקנה שואלת על הכתובת של הלדג'ר.
+
+- **עם דומיין ב-Cloudflare:** מקלידים כתובת עליו, למשל `ledger.acme.co.il`. תוכנת ההתקנה יוצרת אותה.
+- **בלי דומיין:** מסמנים **Use the free Cloudflare address instead of a domain** ובוחרים שם ל-workers.dev, למשל שם העסק באנגלית. הלקוחות רואים את הכתובת הזו בקישורים שאתם שולחים. מעבר לדומיין שלכם בהמשך משנה את הכתובת.
+
+## 5. רשות המסים
+
+בוחרים איך הלדג'ר מקבל מספרי הקצאה לחשבוניות מס. במהדורה המחוברת זה כבר ממולא: הלדג'ר מתחבר דרך MTN, בלי שום הקלדה. אחרי ההתקנה נכנסים פעם אחת עם המשתמש שלכם ברשות המסים, ראו [חיבור לרשות המסים](https://open-ledger.matanlevanon.com/he/help/tax-authority/).
+
+## 6. תוספות
+
+הכול לא חובה. כל כפתור **?** מסביר מאיפה להביא את המפתח.
+
+- **קריאת הוצאות:** בוחרים Gemini או Anthropic ומדביקים את המפתח. מפתח Gemini מ-aistudio.google.com מתחיל ב-`AQ.`, מפתחות ישנים ב-`AIza`.
+- **שליחת מיילים:** מפתח ה-API של Resend והשולח, בצורה `Business Name <billing@your-domain.co.il>`. ראו [שליחת מסמכים במייל](https://open-ledger.matanlevanon.com/he/help/email/).
+- **התראות Slack:** כתובת ה-webhook.
+
+מדלגים על מה שאין לכם. אפשר להוסיף אחר כך, ראו [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/).
+
+## 7. התקנה וסיום
+
+1. בודקים את הסיכום ולוחצים **Install**. זה לוקח בערך 3 דקות.
+2. המסך האחרון מציג את כתובת הלדג'ר ו-**MCP token**. מעתיקים את הטוקן עכשיו, או לוחצים על אחד מכפתורי ההורדה. Cloudflare לא מציג אותו שוב. ראו [חיבור Claude](https://open-ledger.matanlevanon.com/he/help/connect-claude/).
+3. תוכנת ההתקנה משאירה קובץ סיכום על שולחן העבודה, בלי סודות.
+4. מוחקים את ה-API token: ב-dash.cloudflare.com/profile/api-tokens, שלוש הנקודות ליד הטוקן, **Delete**. הלדג'ר כבר לא צריך אותו.
+
+## הצעד הבא
+
+[כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/).
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/install/
+
+
+---
+
+# הוספה או החלפה של מפתח אחרי ההתקנה
+
+הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
+
+עודכן 2026-10-17
+
+הלדג'ר קורא את המפתחות שלו מה-Worker שלו ב-Cloudflare. Worker הוא התוכנה שמריצה את הלדג'ר. שם מוסיפים או מחליפים מפתח.
+
+## איפה
+
+1. נכנסים ל-dash.cloudflare.com.
+2. פותחים **Workers & Pages** ולוחצים **mtn-open-ledger**.
+3. פותחים **Settings** ואז **Variables and Secrets**.
+4. לוחצים **+ Add**. בוחרים **Secret** למפתחות ו-**Text** להגדרות רגילות. מקלידים את השם ומדביקים את הערך.
+5. לוחצים **Deploy**. הלדג'ר משתמש בערך החדש תוך דקה.
+
+השמות מדויקים, באותיות גדולות.
+
+## אילו שמות
+
+- **קריאת קבלות עם Gemini:** Secret בשם `GEMINI_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `gemini`.
+- **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `anthropic`.
+- **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ו-Text בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
+- **התראות Slack:** Secret בשם `SLACK_WEBHOOK_URL`.
+- **הוצאות מגוגל דרייב:** Secret בשם `GOOGLE_SERVICE_ACCOUNT_JSON` עם כל התוכן של קובץ ה-JSON, מה-`{` הראשון עד ה-`}` האחרון.
+- **טוקן MCP:** Secret בשם `MCP_TOKEN`, ראו [חיבור Claude](https://open-ledger.matanlevanon.com/he/help/connect-claude/).
+
+## כללים
+
+- לא מדביקים מפתח במייל, בצ'אט או במסמך. רק ב-Cloudflare או בתוכנת ההתקנה.
+- אם מפתח דלף, יוצרים חדש אצל הספק, מוחקים שם את הישן, ומחליפים כאן.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/keys-later/
+
+
+---
+
+# גבייה עם גרואו, קארדקום או סולק אחר
+
+סולק גובה את הכסף והלדג'ר מוציא את הקבלות, ידנית או אוטומטית, בלי שני מסמכים לאותו תשלום.
+
+עודכן 2026-10-17
+
+הלדג'ר מוציא את המסמכים. סולק כמו Grow, Cardcom, PayPlus או ביט גובה את הכסף. השניים עובדים זה לצד זה.
+
+## קודם כול: מכבים את המסמכים של הסולק
+
+רוב הסולקים מוציאים קבלה או חשבונית משלהם על כל תשלום. מכבים את זה בהגדרות של הסולק, או מבקשים מהתמיכה שלהם. אחרת כל תשלום מקבל שני מסמכים עם שני מספרים שונים, והספרים מפסיקים להתאים לבנק.
+
+## דרך 1: ידנית
+
+1. בלדג'ר מוסיפים את קישור התשלום של הסולק כאמצעי תשלום: **Settings > Payment methods**, סוג **Card** או **Other**, ומדביקים את הקישור.
+2. שולחים ללקוח דרישת תשלום עם אמצעי התשלום הזה מסומן.
+3. כשהסולק מודיע שהכסף נכנס, פותחים את דרישת התשלום ולוחצים **Record payment**. בוחרים **Card** ומדביקים את מספר העסקה של הסולק כאסמכתא.
+4. הלדג'ר מוציא את הקבלה. שולחים אותה ללקוח.
+
+שתי דקות לתשלום. מתאים לעסק עם כמה תשלומים בשבוע.
+
+## דרך 2: אוטומטית, למי שמכיר אוטומציות
+
+ללדג'ר יש נקודת חיבור MCP, דלת לתוכנות אחרות, בכתובת שלו עם `/mcp` בסוף. היא מקבלת קריאות JSON-RPC (`tools/call`) עם הכותרת `Authorization: Bearer` וטוקן ה-MCP שלכם. בין הכלים: `list_clients`, `create_draft`, `finalize_document` ו-`record_payment`.
+
+כלי אוטומציה כמו Make, Zapier או n8n מחבר את הסולק אליה:
+
+1. בסולק מפעילים webhook לתשלום שהצליח ומכוונים אותו לתרחיש חדש.
+2. בתרחיש מוצאים את הלקוח עם `list_clients`, לפי שם או מייל של המשלם.
+3. רושמים את התשלום על דרישת התשלום הפתוחה עם `record_payment` ו-`confirm: true`. התרחיש צריך את מזהה המסמך של דרישת התשלום. מחזיקים טבלה קטנה של קישור תשלום מול מזהה מסמך, ומעדכנים אותה כששולחים כל דרישה.
+4. הלדג'ר מוציא את הקבלה.
+
+ההקמה והבדיקה לוקחות אחר צהריים. מתחילים עם תשלום קטן אחד. לטוקן ה-MCP ראו [חיבור Claude או אפליקציה אחרת](https://open-ledger.matanlevanon.com/he/help/connect-claude/).
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/payment-providers/
+
+
+---
+
+# חיבור לרשות המסים למספרי הקצאה
+
+מחברים את הלדג'ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.
+
+עודכן 2026-10-17
+
+חשבונית מס לעוסק מורשה ישראלי מעל הסף צריכה מספר הקצאה מרשות המסים. עם החיבור, הלדג'ר מבקש את המספר כשמסיימים את החשבונית ומדפיס אותו על המסמך.
+
+עוסק פטור לא מוציא חשבוניות מס, ולכן לא צריך חיבור. מתחברים כשעוברים לעוסק מורשה.
+
+## התחברות
+
+1. בלדג'ר פותחים **ITA** בתפריט הצד.
+2. לוחצים **Connect to ITA**.
+3. נפתח עמוד הכניסה של רשות המסים. נכנסים עם המשתמש שלכם ברשות המסים: קוד המשתמש והקוד החד פעמי שמגיע לטלפון. משתמשים במשתמש של העסק עצמו, זה של מספר העוסק שלו.
+4. מאשרים את הבקשה. חוזרים ללדג'ר, והעמוד מציג **Connected** עם מספר הימים שנשארו.
+
+המהדורה המחוברת עוברת דרך האפליקציה המאושרת של MTN ברשות המסים, אז אין צורך לרשום אפליקציה משלכם.
+
+## כל 90 יום
+
+הכניסה לרשות המסים תקפה 90 יום. עמוד ITA מציג **Login ends in N days**. עם התראות Slack, הלדג'ר מזהיר מראש. כשהיא נגמרת, פותחים **ITA** ולוחצים **Connect again**. חשבונית שעדיין מחכה למספר מופיעה ב-**Allocation queue** באותו עמוד. אחרי ההתחברות לוחצים **Retry now**.
+
+## כשמספר נדחה
+
+עמוד ITA מציג את הסיבה. האפשרויות הן לבטל את החשבונית, להמשיך בלי מספר עם הודעה על המסמך, או לעבור לחיוב עצמי (reverse charge) בהסכמת הלקוח. שאלו את רואה החשבון מה מתאים.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/tax-authority/
+
+
+---
+
+# בעיות נפוצות ואיך פותרים אותן
+
+פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
+
+עודכן 2026-10-17
+
+## תוכנת ההתקנה
+
+- **Windows protected your PC.** לוחצים **More info** ואז **Run anyway**.
+- **האנטי-וירוס מחק את הקובץ.** משחזרים אותו מההסגר של האנטי-וירוס ומאשרים, או מורידים שוב ממייל הרכישה.
+- **לחיצה כפולה ושום דבר לא נפתח.** מחכים 20 שניות, הקובץ גדול. תוכנת ההתקנה פותחת לשונית בדפדפן בכתובת שמתחילה ב-`http://127.0.0.1`. אם לא נפתחה לשונית, מעתיקים את הכתובת מהחלון השחור הקטן לדפדפן.
+- **מפתח הרישיון נדחה.** מקלידים אותו בצורה `OL-XXXX-XXXX-XXXX-XXXX` ובודקים את מספר העוסק. המפתח עובד רק למספר שבשבילו נקנה. התקנה חוזרת של אותו עסק עם אותו מפתח עובדת.
+
+## Cloudflare
+
+- **אין Zone Resources.** הוא מופיע רק אחרי שורת הרשאה מסוג Zone. בלי דומיין, מדלגים ומשתמשים בכתובת החינמית של workers.dev. ראו [יצירת ה-API token](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/).
+- **Check token נכשל.** ההודעה אומרת איזו הרשאה חסרה. עורכים את הטוקן, מוסיפים את השורה, שומרים ובודקים שוב.
+- **Zero Trust או R2 מבקשים כרטיס.** שתי התוכניות החינמיות מבקשות אמצעי תשלום ולא מחייבות.
+- **Purchase R2 Plan.** לוחצים ומאשרים את התוכנית החינמית. 10GB הראשונים בחודש בחינם.
+
+## מפתחות
+
+- **מפתח Gemini נדחה.** מפתחות חדשים מ-Google AI Studio מתחילים ב-`AQ.`. תוכנת ההתקנה של גרסה 1.6.0 מ-17 באוקטובר 2026 מקבלת אותם. עם תוכנת התקנה ישנה, בוחרים **No** בקריאת הוצאות ומוסיפים את המפתח אחר כך, ראו [הוספה או החלפה של מפתח](https://open-ledger.matanlevanon.com/he/help/keys-later/).
+- **מפתח Anthropic נדחה.** הוא מתחיל ב-`sk-ant-`. מעתיקים אותו שוב מ-console.anthropic.com.
+
+## כניסה
+
+- **עמוד של Cloudflare מבקש מייל.** זו הכניסה. מקלידים את מייל הבעלים ומדביקים את הקוד מהמייל.
+- **הקוד לא מגיע.** בודקים בספאם, ובודקים שזה המייל שהוזן בתוכנת ההתקנה.
+- **מישהו אחר נעצר בעמוד של Cloudflare.** מוסיפים את המייל שלו ב-Cloudflare Access, ראו [גישה לרואה חשבון](https://open-ledger.matanlevanon.com/he/help/users/).
+
+## הורדות ומייל
+
+- **קישור ההורדה פג או נגמר.** לוחצים **Email me a fresh link** באותו עמוד.
+- **לקוחות מקבלים את המסמכים בספאם.** ראו [שליחת מסמכים בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/).
+- **טוקן ה-MCP אבד.** ראו [חיבור Claude](https://open-ledger.matanlevanon.com/he/help/connect-claude/).
+
+## רשות המסים
+
+- **ITA מבקש להתחבר מחדש.** הכניסה תקפה 90 יום. פותחים **ITA** ולוחצים **Connect again**.
+- **חשבונית מחכה למספר 24 שעות.** מבקשים את המספר באתר של רשות המסים ומקלידים אותו בעמוד ITA.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/troubleshooting/
+
+
+---
+
+# עדכונים וגיבויים
+
+איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
+
+עודכן 2026-10-17
+
+## בדיקת עדכונים
+
+**Settings > Updates > Check for updates.** הלדג'ר בודק גם בכל 1 לחודש. שום דבר לא מותקן לבד.
+
+## עדכון
+
+1. פותחים את קישור ההורדה ממייל הרכישה. אם הוא כבר לא עובד, פותחים אותו בכל זאת ולוחצים **Email me a fresh link**.
+2. מריצים את תוכנת ההתקנה החדשה על אותו חשבון Cloudflare, עם אותו מפתח רישיון.
+3. היא מעדכנת את הלדג'ר ושומרת הכול: מסד הנתונים, הקבצים, הכניסה והמפתחות.
+
+## גיבויים
+
+- כל רבעון הלדג'ר כותב עותק מלא של מסד הנתונים ורשימה של כל הקבצים ל-bucket הגיבויים שלו, ובודק שהעותק משתחזר.
+- כשגוגל דרייב מחובר, אותו עותק נשמר גם בדרייב, מחוץ ל-Cloudflare.
+- כל לילה הלדג'ר בודק שאין חורים במספור ושאף מסמך לא השתנה. **Settings > Backups > Run check now** מריץ את הבדיקה מתי שרוצים.
+
+## שומרים על חשבון Cloudflare
+
+חשבון Cloudflare מחזיק את הספרים שלכם. מפעילים אימות דו-שלבי: dash.cloudflare.com, הפרופיל, **Authentication**, **Two-Factor Authentication**.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/updates-backups/
+
+
+---
+
+# גישה לרואה חשבון או לעוזר
+
+הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
+
+עודכן 2026-10-17
+
+לכל אדם יש תפקיד בכל עסק.
+
+- **Owner (בעלים):** הכול, כולל הגדרות, משתמשים, מספור וחיבור לרשות המסים.
+- **Assistant (עוזר):** לקוחות, הצעות מחיר, דרישות תשלום, קבלות, שליחה והוצאות. בלי הגדרות, משתמשים או רשות המסים.
+- **Accountant (רואה חשבון):** רואה את מה שאתם מאשרים, עד תאריך סיום. כל פעולה נרשמת. רואה חשבון אף פעם לא מוציא או מבטל מסמך.
+
+## הוספת אדם
+
+שני מקומות, שניהם חובה.
+
+### 1. בלדג'ר
+
+1. בוחרים את העסק בבורר שלמעלה.
+2. בתפריט הצד פותחים **Accountant > Users**.
+3. לוחצים **Invite someone**.
+4. מקלידים מייל ובוחרים תפקיד. לרואה חשבון צריך גם תאריך סיום ומתגים: מסמכי הכנסה, הוצאות, דוחות, החבילה החודשית, מבנה אחיד.
+5. לוחצים **Send invite**.
+
+למייל נוסף שלכם בוחרים **Owner**.
+
+### 2. ב-Cloudflare Access
+
+מיילים שהכנסתם בתוכנת ההתקנה כבר שם. לכל אחד חדש:
+
+1. נכנסים ל-dash.cloudflare.com ופותחים **Zero Trust**.
+2. נכנסים ל-**Access > Applications** ופותחים את **MTN Open Ledger**.
+3. פותחים את הלשונית **Policies** ועורכים את מדיניות הכניסה.
+4. תחת **Include > Emails** מוסיפים את המייל.
+5. לוחצים **Save**.
+
+עד שלב 5, Cloudflare עוצר את האדם בעמוד הכניסה שלו.
+
+## הסרת אדם
+
+1. בלדג'ר: **Accountant > Users**, לוחצים **Revoke** בשורה שלו.
+2. ב-Cloudflare Access: מוחקים את המייל מ-**Include > Emails** ושומרים.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/he/help/users/
+
+
+---
+
+# Before you install: what you need
+
+The accounts, details and 30 minutes you need before you run the Open Ledger IL installer, and which parts are optional.
+
+Updated 2026-10-17
+
+The install takes about 30 minutes the first time. Most of that is creating accounts. Have these ready before you start.
+
+## Required
+
+- **A Windows computer.** The installer runs on Windows 10 or 11. After the install, the Ledger opens in any browser, on any computer or phone.
+- **The licence key** from your purchase email. It looks like `OL-XXXX-XXXX-XXXX-XXXX`. One key is one business.
+- **The business details:** the business name as it should appear on documents, the owner's email, and the 9-digit tax number (ת"ז for a sole trader, ח.פ. for a company). The key works for this tax number only.
+- **An email address you read.** It becomes the owner's sign-in. Cloudflare sends a one-time code to it each time you sign in.
+- **A credit card.** Cloudflare asks for one to turn on two free services, Zero Trust and R2. The free plans cost $0 and nothing is charged.
+
+## Optional
+
+You add each of these during the install or later.
+
+- **A domain**, for example acme.co.il, already in your Cloudflare account. Without one, the Ledger runs on a free Cloudflare address ending in workers.dev. See [Domain or workers.dev](https://open-ledger.matanlevanon.com/help/install/).
+- **A Gemini or Anthropic API key**, so the Ledger reads receipts and supplier invoices for you. Without one, you type expense details by hand.
+- **A Resend API key**, so the Ledger emails documents to clients. Resend needs a domain. Without one, you download each PDF or share it on WhatsApp.
+- **A Slack webhook**, for alerts such as a Tax Authority login about to end.
+
+## Who owns what
+
+Everything is created in your own accounts, in your name: the Cloudflare account, the database, the files. MTN does not hold your data. The only link to MTN is the Tax Authority connection in the connected edition, which passes your allocation-number requests through MTN's approved app.
+
+## Next
+
+[Install with the installer](https://open-ledger.matanlevanon.com/help/install/).
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/before-you-start/
+
+
+---
+
+# Create the Cloudflare API token
+
+The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
+
+Updated 2026-10-17
+
+The token is a password with limited rights. It lets the installer create the Ledger in your Cloudflare account. You delete it after the install.
+
+## Open the token page
+
+1. Open dash.cloudflare.com/profile/api-tokens in a new tab. Keep the installer open.
+2. Click **Create Token**.
+3. Scroll to the bottom of the list of templates. Find **Custom token** and click **Get started**.
+4. Token name: anything, for example `Ledger install`.
+
+## Add the permission rows
+
+Each row has three boxes: the type (**Account** or **Zone**), the permission, and the level (**Read** or **Edit**). The first row is there already. Click **+ Add more** for each next row.
+
+Add these six rows:
+
+1. Account | Workers Scripts | Edit
+2. Account | D1 | Edit
+3. Account | Workers R2 Storage | Edit
+4. Account | Access: Apps and Policies | Edit
+5. Account | Access: Organizations, Identity Providers, and Groups | Read
+6. Account | Account Settings | Read
+
+Only if your account has a domain, add three more:
+
+1. Zone | Zone | Read
+2. Zone | Workers Routes | Edit
+3. Zone | DNS | Edit
+
+How to tell if you have a domain: on dash.cloudflare.com, the **Domains** list (on older menus, **Websites**) shows it. A new account has none.
+
+## Account and zone resources
+
+1. Below the permissions, under **Account Resources**, choose **Include**, then the business's account.
+2. **Zone Resources** shows up only after you add a Zone row. With a domain: **Include**, then **Specific zone**, then the domain the Ledger will use. Without a domain you added no Zone rows, so this part does not show. Skip it.
+3. **Client IP Address Filtering** and **TTL**: leave empty.
+
+## Create and copy
+
+1. Click **Continue to summary**, then **Create Token**.
+2. Click **Copy** next to the token. Cloudflare shows it once. If you lose it, create a new one the same way.
+3. Paste it in the installer and click **Check token**.
+
+## If Check token fails
+
+- **A permission is missing:** the message names it. Edit the token on the token page, add the row, save, and click **Check token** again. The token value stays the same.
+- **Wrong account:** the token's **Account Resources** points at a different account. Edit it and pick the right one.
+- **Pasted with a space:** copy it again with the **Copy** button.
+- **Zero Trust or R2 not on yet:** finish step 1 of the installer first.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/cloudflare-token/
+
+
+---
+
+# Connect Claude or another AI app (MCP)
+
+Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
+
+Updated 2026-10-17
+
+With MCP connected, you ask Claude things like "how much does Acme owe me" or "make a payment request for 3 hours of consulting", and Claude works in your Ledger. Claude creates drafts, and finalizes a document only after you confirm.
+
+## What you need
+
+- **The address:** your Ledger's address followed by `/mcp`, for example `https://ledger.acme.co.il/mcp`.
+- **The token:** shown once on the installer's last screen.
+
+## Claude Desktop
+
+1. On the installer's last screen you clicked **Download for Claude Desktop**. The file `claude-desktop-<your address>.json` is in your Downloads folder.
+2. In Claude Desktop: **Settings > Developer > Edit Config**. The file `claude_desktop_config.json` opens.
+3. Copy the `open-ledger` entry from the downloaded file into `mcpServers` in that file. Save.
+4. Restart Claude Desktop. This needs Node.js on the computer, from nodejs.org.
+
+## Claude Code
+
+Click **Download for Claude Code** on the installer's last screen and save the file as `.mcp.json` in the folder you work in. Or add the server with the address and the header `Authorization: Bearer <token>`.
+
+## Lost the token
+
+Cloudflare never shows a secret again, so you make a new token. The old one stops working at that moment.
+
+### In the Ledger
+
+1. Open **Settings > MCP**. Only an owner sees this tab.
+2. Click **Make a new token**, then **Make the token** to confirm.
+3. Copy the token, or click **Download for Claude Desktop** or **Download for Claude Code**. It is shown once.
+4. Put it in the Claude config and restart Claude.
+
+The same tab shows the MCP address with a **Copy** button, when the token was last used, and a switch that turns MCP off for every app.
+
+### No MCP tab yet
+
+The tab is in Ledgers updated after 17 October 2026. On an older Ledger, update first, see [Updates](https://open-ledger.matanlevanon.com/help/updates-backups/). Or set the token in Cloudflare:
+
+1. Look in Downloads for `claude-desktop-....json`. If it is there, the old token is inside and nothing else is needed.
+2. Otherwise make a token in PowerShell on your computer:
+
+`$b = New-Object byte 32; Security.Cryptography.RandomNumberGenerator::Create().GetBytes($b); Convert::ToBase64String($b)`
+
+1. In dash.cloudflare.com: **Workers & Pages**, click **mtn-open-ledger**, then **Settings > Variables and Secrets**. Edit **MCP_TOKEN**, paste the line it printed, and click **Deploy**.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/connect-claude/
+
+
+---
+
+# Send documents by email, and keep them out of spam
+
+Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
+
+Updated 2026-10-17
+
+The Ledger sends email through Resend, a sending service with a free plan. Resend sends only from a domain you own and verify. Without a domain, download each PDF or use the WhatsApp button on the document page.
+
+## Set up Resend
+
+1. Sign up at resend.com.
+2. Open **Domains**, click **Add Domain**, and type your domain, for example `acme.co.il`.
+3. Resend shows DNS records: one or two for DKIM, one for SPF, and one MX on a `send.` subdomain. Add them where the domain's DNS lives. On Cloudflare, Resend offers to add them for you.
+4. Wait for **Verified**. Minutes, sometimes an hour.
+5. Open **API Keys**, click **Create API Key**, pick **Sending access**, and copy the key. It starts with `re_`.
+6. Give it to the Ledger in the installer's Extras step, or later as the secret `MAIL_API_KEY` plus the variable `MAIL_FROM`, see [Add or change a key](https://open-ledger.matanlevanon.com/help/keys-later/).
+
+`MAIL_FROM` is the name and address clients see, for example `Acme Ltd <billing@acme.co.il>`. The address must be on the verified domain.
+
+## Keep it out of spam
+
+1. **DMARC.** Add a TXT record named `_dmarc` with the value `v=DMARC1; p=none;`. After two weeks of clean reports, change `p=none` to `p=quarantine`. Gmail and Yahoo expect a DMARC record from every sender.
+2. **Turn off tracking.** In Resend, **Domains >** your domain **> Configuration**: turn off open tracking and click tracking. Tracking pixels and rewritten links push mail into Promotions and spam.
+3. **A real reply address.** Send from an address that receives mail, such as `billing@` with a mailbox or forwarding behind it. Replies tell Gmail people want your mail.
+4. **One sender for documents only.** Do not send newsletters from the address that sends receipts.
+5. **Test once.** Send a receipt to your own Gmail, open it, click the three dots, **Show original**, and check that SPF, DKIM and DMARC all say **PASS**.
+
+## The first email to a client
+
+The Ledger asks for the client's consent before the first digital document. Ask the client to add your address to their contacts, and the next ones reach the inbox.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/email/
+
+
+---
+
+# Get your expenses into the Ledger
+
+Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.
+
+Updated 2026-10-17
+
+## Upload
+
+The quickest way.
+
+1. Open **Expenses** and click **Upload expense**.
+2. Pick the file: PDF, JPG or PNG. On a phone, take a photo of the paper receipt.
+3. With a Gemini or Anthropic key set, the Ledger reads the supplier, date, amounts and VAT, and fills them in. Check them and save.
+4. Without a key, type the details yourself.
+
+To add a reading key after the install, see [Add or change a key](https://open-ledger.matanlevanon.com/help/keys-later/).
+
+## A month from Google Drive
+
+For people who already keep receipts in Drive, one folder per month named `YYYY-MM`, for example `2026-10`.
+
+1. Follow the Drive setup in the repository: a Google Cloud project, the Drive and Sheets APIs, a service account, and the expenses folder shared with that account as Editor. The guide is `docs/drive-expenses-setup.md` on GitHub.
+2. Give the Ledger the service account's JSON key as the secret `GOOGLE_SERVICE_ACCOUNT_JSON`, see [Add or change a key](https://open-ledger.matanlevanon.com/help/keys-later/).
+3. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
+4. In **Expenses**, pick the month and click **Import month**. Each file goes through AI reading and waits for your check. Running it twice adds nothing twice.
+5. To import every morning, turn on **Daily sync** in **Settings > Expenses**.
+
+## Coming: forward receipts by email
+
+We are building a private email address for each Ledger. You set one rule in Gmail or Outlook that forwards receipts to it, and every receipt lands in **Expenses** read and waiting for your check. No Drive, no Google Cloud. This page will explain the setup once it ships.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/expenses/
+
+
+---
+
+# From quote to receipt: your first documents
+
+The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.
+
+Updated 2026-10-17
+
+## The order
+
+1. **Quote:** the price you offer. No tax meaning.
+2. **Payment request** (דרישת תשלום): asks for the money. No tax meaning either.
+3. **Receipt**, or for an עוסק מורשה a **tax invoice/receipt:** issued when the money arrives. This is the document that counts as income.
+
+You skip steps you do not need. A client who already paid gets a receipt straight away.
+
+## Make a payment request
+
+1. Click **Create new**, then **Payment Request**.
+2. Pick the client or add a new one. Add the lines: a service from **Services**, or free text, quantity and price.
+3. Tick the payment methods to show.
+4. Click **Save and finalize**. Finalizing gives it a number and locks it.
+5. Send it: by email from the document page, or with the WhatsApp button, or download the PDF.
+
+## When the money arrives
+
+1. Open the payment request. In the list it has a **Record payment** button.
+2. Fill in how and when the client paid, and the amount.
+3. Confirm. The Ledger issues the receipt, numbered and signed, and links it to the request.
+4. Send the receipt the same way.
+
+## Mistakes
+
+- **Before you send:Cancel** on the document page.
+- **After you send:** a final document never changes. Open the receipt and click **Issue credit** for all or part of it.
+
+## Recurring
+
+For a monthly retainer, **Income > Recurring** issues a payment request or a receipt every month, and sends it if you choose **Issue and send automatically**.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/first-invoice/
+
+
+---
+
+# First sign-in and setup
+
+Sign in to your Ledger for the first time, fill in the business profile, logo, signature and numbering, and check one receipt before you go live.
+
+Updated 2026-10-17
+
+## Sign in
+
+1. Open the Ledger's address from the installer's last screen or the Desktop summary.
+2. Cloudflare shows its sign-in page. Type the owner email and click **Send me a code**.
+3. Copy the code from the email and paste it. You are in.
+
+Every sign-in works this way. A person whose email is not on the list never reaches the Ledger, Cloudflare stops them first.
+
+## Business profile
+
+The first sign-in opens the setup screen. The Ledger creates no document until the required fields hold a value: the business name in English and Hebrew, the tax number and the address. The same form lives in **Settings > Business**.
+
+Optional fields print on documents when set: tagline, email, phone, website, and on payment requests also bank details and payment links.
+
+## Logo and signature
+
+- **Settings > Business > Logo > Upload image.** PNG, JPEG, WebP or SVG, up to 2 MB.
+- **Settings > Signature > Signature image > Upload image.** A transparent PNG works best. It prints above the signer line on every issued document.
+
+## Numbering, if you used another system before
+
+**Settings > Numbering** lists one series per document type, each starting at 1. If you issued receipts or invoices in another system this year, set each series to one more than the last number you issued there.
+
+Do this before the first document in that series. The start number locks the moment a document takes a number, and the Ledger refuses any later change.
+
+## Payment methods
+
+**Settings > Payment methods.** Add the ways clients pay you: bank transfer with your account details, Bit, card, a payment link. Payment requests list the ones you tick.
+
+## Check before you go live
+
+1. Issue one receipt to yourself for a small amount.
+2. Open the client copy and the filed copy. Check the header, the tax number, the logo and the signature.
+3. Check with your accountant: the document types you need, the business type, and sending documents digitally.
+
+## Next
+
+[From quote to receipt](https://open-ledger.matanlevanon.com/help/first-invoice/).
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/first-sign-in/
+
+
+---
+
+# Install Open Ledger IL step by step
+
+Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
+
+Updated 2026-10-17
+
+Read [Before you install](https://open-ledger.matanlevanon.com/help/before-you-start/) first. Keep the purchase email open, you need the key and the download link.
+
+## 1. Download and open the installer
+
+1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, about 100 MB.
+2. The link works for 72 hours and 5 downloads. If it no longer works, open it anyway and click **Email me a fresh link**.
+3. Double-click the file. Windows shows **Windows protected your PC**. Click **More info**, then **Run anyway**. The file is not signed with a paid certificate yet, so Windows warns about every new copy.
+4. The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.
+
+## 2. Licence key and business
+
+1. Paste the licence key and the business tax number.
+2. Fill in the business name, the owner email and the business type: עוסק פטור, עוסק מורשה or חברה בע"מ. The Ledger asks once more on its first screen, so a mistake here is easy to fix.
+3. Under **More people who may sign in**, add your accountant or a second email of your own, one per line. You also add people later, see [Give your accountant access](https://open-ledger.matanlevanon.com/help/users/).
+
+## 3. Cloudflare account
+
+The Ledger runs in your own Cloudflare account. The installer shows three steps, in order.
+
+1. **No Cloudflare account yet?** Sign up at dash.cloudflare.com/sign-up with the business email and verify the email. Skip any offer to add a website.
+2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Do not create a bucket, the installer does that. Tick **I did it**.
+3. **Create the API token.** Follow [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/). This is the step where most people get stuck. Tick **I did it**.
+4. Paste the token and click **Check token**. Pick the account.
+
+## 4. Domain or workers.dev
+
+After the token check, the installer asks for the Ledger's web address.
+
+- **With a domain in Cloudflare:** type an address on it, for example `ledger.acme.co.il`. The installer creates it.
+- **Without a domain:** tick **Use the free Cloudflare address instead of a domain** and choose a workers.dev name, for example the business name in English. Clients see this address in the links you send. Moving to your own domain later changes the address.
+
+## 5. Tax Authority
+
+Pick how the Ledger gets allocation numbers for tax invoices. The connected edition fills this in for you: the Ledger connects through MTN, with nothing to type. After the install you sign in once with your Tax Authority user, see [Connect to the Tax Authority](https://open-ledger.matanlevanon.com/help/tax-authority/).
+
+## 6. Extras
+
+All optional. Each **?** button explains where to get the key.
+
+- **Expense reading:** pick Gemini or Anthropic and paste the key. A Gemini key from aistudio.google.com starts with `AQ.`, older ones with `AIza`.
+- **Email sending:** the Resend API key and the sender, written as `Business Name <billing@your-domain.co.il>`. See [Send documents by email](https://open-ledger.matanlevanon.com/help/email/).
+- **Slack alerts:** the webhook address.
+
+Skip anything you do not have. You add it later, see [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/).
+
+## 7. Install and finish
+
+1. Check the summary and click **Install**. It takes about 3 minutes.
+2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. Cloudflare never shows it again. See [Connect Claude](https://open-ledger.matanlevanon.com/help/connect-claude/).
+3. The installer leaves a summary file on the Desktop, without secrets.
+4. Delete the Cloudflare API token: dash.cloudflare.com/profile/api-tokens, the three dots next to the token, **Delete**. The Ledger does not need it any more.
+
+## Next
+
+[First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/).
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/install/
+
+
+---
+
+# Add or change a key after the install
+
+Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
+
+Updated 2026-10-17
+
+The Ledger reads its keys from its Worker in Cloudflare. A Worker is the program that runs the Ledger. You add or change a key there.
+
+## Where
+
+1. Sign in at dash.cloudflare.com.
+2. Open **Workers & Pages** and click **mtn-open-ledger**.
+3. Open **Settings**, then **Variables and Secrets**.
+4. Click **+ Add**. Pick **Secret** for keys and **Text** for plain settings. Type the name, paste the value.
+5. Click **Deploy**. The Ledger uses the new value within a minute.
+
+Names are exact, in capital letters.
+
+## Which names
+
+- **Receipt reading with Gemini:** Secret `GEMINI_API_KEY` with the key, and Text `AI_PROVIDER` with the value `gemini`.
+- **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and Text `AI_PROVIDER` with the value `anthropic`.
+- **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and Text `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
+- **Slack alerts:** Secret `SLACK_WEBHOOK_URL`.
+- **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`.
+- **MCP token:** Secret `MCP_TOKEN`, see [Connect Claude](https://open-ledger.matanlevanon.com/help/connect-claude/).
+
+## Rules
+
+- Never paste a key in an email, a chat or a document. Paste it only into Cloudflare or the installer.
+- If a key leaks, make a new one at the provider, delete the old one there, and replace it here.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/keys-later/
+
+
+---
+
+# Take payments with Grow, Cardcom or another provider
+
+Use a card payment provider for collecting money and the Ledger for the receipts, by hand or automatically, without two documents for one payment.
+
+Updated 2026-10-17
+
+The Ledger issues the documents. A payment provider such as Grow, Cardcom, PayPlus or Bit collects the money. The two work side by side.
+
+## First: turn off the provider's documents
+
+Most providers issue their own receipt or invoice for every payment. Turn that off in the provider's settings, or ask their support to. Otherwise every payment gets two documents with two different numbers, and your books stop matching the bank.
+
+## Way 1: by hand
+
+1. In the Ledger, add the provider's payment link as a payment method: **Settings > Payment methods**, type **Card** or **Other**, paste the link.
+2. Send the client a payment request with that method ticked.
+3. When the provider tells you the money arrived, open the payment request and click **Record payment**. Pick **Card**, and paste the provider's transaction number as the reference.
+4. The Ledger issues the receipt. Send it to the client.
+
+Two minutes per payment. Fits a business with a few payments a week.
+
+## Way 2: automatic, for technical users
+
+The Ledger has an MCP endpoint, a door for other software, at its address followed by `/mcp`. It takes JSON-RPC calls (`tools/call`) with the header `Authorization: Bearer` and your MCP token. The tools include `list_clients`, `create_draft`, `finalize_document` and `record_payment`.
+
+An automation tool such as Make, Zapier or n8n connects the provider to it:
+
+1. In the provider, turn on the webhook for successful payments and point it at a new scenario.
+2. In the scenario, find the client with `list_clients`, using the payer's name or email.
+3. Record the payment against the open payment request with `record_payment` and `confirm: true`. The scenario needs the payment request's document id. Keep a small table of payment link to document id, filled when you send each request.
+4. The Ledger issues the receipt.
+
+This takes an afternoon to set up and test. Start with one small payment. For the MCP token, see [Connect Claude or another app](https://open-ledger.matanlevanon.com/help/connect-claude/).
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/payment-providers/
+
+
+---
+
+# Connect to the Tax Authority for allocation numbers
+
+Sign the Ledger in to the Israel Tax Authority once, so tax invoices get their allocation numbers by themselves, and reconnect every 90 days.
+
+Updated 2026-10-17
+
+A tax invoice to an Israeli עוסק מורשה above the threshold needs an allocation number (מספר הקצאה) from the Tax Authority. With the connection, the Ledger asks for the number when you finalize the invoice and prints it on the document.
+
+An עוסק פטור issues no tax invoices, so it needs no connection. Connect later, when you become עוסק מורשה.
+
+## Connect
+
+1. In the Ledger, open **ITA** in the sidebar.
+2. Click **Connect to ITA**.
+3. The Tax Authority's sign-in page opens. Sign in with your Tax Authority user: the user code and the one-time code sent to your phone. Use the business's own user, the one for its tax number.
+4. Approve the request. You come back to the Ledger, and the page shows **Connected**, with the number of days left.
+
+The connected edition goes through MTN's approved Tax Authority app, so there is no app of your own to register.
+
+## Every 90 days
+
+The Tax Authority login lasts 90 days. The ITA page shows **Login ends in N days**. With Slack alerts on, the Ledger warns you before. When it ends, open **ITA** and click **Connect again**. An invoice still waiting for a number shows in the **Allocation queue** on the same page. After you reconnect, click **Retry now**.
+
+## When a number is refused
+
+The ITA page shows the reason. The choices are to cancel the invoice, continue without a number with a notice on the document, or switch to reverse charge with the client's agreement. Ask your accountant which fits.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/tax-authority/
+
+
+---
+
+# Common problems and how to fix them
+
+Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
+
+Updated 2026-10-17
+
+## The installer
+
+- **Windows protected your PC.** Click **More info**, then **Run anyway**.
+- **The antivirus removed the file.** Restore it from the antivirus quarantine and allow it, or download it again from the purchase email.
+- **Nothing opens after double-click.** Wait 20 seconds, the file is large. The installer opens a browser tab at an address starting with `http://127.0.0.1`. If no tab opens, copy that address from the small black window into your browser.
+- **The licence key is refused.** Type it as `OL-XXXX-XXXX-XXXX-XXXX`, and check the tax number. The key works only for the tax number it was bought for. Reinstalling the same business with the same key is fine.
+
+## Cloudflare
+
+- **Zone Resources is missing.** It shows up only after a Zone permission row. Without a domain, skip it and use the free workers.dev address. See [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/).
+- **Check token fails.** The message names the missing permission. Edit the token, add the row, save, and check again.
+- **Zero Trust or R2 asks for a card.** Both free plans ask for a payment method and charge nothing.
+- **Purchase R2 Plan.** Click it and confirm the free tier. The first 10 GB a month are free.
+
+## Keys
+
+- **A Gemini key is refused.** New keys from Google AI Studio start with `AQ.`. The installer from version 1.6.0 of 17 October 2026 accepts them. With an older installer, pick **No** for expense reading and add the key afterwards, see [Add or change a key](https://open-ledger.matanlevanon.com/help/keys-later/).
+- **An Anthropic key is refused.** It starts with `sk-ant-`. Copy it again from console.anthropic.com.
+
+## Signing in
+
+- **A Cloudflare page asks for an email.** That is the sign-in. Type the owner email and paste the code from the email.
+- **No code arrives.** Check spam, and check that the email is the one given in the installer.
+- **Someone else is stopped at the Cloudflare page.** Add their email in Cloudflare Access, see [Give your accountant access](https://open-ledger.matanlevanon.com/help/users/).
+
+## Downloads and email
+
+- **The download link says it expired or ran out.** Click **Email me a fresh link** on that page.
+- **Clients get your documents in spam.** See [Keep them out of spam](https://open-ledger.matanlevanon.com/help/email/).
+- **Lost the MCP token.** See [Connect Claude](https://open-ledger.matanlevanon.com/help/connect-claude/).
+
+## Tax Authority
+
+- **ITA says reconnect.** The login lasts 90 days. Open **ITA** and click **Connect again**.
+- **An invoice waits for a number for 24 hours.** Request the number in the Tax Authority web app and type it on the ITA page.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+
+Source: https://open-ledger.matanlevanon.com/help/troubleshooting/
+
+
+---
+
+# Updates and backups
+
+How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
+
+Updated 2026-10-17
+
+## Check for updates
+
+**Settings > Updates > Check for updates.** The Ledger also checks on the 1st of each month. Nothing installs by itself.
+
+## Update
+
+1. Open the download link from your purchase email. If it no longer works, open it anyway and click **Email me a fresh link**.
+2. Run the new installer on the same Cloudflare account, with the same licence key.
+3. It updates the Ledger and keeps everything: the database, the files, the sign-in and your keys.
+
+## Backups
+
+- Every quarter, the Ledger writes a full copy of its database and a list of every file to its own backup bucket, and tests that the copy restores.
+- With Google Drive connected, the same copy also goes to your Drive, outside Cloudflare.
+- Every night it checks the numbering for gaps and the documents for changes. **Settings > Backups > Run check now** runs the check on demand.
+
+## Keep Cloudflare safe
+
+The Cloudflare account holds your books. Turn on two-factor sign-in: dash.cloudflare.com, your profile, **Authentication**, **Two-Factor Authentication**.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/updates-backups/
+
+
+---
+
+# Give your accountant or assistant access
+
+Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
+
+Updated 2026-10-17
+
+Each person gets a role per business.
+
+- **Owner:** everything, including Settings, users, numbering and the Tax Authority connection.
+- **Assistant:** clients, quotes, payment requests, receipts, sending and expenses. No Settings, users or Tax Authority.
+- **Accountant:** reads what you allow, until an end date. Every request is logged. An accountant never issues or cancels a document.
+
+## Add a person
+
+Two places, both needed.
+
+### 1. In the Ledger
+
+1. Pick the business in the switcher at the top.
+2. In the sidebar, open **Accountant > Users**.
+3. Click **Invite someone**.
+4. Type the email and pick the role. An accountant also needs an end date and the feature switches: income documents, expenses, reports, the monthly pack, the unified file.
+5. Click **Send invite**.
+
+For your own second email, pick **Owner**.
+
+### 2. In Cloudflare Access
+
+Emails you listed in the installer are there already. For anyone new:
+
+1. Sign in at dash.cloudflare.com and open **Zero Trust**.
+2. Go to **Access > Applications** and open **MTN Open Ledger**.
+3. Open the **Policies** tab and edit the sign-in policy.
+4. Under **Include > Emails**, add the email.
+5. Click **Save**.
+
+Until step 5, Cloudflare stops the person at its own sign-in page.
+
+## Remove a person
+
+1. In the Ledger: **Accountant > Users**, click **Revoke** on the row.
+2. In Cloudflare Access: remove the email from **Include > Emails** and save.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
+- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+
+Source: https://open-ledger.matanlevanon.com/help/users/

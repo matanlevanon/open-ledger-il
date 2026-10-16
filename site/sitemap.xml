@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://open-ledger.matanlevanon.com/he/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/"/>
@@ -16,49 +16,154 @@
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/he/demo/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/demo/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/demo/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/demo/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/he/features/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/features/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/features/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/features/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/he/guides/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/"/>
   </url>
   <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/before-you-start/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/before-you-start/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/before-you-start/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/before-you-start/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/cloudflare-token/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/cloudflare-token/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/cloudflare-token/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/cloudflare-token/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/connect-claude/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/connect-claude/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/connect-claude/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/connect-claude/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/email/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/email/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/email/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/email/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/expenses/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/expenses/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/expenses/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/expenses/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/first-invoice/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/first-invoice/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/first-invoice/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/first-invoice/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/first-sign-in/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/first-sign-in/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/first-sign-in/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/first-sign-in/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/install/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/install/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/install/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/install/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/keys-later/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/keys-later/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/keys-later/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/keys-later/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/payment-providers/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/payment-providers/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/payment-providers/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/payment-providers/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/tax-authority/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/tax-authority/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/tax-authority/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/tax-authority/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/troubleshooting/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/troubleshooting/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/troubleshooting/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/troubleshooting/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/updates-backups/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/updates-backups/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/updates-backups/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/updates-backups/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/he/help/users/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/users/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/users/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/users/"/>
+  </url>
+  <url>
     <loc>https://open-ledger.matanlevanon.com/he/license/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/license/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/license/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/license/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/he/pricing/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/pricing/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/pricing/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/pricing/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/he/registration/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/registration/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/registration/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/registration/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/"/>
@@ -72,42 +177,147 @@
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/demo/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/demo/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/demo/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/demo/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/features/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/features/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/features/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/features/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/guides/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/"/>
   </url>
   <url>
+    <loc>https://open-ledger.matanlevanon.com/help/</loc>
+    <lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/before-you-start/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/before-you-start/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/before-you-start/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/before-you-start/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/cloudflare-token/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/cloudflare-token/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/cloudflare-token/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/cloudflare-token/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/connect-claude/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/connect-claude/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/connect-claude/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/connect-claude/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/email/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/email/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/email/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/email/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/expenses/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/expenses/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/expenses/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/expenses/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/first-invoice/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/first-invoice/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/first-invoice/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/first-invoice/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/first-sign-in/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/first-sign-in/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/first-sign-in/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/first-sign-in/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/install/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/install/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/install/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/install/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/keys-later/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/keys-later/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/keys-later/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/keys-later/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/payment-providers/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/payment-providers/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/payment-providers/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/payment-providers/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/tax-authority/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/tax-authority/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/tax-authority/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/tax-authority/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/troubleshooting/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/troubleshooting/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/troubleshooting/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/troubleshooting/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/updates-backups/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/updates-backups/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/updates-backups/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/updates-backups/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.matanlevanon.com/help/users/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/users/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/users/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/users/"/>
+  </url>
+  <url>
     <loc>https://open-ledger.matanlevanon.com/license/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/license/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/license/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/license/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/pricing/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/pricing/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/pricing/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/pricing/"/>
   </url>
   <url>
     <loc>https://open-ledger.matanlevanon.com/registration/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/registration/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/registration/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/registration/"/>
