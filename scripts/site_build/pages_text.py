@@ -30,6 +30,10 @@ PAGES = {
             title='Open Ledger IL guides: invoicing for Israeli businesses',
             desc='Plain guides to Israeli invoicing: allocation numbers, the עוסק פטור ceiling, registered software, the unified file and which document is income.',
             h1='Guides', crumb='Guides'),
+        'help': dict(
+            title='Open Ledger IL help: install, set up and daily use',
+            desc='Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.',
+            h1='Help', crumb='Help'),
         'changelog': dict(
             title='Open Ledger IL changelog: what changed in each version',
             desc='Every Open Ledger IL release and what changed in it, newest first. The current version is ' + VERSION + '.',
@@ -64,6 +68,10 @@ PAGES = {
             title='מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל',
             desc='מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.',
             h1='מדריכים', crumb='מדריכים'),
+        'help': dict(
+            title='עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש',
+            desc='צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.',
+            h1='עזרה', crumb='עזרה'),
         'changelog': dict(
             title='יומן שינויים של Open Ledger IL: מה חדש בכל גרסה',
             desc='כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא ' + VERSION + '.',
@@ -76,8 +84,8 @@ PAGES = {
 }
 
 NAV = {
-    'en': [('features', 'Features'), ('pricing', 'Pricing'), ('registration', 'Registration'), ('demo', 'Demo'), ('guides', 'Guides')],
-    'he': [('features', 'יכולות'), ('pricing', 'מחירים'), ('registration', 'רישום'), ('demo', 'הדגמה'), ('guides', 'מדריכים')],
+    'en': [('features', 'Features'), ('pricing', 'Pricing'), ('registration', 'Registration'), ('demo', 'Demo'), ('guides', 'Guides'), ('help', 'Help')],
+    'he': [('features', 'יכולות'), ('pricing', 'מחירים'), ('registration', 'רישום'), ('demo', 'הדגמה'), ('guides', 'מדריכים'), ('help', 'עזרה')],
 }
 
 UI = {
@@ -101,6 +109,11 @@ UI = {
         demo_page_lead='The live demo opens the real app on sample businesses. Nothing to install.',
         reg_registry='The Tax Authority registry of registered software',
         guides_none='The guides are being written and reviewed. They will appear here once published.',
+        help_lead='Step-by-step instructions, in the order you need them. Start at the top if this is your first install.',
+        help_none='The help pages are being written.',
+        help_more='More help',
+        help_stuck='Still stuck?',
+        help_stuck_link='Write to us from the pricing page.',
         guides_draft_bar='Draft. This guide is under review and not published yet.',
         guide_how='How Open Ledger IL does it',
         guide_sources='Sources',
@@ -156,6 +169,11 @@ UI = {
         demo_page_lead='ההדגמה החיה פותחת את המערכת האמיתית על עסקי דוגמה. אין מה להתקין.',
         reg_registry='מאגר התוכנות הרשומות של רשות המסים',
         guides_none='המדריכים נכתבים ועוברים בדיקה. הם יופיעו כאן אחרי הפרסום.',
+        help_lead='הוראות צעד אחר צעד, לפי הסדר שבו תצטרכו אותן. בהתקנה ראשונה, התחילו מלמעלה.',
+        help_none='דפי העזרה בכתיבה.',
+        help_more='עוד עזרה',
+        help_stuck='עדיין תקועים?',
+        help_stuck_link='כתבו לנו מעמוד המחירים.',
         guides_draft_bar='טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.',
         guide_how='איך Open Ledger IL עושה את זה',
         guide_sources='מקורות',

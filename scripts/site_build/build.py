@@ -18,7 +18,8 @@ from .text import EN, HE, OPTIONS_EN, OPTIONS_HE
 E = html.escape
 TEXT = {'en': EN, 'he': HE}
 LANGS = ('he', 'en')
-KEYS = ('home', 'features', 'pricing', 'registration', 'demo', 'guides', 'changelog', 'license')
+KEYS = ('home', 'features', 'pricing', 'registration', 'demo', 'guides', 'help', 'changelog', 'license')
+ARTICLE_KEYS = ('guide', 'helpitem')
 HASHED = re.compile(r'\.[0-9a-f]{8}\.[a-z0-9]+$')
 REPORTS = ROOT / 'site-reports'
 
@@ -71,6 +72,7 @@ PAGE_CSS = '''
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 '''
 
@@ -85,6 +87,8 @@ def path_of(lang, key, slug=None):
         return base
     if key == 'guide':
         return f'{base}guides/{slug}/'
+    if key == 'helpitem':
+        return f'{base}help/{slug}/'
     return f'{base}{key}/'
 
 
@@ -200,7 +204,7 @@ def head(page):
 {alternates}{md_link}<meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
-<meta property="og:type" content="{'article' if page['key'] == 'guide' else 'website'}">
+<meta property="og:type" content="{'article' if page['key'] in ARTICLE_KEYS else 'website'}">
 <meta property="og:url" content="{canonical}">
 <meta property="og:image" content="{image}">
 <meta property="og:image:width" content="1200">
@@ -245,7 +249,7 @@ def header(page):
     other = 'en' if lang == 'he' else 'he'
     links = []
     for key, label in NAV[lang]:
-        current = ' aria-current="page"' if page['key'] == key or (page['key'] == 'guide' and key == 'guides') else ''
+        current = ' aria-current="page"' if page['key'] == key or (page['key'] == 'guide' and key == 'guides') or (page['key'] == 'helpitem' and key == 'help') else ''
         links.append(f'<a href="{path_of(lang, key)}"{current}>{E(label)}</a>')
     switch_to = (page.get('pair') or {}).get(other) or path_of(other, 'home')
     menu_label = E('Menu' if lang == 'en' else 'תפריט')
@@ -625,8 +629,8 @@ def hero(lang):
 # ---------------------------------------------------------------------------------------------
 
 def base_page(lang, key, slug=None, **extra):
-    t = PAGES[lang].get(key, {}) if key != 'guide' else {}
-    page = dict(lang=lang, key=key, slug=slug, path=path_of(lang, key, slug), og=key if key != 'guide' else f'guide-{slug}',
+    t = PAGES[lang].get(key, {}) if key not in ARTICLE_KEYS else {}
+    page = dict(lang=lang, key=key, slug=slug, path=path_of(lang, key, slug), og=key if key not in ARTICLE_KEYS else f'{key}-{slug}',
                 title=t.get('title', ''), desc=t.get('desc', ''), h1=t.get('h1', ''), jsonld=[], md='',
                 pair={l: path_of(l, key, slug) for l in LANGS})
     home = (PAGES[lang]['home']['crumb'], path_of(lang, 'home'))
@@ -750,6 +754,7 @@ def key_facts(lang):
 # ---------------------------------------------------------------------------------------------
 
 GUIDES_DIR = ROOT / 'scripts' / 'guides'
+HELP_DIR = ROOT / 'scripts' / 'help'
 MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 
@@ -798,15 +803,16 @@ def seo_title(title):
     return f'{short} · Open Ledger IL' if len(short) + 17 < 60 else short[:59]
 
 
-def load_guides(rates):
+def load_guides(rates, root=None, kind='guide'):
+    root = root or GUIDES_DIR
     guides = []
     for lang in LANGS:
-        folder = GUIDES_DIR / lang
+        folder = root / lang
         if not folder.exists():
             continue
         values = token_values(lang, rates)
         for f in sorted(folder.glob('*.md')):
-            where = f'scripts/guides/{lang}/{f.name}'
+            where = f'scripts/{root.name}/{lang}/{f.name}'
             meta, body = md.front_matter(f.read_text(encoding='utf-8'))
             for key in ('title', 'description', 'updated'):
                 if not meta.get(key):
@@ -817,8 +823,8 @@ def load_guides(rates):
             faq_text = ' '.join(str(x.get('q', '')) + ' ' + str(x.get('a', '')) for x in (meta.get('faq') or []) if isinstance(x, dict))
             words = len(re.findall(r'\S+', md.plain(re.sub(r'^#+ ', '', body, flags=re.M)) + ' ' + faq_text))
             guides.append(dict(
-                lang=lang, slug=f.stem, path=path_of(lang, 'guide', f.stem), title=str(meta['title']), desc=str(meta['description']),
-                published=meta.get('published') is True, updated=str(meta['updated']), sources=list(meta.get('sources') or []),
+                lang=lang, slug=f.stem, path=path_of(lang, kind, f.stem), title=str(meta['title']), desc=str(meta['description']),
+                published=meta.get('published') is True, order=int(meta.get('order') or 99), kind=kind, updated=str(meta['updated']), sources=list(meta.get('sources') or []),
                 faq=list(meta.get('faq') or []), body=body, words=words, todo=body.count('[TO CHECK]'), file=where))
     return guides
 
@@ -847,6 +853,42 @@ def build_guide(g, guides):
       <dl class="faq">{faq}</dl>
       <h2 id="sources">{E(u['guide_sources'])}</h2>
       <ol class="sources">{sources}</ol>
+    </div>
+  </section>'''
+    return page, main, ''
+
+
+def build_help_index(lang, helps):
+    page = base_page(lang, 'help')
+    u = UI[lang]
+    items = sorted((h for h in helps if h['lang'] == lang and h['published']), key=lambda h: (h['order'], h['title']))
+    links = ''.join(f'<li><a href="{h["path"]}">{E(h["title"])}</a><p>{E(h["desc"])}</p></li>' for h in items)
+    body = f'<ul class="guide-list">{links}</ul>' if items else f'<p class="lead">{E(u["help_none"])}</p>'
+    main = page_intro(page, E(u['help_lead'])) + f'\n  <section class="plain"><div class="wrap">{body}</div></section>'
+    return page, main, ''
+
+
+def build_help(h, helps):
+    lang = h['lang']
+    u = UI[lang]
+    pair = {x['lang']: x['path'] for x in helps if x['slug'] == h['slug']}
+    page = dict(lang=lang, key='helpitem', slug=h['slug'], path=h['path'], og=f'help-{h["slug"]}', title=seo_title(h['title']),
+                desc=h['desc'], h1=h['title'], jsonld=[], md='', pair=pair, noindex=not h['published'], draft=not h['published'],
+                guide=h)
+    page['crumbs'] = [(PAGES[lang]['home']['crumb'], path_of(lang, 'home')), (PAGES[lang]['help']['crumb'], path_of(lang, 'help')), (h['title'], None)]
+    faq = ''.join(f'<dt>{E(item["q"])}</dt><dd>{E(item["a"])}</dd>' for item in h['faq'] if isinstance(item, dict))
+    faq_html = f'<h2 id="faq">{E(u["guide_faq"])}</h2><dl class="faq">{faq}</dl>' if faq else ''
+    others = sorted((x for x in helps if x['lang'] == lang and x['published'] and x['slug'] != h['slug']), key=lambda x: (x['order'], x['title']))
+    more = ''.join(f'<li><a href="{x["path"]}">{E(x["title"])}</a></li>' for x in others)
+    more_html = f'<h2 id="more">{E(u["help_more"])}</h2><ul>{more}</ul>' if more else ''
+    main = page_intro(page, E(h['desc'])) + f'''
+  <section class="plain">
+    <div class="wrap prose">
+      <p class="shot-cap" style="text-align:start">{E(u["guide_updated"] + " " + h["updated"])}</p>
+      {md.to_html(h['body'], refs=False)}
+      {faq_html}
+      <p>{E(u["help_stuck"])} <a href="{path_of(lang, 'pricing')}#setup">{E(u["help_stuck_link"])}</a></p>
+      {more_html}
     </div>
   </section>'''
     return page, main, ''
@@ -898,7 +940,7 @@ def jsonld(page):
                      'הונפקה למהדורה 1.1.0, בתוקף מ-7.10.2026 עד 31.10.2028.')
         blocks.append({'@context': 'https://schema.org', '@type': 'WebPage', 'name': page['title'], 'url': url, 'inLanguage': lang,
                        'description': about, 'isPartOf': {'@id': SITE_ID}, 'publisher': {'@id': ORG_ID}})
-    if page['key'] == 'guide':
+    if page['key'] in ARTICLE_KEYS:
         g = page['guide']
         blocks.append({
             '@context': 'https://schema.org', '@type': 'Article', 'headline': g['title'][:110], 'description': g['desc'],
@@ -999,7 +1041,7 @@ def git_date(paths):
 
 
 def lastmod(page, cache):
-    if page['key'] == 'guide':
+    if page['key'] in ARTICLE_KEYS:
         return page['guide']['updated']
     sources = {'changelog': ['CHANGELOG.md'], 'registration': ['scripts/site_build']}.get(
         page['key'], ['scripts/site_build', 'site.config.json'])
@@ -1035,13 +1077,14 @@ def llms_txt(pages):
     intro = u['llms_intro'] + (u['llms_intro_shop'] if SHOP_LIVE else '')
     sections = []
     for lang, heading in (('en', 'Pages in English'), ('he', 'Pages in Hebrew')):
-        items = [p for p in pages if p['lang'] == lang and published(p) and p['key'] != 'guide']
+        items = [p for p in pages if p['lang'] == lang and published(p) and p['key'] not in ARTICLE_KEYS]
         lines = [f'- [{p["title"]}]({absolute(p["path"])}): {p["desc"]}' for p in items]
         sections.append(f'## {heading}\n\n' + '\n'.join(lines))
-        guides = [p for p in pages if p['lang'] == lang and published(p) and p['key'] == 'guide']
-        if guides:
-            sections.append(f'## Guides in {"English" if lang == "en" else "Hebrew"}\n\n'
-                            + '\n'.join(f'- [{p["h1"]}]({absolute(p["path"])}): {p["desc"]}' for p in guides))
+        for kind, name in (('guide', 'Guides'), ('helpitem', 'Help')):
+            items = [p for p in pages if p['lang'] == lang and published(p) and p['key'] == kind]
+            if items:
+                sections.append(f'## {name} in {"English" if lang == "en" else "Hebrew"}\n\n'
+                                + '\n'.join(f'- [{p["h1"]}]({absolute(p["path"])}): {p["desc"]}' for p in items))
     sections.append('## Optional\n\n'
                     f'- [Source code]({REPO}): the repository, FSL-1.1-ALv2\n'
                     f'- [Full text of every page]({absolute("/llms-full.txt")}): one Markdown file')
@@ -1054,15 +1097,20 @@ def main():
     ASSETS = Assets()
     rates = load_rates()
     guides = load_guides(rates)
+    helps = load_guides(rates, HELP_DIR, 'helpitem')
     built = []
     for lang in LANGS:
         for key in KEYS:
             if key == 'guides':
                 built.append(build_guides_index(lang, guides))
+            elif key == 'help':
+                built.append(build_help_index(lang, helps))
             else:
                 built.append(BUILDERS[key](lang))
     for g in guides:
         built.append(build_guide(g, guides))
+    for h in helps:
+        built.append(build_help(h, helps))
     pages = [p for p, _, _ in built]
     check_meta(pages)
     for p in pages:

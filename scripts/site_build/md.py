@@ -40,7 +40,7 @@ def plain(text):
 
 
 def blocks(md):
-    """Splits Markdown into (kind, data) blocks: heading (level, text), list (ordered, items), para (text)."""
+    """Splits Markdown into (kind, data) blocks: heading (level, text), list (ordered, items), code (text), para (text)."""
     out = []
     para, items, ordered = [], None, False
 
@@ -53,8 +53,20 @@ def blocks(md):
             out.append(('list', (ordered, items)))
             items = None
 
+    code = None
     for raw in md.splitlines():
         line = raw.rstrip()
+        if line.strip().startswith('```'):
+            if code is None:
+                flush()
+                code = []
+            else:
+                out.append(('code', '\n'.join(code)))
+                code = None
+            continue
+        if code is not None:
+            code.append(raw.rstrip())
+            continue
         m = re.match(r'^(#{1,4})\s+(.*)$', line)
         if m:
             flush()
@@ -95,6 +107,8 @@ def to_html(md, shift=0, refs=True):
             ordered, items = data
             tag = 'ol' if ordered else 'ul'
             parts.append(f'<{tag}>' + ''.join(f'<li>{inline(i, refs)}</li>' for i in items) + f'</{tag}>')
+        elif kind == 'code':
+            parts.append(f'<p class="cmd" dir="ltr"><code>{html.escape(data)}</code></p>')
         else:
             parts.append(f'<p>{inline(data, refs)}</p>')
     return '\n'.join(parts)
