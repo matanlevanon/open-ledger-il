@@ -13,7 +13,7 @@ The easiest way for receipts that reach your inbox. Your Ledger has a private ad
 
 ### Find your address
 
-Open **Settings > Expenses > Email inbox**. The address looks like `r7k2m9x4qp@in.matanlevanon.com`. Click **Copy**. The installer sets it up. If the page says the inbox is not set up, run the installer again.
+Open **Settings > Expenses > Email inbox**. The address looks like `expenses+r7k2m9x4qp@open-ledger.dev`. Click **Copy**. The installer sets it up. If the page says the inbox is not set up, run the installer again.
 
 ### Set it up in Gmail, once
 
