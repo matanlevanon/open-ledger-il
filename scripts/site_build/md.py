@@ -67,6 +67,14 @@ def blocks(md):
         if code is not None:
             code.append(raw.rstrip())
             continue
+        if line.strip().startswith('|'):
+            if not (out and out[-1][0] == 'table' and not para and items is None):
+                flush()
+                out.append(('table', []))
+            cells = [c.strip() for c in line.strip().strip('|').split('|')]
+            if not all(re.fullmatch(r':?-{3,}:?', c) for c in cells):
+                out[-1][1].append(cells)
+            continue
         m = re.match(r'^(#{1,4})\s+(.*)$', line)
         if m:
             flush()
@@ -107,6 +115,11 @@ def to_html(md, shift=0, refs=True):
             ordered, items = data
             tag = 'ol' if ordered else 'ul'
             parts.append(f'<{tag}>' + ''.join(f'<li>{inline(i, refs)}</li>' for i in items) + f'</{tag}>')
+        elif kind == 'table':
+            rows = data
+            head = ''.join(f'<th>{inline(c, refs)}</th>' for c in rows[0]) if rows else ''
+            body = ''.join('<tr>' + ''.join(f'<td>{inline(c, refs)}</td>' for c in r) + '</tr>' for r in rows[1:])
+            parts.append(f'<div class="table-wrap"><table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
         elif kind == 'code':
             parts.append(f'<p class="cmd" dir="ltr"><code>{html.escape(data)}</code></p>')
         else:

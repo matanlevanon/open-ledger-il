@@ -72,6 +72,24 @@ PAGE_CSS = '''
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.help-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 44px; align-items: start; }
+.help-nav { position: sticky; top: 88px; font-size: 14.5px; }
+.help-nav p { font-weight: 700; margin: 0 0 8px; color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.help-nav ol { list-style: none; padding: 0; margin: 0; }
+.help-nav li a { display: block; padding: 7px 12px; border-inline-start: 3px solid transparent; color: var(--text-dim); text-decoration: none; border-radius: 0 8px 8px 0; }
+[dir="rtl"] .help-nav li a { border-radius: 8px 0 0 8px; }
+.help-nav li a:hover { color: var(--text); background: var(--surface-2); }
+.help-nav li a[aria-current="page"] { color: var(--blue); font-weight: 650; background: var(--surface-2); border-inline-start-color: var(--blue); }
+.help-more { display: none; }
+.buy-box { background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; margin: 8px 0 24px; }
+.buy-box h2 { margin-top: 0; font-size: 19px; }
+.buy-box ul { margin: 8px 0 14px; }
+.buy-box .guide-cta { margin-top: 10px; }
+@media (max-width: 860px) { .help-wrap { grid-template-columns: 1fr; } .help-nav { display: none; } .help-more { display: block; } }
+.prose .table-wrap { overflow-x: auto; margin: 16px 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 '''
@@ -824,7 +842,8 @@ def load_guides(rates, root=None, kind='guide'):
             words = len(re.findall(r'\S+', md.plain(re.sub(r'^#+ ', '', body, flags=re.M)) + ' ' + faq_text))
             guides.append(dict(
                 lang=lang, slug=f.stem, path=path_of(lang, kind, f.stem), title=str(meta['title']), desc=str(meta['description']),
-                published=meta.get('published') is True, order=int(meta.get('order') or 99), kind=kind, updated=str(meta['updated']), sources=list(meta.get('sources') or []),
+                published=meta.get('published') is True, order=int(meta.get('order') or 99), kind=kind,
+                nav=str(meta.get('nav') or meta['title']), cta=str(meta.get('cta') or ''), updated=str(meta['updated']), sources=list(meta.get('sources') or []),
                 faq=list(meta.get('faq') or []), body=body, words=words, todo=body.count('[TO CHECK]'), file=where))
     return guides
 
@@ -880,15 +899,29 @@ def build_help(h, helps):
     faq_html = f'<h2 id="faq">{E(u["guide_faq"])}</h2><dl class="faq">{faq}</dl>' if faq else ''
     others = sorted((x for x in helps if x['lang'] == lang and x['published'] and x['slug'] != h['slug']), key=lambda x: (x['order'], x['title']))
     more = ''.join(f'<li><a href="{x["path"]}">{E(x["title"])}</a></li>' for x in others)
-    more_html = f'<h2 id="more">{E(u["help_more"])}</h2><ul>{more}</ul>' if more else ''
+    more_html = f'<div class="help-more"><h2 id="more">{E(u["help_more"])}</h2><ul>{more}</ul></div>' if more else ''
+    topics = sorted((x for x in helps if x['lang'] == lang and x['published']), key=lambda x: (x['order'], x['title']))
+    nav_items = ''.join(f'<li><a href="{x["path"]}"' + (' aria-current="page"' if x['slug'] == h['slug'] else '') + f'>{E(x["nav"])}</a></li>' for x in topics)
+    side = f'<nav class="help-nav" aria-label="{E(u["help_topics"])}"><p>{E(u["help_topics"])}</p><ol>{nav_items}</ol></nav>'
+    buy = ''
+    if h['cta'] == 'buy':
+        points = ''.join(f'<li>{E(p)}</li>' for p in u['help_buy_points'])
+        href = SHOP_URL + '/buy' + ('?lang=he' if lang == 'he' else '')
+        buy = (f'<div class="buy-box"><h2>{E(u["help_buy_h"])}</h2><p>{E(u["help_buy_p"])}</p><ul>{points}</ul>'
+               f'<div class="guide-cta"><a class="btn btn-primary" href="{href}" target="_blank" rel="noopener">{E(u["help_buy_btn"])}</a>'
+               f'<a class="btn btn-ghost" href="{DEPLOY}">{E(u["help_buy_self"])}</a></div></div>')
     main = page_intro(page, E(h['desc'])) + f'''
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    {side}
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">{E(u["guide_updated"] + " " + h["updated"])}</p>
+      {buy}
       {md.to_html(h['body'], refs=False)}
       {faq_html}
       <p>{E(u["help_stuck"])} <a href="{path_of(lang, 'pricing')}#setup">{E(u["help_stuck_link"])}</a></p>
       {more_html}
+    </div>
     </div>
   </section>'''
     return page, main, ''
