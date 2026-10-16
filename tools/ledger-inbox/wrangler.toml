@@ -1,0 +1,20 @@
+# ledger-inbox: the email gateway (README.md). Deploy from this folder: npx wrangler deploy
+name = "ledger-inbox"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+# Variables set in the dashboard survive a deploy. Secrets always do.
+keep_vars = true
+
+[observability]
+enabled = true
+
+# The domain the addresses live on. Email Routing on it sends every address to this Worker.
+[vars]
+INBOX_DOMAIN = "in.example.com"
+
+# The inbox registry. Make your own with: npx wrangler d1 create ledger-inbox
+# then put its id here and apply migrations/0001_inboxes.sql once.
+[[d1_databases]]
+binding = "DB"
+database_name = "ledger-inbox"
+database_id = "REPLACE_WITH_YOUR_D1_ID"

@@ -1,0 +1,12 @@
+{
+  "name": "ledger-inbox",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Email gateway: turns receipts forwarded by email into Open Ledger IL expenses",
+  "license": "FSL-1.1-ALv2",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "test": "node test/inbox.test.mjs"
+  }
+}
