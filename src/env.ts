@@ -41,6 +41,8 @@ export interface Env {
   BACKUPS: R2Bucket;
   /** R14: bearer token for POST /mcp. */
   MCP_TOKEN?: string;
+  /** R35: HMAC key the email gateway signs forwarded receipts with. Set by the installer. */
+  INBOX_SECRET?: string;
   /** Unified file (מבנה אחיד) INI.TXT software fields (section 3.1): the software as registered with the Tax Authority. */
   SOFTWARE_NAME?: string;
   SOFTWARE_VERSION?: string;

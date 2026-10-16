@@ -4,7 +4,8 @@
  * session. Authorization for these lives in the signed token itself (tokens.ts), checked inside
  * each route. A future run adding its own public, client-facing link extends this array.
  */
-export const PUBLIC_API_PREFIXES = ['/sending/public/'] as const;
+// R35: the email inbox checks its own HMAC signature (src/modules/expenses/inbox.ts).
+export const PUBLIC_API_PREFIXES = ['/sending/public/', '/inbox'] as const;
 
 export function isPublicApiPath(path: string): boolean {
   return PUBLIC_API_PREFIXES.some((p) => path.startsWith(`/api${p}`));

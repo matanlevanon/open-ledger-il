@@ -9,7 +9,7 @@ import { createMcpSettingsModule } from '../../../src/modules/mcp/settings-route
 /** R34 task 3: /api/settings/mcp. Owner only, 403 in the demo, audited with the last 4 only. */
 const app = createApp();
 const OWNER = 'owner@example.com';
-const ASSISTANT = 'mcp-assistant@example.com';
+const ASSISTANT = 'noauto-mcp-assistant@example.com';
 const ACCOUNTANT = 'mcp-accountant@example.com';
 
 const as = (email: string, extra: Record<string, unknown> = {}) => ({ ...env, DEV_AUTH_EMAIL: email, MCP_TOKEN: 'installer-secret', PUBLIC_APP_URL: 'https://ledger.example.com', ...extra });
@@ -32,7 +32,9 @@ function mcpPing(token: string) {
 
 beforeAll(async () => {
   await env.DB.batch([
-    env.DB.prepare("INSERT OR IGNORE INTO users (email, role) VALUES (?, 'assistant')").bind(ASSISTANT),
+    // As the app adds one: users.role says only accountant or not, user_businesses holds the role.
+    env.DB.prepare("INSERT OR IGNORE INTO users (email, role) VALUES (?, 'owner')").bind(ASSISTANT),
+    env.DB.prepare("INSERT OR IGNORE INTO user_businesses (user_id, business_id, role) SELECT id, 1, 'assistant' FROM users WHERE email = ?").bind(ASSISTANT),
     env.DB.prepare("INSERT OR IGNORE INTO users (email, role) VALUES (?, 'accountant')").bind(ACCOUNTANT),
   ]);
 });

@@ -190,6 +190,7 @@ Document reading picks its provider from the Worker variable `AI_PROVIDER` (`ant
 | `MAIL_API_KEY` | Resend dashboard, an API key |
 | `SEND_LINK_KEY` | 32 random bytes, base64: `openssl rand -base64 32` |
 | `MCP_TOKEN` | 32 random bytes, base64, or any long random string: `openssl rand -base64 32`. Only the starting token: Settings > MCP makes a new one without the dashboard, and from then on this secret no longer works |
+| `INBOX_SECRET` | Optional. The secret an email gateway's `/register` returns. Not needed for a Ledger that takes email on its own domain. See `docs/expense-inbox.md` |
 
 ### Make the PDF signing key
 

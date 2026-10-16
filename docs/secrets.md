@@ -31,6 +31,7 @@ Set a secret on your computer with `npx wrangler secret put <NAME>`, or in the C
 | `MAIL_API_KEY` | R06, R08 | Outgoing email through Resend. R08 emails the monthly accountant pack |
 | `SEND_LINK_KEY` | R06 | HMAC key for signed consent-request and WhatsApp share links. 32 random bytes, base64. Make one with `openssl rand -base64 32` |
 | `MCP_TOKEN` | R14, R34 | The starting bearer token for `/mcp`. Settings > MCP makes a token the Ledger keeps in D1 (SHA-256 only). From then on only that token works and `MCP_TOKEN` is refused |
+| `INBOX_SECRET` | R35 | HMAC key an email gateway signs forwarded receipts with. Only with a gateway, see `docs/expense-inbox.md`. A Ledger on its own domain needs none |
 
 Sandbox and production ITA credentials sit under separate names. `ITA_ENV` picks the set (CLAUDE.md rule 7).
 

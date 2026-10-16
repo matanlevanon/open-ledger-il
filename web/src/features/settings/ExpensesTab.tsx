@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useDemo } from '../../app/demo';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import { type DriveSettings, fetchDriveSettings, saveDailySync, saveDriveRootFolder, saveIndexTitlePattern } from '../expenses/api';
 import { ImportCounts } from '../expenses/ImportSummaryView';
 import { ApiError } from './api';
+import { InboxSection } from './InboxSection';
 
 /** R20: the Drive root folder, the daily sync switch, and the log of every import run. Owner only. */
 export function ExpensesTab() {
@@ -15,6 +17,8 @@ export function ExpensesTab() {
   const [saving, setSaving] = useState(false);
   const toast = useToast();
   const t = useT();
+  // R35: the email inbox is never shown in the demo.
+  const demo = useDemo();
 
   const load = () =>
     fetchDriveSettings()
@@ -76,6 +80,7 @@ export function ExpensesTab() {
 
   return (
     <div className="flex flex-col gap-6">
+      {!demo && <InboxSection />}
       {settings.reader && (
         <section className="flex flex-col gap-2">
           <h2 className="font-heading text-lg text-ink">{t('settings.expenses.readerTitle')}</h2>

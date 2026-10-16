@@ -18,7 +18,7 @@ export type { RateSource } from './fx';
 export type { Deps as ExpensesDeps } from './service';
 export { DRIVE_DAILY_CRON, importMonth, runDailyDriveImport } from './drive-import';
 
-function defaultDeps(env: Env): Deps {
+export function defaultDeps(env: Env): Deps {
   return {
     drive: new GoogleDriveSource(env),
     extractor: new AiExtractor(env),

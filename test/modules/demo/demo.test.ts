@@ -297,6 +297,8 @@ describe('the sample data is read-only', () => {
       /^POST \/api\/demo\//,
       /^(POST|PUT|PATCH|DELETE) \/api\/(sending\/public|admin)\//,
       /^(POST|PUT|PATCH|DELETE) \/(admin|mcp)\b/,
+      // R35: signed by the email gateway, outside the session, and 404 in the demo.
+      /^POST \/api\/inbox$/,
     ];
     const routes = [...new Set(app.routes.filter((r) => ['POST', 'PUT', 'PATCH', 'DELETE'].includes(r.method)).map((r) => `${r.method} ${r.path}`))];
     expect(routes.length).toBeGreaterThan(80);

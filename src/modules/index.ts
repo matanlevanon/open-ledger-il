@@ -58,6 +58,10 @@ import { createContractsModule, createContractsPublicModule } from './contracts'
 // R26: demo mode for the public Sample Ledger. Every route answers 404 unless DEMO_MODE=1.
 import { createDemoAppModule, createDemoModule } from './demo';
 
+// R35: POST /api/inbox, receipts forwarded by email. Signed by the gateway, outside Access.
+import { defaultDeps as expensesDeps } from './expenses';
+import { createInboxModule } from './expenses/inbox-routes';
+
 // R34: Settings > MCP, the address, a token the Ledger keeps, and MCP on or off. Owner only.
 import { mcpSettingsModule } from './mcp/settings-routes';
 
@@ -139,4 +143,6 @@ export const modules: ModuleDef[] = [
   createDemoAppModule(),
 
   mcpSettingsModule,
+
+  createInboxModule(expensesDeps),
 ];

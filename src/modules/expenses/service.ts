@@ -26,6 +26,8 @@ export interface Deps {
   drive: DriveSource;
   extractor: Extractor;
   fx: RateSource;
+  /** R35: calls to the email gateway. Tests pass a fake. */
+  gatewayFetch?: typeof fetch;
 }
 
 // ---------------------------------------------------------------------------
@@ -219,8 +221,16 @@ async function recordFile(env: Env, input: IngestInput, actor: AuditActor): Prom
 }
 
 /** Runs extraction, resolves the supplier, checks duplicates, converts to ILS and creates the expense. */
-async function createExpenseFromExtraction(env: Env, deps: Deps, file: ExpenseFileRow, actor: AuditActor): Promise<ExpenseRow> {
-  const extracted = await deps.extractor.extract({ bytes: await downloadForExtraction(env, file), contentType: file.content_type, filename: file.filename });
+async function createExpenseFromExtraction(
+  env: Env,
+  deps: Deps,
+  file: ExpenseFileRow,
+  actor: AuditActor,
+  readAs?: { bytes: ArrayBuffer; contentType: string },
+): Promise<ExpenseRow> {
+  const extracted = await deps.extractor.extract(
+    readAs ? { ...readAs, filename: file.filename } : { bytes: await downloadForExtraction(env, file), contentType: file.content_type, filename: file.filename },
+  );
   const currency = assertCurrency(extracted.currency);
   const amountMinor = parseMajor(extracted.amount, currency);
   const vatAmountMinor = extracted.vatAmount ? parseMajor(extracted.vatAmount, currency) : 0;
@@ -282,6 +292,55 @@ export async function ingestFile(env: Env, deps: Deps, input: IngestInput, actor
   const file = await recordFile(env, input, actor);
   if (!file) return null;
   return createExpenseFromExtraction(env, deps, file, actor);
+}
+
+/** R35: one file from a forwarded email. `readAs` is what the reader gets when it differs from the file. */
+export interface InboxIngestInput {
+  bytes: ArrayBuffer;
+  filename: string;
+  contentType: string;
+  note: string;
+  readAs?: { bytes: ArrayBuffer; contentType: string };
+}
+
+export type InboxIngestResult = { kind: 'created'; expense: ExpenseRow; read: boolean } | { kind: 'duplicate'; expenseId: number };
+
+/**
+ * R35: ingests one file from the email inbox through the Upload path: R2, SHA-256, reading. The
+ * same file already on an expense makes nothing. A file the reader cannot read still becomes an
+ * expense waiting for review, with the amount left for the owner. The note keeps the email's
+ * sender and subject.
+ */
+export async function ingestInboxFile(env: Env, deps: Deps, input: InboxIngestInput, actor: AuditActor): Promise<InboxIngestResult> {
+  const sha256 = await sha256Hex(input.bytes);
+  const seen = await first<{ expense_id: number }>(
+    env.DB,
+    'SELECT expense_id FROM expense_files WHERE sha256 = ? AND business_id = ? AND expense_id IS NOT NULL ORDER BY id LIMIT 1',
+    sha256,
+    actorBiz(actor),
+  );
+  if (seen) return { kind: 'duplicate', expenseId: seen.expense_id };
+  const file = (await recordFile(env, { bytes: input.bytes, filename: input.filename, contentType: input.contentType, source: 'upload' }, actor))!;
+  try {
+    const expense = await createExpenseFromExtraction(env, deps, file, actor, input.readAs);
+    await run(env.DB, 'UPDATE expenses SET notes = ?, updated_at = ? WHERE id = ?', input.note, nowIso(), expense.id);
+    return { kind: 'created', expense: { ...expense, notes: input.note }, read: true };
+  } catch {
+    // No reading key, a format the reader refuses, or an answer that does not fit: the owner types it.
+    const { lastRowId } = await run(
+      env.DB,
+      `INSERT INTO expenses (file_id, status, document_date, notes, business_id) VALUES (?, 'new', ?, ?, ?)`,
+      file.id,
+      nowIso().slice(0, 10),
+      input.note,
+      actorBiz(actor),
+    );
+    await transaction(env.DB, [
+      stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id),
+      auditStatement(env.DB, actor, 'expense.create', 'expense', lastRowId, { status: 'new', source: 'inbox', read: false }),
+    ]);
+    return { kind: 'created', expense: (await first<ExpenseRow>(env.DB, 'SELECT * FROM expenses WHERE id = ?', lastRowId))!, read: false };
+  }
 }
 
 const DRIVE_ROOT_SETTING_KEY = 'expenses.drive_root_folder_id';

@@ -76,10 +76,13 @@ export class AnthropicReader implements DocumentReader {
 
   async read(req: ReadDocumentRequest): Promise<unknown> {
     const data = arrayBufferToBase64(req.bytes);
+    // R35: an email without an attachment is read from its text.
     const documentBlock =
       req.contentType === 'application/pdf'
         ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data } }
-        : { type: 'image', source: { type: 'base64', media_type: req.contentType, data } };
+        : req.contentType === 'text/plain'
+          ? { type: 'document', source: { type: 'text', media_type: 'text/plain', data: new TextDecoder().decode(req.bytes) } }
+          : { type: 'image', source: { type: 'base64', media_type: req.contentType, data } };
 
     const res = await this.fetchFn('https://api.anthropic.com/v1/messages', {
       method: 'POST',

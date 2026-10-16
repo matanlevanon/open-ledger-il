@@ -48,6 +48,13 @@ secret `MCP_TOKEN` is the first token. Settings > MCP (owner only) shows the add
 new token, shows it once with the Claude Desktop and Claude Code files, and turns MCP off. A
 token made there replaces `MCP_TOKEN`. Details: `docs/secrets.md`.
 
+## Email inbox
+
+Forward receipts to the Ledger by email. Each PDF or image attachment becomes an expense, read by
+AI and waiting for your check. Only senders on your list count. An email gateway (`tools/ledger-inbox`)
+gives each install an address. A Ledger on its own domain can take email with Email Routing and
+no gateway. Details: `docs/expense-inbox.md`.
+
 ## Screenshots
 
 All screenshots come from the demo database (`npm run seed:demo`). Every name in them is invented.

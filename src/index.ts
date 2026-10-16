@@ -17,6 +17,8 @@ import { type AdminOptions, createDemoAdminRoutes } from './modules/demo/admin';
 import { gatePageHtml, misconfiguredPageHtml, preparingPageHtml, privacyPageHtml } from './modules/demo/pages';
 import { sessionFromCookie } from './modules/demo/session';
 import { dispatchScheduled } from './scheduled';
+import { defaultDeps as expensesDeps } from './modules/expenses';
+import { handleLedgerEmail } from './modules/expenses/inbox';
 
 export interface AppOptions {
   auth?: AuthOptions;
@@ -180,5 +182,9 @@ export default {
   fetch: app.fetch,
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(dispatchScheduled(controller, env, ctx, registeredModules));
+  },
+  // R35: receipts sent to an address on the Ledger's own domain through Email Routing.
+  async email(message: ForwardableEmailMessage, env: Env) {
+    await handleLedgerEmail(message, env, expensesDeps(env));
   },
 } satisfies ExportedHandler<Env>;

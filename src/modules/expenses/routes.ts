@@ -10,6 +10,7 @@ import { todayIsrael } from '../../core/db';
 import * as driveImport from './drive-import';
 import { readFile } from './files';
 import * as service from './service';
+import { registerInboxSettingsRoutes } from './inbox-routes';
 import type { Deps } from './service';
 import {
   CategoryInputSchema,
@@ -155,13 +156,22 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
     return c.json({ summary });
   });
 
+  // R35: Settings > Expenses > Email inbox. Owner only, never in the demo.
+  registerInboxSettingsRoutes(app, resolveDeps);
+
   app.get('/files/:id/download', async (c) => {
     const fileId = idParam(c.req.param('id'));
     const file = await service.getExpenseFile(c.env.DB, fileId, businessIdOf(c));
     const object = await readFile(c.env, file.r2_key);
     if (!object) throw new NotFoundError('File', fileId);
     return new Response(object.body, {
-      headers: { 'Content-Type': file.content_type, 'Content-Disposition': `inline; filename="${file.filename}"` },
+      headers: {
+        'Content-Type': file.content_type,
+        'Content-Disposition': `inline; filename="${file.filename}"`,
+        // R35: an email body is stored as HTML. Sandboxed, it runs no script and loads nothing remote.
+        'Content-Security-Policy': "sandbox; default-src 'none'; img-src data:; style-src 'unsafe-inline'",
+        'X-Content-Type-Options': 'nosniff',
+      },
     });
   });
 

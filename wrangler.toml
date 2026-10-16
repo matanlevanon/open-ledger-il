@@ -57,6 +57,7 @@ UPDATE_REPO = ""                   # owner/name of the GitHub repo you deploy fr
 #   MAIL_API_KEY          Outgoing email, Resend (R06)
 #   SEND_LINK_KEY         HMAC key for signed consent and WhatsApp share links (R06)
 #   MCP_TOKEN             Bearer token for /mcp (R14)
+#   INBOX_SECRET          HMAC key for /api/inbox, from the email gateway (R35)
 # Local development: copy .dev.vars.example to .dev.vars (git-ignored).
 
 [[d1_databases]]
