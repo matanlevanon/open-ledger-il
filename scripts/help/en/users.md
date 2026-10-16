@@ -3,6 +3,7 @@ title: Give your accountant or assistant access
 description: Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
 updated: 2026-10-17
 published: true
+nav: Accountant and team access
 order: 5
 ---
 

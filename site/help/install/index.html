@@ -265,6 +265,24 @@ section[id] { scroll-margin-top: 64px; }
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.help-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 44px; align-items: start; }
+.help-nav { position: sticky; top: 88px; font-size: 14.5px; }
+.help-nav p { font-weight: 700; margin: 0 0 8px; color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.help-nav ol { list-style: none; padding: 0; margin: 0; }
+.help-nav li a { display: block; padding: 7px 12px; border-inline-start: 3px solid transparent; color: var(--text-dim); text-decoration: none; border-radius: 0 8px 8px 0; }
+[dir="rtl"] .help-nav li a { border-radius: 8px 0 0 8px; }
+.help-nav li a:hover { color: var(--text); background: var(--surface-2); }
+.help-nav li a[aria-current="page"] { color: var(--blue); font-weight: 650; background: var(--surface-2); border-inline-start-color: var(--blue); }
+.help-more { display: none; }
+.buy-box { background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; margin: 8px 0 24px; }
+.buy-box h2 { margin-top: 0; font-size: 19px; }
+.buy-box ul { margin: 8px 0 14px; }
+.buy-box .guide-cta { margin-top: 10px; }
+@media (max-width: 860px) { .help-wrap { grid-template-columns: 1fr; } .help-nav { display: none; } .help-more { display: block; } }
+.prose .table-wrap { overflow-x: auto; margin: 16px 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
@@ -317,9 +335,15 @@ section[id] { scroll-margin-top: 64px; }
     <p class="lead">Every screen of the Windows installer, from the licence key to the Ledger&#x27;s address, with what to fill in and what to skip.</p>
   </div>
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    <nav class="help-nav" aria-label="Topics"><p>Topics</p><ol><li><a href="/help/before-you-start/">Before you install</a></li><li><a href="/help/install/" aria-current="page">Install</a></li><li><a href="/help/cloudflare-token/">Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in</a></li><li><a href="/help/users/">Accountant and team access</a></li><li><a href="/help/tax-authority/">Tax Authority</a></li><li><a href="/help/first-invoice/">Quote to receipt</a></li><li><a href="/help/payment-providers/">Payment providers</a></li><li><a href="/help/expenses/">Expenses</a></li><li><a href="/help/email/">Email and spam</a></li><li><a href="/help/connect-claude/">Connect Claude (MCP)</a></li><li><a href="/help/keys-later/">Add a key later</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems</a></li></ol></nav>
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">Updated 2026-10-17</p>
-      <p>Read <a href="/help/before-you-start/">Before you install</a> first. Keep the purchase email open, you need the key and the download link.</p>
+      <div class="buy-box"><h2>The installer comes with your purchase</h2><p>Buy the connected installer for ₪99, a first-release price (regular ₪199). The licence key and the download link reach your email within a minute.</p><ul><li>No Tax Authority API app to apply for. You connect through MTN&#x27;s approved app.</li><li>No Israeli server or relay to run. Every Tax Authority call leaves from an Israeli address, so it never gets the 403 a Worker abroad gets.</li><li>No command line. A wizard creates the database, the files, the sign-in and the address in your Cloudflare account, in about 3 minutes.</li><li>Run it again later to update, and your data stays.</li></ul><div class="guide-cta"><a class="btn btn-primary" href="https://get.matanlevanon.com/buy" target="_blank" rel="noopener">Buy the installer</a><a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Or set it up yourself, free</a></div></div>
+      <p>The installer is the paid, connected way to install Open Ledger IL. You buy it once on the shop, and the purchase email brings the licence key and the download link. Read <a href="/help/before-you-start/">Before you install</a> first.</p>
+<h2 id="what-the-installer-saves-you">What the installer saves you</h2>
+<p>Setting up from the source code is free, and the <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" rel="noopener" target="_blank">setup guide</a> covers it. The installer skips the hard parts:</p>
+<ul><li><b>No Tax Authority API app.</b> On your own, you register in the Tax Authority developer portal, apply for an API app, wait for approval, and keep its client secret safe. The installer connects you through MTN's approved app. You sign in with your own Tax Authority user and that is all.</li><li><b>No Israeli server.</b> The Tax Authority turns away calls from outside Israel, and Cloudflare often serves a Worker from Frankfurt. On your own, you run a relay on a server with an Israeli address. With the installer, every call goes out through MTN's Israeli route.</li><li><b>No command line.</b> No Node.js, no wrangler, no database ids, no secrets to type. The wizard creates everything in your Cloudflare account in about 3 minutes.</li><li><b>Updates in one step.</b> Run the new installer, and your data stays.</li></ul>
 <h2 id="1-download-and-open-the-installer">1. Download and open the installer</h2>
 <ol><li>Click the download link in the purchase email. The file is <code>MTN-Open-Ledger-Setup-relay-1.6.0.exe</code>, about 100 MB.</li><li>The link works for 72 hours and 5 downloads. If it no longer works, open it anyway and click <b>Email me a fresh link</b>.</li><li>Double-click the file. Windows shows <b>Windows protected your PC</b>. Click <b>More info</b>, then <b>Run anyway</b>. The file is not signed with a paid certificate yet, so Windows warns about every new copy.</li><li>The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.</li></ol>
 <h2 id="2-licence-key-and-business">2. Licence key and business</h2>
@@ -342,7 +366,8 @@ section[id] { scroll-margin-top: 64px; }
 <p><a href="/help/first-sign-in/">First sign-in and setup</a>.</p>
       
       <p>Still stuck? <a href="/pricing/#setup">Write to us from the pricing page.</a></p>
-      <h2 id="more">More help</h2><ul><li><a href="/help/before-you-start/">Before you install: what you need</a></li><li><a href="/help/cloudflare-token/">Create the Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in and setup</a></li><li><a href="/help/users/">Give your accountant or assistant access</a></li><li><a href="/help/tax-authority/">Connect to the Tax Authority for allocation numbers</a></li><li><a href="/help/first-invoice/">From quote to receipt: your first documents</a></li><li><a href="/help/payment-providers/">Take payments with Grow, Cardcom or another provider</a></li><li><a href="/help/expenses/">Get your expenses into the Ledger</a></li><li><a href="/help/email/">Send documents by email, and keep them out of spam</a></li><li><a href="/help/connect-claude/">Connect Claude or another AI app (MCP)</a></li><li><a href="/help/keys-later/">Add or change a key after the install</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems and how to fix them</a></li></ul>
+      <div class="help-more"><h2 id="more">More help</h2><ul><li><a href="/help/before-you-start/">Before you install: what you need</a></li><li><a href="/help/cloudflare-token/">Create the Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in and setup</a></li><li><a href="/help/users/">Give your accountant or assistant access</a></li><li><a href="/help/tax-authority/">Connect to the Tax Authority for allocation numbers</a></li><li><a href="/help/first-invoice/">From quote to receipt: your first documents</a></li><li><a href="/help/payment-providers/">Take payments with Grow, Cardcom or another provider</a></li><li><a href="/help/expenses/">Get your expenses into the Ledger</a></li><li><a href="/help/email/">Send documents by email, and keep them out of spam</a></li><li><a href="/help/connect-claude/">Connect Claude or another AI app (MCP)</a></li><li><a href="/help/keys-later/">Add or change a key after the install</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems and how to fix them</a></li></ul></div>
+    </div>
     </div>
   </section>
 </main>

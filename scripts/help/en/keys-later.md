@@ -3,6 +3,7 @@ title: Add or change a key after the install
 description: Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
 updated: 2026-10-17
 published: true
+nav: Add a key later
 order: 12
 ---
 

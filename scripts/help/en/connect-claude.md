@@ -3,6 +3,7 @@ title: Connect Claude or another AI app (MCP)
 description: Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
 updated: 2026-10-17
 published: true
+nav: Connect Claude (MCP)
 order: 11
 ---
 

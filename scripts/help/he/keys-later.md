@@ -3,6 +3,7 @@ title: הוספה או החלפה של מפתח אחרי ההתקנה
 description: הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
 updated: 2026-10-17
 published: true
+nav: הוספת מפתח
 order: 12
 ---
 

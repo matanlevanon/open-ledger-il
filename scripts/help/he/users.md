@@ -3,6 +3,7 @@ title: גישה לרואה חשבון או לעוזר
 description: הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
 updated: 2026-10-17
 published: true
+nav: גישה לרואה חשבון וצוות
 order: 5
 ---
 

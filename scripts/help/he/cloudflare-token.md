@@ -3,6 +3,7 @@ title: יצירת ה-API token ב-Cloudflare
 description: שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
 updated: 2026-10-17
 published: true
+nav: API token ב-Cloudflare
 order: 3
 ---
 

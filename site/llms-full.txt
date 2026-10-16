@@ -394,10 +394,10 @@ Source: https://open-ledger.matanlevanon.com/he/guides/
 - [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/)שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
 - [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/)הכניסה הראשונה ללדג'ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.
 - [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/)הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
-- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)מחברים את הלדג'ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/)מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.
 - [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/)סדר המסמכים בלדג'ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.
 - [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/)סולק גובה את הכסף והלדג'ר מוציא את הקבלות, ידנית או אוטומטית, בלי שני מסמכים לאותו תשלום.
-- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/)העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/)חיבור Resend כדי שהלדג'ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/)נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/)הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
@@ -451,8 +451,18 @@ Source: https://open-ledger.matanlevanon.com/he/help/
 
 - The Tax Authority card reads the real connection state, in English and Hebrew.
 
+### MCP
+
+- Settings > MCP shows the MCP address, makes a new token and shows it once, and turns MCP off. A token made there replaces the Worker secret `MCP_TOKEN`. Owner only.
+
+### Expenses
+
+- Forward receipts by email. Each PDF or image attachment becomes an expense waiting for review. Only senders on the list count. Settings > Expenses > Email inbox shows the address, the senders, the Gmail confirmation code and the setup steps. A Ledger on its own domain takes email through Email Routing with no gateway. The gateway is `tools/ledger-inbox`.
+
 ### Database
 
+- Migration 3500: `inbox_signatures` and `inbox_events`, for the email inbox.
+- Migration 3400: `mcp_tokens`, the token made in Settings > MCP, stored as its SHA-256 only.
 - Migration 2900: demo session tags on the demo tables, the build lock and the sweep log.
 
 ## 1.5.0 (2026-10-13)
@@ -1015,10 +1025,10 @@ Step-by-step instructions, in the order you need them. Start at the top if this 
 - [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
 - [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)Sign in to your Ledger for the first time, fill in the business profile, logo, signature and numbering, and check one receipt before you go live.
 - [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)Sign the Ledger in to the Israel Tax Authority once, so tax invoices get their allocation numbers by themselves, and reconnect every 90 days.
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)Allocation numbers with the installer or with your own setup: what each path takes, how to connect, and the 90-day reconnect.
 - [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.
 - [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)Use a card payment provider for collecting money and the Ledger for the receipts, by hand or automatically, without two documents for one payment.
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.
+- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
 - [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
 - [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
 - [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
@@ -1070,8 +1080,18 @@ Every release, newest first. The current version is 1.6.0.
 
 - The Tax Authority card reads the real connection state, in English and Hebrew.
 
+### MCP
+
+- Settings > MCP shows the MCP address, makes a new token and shows it once, and turns MCP off. A token made there replaces the Worker secret `MCP_TOKEN`. Owner only.
+
+### Expenses
+
+- Forward receipts by email. Each PDF or image attachment becomes an expense waiting for review. Only senders on the list count. Settings > Expenses > Email inbox shows the address, the senders, the Gmail confirmation code and the setup steps. A Ledger on its own domain takes email through Email Routing with no gateway. The gateway is `tools/ledger-inbox`.
+
 ### Database
 
+- Migration 3500: `inbox_signatures` and `inbox_events`, for the email inbox.
+- Migration 3400: `mcp_tokens`, the token made in Settings > MCP, stored as its SHA-256 only.
 - Migration 2900: demo session tags on the demo tables, the build lock and the sweep log.
 
 ## 1.5.0 (2026-10-13)
@@ -1499,9 +1519,44 @@ Source: https://open-ledger.matanlevanon.com/he/help/email/
 
 # הכנסת הוצאות ללדג'ר
 
-העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.
+העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
 
 עודכן 2026-10-17
+
+## העברת קבלות במייל
+
+הדרך הכי קלה לקבלות שמגיעות למייל. ללדג'ר שלכם יש כתובת פרטית. כל מה שמועבר אליה הופך להוצאה, נקרא עם AI ומחכה לבדיקה שלכם.
+
+### מוצאים את הכתובת
+
+פותחים **Settings > Expenses > Email inbox**. הכתובת נראית כך: `r7k2m9x4qp@in.matanlevanon.com`. לוחצים **Copy**. תוכנת ההתקנה מגדירה אותה. אם העמוד אומר שהתיבה לא מוגדרת, מריצים שוב את תוכנת ההתקנה.
+
+### הגדרה בג'ימייל, פעם אחת
+
+1. בג'ימייל לוחצים על גלגל השיניים, אחר כך **See all settings** (הצגת כל ההגדרות), ואז הלשונית **Forwarding and POP/IMAP** (העברה ו-POP/IMAP).
+2. לוחצים **Add a forwarding address** (הוספת כתובת להעברה), מדביקים את הכתובת ומאשרים.
+3. ג'ימייל שולח קוד אישור לכתובת. הוא מופיע בלדג'ר תחת **Email inbox**: "Gmail sent a confirmation code". מקלידים את הקוד בג'ימייל ולוחצים **Verify**.
+4. משאירים מסומן **Disable forwarding**. מעבירים רק קבלות, לא את כל המייל.
+5. בתיבת החיפוש של ג'ימייל מדביקים את החיפוש מעמוד הלדג'ר, למשל `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. אפשר להוסיף ספקים: `from:(billing@supplier.com)`.
+6. לוחצים על סמל אפשרויות החיפוש, ואז **Create filter** (יצירת מסנן). מסמנים **Forward it to** (העברה אל), בוחרים את הכתובת ולוחצים **Create filter**.
+
+מעכשיו כל מייל מתאים מגיע ללדג'ר לבד. לשליחה ידנית, מעבירים לאותה כתובת.
+
+### אאוטלוק
+
+**Settings > Mail > Rules > Add new rule.** תנאי: **Has attachment**, ומילים בנושא כמו invoice או קבלה. פעולה: **Forward to** לכתובת.
+
+### מה קורה לכל מייל
+
+- כל קובץ מצורף מסוג PDF, JPG, PNG, WebP או HEIC הופך להוצאה אחת. תמונות לוגו קטנות מדולגות.
+- מייל בלי קובץ מצורף הופך להוצאה אחת מהטקסט שלו, עם הסימון "From email text, check the amount".
+- אותו קובץ פעמיים הוא הוצאה אחת.
+- נספר רק מייל שהועבר מהכתובות שלכם. הרשימה נמצאת תחת **Allowed senders**, ומתחילה במיילים של הבעלים והעוזרים. כל השאר מתעלם ומופיע תחת **Last received**.
+- הכתובת עוברת דרך שער המייל של MTN, שלא שומר כלום. עם דומיין משלכם ב-Cloudflare, מנתבים כתובת כמו `receipts@your-domain.co.il` ישר ללדג'ר. הקובץ `docs/expense-inbox.md` במאגר מסביר איך.
+
+### כתובת חדשה
+
+אם הכתובת דלפה או מקבלת ספאם, לוחצים **Make a new address**. הישנה מפסיקה מיד. מעדכנים את המסנן בג'ימייל עם החדשה.
 
 ## העלאה
 
@@ -1523,10 +1578,6 @@ Source: https://open-ledger.matanlevanon.com/he/help/email/
 3. ב-**Settings > Expenses** מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי `/folders/`, ולוחצים **Save folder**.
 4. ב-**Expenses** בוחרים חודש ולוחצים **Import month**. כל קובץ נקרא עם AI ומחכה לבדיקה שלכם. הרצה כפולה לא מכפילה כלום.
 5. לייבוא כל בוקר, מפעילים **Daily sync** ב-**Settings > Expenses**.
-
-## בקרוב: העברת קבלות במייל
-
-אנחנו בונים כתובת מייל פרטית לכל לדג'ר. מגדירים כלל אחד בג'ימייל או באאוטלוק שמעביר אליה קבלות, וכל קבלה מגיעה ל-**Expenses** כשהיא כבר נקראה ומחכה לבדיקה. בלי דרייב, בלי Google Cloud. העמוד הזה יסביר את ההגדרה כשהיא תעלה.
 
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.matanlevanon.com/he/pricing/#setup)
 
@@ -1686,7 +1737,27 @@ Source: https://open-ledger.matanlevanon.com/he/help/first-sign-in/
 
 עודכן 2026-10-17
 
-קודם קראו את [לפני ההתקנה](https://open-ledger.matanlevanon.com/he/help/before-you-start/). השאירו את מייל הרכישה פתוח, צריך ממנו את המפתח ואת קישור ההורדה.
+## תוכנת ההתקנה מגיעה עם הרכישה
+
+קונים את תוכנת ההתקנה המחוברת ב-₪99, מחיר השקה לגרסה הראשונה (מחיר רגיל ₪199). מפתח הרישיון וקישור ההורדה מגיעים למייל תוך דקה.
+
+- בלי בקשה לאפליקציית API ברשות המסים. מתחברים דרך האפליקציה המאושרת של MTN.
+- בלי שרת ישראלי או ממסר להפעיל. כל פנייה לרשות המסים יוצאת מכתובת ישראלית, ולכן לא נחסמת כמו Worker שרץ בחו"ל.
+- בלי שורת פקודה. אשף מקים בחשבון Cloudflare שלכם את מסד הנתונים, הקבצים, הכניסה והכתובת, בערך ב-3 דקות.
+- הרצה חוזרת בהמשך מעדכנת, והנתונים נשארים.
+
+[לרכישת תוכנת ההתקנה](https://get.matanlevanon.com/buy?lang=he)[או התקנה עצמית, בחינם](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+
+תוכנת ההתקנה היא הדרך בתשלום, המחוברת, להתקין את Open Ledger IL. קונים אותה פעם אחת בחנות, ומייל הרכישה מביא את מפתח הרישיון ואת קישור ההורדה. קודם קראו את [לפני ההתקנה](https://open-ledger.matanlevanon.com/he/help/before-you-start/).
+
+## מה תוכנת ההתקנה חוסכת
+
+התקנה מקוד המקור חינמית, ו[מדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) מסביר אותה. תוכנת ההתקנה מדלגת על החלקים הקשים:
+
+- **בלי אפליקציית API ברשות המסים.** לבד, נרשמים בפורטל המפתחים של רשות המסים, מבקשים אפליקציית API, מחכים לאישור ושומרים על ה-client secret שלה. תוכנת ההתקנה מחברת אתכם דרך האפליקציה המאושרת של MTN. נכנסים עם המשתמש שלכם ברשות המסים וזהו.
+- **בלי שרת בישראל.** רשות המסים חוסמת פניות מחוץ לישראל, ו-Cloudflare מריץ לא פעם את ה-Worker מפרנקפורט. לבד, מפעילים ממסר על שרת עם כתובת ישראלית. עם תוכנת ההתקנה, כל פנייה יוצאת דרך הנתיב הישראלי של MTN.
+- **בלי שורת פקודה.** בלי Node.js, בלי wrangler, בלי מזהי מסד נתונים ובלי סודות להקליד. האשף מקים הכול בחשבון Cloudflare שלכם בערך ב-3 דקות.
+- **עדכון בצעד אחד.** מריצים את תוכנת ההתקנה החדשה, והנתונים נשארים.
 
 ## 1. מורידים ופותחים את תוכנת ההתקנה
 
@@ -1879,26 +1950,45 @@ Source: https://open-ledger.matanlevanon.com/he/help/payment-providers/
 
 # חיבור לרשות המסים למספרי הקצאה
 
-מחברים את הלדג'ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.
+מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.
 
 עודכן 2026-10-17
 
-חשבונית מס לעוסק מורשה ישראלי מעל הסף צריכה מספר הקצאה מרשות המסים. עם החיבור, הלדג'ר מבקש את המספר כשמסיימים את החשבונית ומדפיס אותו על המסמך.
+חשבונית מס לעוסק מורשה ישראלי מעל הסף צריכה מספר הקצאה מרשות המסים. עם חיבור, הלדג'ר מבקש את המספר כשמסיימים את החשבונית ומדפיס אותו על המסמך.
 
 עוסק פטור לא מוציא חשבוניות מס, ולכן לא צריך חיבור. מתחברים כשעוברים לעוסק מורשה.
 
-## התחברות
+## שתי דרכים להתחבר
+
+| | עם תוכנת ההתקנה | התקנה עצמית מקוד המקור |
+| --- | --- | --- |
+| אפליקציית API ברשות המסים | האפליקציה המאושרת של MTN. אין מה לבקש | נרשמים בפורטל המפתחים, מבקשים אפליקציה משלכם ומחכים לאישור |
+| Client id ו-secret | אין. תוכנת ההתקנה מגדירה את החיבור | שומרים אותם כסודות ב-Worker |
+| פניות מישראל | תמיד, דרך הנתיב הישראלי של MTN | רשות המסים חוסמת פניות מחוץ לישראל. לפעמים תופסים את מרכז הנתונים של Cloudflare בתל אביב, או מפעילים ממסר משלכם על שרת בישראל |
+| זמן הקמה | חלק מההתקנה של 3 דקות | שעות, ועוד זמן המתנה לאישור |
+| עלות | כלול במחיר תוכנת ההתקנה | חינם, ועוד שרת אם מפעילים |
+
+## עם תוכנת ההתקנה
 
 1. בלדג'ר פותחים **ITA** בתפריט הצד.
 2. לוחצים **Connect to ITA**.
-3. נפתח עמוד הכניסה של רשות המסים. נכנסים עם המשתמש שלכם ברשות המסים: קוד המשתמש והקוד החד פעמי שמגיע לטלפון. משתמשים במשתמש של העסק עצמו, זה של מספר העוסק שלו.
-4. מאשרים את הבקשה. חוזרים ללדג'ר, והעמוד מציג **Connected** עם מספר הימים שנשארו.
+3. נפתח עמוד הכניסה של רשות המסים. נכנסים עם המשתמש של העסק ברשות המסים: קוד המשתמש והקוד החד פעמי שמגיע לטלפון.
+4. מאשרים את הבקשה. מסך ההסכמה מציג את האפליקציה של MTN. חוזרים ללדג'ר, והעמוד מציג **Connected** עם מספר הימים שנשארו.
 
-המהדורה המחוברת עוברת דרך האפליקציה המאושרת של MTN ברשות המסים, אז אין צורך לרשום אפליקציה משלכם.
+## התקנה עצמית
+
+1. נרשמים בפורטל המפתחים של רשות המסים ויוצרים אפליקציית API לחשבוניות ישראל. מחכים לאישור לסביבת הייצור.
+2. שמים את ה-client id וה-secret של האפליקציה בסודות של ה-Worker, לפי [מדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md).
+3. פותרים את חסימת הפניות מחו"ל. בעמוד ITA לוחצים **Check route**. "Direct (from TLV): reached the ITA" אומר שהפנייה עברה הפעם. "From FRA: turned away, HTTP 403" אומר ש-Cloudflare הריץ אתכם מפרנקפורט. לפניות שעובדות תמיד, מפעילים את הממסר מ-`tools/ita-relay` על שרת עם כתובת ישראלית, למשל התוכנית החינמית של Oracle Cloud בירושלים.
+4. אחר כך **Connect to ITA** כמו למעלה.
+
+בלי אפליקציה בכלל? הלדג'ר עובד גם במצב ידני: כל חשבונית שצריכה מספר מחכה בעמוד ITA, מבקשים את המספר באתר של רשות המסים ומקלידים אותו בחזרה.
+
+[לרכישת תוכנת ההתקנה](https://open-ledger.matanlevanon.com/he/help/install/) ודילוג על שלבים 1 עד 3.
 
 ## כל 90 יום
 
-הכניסה לרשות המסים תקפה 90 יום. עמוד ITA מציג **Login ends in N days**. עם התראות Slack, הלדג'ר מזהיר מראש. כשהיא נגמרת, פותחים **ITA** ולוחצים **Connect again**. חשבונית שעדיין מחכה למספר מופיעה ב-**Allocation queue** באותו עמוד. אחרי ההתחברות לוחצים **Retry now**.
+הכניסה לרשות המסים תקפה 90 יום בשתי הדרכים. עמוד ITA מציג **Login ends in N days**. עם התראות Slack, הלדג'ר מזהיר בימים 75, 85 ו-89. כשהיא נגמרת, פותחים **ITA** ולוחצים **Connect again**. חשבונית שעדיין מחכה למספר מופיעה ב-**Allocation queue** באותו עמוד. אחרי ההתחברות לוחצים **Retry now**.
 
 ## כשמספר נדחה
 
@@ -2368,9 +2458,44 @@ Source: https://open-ledger.matanlevanon.com/help/email/
 
 # Get your expenses into the Ledger
 
-Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.
+Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
 
 Updated 2026-10-17
+
+## Forward receipts by email
+
+The easiest way for receipts that reach your inbox. Your Ledger has a private address. Everything forwarded there becomes an expense, read by AI and waiting for your check.
+
+### Find your address
+
+Open **Settings > Expenses > Email inbox**. The address looks like `r7k2m9x4qp@in.matanlevanon.com`. Click **Copy**. The installer sets it up. If the page says the inbox is not set up, run the installer again.
+
+### Set it up in Gmail, once
+
+1. In Gmail, click the gear, then **See all settings**, then the tab **Forwarding and POP/IMAP**.
+2. Click **Add a forwarding address**, paste the address and confirm.
+3. Gmail sends a confirmation code to that address. It shows up in the Ledger under **Email inbox**: "Gmail sent a confirmation code". Type the code in Gmail and click **Verify**.
+4. Leave **Disable forwarding** selected. You forward only receipts, not all your mail.
+5. In the Gmail search box, paste the search from the Ledger page, for example `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. Add your suppliers if you like: `from:(billing@supplier.com)`.
+6. Click the search options icon, then **Create filter**. Tick **Forward it to**, pick the address, and click **Create filter**.
+
+From now on, every matching email goes to the Ledger by itself. To send one by hand, forward it to the same address.
+
+### Outlook
+
+**Settings > Mail > Rules > Add new rule.** Condition: **Has attachment**, and words in the subject such as invoice or receipt. Action: **Forward to** the address.
+
+### What happens to each email
+
+- Each PDF, JPG, PNG, WebP or HEIC attachment becomes one expense. Small logo images are skipped.
+- An email with no attachment becomes one expense from its text, marked "From email text, check the amount".
+- The same file twice is one expense.
+- Only email forwarded from your own addresses counts. The list is under **Allowed senders**, and starts with the owner and assistant emails. Anything else is ignored and listed under **Last received**.
+- The address passes through MTN's email gateway, which stores nothing. With your own domain on Cloudflare, you route an address such as `receipts@your-domain.co.il` straight to your Ledger instead. The repository's `docs/expense-inbox.md` explains how.
+
+### A new address
+
+If the address leaks or gets spam, click **Make a new address**. The old one stops at once. Update the Gmail filter with the new one.
 
 ## Upload
 
@@ -2392,10 +2517,6 @@ For people who already keep receipts in Drive, one folder per month named `YYYY-
 3. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
 4. In **Expenses**, pick the month and click **Import month**. Each file goes through AI reading and waits for your check. Running it twice adds nothing twice.
 5. To import every morning, turn on **Daily sync** in **Settings > Expenses**.
-
-## Coming: forward receipts by email
-
-We are building a private email address for each Ledger. You set one rule in Gmail or Outlook that forwards receipts to it, and every receipt lands in **Expenses** read and waiting for your check. No Drive, no Google Cloud. This page will explain the setup once it ships.
 
 Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
 
@@ -2555,7 +2676,27 @@ Every screen of the Windows installer, from the licence key to the Ledger's addr
 
 Updated 2026-10-17
 
-Read [Before you install](https://open-ledger.matanlevanon.com/help/before-you-start/) first. Keep the purchase email open, you need the key and the download link.
+## The installer comes with your purchase
+
+Buy the connected installer for ₪99, a first-release price (regular ₪199). The licence key and the download link reach your email within a minute.
+
+- No Tax Authority API app to apply for. You connect through MTN's approved app.
+- No Israeli server or relay to run. Every Tax Authority call leaves from an Israeli address, so it never gets the 403 a Worker abroad gets.
+- No command line. A wizard creates the database, the files, the sign-in and the address in your Cloudflare account, in about 3 minutes.
+- Run it again later to update, and your data stays.
+
+[Buy the installer](https://get.matanlevanon.com/buy)[Or set it up yourself, free](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+
+The installer is the paid, connected way to install Open Ledger IL. You buy it once on the shop, and the purchase email brings the licence key and the download link. Read [Before you install](https://open-ledger.matanlevanon.com/help/before-you-start/) first.
+
+## What the installer saves you
+
+Setting up from the source code is free, and the [setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) covers it. The installer skips the hard parts:
+
+- **No Tax Authority API app.** On your own, you register in the Tax Authority developer portal, apply for an API app, wait for approval, and keep its client secret safe. The installer connects you through MTN's approved app. You sign in with your own Tax Authority user and that is all.
+- **No Israeli server.** The Tax Authority turns away calls from outside Israel, and Cloudflare often serves a Worker from Frankfurt. On your own, you run a relay on a server with an Israeli address. With the installer, every call goes out through MTN's Israeli route.
+- **No command line.** No Node.js, no wrangler, no database ids, no secrets to type. The wizard creates everything in your Cloudflare account in about 3 minutes.
+- **Updates in one step.** Run the new installer, and your data stays.
 
 ## 1. Download and open the installer
 
@@ -2748,26 +2889,45 @@ Source: https://open-ledger.matanlevanon.com/help/payment-providers/
 
 # Connect to the Tax Authority for allocation numbers
 
-Sign the Ledger in to the Israel Tax Authority once, so tax invoices get their allocation numbers by themselves, and reconnect every 90 days.
+Allocation numbers with the installer or with your own setup: what each path takes, how to connect, and the 90-day reconnect.
 
 Updated 2026-10-17
 
-A tax invoice to an Israeli עוסק מורשה above the threshold needs an allocation number (מספר הקצאה) from the Tax Authority. With the connection, the Ledger asks for the number when you finalize the invoice and prints it on the document.
+A tax invoice to an Israeli עוסק מורשה above the threshold needs an allocation number (מספר הקצאה) from the Tax Authority. With a connection, the Ledger asks for the number when you finalize the invoice and prints it on the document.
 
 An עוסק פטור issues no tax invoices, so it needs no connection. Connect later, when you become עוסק מורשה.
 
-## Connect
+## Two ways to connect
+
+| | With the installer | Self setup from the source code |
+| --- | --- | --- |
+| Tax Authority API app | MTN's approved app. Nothing to apply for | Register in the developer portal, apply for your own app, wait for approval |
+| Client id and secret | None. The installer sets the connection | You store them as Worker secrets |
+| Calls from Israel | Always, through MTN's Israeli route | The Tax Authority turns away calls from outside Israel. You catch Cloudflare's Tel Aviv data center some of the time, or run your own relay on an Israeli server |
+| Setup time | Part of the 3-minute install | Hours, plus the approval wait |
+| Cost | Included in the installer price | Free, plus any server you run |
+
+## With the installer
 
 1. In the Ledger, open **ITA** in the sidebar.
 2. Click **Connect to ITA**.
-3. The Tax Authority's sign-in page opens. Sign in with your Tax Authority user: the user code and the one-time code sent to your phone. Use the business's own user, the one for its tax number.
-4. Approve the request. You come back to the Ledger, and the page shows **Connected**, with the number of days left.
+3. The Tax Authority's sign-in page opens. Sign in with the business's own Tax Authority user: the user code and the one-time code sent to your phone.
+4. Approve the request. The consent screen names MTN's app. You come back to the Ledger, and the page shows **Connected**, with the days left.
 
-The connected edition goes through MTN's approved Tax Authority app, so there is no app of your own to register.
+## Self setup
+
+1. Register in the Tax Authority developer portal and create an API app for Israel Invoices. Wait for production approval.
+2. Put the app's client id and secret in the Worker's secrets, as the [setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) lists.
+3. Solve the Israel-only rule. On the ITA page, click **Check route**. "Direct (from TLV): reached the ITA" means the call got through this time. "From FRA: turned away, HTTP 403" means Cloudflare served you from Frankfurt. For calls that work every time, run the relay from `tools/ita-relay` on a server with an Israeli address, for example Oracle Cloud's free tier in Jerusalem.
+4. Then **Connect to ITA** as above.
+
+No app at all? The Ledger also runs in manual mode: each invoice that needs a number waits on the ITA page, you request the number in the Tax Authority web app, and type it back.
+
+[Buy the installer](https://open-ledger.matanlevanon.com/help/install/) to skip steps 1 to 3.
 
 ## Every 90 days
 
-The Tax Authority login lasts 90 days. The ITA page shows **Login ends in N days**. With Slack alerts on, the Ledger warns you before. When it ends, open **ITA** and click **Connect again**. An invoice still waiting for a number shows in the **Allocation queue** on the same page. After you reconnect, click **Retry now**.
+The Tax Authority login lasts 90 days on both paths. The ITA page shows **Login ends in N days**. With Slack alerts on, the Ledger warns you on days 75, 85 and 89. When it ends, open **ITA** and click **Connect again**. An invoice still waiting for a number shows in the **Allocation queue** on the same page. After you reconnect, click **Retry now**.
 
 ## When a number is refused
 

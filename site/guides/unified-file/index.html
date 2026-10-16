@@ -265,6 +265,24 @@ section[id] { scroll-margin-top: 64px; }
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.help-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 44px; align-items: start; }
+.help-nav { position: sticky; top: 88px; font-size: 14.5px; }
+.help-nav p { font-weight: 700; margin: 0 0 8px; color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.help-nav ol { list-style: none; padding: 0; margin: 0; }
+.help-nav li a { display: block; padding: 7px 12px; border-inline-start: 3px solid transparent; color: var(--text-dim); text-decoration: none; border-radius: 0 8px 8px 0; }
+[dir="rtl"] .help-nav li a { border-radius: 8px 0 0 8px; }
+.help-nav li a:hover { color: var(--text); background: var(--surface-2); }
+.help-nav li a[aria-current="page"] { color: var(--blue); font-weight: 650; background: var(--surface-2); border-inline-start-color: var(--blue); }
+.help-more { display: none; }
+.buy-box { background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; margin: 8px 0 24px; }
+.buy-box h2 { margin-top: 0; font-size: 19px; }
+.buy-box ul { margin: 8px 0 14px; }
+.buy-box .guide-cta { margin-top: 10px; }
+@media (max-width: 860px) { .help-wrap { grid-template-columns: 1fr; } .help-nav { display: none; } .help-more { display: block; } }
+.prose .table-wrap { overflow-x: auto; margin: 16px 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
@@ -326,7 +344,7 @@ section[id] { scroll-margin-top: 64px; }
 <p>The file is two text files, packed together <sup><a href="#src-1">[1]</a></sup>:</p>
 <ul><li><b>INI.TXT</b>: the business details, the software that produced the file, and a summary row for each record type in the file <sup><a href="#src-1">[1]</a></sup>.</li><li><b>BKMVDATA.TXT</b>: the data itself, one record per line <sup><a href="#src-1">[1]</a></sup>.</li></ul>
 <p>Each record has a code. These are the main ones <sup><a href="#src-1">[1]</a></sup>:</p>
-<p>| Code | What it holds | |---|---| | A100 | Opening record | | B110 | A bookkeeping account, for example a client account | | C100 | Document header: type, number, date, client and amounts | | D110 | Document lines | | D120 | Payment details on receipts | | Z900 | Closing record |</p>
+<div class="table-wrap"><table><thead><tr><th>Code</th><th>What it holds</th></tr></thead><tbody><tr><td>A100</td><td>Opening record</td></tr><tr><td>B110</td><td>A bookkeeping account, for example a client account</td></tr><tr><td>C100</td><td>Document header: type, number, date, client and amounts</td></tr><tr><td>D110</td><td>Document lines</td></tr><tr><td>D120</td><td>Payment details on receipts</td></tr><tr><td>Z900</td><td>Closing record</td></tr></tbody></table></div>
 <p>Software that is also a double-entry ledger or a stock system adds more records, such as journal entries (B100) and stock items (M100) <sup><a href="#src-1">[1]</a></sup>.</p>
 <p>The two files are packed together: BKMVDATA.TXT is compressed in an inner ZIP file, which sits with INI.TXT in one folder inside a single ZIP file <sup><a href="#src-1">[1]</a></sup>. That is the file you hand over.</p>
 <p>Each field in a record has a fixed width, set by a table in the specification <sup><a href="#src-2">[2]</a></sup>. A text field is left aligned and padded with spaces. A number field is right aligned and padded with zeros <sup><a href="#src-2">[2]</a></sup>.</p>

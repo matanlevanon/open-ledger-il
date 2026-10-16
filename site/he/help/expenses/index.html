@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>הכנסת הוצאות ללדג&#x27;ר</title>
-<meta name="description" content="העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.">
+<meta name="description" content="העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.">
 <link rel="canonical" href="https://open-ledger.matanlevanon.com/he/help/expenses/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/expenses/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/expenses/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/he/help/expenses/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="הכנסת הוצאות ללדג&#x27;ר">
-<meta property="og:description" content="העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.">
+<meta property="og:description" content="העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://open-ledger.matanlevanon.com/he/help/expenses/">
 <meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="הכנסת הוצאות ללדג&#x27;ר">
-<meta name="twitter:description" content="העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.">
+<meta name="twitter:description" content="העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.">
 <meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
@@ -265,13 +265,31 @@ section[id] { scroll-margin-top: 64px; }
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.help-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 44px; align-items: start; }
+.help-nav { position: sticky; top: 88px; font-size: 14.5px; }
+.help-nav p { font-weight: 700; margin: 0 0 8px; color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.help-nav ol { list-style: none; padding: 0; margin: 0; }
+.help-nav li a { display: block; padding: 7px 12px; border-inline-start: 3px solid transparent; color: var(--text-dim); text-decoration: none; border-radius: 0 8px 8px 0; }
+[dir="rtl"] .help-nav li a { border-radius: 8px 0 0 8px; }
+.help-nav li a:hover { color: var(--text); background: var(--surface-2); }
+.help-nav li a[aria-current="page"] { color: var(--blue); font-weight: 650; background: var(--surface-2); border-inline-start-color: var(--blue); }
+.help-more { display: none; }
+.buy-box { background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; margin: 8px 0 24px; }
+.buy-box h2 { margin-top: 0; font-size: 19px; }
+.buy-box ul { margin: 8px 0 14px; }
+.buy-box .guide-cta { margin-top: 10px; }
+@media (max-width: 860px) { .help-wrap { grid-template-columns: 1fr; } .help-nav { display: none; } .help-more { display: block; } }
+.prose .table-wrap { overflow-x: auto; margin: 16px 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.matanlevanon.com/he/"},{"@type":"ListItem","position":2,"name":"עזרה","item":"https://open-ledger.matanlevanon.com/he/help/"},{"@type":"ListItem","position":3,"name":"הכנסת הוצאות ללדג'ר","item":"https://open-ledger.matanlevanon.com/he/help/expenses/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"הכנסת הוצאות ללדג'ר","description":"העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.","inLanguage":"he","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.matanlevanon.com/he/help/expenses/","url":"https://open-ledger.matanlevanon.com/he/help/expenses/","image":"https://open-ledger.matanlevanon.com/assets/og/default.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"הכנסת הוצאות ללדג'ר","description":"העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.","inLanguage":"he","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.matanlevanon.com/he/help/expenses/","url":"https://open-ledger.matanlevanon.com/he/help/expenses/","image":"https://open-ledger.matanlevanon.com/assets/og/default.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
 </head>
 <body>
 <header>
@@ -314,23 +332,38 @@ section[id] { scroll-margin-top: 64px; }
   <div class="wrap page">
     <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/he/">דף הבית</a></li><li><a href="/he/help/">עזרה</a></li><li aria-current="page">הכנסת הוצאות ללדג&#x27;ר</li></ol></nav>
     <h1>הכנסת הוצאות ללדג&#x27;ר</h1>
-    <p class="lead">העלאת קבלות וחשבוניות ספקים, קריאה אוטומטית עם AI, ייבוא חודש מגוגל דרייב, ותיבת המייל שבדרך.</p>
+    <p class="lead">העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.</p>
   </div>
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    <nav class="help-nav" aria-label="נושאים"><p>נושאים</p><ol><li><a href="/he/help/before-you-start/">לפני ההתקנה</a></li><li><a href="/he/help/install/">התקנה</a></li><li><a href="/he/help/cloudflare-token/">API token ב-Cloudflare</a></li><li><a href="/he/help/first-sign-in/">כניסה ראשונה</a></li><li><a href="/he/help/users/">גישה לרואה חשבון וצוות</a></li><li><a href="/he/help/tax-authority/">רשות המסים</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה</a></li><li><a href="/he/help/payment-providers/">סולקים</a></li><li><a href="/he/help/expenses/" aria-current="page">הוצאות</a></li><li><a href="/he/help/email/">מייל וספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude (MCP)</a></li><li><a href="/he/help/keys-later/">הוספת מפתח</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות</a></li></ol></nav>
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">עודכן 2026-10-17</p>
-      <h2 id="העלאה">העלאה</h2>
+      
+      <h2 id="העברת-קבלות-במייל">העברת קבלות במייל</h2>
+<p>הדרך הכי קלה לקבלות שמגיעות למייל. ללדג'ר שלכם יש כתובת פרטית. כל מה שמועבר אליה הופך להוצאה, נקרא עם AI ומחכה לבדיקה שלכם.</p>
+<h3 id="מוצאים-את-הכתובת">מוצאים את הכתובת</h3>
+<p>פותחים <b>Settings &gt; Expenses &gt; Email inbox</b>. הכתובת נראית כך: <code>r7k2m9x4qp@in.matanlevanon.com</code>. לוחצים <b>Copy</b>. תוכנת ההתקנה מגדירה אותה. אם העמוד אומר שהתיבה לא מוגדרת, מריצים שוב את תוכנת ההתקנה.</p>
+<h3 id="הגדרה-בג-ימייל-פעם-אחת">הגדרה בג'ימייל, פעם אחת</h3>
+<ol><li>בג'ימייל לוחצים על גלגל השיניים, אחר כך <b>See all settings</b> (הצגת כל ההגדרות), ואז הלשונית <b>Forwarding and POP/IMAP</b> (העברה ו-POP/IMAP).</li><li>לוחצים <b>Add a forwarding address</b> (הוספת כתובת להעברה), מדביקים את הכתובת ומאשרים.</li><li>ג'ימייל שולח קוד אישור לכתובת. הוא מופיע בלדג'ר תחת <b>Email inbox</b>: "Gmail sent a confirmation code". מקלידים את הקוד בג'ימייל ולוחצים <b>Verify</b>.</li><li>משאירים מסומן <b>Disable forwarding</b>. מעבירים רק קבלות, לא את כל המייל.</li><li>בתיבת החיפוש של ג'ימייל מדביקים את החיפוש מעמוד הלדג'ר, למשל <code>has:attachment (invoice OR receipt OR חשבונית OR קבלה)</code>. אפשר להוסיף ספקים: <code>from:(billing@supplier.com)</code>.</li><li>לוחצים על סמל אפשרויות החיפוש, ואז <b>Create filter</b> (יצירת מסנן). מסמנים <b>Forward it to</b> (העברה אל), בוחרים את הכתובת ולוחצים <b>Create filter</b>.</li></ol>
+<p>מעכשיו כל מייל מתאים מגיע ללדג'ר לבד. לשליחה ידנית, מעבירים לאותה כתובת.</p>
+<h3 id="אאוטלוק">אאוטלוק</h3>
+<p><b>Settings &gt; Mail &gt; Rules &gt; Add new rule.</b> תנאי: <b>Has attachment</b>, ומילים בנושא כמו invoice או קבלה. פעולה: <b>Forward to</b> לכתובת.</p>
+<h3 id="מה-קורה-לכל-מייל">מה קורה לכל מייל</h3>
+<ul><li>כל קובץ מצורף מסוג PDF, JPG, PNG, WebP או HEIC הופך להוצאה אחת. תמונות לוגו קטנות מדולגות.</li><li>מייל בלי קובץ מצורף הופך להוצאה אחת מהטקסט שלו, עם הסימון "From email text, check the amount".</li><li>אותו קובץ פעמיים הוא הוצאה אחת.</li><li>נספר רק מייל שהועבר מהכתובות שלכם. הרשימה נמצאת תחת <b>Allowed senders</b>, ומתחילה במיילים של הבעלים והעוזרים. כל השאר מתעלם ומופיע תחת <b>Last received</b>.</li><li>הכתובת עוברת דרך שער המייל של MTN, שלא שומר כלום. עם דומיין משלכם ב-Cloudflare, מנתבים כתובת כמו <code>receipts@your-domain.co.il</code> ישר ללדג'ר. הקובץ <code>docs/expense-inbox.md</code> במאגר מסביר איך.</li></ul>
+<h3 id="כתובת-חדשה">כתובת חדשה</h3>
+<p>אם הכתובת דלפה או מקבלת ספאם, לוחצים <b>Make a new address</b>. הישנה מפסיקה מיד. מעדכנים את המסנן בג'ימייל עם החדשה.</p>
+<h2 id="העלאה">העלאה</h2>
 <p>הדרך המהירה.</p>
 <ol><li>פותחים <b>Expenses</b> ולוחצים <b>Upload expense</b>.</li><li>בוחרים קובץ: PDF, JPG או PNG. בטלפון, מצלמים את הקבלה.</li><li>עם מפתח Gemini או Anthropic, הלדג'ר קורא ספק, תאריך, סכומים ומע"מ וממלא אותם. בודקים ושומרים.</li><li>בלי מפתח, מקלידים את הפרטים לבד.</li></ol>
 <p>להוספת מפתח קריאה אחרי ההתקנה ראו <a href="/he/help/keys-later/">הוספה או החלפה של מפתח</a>.</p>
 <h2 id="חודש-מגוגל-דרייב">חודש מגוגל דרייב</h2>
 <p>למי שכבר שומר קבלות בדרייב, בתיקייה לכל חודש בשם <code>YYYY-MM</code>, למשל <code>2026-10</code>.</p>
 <ol><li>עוקבים אחרי הגדרת הדרייב במאגר הקוד: פרויקט ב-Google Cloud, הפעלת Drive API ו-Sheets API, Service Account, ושיתוף תיקיית ההוצאות איתו כעורך. המדריך הוא <code>docs/drive-expenses-setup.md</code> ב-GitHub.</li><li>נותנים ללדג'ר את מפתח ה-JSON של ה-Service Account כסוד <code>GOOGLE_SERVICE_ACCOUNT_JSON</code>, ראו <a href="/he/help/keys-later/">הוספה או החלפה של מפתח</a>.</li><li>ב-<b>Settings &gt; Expenses</b> מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי <code>/folders/</code>, ולוחצים <b>Save folder</b>.</li><li>ב-<b>Expenses</b> בוחרים חודש ולוחצים <b>Import month</b>. כל קובץ נקרא עם AI ומחכה לבדיקה שלכם. הרצה כפולה לא מכפילה כלום.</li><li>לייבוא כל בוקר, מפעילים <b>Daily sync</b> ב-<b>Settings &gt; Expenses</b>.</li></ol>
-<h2 id="בקרוב-העברת-קבלות-במייל">בקרוב: העברת קבלות במייל</h2>
-<p>אנחנו בונים כתובת מייל פרטית לכל לדג'ר. מגדירים כלל אחד בג'ימייל או באאוטלוק שמעביר אליה קבלות, וכל קבלה מגיעה ל-<b>Expenses</b> כשהיא כבר נקראה ומחכה לבדיקה. בלי דרייב, בלי Google Cloud. העמוד הזה יסביר את ההגדרה כשהיא תעלה.</p>
       
       <p>עדיין תקועים? <a href="/he/pricing/#setup">כתבו לנו מעמוד המחירים.</a></p>
-      <h2 id="more">עוד עזרה</h2><ul><li><a href="/he/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a></li><li><a href="/he/help/install/">התקנת Open Ledger IL צעד אחר צעד</a></li><li><a href="/he/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a></li><li><a href="/he/help/first-sign-in/">כניסה ראשונה והגדרות</a></li><li><a href="/he/help/users/">גישה לרואה חשבון או לעוזר</a></li><li><a href="/he/help/tax-authority/">חיבור לרשות המסים למספרי הקצאה</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a></li><li><a href="/he/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a></li><li><a href="/he/help/email/">שליחת מסמכים במייל, בלי ספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a></li><li><a href="/he/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a></li></ul>
+      <div class="help-more"><h2 id="more">עוד עזרה</h2><ul><li><a href="/he/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a></li><li><a href="/he/help/install/">התקנת Open Ledger IL צעד אחר צעד</a></li><li><a href="/he/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a></li><li><a href="/he/help/first-sign-in/">כניסה ראשונה והגדרות</a></li><li><a href="/he/help/users/">גישה לרואה חשבון או לעוזר</a></li><li><a href="/he/help/tax-authority/">חיבור לרשות המסים למספרי הקצאה</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a></li><li><a href="/he/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a></li><li><a href="/he/help/email/">שליחת מסמכים במייל, בלי ספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a></li><li><a href="/he/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a></li></ul></div>
+    </div>
     </div>
   </section>
 </main>

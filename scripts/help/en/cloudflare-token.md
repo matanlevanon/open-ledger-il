@@ -3,6 +3,7 @@ title: Create the Cloudflare API token
 description: The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
 updated: 2026-10-17
 published: true
+nav: Cloudflare API token
 order: 3
 ---
 

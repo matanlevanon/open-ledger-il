@@ -3,6 +3,7 @@ title: Take payments with Grow, Cardcom or another provider
 description: Use a card payment provider for collecting money and the Ledger for the receipts, by hand or automatically, without two documents for one payment.
 updated: 2026-10-17
 published: true
+nav: Payment providers
 order: 8
 ---
 

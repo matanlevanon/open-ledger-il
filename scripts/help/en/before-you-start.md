@@ -3,6 +3,7 @@ title: Before you install: what you need
 description: The accounts, details and 30 minutes you need before you run the Open Ledger IL installer, and which parts are optional.
 updated: 2026-10-17
 published: true
+nav: Before you install
 order: 1
 ---
 

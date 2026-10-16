@@ -3,6 +3,7 @@ title: From quote to receipt: your first documents
 description: The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.
 updated: 2026-10-17
 published: true
+nav: Quote to receipt
 order: 7
 ---
 

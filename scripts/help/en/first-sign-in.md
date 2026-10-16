@@ -3,6 +3,7 @@ title: First sign-in and setup
 description: Sign in to your Ledger for the first time, fill in the business profile, logo, signature and numbering, and check one receipt before you go live.
 updated: 2026-10-17
 published: true
+nav: First sign-in
 order: 4
 ---
 

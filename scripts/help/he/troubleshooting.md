@@ -3,6 +3,7 @@ title: בעיות נפוצות ואיך פותרים אותן
 description: פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
 updated: 2026-10-17
 published: true
+nav: בעיות נפוצות
 order: 14
 ---
 

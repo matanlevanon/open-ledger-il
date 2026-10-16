@@ -3,10 +3,21 @@ title: Install Open Ledger IL step by step
 description: Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
 updated: 2026-10-17
 published: true
+nav: Install
+cta: buy
 order: 2
 ---
 
-Read [Before you install](/help/before-you-start/) first. Keep the purchase email open, you need the key and the download link.
+The installer is the paid, connected way to install Open Ledger IL. You buy it once on the shop, and the purchase email brings the licence key and the download link. Read [Before you install](/help/before-you-start/) first.
+
+## What the installer saves you
+
+Setting up from the source code is free, and the [setup guide]({{repo}}/blob/main/docs/deploy.md) covers it. The installer skips the hard parts:
+
+- **No Tax Authority API app.** On your own, you register in the Tax Authority developer portal, apply for an API app, wait for approval, and keep its client secret safe. The installer connects you through MTN's approved app. You sign in with your own Tax Authority user and that is all.
+- **No Israeli server.** The Tax Authority turns away calls from outside Israel, and Cloudflare often serves a Worker from Frankfurt. On your own, you run a relay on a server with an Israeli address. With the installer, every call goes out through MTN's Israeli route.
+- **No command line.** No Node.js, no wrangler, no database ids, no secrets to type. The wizard creates everything in your Cloudflare account in about 3 minutes.
+- **Updates in one step.** Run the new installer, and your data stays.
 
 ## 1. Download and open the installer
 

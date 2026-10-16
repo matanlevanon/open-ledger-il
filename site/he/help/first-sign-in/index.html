@@ -265,6 +265,24 @@ section[id] { scroll-margin-top: 64px; }
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.help-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 44px; align-items: start; }
+.help-nav { position: sticky; top: 88px; font-size: 14.5px; }
+.help-nav p { font-weight: 700; margin: 0 0 8px; color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.help-nav ol { list-style: none; padding: 0; margin: 0; }
+.help-nav li a { display: block; padding: 7px 12px; border-inline-start: 3px solid transparent; color: var(--text-dim); text-decoration: none; border-radius: 0 8px 8px 0; }
+[dir="rtl"] .help-nav li a { border-radius: 8px 0 0 8px; }
+.help-nav li a:hover { color: var(--text); background: var(--surface-2); }
+.help-nav li a[aria-current="page"] { color: var(--blue); font-weight: 650; background: var(--surface-2); border-inline-start-color: var(--blue); }
+.help-more { display: none; }
+.buy-box { background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; margin: 8px 0 24px; }
+.buy-box h2 { margin-top: 0; font-size: 19px; }
+.buy-box ul { margin: 8px 0 14px; }
+.buy-box .guide-cta { margin-top: 10px; }
+@media (max-width: 860px) { .help-wrap { grid-template-columns: 1fr; } .help-nav { display: none; } .help-more { display: block; } }
+.prose .table-wrap { overflow-x: auto; margin: 16px 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
@@ -317,8 +335,11 @@ section[id] { scroll-margin-top: 64px; }
     <p class="lead">הכניסה הראשונה ללדג&#x27;ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.</p>
   </div>
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    <nav class="help-nav" aria-label="נושאים"><p>נושאים</p><ol><li><a href="/he/help/before-you-start/">לפני ההתקנה</a></li><li><a href="/he/help/install/">התקנה</a></li><li><a href="/he/help/cloudflare-token/">API token ב-Cloudflare</a></li><li><a href="/he/help/first-sign-in/" aria-current="page">כניסה ראשונה</a></li><li><a href="/he/help/users/">גישה לרואה חשבון וצוות</a></li><li><a href="/he/help/tax-authority/">רשות המסים</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה</a></li><li><a href="/he/help/payment-providers/">סולקים</a></li><li><a href="/he/help/expenses/">הוצאות</a></li><li><a href="/he/help/email/">מייל וספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude (MCP)</a></li><li><a href="/he/help/keys-later/">הוספת מפתח</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות</a></li></ol></nav>
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">עודכן 2026-10-17</p>
+      
       <h2 id="כניסה">כניסה</h2>
 <ol><li>פותחים את כתובת הלדג'ר מהמסך האחרון של תוכנת ההתקנה או מקובץ הסיכום על שולחן העבודה.</li><li>Cloudflare מציג עמוד כניסה. מקלידים את המייל של הבעלים ולוחצים <b>Send me a code</b>.</li><li>מעתיקים את הקוד מהמייל ומדביקים. נכנסתם.</li></ol>
 <p>כל כניסה עובדת כך. מי שהמייל שלו לא ברשימה לא מגיע ללדג'ר בכלל, Cloudflare עוצר אותו קודם.</p>
@@ -338,7 +359,8 @@ section[id] { scroll-margin-top: 64px; }
 <p><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה</a>.</p>
       
       <p>עדיין תקועים? <a href="/he/pricing/#setup">כתבו לנו מעמוד המחירים.</a></p>
-      <h2 id="more">עוד עזרה</h2><ul><li><a href="/he/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a></li><li><a href="/he/help/install/">התקנת Open Ledger IL צעד אחר צעד</a></li><li><a href="/he/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a></li><li><a href="/he/help/users/">גישה לרואה חשבון או לעוזר</a></li><li><a href="/he/help/tax-authority/">חיבור לרשות המסים למספרי הקצאה</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a></li><li><a href="/he/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a></li><li><a href="/he/help/expenses/">הכנסת הוצאות ללדג&#x27;ר</a></li><li><a href="/he/help/email/">שליחת מסמכים במייל, בלי ספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a></li><li><a href="/he/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a></li></ul>
+      <div class="help-more"><h2 id="more">עוד עזרה</h2><ul><li><a href="/he/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a></li><li><a href="/he/help/install/">התקנת Open Ledger IL צעד אחר צעד</a></li><li><a href="/he/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a></li><li><a href="/he/help/users/">גישה לרואה חשבון או לעוזר</a></li><li><a href="/he/help/tax-authority/">חיבור לרשות המסים למספרי הקצאה</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a></li><li><a href="/he/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a></li><li><a href="/he/help/expenses/">הכנסת הוצאות ללדג&#x27;ר</a></li><li><a href="/he/help/email/">שליחת מסמכים במייל, בלי ספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a></li><li><a href="/he/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a></li></ul></div>
+    </div>
     </div>
   </section>
 </main>

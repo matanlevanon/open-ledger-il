@@ -265,6 +265,24 @@ section[id] { scroll-margin-top: 64px; }
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.help-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 44px; align-items: start; }
+.help-nav { position: sticky; top: 88px; font-size: 14.5px; }
+.help-nav p { font-weight: 700; margin: 0 0 8px; color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.help-nav ol { list-style: none; padding: 0; margin: 0; }
+.help-nav li a { display: block; padding: 7px 12px; border-inline-start: 3px solid transparent; color: var(--text-dim); text-decoration: none; border-radius: 0 8px 8px 0; }
+[dir="rtl"] .help-nav li a { border-radius: 8px 0 0 8px; }
+.help-nav li a:hover { color: var(--text); background: var(--surface-2); }
+.help-nav li a[aria-current="page"] { color: var(--blue); font-weight: 650; background: var(--surface-2); border-inline-start-color: var(--blue); }
+.help-more { display: none; }
+.buy-box { background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; margin: 8px 0 24px; }
+.buy-box h2 { margin-top: 0; font-size: 19px; }
+.buy-box ul { margin: 8px 0 14px; }
+.buy-box .guide-cta { margin-top: 10px; }
+@media (max-width: 860px) { .help-wrap { grid-template-columns: 1fr; } .help-nav { display: none; } .help-more { display: block; } }
+.prose .table-wrap { overflow-x: auto; margin: 16px 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
@@ -317,8 +335,11 @@ section[id] { scroll-margin-top: 64px; }
     <p class="lead">The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.</p>
   </div>
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    <nav class="help-nav" aria-label="Topics"><p>Topics</p><ol><li><a href="/help/before-you-start/">Before you install</a></li><li><a href="/help/install/">Install</a></li><li><a href="/help/cloudflare-token/">Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in</a></li><li><a href="/help/users/">Accountant and team access</a></li><li><a href="/help/tax-authority/">Tax Authority</a></li><li><a href="/help/first-invoice/" aria-current="page">Quote to receipt</a></li><li><a href="/help/payment-providers/">Payment providers</a></li><li><a href="/help/expenses/">Expenses</a></li><li><a href="/help/email/">Email and spam</a></li><li><a href="/help/connect-claude/">Connect Claude (MCP)</a></li><li><a href="/help/keys-later/">Add a key later</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems</a></li></ol></nav>
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">Updated 2026-10-17</p>
+      
       <h2 id="the-order">The order</h2>
 <ol><li><b>Quote:</b> the price you offer. No tax meaning.</li><li><b>Payment request</b> (דרישת תשלום): asks for the money. No tax meaning either.</li><li><b>Receipt</b>, or for an עוסק מורשה a <b>tax invoice/receipt:</b> issued when the money arrives. This is the document that counts as income.</li></ol>
 <p>You skip steps you do not need. A client who already paid gets a receipt straight away.</p>
@@ -332,7 +353,8 @@ section[id] { scroll-margin-top: 64px; }
 <p>For a monthly retainer, <b>Income &gt; Recurring</b> issues a payment request or a receipt every month, and sends it if you choose <b>Issue and send automatically</b>.</p>
       
       <p>Still stuck? <a href="/pricing/#setup">Write to us from the pricing page.</a></p>
-      <h2 id="more">More help</h2><ul><li><a href="/help/before-you-start/">Before you install: what you need</a></li><li><a href="/help/install/">Install Open Ledger IL step by step</a></li><li><a href="/help/cloudflare-token/">Create the Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in and setup</a></li><li><a href="/help/users/">Give your accountant or assistant access</a></li><li><a href="/help/tax-authority/">Connect to the Tax Authority for allocation numbers</a></li><li><a href="/help/payment-providers/">Take payments with Grow, Cardcom or another provider</a></li><li><a href="/help/expenses/">Get your expenses into the Ledger</a></li><li><a href="/help/email/">Send documents by email, and keep them out of spam</a></li><li><a href="/help/connect-claude/">Connect Claude or another AI app (MCP)</a></li><li><a href="/help/keys-later/">Add or change a key after the install</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems and how to fix them</a></li></ul>
+      <div class="help-more"><h2 id="more">More help</h2><ul><li><a href="/help/before-you-start/">Before you install: what you need</a></li><li><a href="/help/install/">Install Open Ledger IL step by step</a></li><li><a href="/help/cloudflare-token/">Create the Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in and setup</a></li><li><a href="/help/users/">Give your accountant or assistant access</a></li><li><a href="/help/tax-authority/">Connect to the Tax Authority for allocation numbers</a></li><li><a href="/help/payment-providers/">Take payments with Grow, Cardcom or another provider</a></li><li><a href="/help/expenses/">Get your expenses into the Ledger</a></li><li><a href="/help/email/">Send documents by email, and keep them out of spam</a></li><li><a href="/help/connect-claude/">Connect Claude or another AI app (MCP)</a></li><li><a href="/help/keys-later/">Add or change a key after the install</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems and how to fix them</a></li></ul></div>
+    </div>
     </div>
   </section>
 </main>

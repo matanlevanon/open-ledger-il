@@ -3,6 +3,7 @@ title: Common problems and how to fix them
 description: Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
 updated: 2026-10-17
 published: true
+nav: Common problems
 order: 14
 ---
 

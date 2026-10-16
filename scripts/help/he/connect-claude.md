@@ -3,6 +3,7 @@ title: חיבור Claude או אפליקציית AI אחרת (MCP)
 description: נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
 updated: 2026-10-17
 published: true
+nav: חיבור Claude (MCP)
 order: 11
 ---
 

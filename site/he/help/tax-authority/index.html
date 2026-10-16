@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>חיבור לרשות המסים למספרי הקצאה</title>
-<meta name="description" content="מחברים את הלדג&#x27;ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.">
+<meta name="description" content="מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.">
 <link rel="canonical" href="https://open-ledger.matanlevanon.com/he/help/tax-authority/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/tax-authority/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/tax-authority/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/he/help/tax-authority/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="חיבור לרשות המסים למספרי הקצאה">
-<meta property="og:description" content="מחברים את הלדג&#x27;ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.">
+<meta property="og:description" content="מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://open-ledger.matanlevanon.com/he/help/tax-authority/">
 <meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="חיבור לרשות המסים למספרי הקצאה">
-<meta name="twitter:description" content="מחברים את הלדג&#x27;ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.">
+<meta name="twitter:description" content="מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.">
 <meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
@@ -265,13 +265,31 @@ section[id] { scroll-margin-top: 64px; }
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.help-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 44px; align-items: start; }
+.help-nav { position: sticky; top: 88px; font-size: 14.5px; }
+.help-nav p { font-weight: 700; margin: 0 0 8px; color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.help-nav ol { list-style: none; padding: 0; margin: 0; }
+.help-nav li a { display: block; padding: 7px 12px; border-inline-start: 3px solid transparent; color: var(--text-dim); text-decoration: none; border-radius: 0 8px 8px 0; }
+[dir="rtl"] .help-nav li a { border-radius: 8px 0 0 8px; }
+.help-nav li a:hover { color: var(--text); background: var(--surface-2); }
+.help-nav li a[aria-current="page"] { color: var(--blue); font-weight: 650; background: var(--surface-2); border-inline-start-color: var(--blue); }
+.help-more { display: none; }
+.buy-box { background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; margin: 8px 0 24px; }
+.buy-box h2 { margin-top: 0; font-size: 19px; }
+.buy-box ul { margin: 8px 0 14px; }
+.buy-box .guide-cta { margin-top: 10px; }
+@media (max-width: 860px) { .help-wrap { grid-template-columns: 1fr; } .help-nav { display: none; } .help-more { display: block; } }
+.prose .table-wrap { overflow-x: auto; margin: 16px 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.matanlevanon.com/he/"},{"@type":"ListItem","position":2,"name":"עזרה","item":"https://open-ledger.matanlevanon.com/he/help/"},{"@type":"ListItem","position":3,"name":"חיבור לרשות המסים למספרי הקצאה","item":"https://open-ledger.matanlevanon.com/he/help/tax-authority/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"חיבור לרשות המסים למספרי הקצאה","description":"מחברים את הלדג'ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.","inLanguage":"he","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.matanlevanon.com/he/help/tax-authority/","url":"https://open-ledger.matanlevanon.com/he/help/tax-authority/","image":"https://open-ledger.matanlevanon.com/assets/og/default.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"חיבור לרשות המסים למספרי הקצאה","description":"מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.","inLanguage":"he","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.matanlevanon.com/he/help/tax-authority/","url":"https://open-ledger.matanlevanon.com/he/help/tax-authority/","image":"https://open-ledger.matanlevanon.com/assets/og/default.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
 </head>
 <body>
 <header>
@@ -314,23 +332,32 @@ section[id] { scroll-margin-top: 64px; }
   <div class="wrap page">
     <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/he/">דף הבית</a></li><li><a href="/he/help/">עזרה</a></li><li aria-current="page">חיבור לרשות המסים למספרי הקצאה</li></ol></nav>
     <h1>חיבור לרשות המסים למספרי הקצאה</h1>
-    <p class="lead">מחברים את הלדג&#x27;ר לרשות המסים פעם אחת, כדי שחשבוניות מס יקבלו מספר הקצאה לבד, ומתחברים מחדש כל 90 יום.</p>
+    <p class="lead">מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.</p>
   </div>
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    <nav class="help-nav" aria-label="נושאים"><p>נושאים</p><ol><li><a href="/he/help/before-you-start/">לפני ההתקנה</a></li><li><a href="/he/help/install/">התקנה</a></li><li><a href="/he/help/cloudflare-token/">API token ב-Cloudflare</a></li><li><a href="/he/help/first-sign-in/">כניסה ראשונה</a></li><li><a href="/he/help/users/">גישה לרואה חשבון וצוות</a></li><li><a href="/he/help/tax-authority/" aria-current="page">רשות המסים</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה</a></li><li><a href="/he/help/payment-providers/">סולקים</a></li><li><a href="/he/help/expenses/">הוצאות</a></li><li><a href="/he/help/email/">מייל וספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude (MCP)</a></li><li><a href="/he/help/keys-later/">הוספת מפתח</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות</a></li></ol></nav>
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">עודכן 2026-10-17</p>
-      <p>חשבונית מס לעוסק מורשה ישראלי מעל הסף צריכה מספר הקצאה מרשות המסים. עם החיבור, הלדג'ר מבקש את המספר כשמסיימים את החשבונית ומדפיס אותו על המסמך.</p>
+      
+      <p>חשבונית מס לעוסק מורשה ישראלי מעל הסף צריכה מספר הקצאה מרשות המסים. עם חיבור, הלדג'ר מבקש את המספר כשמסיימים את החשבונית ומדפיס אותו על המסמך.</p>
 <p>עוסק פטור לא מוציא חשבוניות מס, ולכן לא צריך חיבור. מתחברים כשעוברים לעוסק מורשה.</p>
-<h2 id="התחברות">התחברות</h2>
-<ol><li>בלדג'ר פותחים <b>ITA</b> בתפריט הצד.</li><li>לוחצים <b>Connect to ITA</b>.</li><li>נפתח עמוד הכניסה של רשות המסים. נכנסים עם המשתמש שלכם ברשות המסים: קוד המשתמש והקוד החד פעמי שמגיע לטלפון. משתמשים במשתמש של העסק עצמו, זה של מספר העוסק שלו.</li><li>מאשרים את הבקשה. חוזרים ללדג'ר, והעמוד מציג <b>Connected</b> עם מספר הימים שנשארו.</li></ol>
-<p>המהדורה המחוברת עוברת דרך האפליקציה המאושרת של MTN ברשות המסים, אז אין צורך לרשום אפליקציה משלכם.</p>
+<h2 id="שתי-דרכים-להתחבר">שתי דרכים להתחבר</h2>
+<div class="table-wrap"><table><thead><tr><th></th><th>עם תוכנת ההתקנה</th><th>התקנה עצמית מקוד המקור</th></tr></thead><tbody><tr><td>אפליקציית API ברשות המסים</td><td>האפליקציה המאושרת של MTN. אין מה לבקש</td><td>נרשמים בפורטל המפתחים, מבקשים אפליקציה משלכם ומחכים לאישור</td></tr><tr><td>Client id ו-secret</td><td>אין. תוכנת ההתקנה מגדירה את החיבור</td><td>שומרים אותם כסודות ב-Worker</td></tr><tr><td>פניות מישראל</td><td>תמיד, דרך הנתיב הישראלי של MTN</td><td>רשות המסים חוסמת פניות מחוץ לישראל. לפעמים תופסים את מרכז הנתונים של Cloudflare בתל אביב, או מפעילים ממסר משלכם על שרת בישראל</td></tr><tr><td>זמן הקמה</td><td>חלק מההתקנה של 3 דקות</td><td>שעות, ועוד זמן המתנה לאישור</td></tr><tr><td>עלות</td><td>כלול במחיר תוכנת ההתקנה</td><td>חינם, ועוד שרת אם מפעילים</td></tr></tbody></table></div>
+<h2 id="עם-תוכנת-ההתקנה">עם תוכנת ההתקנה</h2>
+<ol><li>בלדג'ר פותחים <b>ITA</b> בתפריט הצד.</li><li>לוחצים <b>Connect to ITA</b>.</li><li>נפתח עמוד הכניסה של רשות המסים. נכנסים עם המשתמש של העסק ברשות המסים: קוד המשתמש והקוד החד פעמי שמגיע לטלפון.</li><li>מאשרים את הבקשה. מסך ההסכמה מציג את האפליקציה של MTN. חוזרים ללדג'ר, והעמוד מציג <b>Connected</b> עם מספר הימים שנשארו.</li></ol>
+<h2 id="התקנה-עצמית">התקנה עצמית</h2>
+<ol><li>נרשמים בפורטל המפתחים של רשות המסים ויוצרים אפליקציית API לחשבוניות ישראל. מחכים לאישור לסביבת הייצור.</li><li>שמים את ה-client id וה-secret של האפליקציה בסודות של ה-Worker, לפי <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" rel="noopener" target="_blank">מדריך ההתקנה</a>.</li><li>פותרים את חסימת הפניות מחו"ל. בעמוד ITA לוחצים <b>Check route</b>. "Direct (from TLV): reached the ITA" אומר שהפנייה עברה הפעם. "From FRA: turned away, HTTP 403" אומר ש-Cloudflare הריץ אתכם מפרנקפורט. לפניות שעובדות תמיד, מפעילים את הממסר מ-<code>tools/ita-relay</code> על שרת עם כתובת ישראלית, למשל התוכנית החינמית של Oracle Cloud בירושלים.</li><li>אחר כך <b>Connect to ITA</b> כמו למעלה.</li></ol>
+<p>בלי אפליקציה בכלל? הלדג'ר עובד גם במצב ידני: כל חשבונית שצריכה מספר מחכה בעמוד ITA, מבקשים את המספר באתר של רשות המסים ומקלידים אותו בחזרה.</p>
+<p><a href="/he/help/install/">לרכישת תוכנת ההתקנה</a> ודילוג על שלבים 1 עד 3.</p>
 <h2 id="כל-90-יום">כל 90 יום</h2>
-<p>הכניסה לרשות המסים תקפה 90 יום. עמוד ITA מציג <b>Login ends in N days</b>. עם התראות Slack, הלדג'ר מזהיר מראש. כשהיא נגמרת, פותחים <b>ITA</b> ולוחצים <b>Connect again</b>. חשבונית שעדיין מחכה למספר מופיעה ב-<b>Allocation queue</b> באותו עמוד. אחרי ההתחברות לוחצים <b>Retry now</b>.</p>
+<p>הכניסה לרשות המסים תקפה 90 יום בשתי הדרכים. עמוד ITA מציג <b>Login ends in N days</b>. עם התראות Slack, הלדג'ר מזהיר בימים 75, 85 ו-89. כשהיא נגמרת, פותחים <b>ITA</b> ולוחצים <b>Connect again</b>. חשבונית שעדיין מחכה למספר מופיעה ב-<b>Allocation queue</b> באותו עמוד. אחרי ההתחברות לוחצים <b>Retry now</b>.</p>
 <h2 id="כשמספר-נדחה">כשמספר נדחה</h2>
 <p>עמוד ITA מציג את הסיבה. האפשרויות הן לבטל את החשבונית, להמשיך בלי מספר עם הודעה על המסמך, או לעבור לחיוב עצמי (reverse charge) בהסכמת הלקוח. שאלו את רואה החשבון מה מתאים.</p>
       
       <p>עדיין תקועים? <a href="/he/pricing/#setup">כתבו לנו מעמוד המחירים.</a></p>
-      <h2 id="more">עוד עזרה</h2><ul><li><a href="/he/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a></li><li><a href="/he/help/install/">התקנת Open Ledger IL צעד אחר צעד</a></li><li><a href="/he/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a></li><li><a href="/he/help/first-sign-in/">כניסה ראשונה והגדרות</a></li><li><a href="/he/help/users/">גישה לרואה חשבון או לעוזר</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a></li><li><a href="/he/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a></li><li><a href="/he/help/expenses/">הכנסת הוצאות ללדג&#x27;ר</a></li><li><a href="/he/help/email/">שליחת מסמכים במייל, בלי ספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a></li><li><a href="/he/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a></li></ul>
+      <div class="help-more"><h2 id="more">עוד עזרה</h2><ul><li><a href="/he/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a></li><li><a href="/he/help/install/">התקנת Open Ledger IL צעד אחר צעד</a></li><li><a href="/he/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a></li><li><a href="/he/help/first-sign-in/">כניסה ראשונה והגדרות</a></li><li><a href="/he/help/users/">גישה לרואה חשבון או לעוזר</a></li><li><a href="/he/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a></li><li><a href="/he/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a></li><li><a href="/he/help/expenses/">הכנסת הוצאות ללדג&#x27;ר</a></li><li><a href="/he/help/email/">שליחת מסמכים במייל, בלי ספאם</a></li><li><a href="/he/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a></li><li><a href="/he/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a></li><li><a href="/he/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/he/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a></li></ul></div>
+    </div>
     </div>
   </section>
 </main>

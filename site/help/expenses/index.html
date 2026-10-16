@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Get your expenses into the Ledger</title>
-<meta name="description" content="Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.">
+<meta name="description" content="Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.">
 <link rel="canonical" href="https://open-ledger.matanlevanon.com/help/expenses/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/expenses/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/expenses/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/help/expenses/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="Get your expenses into the Ledger">
-<meta property="og:description" content="Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.">
+<meta property="og:description" content="Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://open-ledger.matanlevanon.com/help/expenses/">
 <meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Get your expenses into the Ledger">
-<meta name="twitter:description" content="Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.">
+<meta name="twitter:description" content="Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.">
 <meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
@@ -265,13 +265,31 @@ section[id] { scroll-margin-top: 64px; }
 .crumbs a, .crumbs li { padding: 4px 0; display: inline-block; }
 .faq dt { font-weight: 650; margin-top: 16px; }
 .faq dd { margin: 4px 0 0; color: var(--text-dim); }
+.help-wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 44px; align-items: start; }
+.help-nav { position: sticky; top: 88px; font-size: 14.5px; }
+.help-nav p { font-weight: 700; margin: 0 0 8px; color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.help-nav ol { list-style: none; padding: 0; margin: 0; }
+.help-nav li a { display: block; padding: 7px 12px; border-inline-start: 3px solid transparent; color: var(--text-dim); text-decoration: none; border-radius: 0 8px 8px 0; }
+[dir="rtl"] .help-nav li a { border-radius: 8px 0 0 8px; }
+.help-nav li a:hover { color: var(--text); background: var(--surface-2); }
+.help-nav li a[aria-current="page"] { color: var(--blue); font-weight: 650; background: var(--surface-2); border-inline-start-color: var(--blue); }
+.help-more { display: none; }
+.buy-box { background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--green); border-radius: 12px; padding: 18px 20px; margin: 8px 0 24px; }
+.buy-box h2 { margin-top: 0; font-size: 19px; }
+.buy-box ul { margin: 8px 0 14px; }
+.buy-box .guide-cta { margin-top: 10px; }
+@media (max-width: 860px) { .help-wrap { grid-template-columns: 1fr; } .help-nav { display: none; } .help-more { display: block; } }
+.prose .table-wrap { overflow-x: auto; margin: 16px 0; }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Help","item":"https://open-ledger.matanlevanon.com/help/"},{"@type":"ListItem","position":3,"name":"Get your expenses into the Ledger","item":"https://open-ledger.matanlevanon.com/help/expenses/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Get your expenses into the Ledger","description":"Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.","inLanguage":"en","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.matanlevanon.com/help/expenses/","url":"https://open-ledger.matanlevanon.com/help/expenses/","image":"https://open-ledger.matanlevanon.com/assets/og/default.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Get your expenses into the Ledger","description":"Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.","inLanguage":"en","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.matanlevanon.com/help/expenses/","url":"https://open-ledger.matanlevanon.com/help/expenses/","image":"https://open-ledger.matanlevanon.com/assets/og/default.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
 </head>
 <body>
 <header>
@@ -314,23 +332,38 @@ section[id] { scroll-margin-top: 64px; }
   <div class="wrap page">
     <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/help/">Help</a></li><li aria-current="page">Get your expenses into the Ledger</li></ol></nav>
     <h1>Get your expenses into the Ledger</h1>
-    <p class="lead">Upload receipts and supplier invoices, let AI read them, and import a month from Google Drive. Plus the email inbox that is coming.</p>
+    <p class="lead">Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.</p>
   </div>
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    <nav class="help-nav" aria-label="Topics"><p>Topics</p><ol><li><a href="/help/before-you-start/">Before you install</a></li><li><a href="/help/install/">Install</a></li><li><a href="/help/cloudflare-token/">Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in</a></li><li><a href="/help/users/">Accountant and team access</a></li><li><a href="/help/tax-authority/">Tax Authority</a></li><li><a href="/help/first-invoice/">Quote to receipt</a></li><li><a href="/help/payment-providers/">Payment providers</a></li><li><a href="/help/expenses/" aria-current="page">Expenses</a></li><li><a href="/help/email/">Email and spam</a></li><li><a href="/help/connect-claude/">Connect Claude (MCP)</a></li><li><a href="/help/keys-later/">Add a key later</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems</a></li></ol></nav>
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">Updated 2026-10-17</p>
-      <h2 id="upload">Upload</h2>
+      
+      <h2 id="forward-receipts-by-email">Forward receipts by email</h2>
+<p>The easiest way for receipts that reach your inbox. Your Ledger has a private address. Everything forwarded there becomes an expense, read by AI and waiting for your check.</p>
+<h3 id="find-your-address">Find your address</h3>
+<p>Open <b>Settings &gt; Expenses &gt; Email inbox</b>. The address looks like <code>r7k2m9x4qp@in.matanlevanon.com</code>. Click <b>Copy</b>. The installer sets it up. If the page says the inbox is not set up, run the installer again.</p>
+<h3 id="set-it-up-in-gmail-once">Set it up in Gmail, once</h3>
+<ol><li>In Gmail, click the gear, then <b>See all settings</b>, then the tab <b>Forwarding and POP/IMAP</b>.</li><li>Click <b>Add a forwarding address</b>, paste the address and confirm.</li><li>Gmail sends a confirmation code to that address. It shows up in the Ledger under <b>Email inbox</b>: "Gmail sent a confirmation code". Type the code in Gmail and click <b>Verify</b>.</li><li>Leave <b>Disable forwarding</b> selected. You forward only receipts, not all your mail.</li><li>In the Gmail search box, paste the search from the Ledger page, for example <code>has:attachment (invoice OR receipt OR חשבונית OR קבלה)</code>. Add your suppliers if you like: <code>from:(billing@supplier.com)</code>.</li><li>Click the search options icon, then <b>Create filter</b>. Tick <b>Forward it to</b>, pick the address, and click <b>Create filter</b>.</li></ol>
+<p>From now on, every matching email goes to the Ledger by itself. To send one by hand, forward it to the same address.</p>
+<h3 id="outlook">Outlook</h3>
+<p><b>Settings &gt; Mail &gt; Rules &gt; Add new rule.</b> Condition: <b>Has attachment</b>, and words in the subject such as invoice or receipt. Action: <b>Forward to</b> the address.</p>
+<h3 id="what-happens-to-each-email">What happens to each email</h3>
+<ul><li>Each PDF, JPG, PNG, WebP or HEIC attachment becomes one expense. Small logo images are skipped.</li><li>An email with no attachment becomes one expense from its text, marked "From email text, check the amount".</li><li>The same file twice is one expense.</li><li>Only email forwarded from your own addresses counts. The list is under <b>Allowed senders</b>, and starts with the owner and assistant emails. Anything else is ignored and listed under <b>Last received</b>.</li><li>The address passes through MTN's email gateway, which stores nothing. With your own domain on Cloudflare, you route an address such as <code>receipts@your-domain.co.il</code> straight to your Ledger instead. The repository's <code>docs/expense-inbox.md</code> explains how.</li></ul>
+<h3 id="a-new-address">A new address</h3>
+<p>If the address leaks or gets spam, click <b>Make a new address</b>. The old one stops at once. Update the Gmail filter with the new one.</p>
+<h2 id="upload">Upload</h2>
 <p>The quickest way.</p>
 <ol><li>Open <b>Expenses</b> and click <b>Upload expense</b>.</li><li>Pick the file: PDF, JPG or PNG. On a phone, take a photo of the paper receipt.</li><li>With a Gemini or Anthropic key set, the Ledger reads the supplier, date, amounts and VAT, and fills them in. Check them and save.</li><li>Without a key, type the details yourself.</li></ol>
 <p>To add a reading key after the install, see <a href="/help/keys-later/">Add or change a key</a>.</p>
 <h2 id="a-month-from-google-drive">A month from Google Drive</h2>
 <p>For people who already keep receipts in Drive, one folder per month named <code>YYYY-MM</code>, for example <code>2026-10</code>.</p>
 <ol><li>Follow the Drive setup in the repository: a Google Cloud project, the Drive and Sheets APIs, a service account, and the expenses folder shared with that account as Editor. The guide is <code>docs/drive-expenses-setup.md</code> on GitHub.</li><li>Give the Ledger the service account's JSON key as the secret <code>GOOGLE_SERVICE_ACCOUNT_JSON</code>, see <a href="/help/keys-later/">Add or change a key</a>.</li><li>In <b>Settings &gt; Expenses</b>, paste the folder id, the part of the folder's address after <code>/folders/</code>, and click <b>Save folder</b>.</li><li>In <b>Expenses</b>, pick the month and click <b>Import month</b>. Each file goes through AI reading and waits for your check. Running it twice adds nothing twice.</li><li>To import every morning, turn on <b>Daily sync</b> in <b>Settings &gt; Expenses</b>.</li></ol>
-<h2 id="coming-forward-receipts-by-email">Coming: forward receipts by email</h2>
-<p>We are building a private email address for each Ledger. You set one rule in Gmail or Outlook that forwards receipts to it, and every receipt lands in <b>Expenses</b> read and waiting for your check. No Drive, no Google Cloud. This page will explain the setup once it ships.</p>
       
       <p>Still stuck? <a href="/pricing/#setup">Write to us from the pricing page.</a></p>
-      <h2 id="more">More help</h2><ul><li><a href="/help/before-you-start/">Before you install: what you need</a></li><li><a href="/help/install/">Install Open Ledger IL step by step</a></li><li><a href="/help/cloudflare-token/">Create the Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in and setup</a></li><li><a href="/help/users/">Give your accountant or assistant access</a></li><li><a href="/help/tax-authority/">Connect to the Tax Authority for allocation numbers</a></li><li><a href="/help/first-invoice/">From quote to receipt: your first documents</a></li><li><a href="/help/payment-providers/">Take payments with Grow, Cardcom or another provider</a></li><li><a href="/help/email/">Send documents by email, and keep them out of spam</a></li><li><a href="/help/connect-claude/">Connect Claude or another AI app (MCP)</a></li><li><a href="/help/keys-later/">Add or change a key after the install</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems and how to fix them</a></li></ul>
+      <div class="help-more"><h2 id="more">More help</h2><ul><li><a href="/help/before-you-start/">Before you install: what you need</a></li><li><a href="/help/install/">Install Open Ledger IL step by step</a></li><li><a href="/help/cloudflare-token/">Create the Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in and setup</a></li><li><a href="/help/users/">Give your accountant or assistant access</a></li><li><a href="/help/tax-authority/">Connect to the Tax Authority for allocation numbers</a></li><li><a href="/help/first-invoice/">From quote to receipt: your first documents</a></li><li><a href="/help/payment-providers/">Take payments with Grow, Cardcom or another provider</a></li><li><a href="/help/email/">Send documents by email, and keep them out of spam</a></li><li><a href="/help/connect-claude/">Connect Claude or another AI app (MCP)</a></li><li><a href="/help/keys-later/">Add or change a key after the install</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/">Common problems and how to fix them</a></li></ul></div>
+    </div>
     </div>
   </section>
 </main>

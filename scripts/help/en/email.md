@@ -3,6 +3,7 @@ title: Send documents by email, and keep them out of spam
 description: Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
 updated: 2026-10-17
 published: true
+nav: Email and spam
 order: 10
 ---
 
