@@ -28,6 +28,8 @@
  * Bindings and variables
  *   DB                          D1 with the inboxes table (migrations/0001_inboxes.sql)
  *   INBOX_DOMAIN                the domain the addresses live on, for example in.example.com
+ *   INBOX_PREFIX                optional, for example expenses: addresses become expenses+<id>@domain,
+ *                               so one Email Routing rule with subaddressing on covers them all
  *   LICENCE_URL, LICENCE_SECRET the licence service (/licence/activate, /licence/check)
  */
 
@@ -78,7 +80,16 @@ export function newInboxId() {
 
 const newSecret = () => b64url(crypto.getRandomValues(new Uint8Array(32)));
 const domainOf = (env) => (env.INBOX_DOMAIN ?? '').trim().toLowerCase();
-const addressOf = (env, inboxId) => `${inboxId}@${domainOf(env)}`;
+const prefixOf = (env) => (env.INBOX_PREFIX ?? '').trim().toLowerCase();
+const addressOf = (env, inboxId) => (prefixOf(env) ? `${prefixOf(env)}+${inboxId}@${domainOf(env)}` : `${inboxId}@${domainOf(env)}`);
+
+/** The inbox id from a recipient: <id>@domain, or <prefix>+<id>@domain. */
+export function inboxIdOf(env, to) {
+  const local = String(to ?? '').split('@')[0].trim().toLowerCase();
+  const prefix = prefixOf(env);
+  if (prefix && local.startsWith(`${prefix}+`)) return local.slice(prefix.length + 1);
+  return local.includes('+') ? '' : local;
+}
 
 function licenceService(env) {
   const url = (env.LICENCE_URL ?? '').trim().replace(/\/+$/, '');
@@ -197,7 +208,7 @@ export async function handleEmail(message, env, fetchFn = fetch) {
     console.log('email too-large');
     return message.setReject('Too large');
   }
-  const local = String(message.to ?? '').split('@')[0].trim().toLowerCase();
+  const local = inboxIdOf(env, message.to);
   const row = local ? await env.DB.prepare('SELECT * FROM inboxes WHERE inbox_id = ? AND paused_at IS NULL').bind(local).first() : null;
   if (!row) {
     console.log('email unknown-address');

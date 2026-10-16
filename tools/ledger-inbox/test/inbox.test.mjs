@@ -121,6 +121,26 @@ await test('a known address forwards the raw message with a valid signature', as
   assert.equal(c.headers.get('X-Inbox-Signature'), want);
 });
 
+await test('with INBOX_PREFIX the address is prefix+id, and both forms reach the same inbox', async () => {
+  const penv = { ...env, INBOX_PREFIX: 'expenses' };
+  const r = await gateway.fetch(new Request('https://gw.example.test/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ origin: 'https://ledger.biz.test', licence: 'OL-AAAA-BBBB-CCCC-DDDD', accountId: 'acc1', taxId: '123' }) }), penv);
+  const again = await r.json();
+  inbox = { ...inbox, secret: again.secret };
+  assert.equal(again.address, `expenses+${again.inboxId}@in.example.test`);
+  for (const to of [`expenses+${again.inboxId}@in.example.test`, `${again.inboxId}@in.example.test`]) {
+    const ledger = fakeLedger(200);
+    const m = fakeMessage(to);
+    await handleEmail(m, penv, ledger.fn);
+    assert.equal(m.rejected, null, to);
+    assert.equal(ledger.calls.length, 1, to);
+  }
+  for (const to of [`other+${again.inboxId}@in.example.test`, `expenses+nope@in.example.test`]) {
+    const m = fakeMessage(to);
+    await handleEmail(m, penv, fakeLedger(200).fn);
+    assert.equal(m.rejected, 'Unknown address', to);
+  }
+});
+
 await test('an unknown address is rejected and nothing is sent', async () => {
   const ledger = fakeLedger(200);
   const m = fakeMessage('nobody0000@in.example.test');
