@@ -3,28 +3,17 @@ import { ZodError } from 'zod';
 import type { AuditActor } from '../../core/audit';
 import { DomainError, mapDbError } from '../../core/errors';
 import type { AppEnv } from '../../env';
+import { checkMcpToken } from './tokens';
 import { MCP_TOOLS, type McpEnv, findTool } from './tools';
 import { APP_VERSION } from '../../version';
 
 /**
  * MCP endpoint (PLAN.md's `MCP` module, runs/R14-ops.md): streamable HTTP transport, one tool
  * call per POST, JSON response (no SSE; this server never needs to push a message on its own).
- * Authenticates with the `MCP_TOKEN` bearer secret, never Cloudflare Access, so it is mounted at
- * the top-level `/mcp` path in src/index.ts rather than through the `/api` registry.
+ * Authenticates with a bearer token, never Cloudflare Access, so it is mounted at the top-level
+ * `/mcp` path in src/index.ts rather than through the `/api` registry. R34: the token made in
+ * Settings > MCP wins over the installer's `MCP_TOKEN` (tokens.ts).
  */
-
-/** Constant-time comparison so a wrong MCP_TOKEN guess never leaks timing information. */
-function timingSafeEqual(a: string, b: string): boolean {
-  const encoder = new TextEncoder();
-  const bufA = encoder.encode(a);
-  const bufB = encoder.encode(b);
-  // Compare a fixed-length digest of each side instead of the raw (possibly different-length)
-  // strings, so the loop below never itself reveals the length of the secret.
-  let diff = bufA.length ^ bufB.length;
-  const len = Math.max(bufA.length, bufB.length);
-  for (let i = 0; i < len; i++) diff |= (bufA[i] ?? 0) ^ (bufB[i] ?? 0);
-  return diff === 0;
-}
 
 interface JsonRpcMessage {
   jsonrpc?: string;
@@ -88,10 +77,10 @@ export function mcpRoutes(): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
 
   app.use('*', async (c, next) => {
-    const token = c.env.MCP_TOKEN;
     const header = c.req.header('Authorization') ?? '';
     const provided = header.startsWith('Bearer ') ? header.slice(7) : '';
-    if (!token || !timingSafeEqual(provided, token)) {
+    // R34: one body for every refusal. It never says which check failed.
+    if (!provided || !(await checkMcpToken(c.env.DB, c.env.MCP_TOKEN, provided))) {
       return c.json({ jsonrpc: '2.0', id: null, error: { code: -32000, message: 'A valid bearer token is required.' } }, 401);
     }
     await next();

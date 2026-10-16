@@ -58,6 +58,9 @@ import { createContractsModule, createContractsPublicModule } from './contracts'
 // R26: demo mode for the public Sample Ledger. Every route answers 404 unless DEMO_MODE=1.
 import { createDemoAppModule, createDemoModule } from './demo';
 
+// R34: Settings > MCP, the address, a token the Ledger keeps, and MCP on or off. Owner only.
+import { mcpSettingsModule } from './mcp/settings-routes';
+
 // R14 mcp: `mcpModule` mounts at the top-level `/mcp` path in src/index.ts, not under /api. It
 // authenticates with the MCP_TOKEN bearer secret, not Cloudflare Access, and owns no cron, so it
 // does not belong in this registry.
@@ -134,4 +137,6 @@ export const modules: ModuleDef[] = [
 
   createDemoModule({ documentsOptions: documentsServiceOptions }),
   createDemoAppModule(),
+
+  mcpSettingsModule,
 ];

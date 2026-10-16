@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useDemoLocked } from '../../app/demo';
+import { useEffect, useState } from 'react';
+import { fetchMe } from '../../api/client';
+import { useDemo, useDemoLocked } from '../../app/demo';
 import type { MessageKey } from '../../i18n';
 import { useT } from '../../i18n';
 import { BusinessDocumentsPanel } from '../business-documents/BusinessDocumentsPanel';
@@ -12,6 +13,7 @@ import { DashboardTab } from './DashboardTab';
 import { ExpensesTab } from './ExpensesTab';
 import { EmailTab } from './EmailTab';
 import { IssuingTab } from './IssuingTab';
+import { McpTab } from './McpTab';
 import { NumberingTab } from './NumberingTab';
 import { PaymentMethodsTab } from './PaymentMethodsTab';
 import { RatesTab } from './RatesTab';
@@ -20,7 +22,7 @@ import { SignatureTab } from './SignatureTab';
 import { TaxTab } from './TaxTab';
 import { UpdatesTab } from './UpdatesTab';
 
-type Tab = 'business' | 'documents' | 'businesses' | 'brands' | 'issuing' | 'email' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'contracts' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
+type Tab = 'business' | 'documents' | 'businesses' | 'brands' | 'issuing' | 'email' | 'mcp' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'contracts' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
 
 const TABS: [Tab, MessageKey][] = [
   ['business', 'settings.tabs.business'],
@@ -29,6 +31,8 @@ const TABS: [Tab, MessageKey][] = [
   ['brands', 'settings.tabs.brands'],
   ['issuing', 'settings.tabs.issuing'],
   ['email', 'settings.tabs.email'],
+  // R34: owner only, hidden in the demo.
+  ['mcp', 'settings.tabs.mcp'],
   ['numbering', 'settings.tabs.numbering'],
   ['tax', 'settings.tabs.tax'],
   ['rates', 'settings.tabs.rates'],
@@ -59,6 +63,15 @@ export function SettingsPage() {
   // R26, R29: on the public demo Settings are visible and every tab is read-only.
   const demoLocked = useDemoLocked();
   const locked = demoLocked;
+  const demo = useDemo();
+  const [isOwner, setIsOwner] = useState(false);
+  useEffect(() => {
+    fetchMe()
+      .then((me) => setIsOwner(me.role === 'owner'))
+      .catch(() => setIsOwner(false));
+  }, []);
+  const showMcp = isOwner && !demo;
+  const tabs = TABS.filter(([key]) => key !== 'mcp' || showMcp);
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl">
@@ -67,7 +80,7 @@ export function SettingsPage() {
       </h1>
 
       <div role="tablist" aria-label={t('settings.title')} className="mt-6 flex flex-wrap gap-2 border-b border-line">
-        {TABS.map(([key, label]) => (
+        {tabs.map(([key, label]) => (
           <button
             key={key}
             role="tab"
@@ -93,6 +106,7 @@ export function SettingsPage() {
         {tab === 'brands' && <BrandsTab />}
         {tab === 'issuing' && <IssuingTab />}
         {tab === 'email' && <EmailTab />}
+        {tab === 'mcp' && showMcp && <McpTab />}
         {tab === 'numbering' && <NumberingTab />}
         {tab === 'tax' && <TaxTab />}
         {tab === 'rates' && <RatesTab />}

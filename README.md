@@ -41,6 +41,13 @@ Website: [open-ledger.matanlevanon.com](https://open-ledger.matanlevanon.com/he/
 - **Reminders.** Payment and signing reminders by email, a switch per client, and reminders due on WhatsApp on the dashboard.
 - **Demo mode.** Run a public trial Ledger. Visitors enter at once, read one shared sample set and keep private drafts that are deleted when they leave. Issue, send, payment and signing show previews. A watermark, a fake Tax Authority, a 15-minute sweep and a nightly rebuild.
 
+## MCP
+
+Claude and other AI apps connect at `<Ledger address>/mcp` with a bearer token. The Worker
+secret `MCP_TOKEN` is the first token. Settings > MCP (owner only) shows the address, makes a
+new token, shows it once with the Claude Desktop and Claude Code files, and turns MCP off. A
+token made there replaces `MCP_TOKEN`. Details: `docs/secrets.md`.
+
 ## Screenshots
 
 All screenshots come from the demo database (`npm run seed:demo`). Every name in them is invented.

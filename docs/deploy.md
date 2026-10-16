@@ -189,7 +189,7 @@ Document reading picks its provider from the Worker variable `AI_PROVIDER` (`ant
 | `DOWNLOAD_SIGN_KEY` | 32 random bytes, base64: `openssl rand -base64 32` |
 | `MAIL_API_KEY` | Resend dashboard, an API key |
 | `SEND_LINK_KEY` | 32 random bytes, base64: `openssl rand -base64 32` |
-| `MCP_TOKEN` | 32 random bytes, base64, or any long random string: `openssl rand -base64 32` |
+| `MCP_TOKEN` | 32 random bytes, base64, or any long random string: `openssl rand -base64 32`. Only the starting token: Settings > MCP makes a new one without the dashboard, and from then on this secret no longer works |
 
 ### Make the PDF signing key
 
