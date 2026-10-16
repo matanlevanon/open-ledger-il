@@ -187,6 +187,8 @@ td span { color: var(--text-dim); }
 .plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
 .price { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 14px; }
 .price span { font-size: 15px; font-weight: 500; color: var(--text-mute); }
+.price .was { font-size: 22px; font-weight: 600; color: var(--text-mute); text-decoration: line-through; margin-inline-end: 6px; }
+.promo { display: inline-block; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #fef3c7; color: #92400e; margin-bottom: 8px; }
 .plan ul { list-style: none; margin: 0 0 22px; padding: 0; flex: 1; }
 .plan li { position: relative; padding-inline-start: 22px; margin: 8px 0; color: var(--text-dim); font-size: 15px; }
 .plan li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
@@ -331,8 +333,9 @@ section[id] { scroll-margin-top: 64px; }
           <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">למדריך ההתקנה</a>
         </div>
         <div class="plan">
+          <div class="promo">גרסה ראשונה: 30% הנחה לזמן מוגבל</div>
           <h3>הקמה עבורך</h3>
-          <div class="price">₪699 <span>חד פעמי</span></div>
+          <div class="price"><s class="was">₪999</s> ₪699 <span>חד פעמי</span></div>
           <ul>
             <li>אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך</li>
             <li>רשות המסים: אפליקציית API משלך, או חיבור דרך MTN</li>
@@ -380,7 +383,7 @@ section[id] { scroll-margin-top: 64px; }
 
 
   <section class="plain" id="key-facts">
-    <div class="wrap"><div class="facts"><h2>עובדות עיקריות</h2><ul><li>Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.</li><li>היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.</li><li>היא חינמית לעסק שלכם, ברישיון FSL-1.1.</li><li>הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי.</li><li>היא תומכת בעוסק פטור ובעוסק מורשה.</li><li>היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.</li></ul></div></div>
+    <div class="wrap"><div class="facts"><h2>עובדות עיקריות</h2><ul><li>Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.</li><li>היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.</li><li>היא חינמית לעסק שלכם, ברישיון FSL-1.1.</li><li>הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה לגרסה הראשונה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.</li><li>היא תומכת בעוסק פטור ובעוסק מורשה.</li><li>היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.</li></ul></div></div>
   </section>
   <section id="how">
     <div class="wrap">

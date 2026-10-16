@@ -187,6 +187,8 @@ td span { color: var(--text-dim); }
 .plan h3 { margin: 0; font-size: 17px; font-weight: 650; }
 .price { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 14px; }
 .price span { font-size: 15px; font-weight: 500; color: var(--text-mute); }
+.price .was { font-size: 22px; font-weight: 600; color: var(--text-mute); text-decoration: line-through; margin-inline-end: 6px; }
+.promo { display: inline-block; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #fef3c7; color: #92400e; margin-bottom: 8px; }
 .plan ul { list-style: none; margin: 0 0 22px; padding: 0; flex: 1; }
 .plan li { position: relative; padding-inline-start: 22px; margin: 8px 0; color: var(--text-dim); font-size: 15px; }
 .plan li::before { content: '\2713'; position: absolute; inset-inline-start: 0; color: var(--green); font-weight: 700; }
@@ -331,8 +333,9 @@ section[id] { scroll-margin-top: 64px; }
           <a class="btn btn-ghost" href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Read the setup guide</a>
         </div>
         <div class="plan">
+          <div class="promo">First release: 30% off for a limited time</div>
           <h3>Set up for you</h3>
-          <div class="price">₪699 <span>one time</span></div>
+          <div class="price"><s class="was">₪999</s> ₪699 <span>one time</span></div>
           <ul>
             <li>We create every account for you, with your own emails</li>
             <li>Tax Authority: your own ITA API app, or the connection through MTN</li>
@@ -380,7 +383,7 @@ section[id] { scroll-margin-top: 64px; }
 
 
   <section class="plain" id="key-facts">
-    <div class="wrap"><div class="facts"><h2>Key facts</h2><ul><li>Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.</li><li>It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.</li><li>It is free for your own business under the FSL-1.1 licence.</li><li>Having it set up for you costs ₪699, once, with no subscription.</li><li>It supports עוסק פטור and עוסק מורשה businesses.</li><li>It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.</li></ul></div></div>
+    <div class="wrap"><div class="facts"><h2>Key facts</h2><ul><li>Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.</li><li>It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.</li><li>It is free for your own business under the FSL-1.1 licence.</li><li>Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.</li><li>It supports עוסק פטור and עוסק מורשה businesses.</li><li>It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.</li></ul></div></div>
   </section>
   <section id="how">
     <div class="wrap">

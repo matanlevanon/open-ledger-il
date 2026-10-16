@@ -424,8 +424,9 @@ OPTIONS_EN = r'''  <section id="options">
         </div>
 <!--SHOP-->
         <div class="plan plan-main">
+          <div class="promo">First release: 50% off for a limited time</div>
           <h3>Install it yourself, connected</h3>
-          <div class="price">₪99 <span>one time</span></div>
+          <div class="price"><s class="was">₪199</s> ₪99 <span>one time</span></div>
           <ul>
             <li>A Windows installer sets it up in your own Cloudflare account</li>
             <li>Tax Authority connection through MTN, no ITA app of your own</li>
@@ -435,8 +436,9 @@ OPTIONS_EN = r'''  <section id="options">
         </div>
 <!--/SHOP-->
         <div class="plan">
+          <div class="promo">First release: 30% off for a limited time</div>
           <h3>Set up for you</h3>
-          <div class="price">₪699 <span>one time</span></div>
+          <div class="price"><s class="was">₪999</s> ₪699 <span>one time</span></div>
           <ul>
             <li>We create every account for you, with your own emails</li>
             <li>Tax Authority: your own ITA API app, or the connection through MTN</li>
@@ -503,8 +505,9 @@ OPTIONS_HE = r'''  <section id="options">
         </div>
 <!--SHOP-->
         <div class="plan plan-main">
+          <div class="promo">גרסה ראשונה: 50% הנחה לזמן מוגבל</div>
           <h3>התקנה עצמית, מחוברת</h3>
-          <div class="price">₪99 <span>חד פעמי</span></div>
+          <div class="price"><s class="was">₪199</s> ₪99 <span>חד פעמי</span></div>
           <ul>
             <li>תוכנת התקנה ל-Windows מקימה הכול בחשבון Cloudflare שלך</li>
             <li>חיבור לרשות המסים דרך MTN, בלי אפליקציית API משלך</li>
@@ -514,8 +517,9 @@ OPTIONS_HE = r'''  <section id="options">
         </div>
 <!--/SHOP-->
         <div class="plan">
+          <div class="promo">גרסה ראשונה: 30% הנחה לזמן מוגבל</div>
           <h3>הקמה עבורך</h3>
-          <div class="price">₪699 <span>חד פעמי</span></div>
+          <div class="price"><s class="was">₪999</s> ₪699 <span>חד פעמי</span></div>
           <ul>
             <li>אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך</li>
             <li>רשות המסים: אפליקציית API משלך, או חיבור דרך MTN</li>
