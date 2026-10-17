@@ -35,7 +35,7 @@ test('with ids set, Cloudflare Web Analytics and GA4 load, with IP anonymised an
   const { dir, r, read } = build({ ...CONFIG, analytics: { cfBeaconToken: '0123456789abcdef0123456789abcdef', ga4Id: 'G-TEST12345' } });
   try {
     assert.equal(r.status, 0, r.stderr);
-    const home = read('he/index.html');
+    const home = read('index.html');
     assert.match(home, /static\.cloudflareinsights\.com\/beacon\.min\.js" data-cf-beacon='\{"token": "0123456789abcdef0123456789abcdef"\}'/);
     assert.match(home, /googletagmanager\.com\/gtag\/js\?id=G-TEST12345/);
     assert.match(home, /anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false/);

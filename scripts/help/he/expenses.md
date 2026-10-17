@@ -51,14 +51,14 @@ order: 9
 3. עם מפתח Gemini או Anthropic, הלדג'ר קורא ספק, תאריך, סכומים ומע"מ וממלא אותם. בודקים ושומרים.
 4. בלי מפתח, מקלידים את הפרטים לבד.
 
-להוספת מפתח קריאה אחרי ההתקנה ראו [הוספה או החלפה של מפתח](/he/help/keys-later/).
+להוספת מפתח קריאה אחרי ההתקנה ראו [הוספה או החלפה של מפתח](/help/keys-later/).
 
 ## חודש מגוגל דרייב
 
 למי שכבר שומר קבלות בדרייב, בתיקייה לכל חודש בשם `YYYY-MM`, למשל `2026-10`.
 
 1. עוקבים אחרי הגדרת הדרייב במאגר הקוד: פרויקט ב-Google Cloud, הפעלת Drive API ו-Sheets API, Service Account, ושיתוף תיקיית ההוצאות איתו כעורך. המדריך הוא `docs/drive-expenses-setup.md` ב-GitHub.
-2. נותנים ללדג'ר את מפתח ה-JSON של ה-Service Account כסוד `GOOGLE_SERVICE_ACCOUNT_JSON`, ראו [הוספה או החלפה של מפתח](/he/help/keys-later/).
+2. נותנים ללדג'ר את מפתח ה-JSON של ה-Service Account כסוד `GOOGLE_SERVICE_ACCOUNT_JSON`, ראו [הוספה או החלפה של מפתח](/help/keys-later/).
 3. ב-**Settings > Expenses** מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי `/folders/`, ולוחצים **Save folder**.
 4. ב-**Expenses** בוחרים חודש ולוחצים **Import month**. כל קובץ נקרא עם AI ומחכה לבדיקה שלכם. הרצה כפולה לא מכפילה כלום.
 5. לייבוא כל בוקר, מפעילים **Daily sync** ב-**Settings > Expenses**.

@@ -1,53 +1,53 @@
-# Take payments with Grow, Cardcom or another provider
+# גבייה עם גרואו, קארדקום או סולק אחר
 
-Use a card payment provider for collecting money and the Ledger for the receipts, by hand or automatically, without two documents for one payment.
+סולק גובה את הכסף והלדג'ר מוציא את הקבלות, ידנית או אוטומטית, בלי שני מסמכים לאותו תשלום.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-The Ledger issues the documents. A payment provider such as Grow, Cardcom, PayPlus or Bit collects the money. The two work side by side.
+הלדג'ר מוציא את המסמכים. סולק כמו Grow, Cardcom, PayPlus או ביט גובה את הכסף. השניים עובדים זה לצד זה.
 
-## First: turn off the provider's documents
+## קודם כול: מכבים את המסמכים של הסולק
 
-Most providers issue their own receipt or invoice for every payment. Turn that off in the provider's settings, or ask their support to. Otherwise every payment gets two documents with two different numbers, and your books stop matching the bank.
+רוב הסולקים מוציאים קבלה או חשבונית משלהם על כל תשלום. מכבים את זה בהגדרות של הסולק, או מבקשים מהתמיכה שלהם. אחרת כל תשלום מקבל שני מסמכים עם שני מספרים שונים, והספרים מפסיקים להתאים לבנק.
 
-## Way 1: by hand
+## דרך 1: ידנית
 
-1. In the Ledger, add the provider's payment link as a payment method: **Settings > Payment methods**, type **Card** or **Other**, paste the link.
-2. Send the client a payment request with that method ticked.
-3. When the provider tells you the money arrived, open the payment request and click **Record payment**. Pick **Card**, and paste the provider's transaction number as the reference.
-4. The Ledger issues the receipt. Send it to the client.
+1. בלדג'ר מוסיפים את קישור התשלום של הסולק כאמצעי תשלום: **Settings > Payment methods**, סוג **Card** או **Other**, ומדביקים את הקישור.
+2. שולחים ללקוח דרישת תשלום עם אמצעי התשלום הזה מסומן.
+3. כשהסולק מודיע שהכסף נכנס, פותחים את דרישת התשלום ולוחצים **Record payment**. בוחרים **Card** ומדביקים את מספר העסקה של הסולק כאסמכתא.
+4. הלדג'ר מוציא את הקבלה. שולחים אותה ללקוח.
 
-Two minutes per payment. Fits a business with a few payments a week.
+שתי דקות לתשלום. מתאים לעסק עם כמה תשלומים בשבוע.
 
-## Way 2: automatic, for technical users
+## דרך 2: אוטומטית, למי שמכיר אוטומציות
 
-The Ledger has an MCP endpoint, a door for other software, at its address followed by `/mcp`. It takes JSON-RPC calls (`tools/call`) with the header `Authorization: Bearer` and your MCP token. The tools include `list_clients`, `create_draft`, `finalize_document` and `record_payment`.
+ללדג'ר יש נקודת חיבור MCP, דלת לתוכנות אחרות, בכתובת שלו עם `/mcp` בסוף. היא מקבלת קריאות JSON-RPC (`tools/call`) עם הכותרת `Authorization: Bearer` וטוקן ה-MCP שלכם. בין הכלים: `list_clients`, `create_draft`, `finalize_document` ו-`record_payment`.
 
-An automation tool such as Make, Zapier or n8n connects the provider to it:
+כלי אוטומציה כמו Make, Zapier או n8n מחבר את הסולק אליה:
 
-1. In the provider, turn on the webhook for successful payments and point it at a new scenario.
-2. In the scenario, find the client with `list_clients`, using the payer's name or email.
-3. Record the payment against the open payment request with `record_payment` and `confirm: true`. The scenario needs the payment request's document id. Keep a small table of payment link to document id, filled when you send each request.
-4. The Ledger issues the receipt.
+1. בסולק מפעילים webhook לתשלום שהצליח ומכוונים אותו לתרחיש חדש.
+2. בתרחיש מוצאים את הלקוח עם `list_clients`, לפי שם או מייל של המשלם.
+3. רושמים את התשלום על דרישת התשלום הפתוחה עם `record_payment` ו-`confirm: true`. התרחיש צריך את מזהה המסמך של דרישת התשלום. מחזיקים טבלה קטנה של קישור תשלום מול מזהה מסמך, ומעדכנים אותה כששולחים כל דרישה.
+4. הלדג'ר מוציא את הקבלה.
 
-This takes an afternoon to set up and test. Start with one small payment. For the MCP token, see [Connect Claude or another app](https://open-ledger.matanlevanon.com/help/connect-claude/).
+ההקמה והבדיקה לוקחות אחר צהריים. מתחילים עם תשלום קטן אחד. לטוקן ה-MCP ראו [חיבור Claude או אפליקציה אחרת](https://open-ledger.dev/help/connect-claude/).
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/payment-providers/
+Source: https://open-ledger.dev/help/payment-providers/

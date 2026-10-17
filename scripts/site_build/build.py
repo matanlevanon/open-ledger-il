@@ -2,8 +2,8 @@
 Builds the product site into site/: one page per question, Hebrew first and English second, every
 page linked to its pair. Run from the repository root: python3 scripts/build-site.py
 
-Pages: home, features, pricing, registration, demo, guides, changelog, license, at /he/<page>/ and
-/<page>/. Assets referenced by a page get a copy with a content hash in its name, which the Worker
+Pages: home, features, pricing, registration, demo, guides, help, changelog, license, Hebrew at
+/<page>/ and English at /en/<page>/. Assets referenced by a page get a copy with a content hash in its name, which the Worker
 caches for a year (tools/site/src/index.js).
 """
 import hashlib, html, json, os, re, shutil, sys
@@ -100,7 +100,7 @@ PAGE_CSS = '''
 # ---------------------------------------------------------------------------------------------
 
 def path_of(lang, key, slug=None):
-    base = '/he/' if lang == 'he' else '/'
+    base = '/' if lang == 'he' else f'/{lang}/'
     if key == 'home':
         return base
     if key == 'guide':
@@ -1034,6 +1034,30 @@ def external_new_tab(text):
     return EXTERNAL_A.sub(fix, text)
 
 
+INTERNAL_HREF = re.compile(r'\s(?:href|src|srcset)="([^"]*)"')
+
+
+def check_links(rendered):
+    """Stops the build on a link to a page or file of this site that does not exist."""
+    paths = {p['path'] for p, _ in rendered}
+    problems = []
+    for page, text in rendered:
+        for m in INTERNAL_HREF.finditer(text):
+            href = html.unescape(m.group(1))
+            if href.startswith(SITE_URL + '/'):
+                href = href[len(SITE_URL):]
+            if not href.startswith('/') or href.startswith('//'):
+                continue
+            target = re.split(r'[?#]', href)[0]
+            if target in paths or (target.endswith('index.md') and target[:-len('index.md')] in paths):
+                continue
+            if target.startswith('/assets/') or target in ('/favicon.svg', '/sitemap.xml', '/llms.txt', '/llms-full.txt', '/robots.txt'):
+                continue
+            problems.append(f'{page["path"]}: link to {href}, which is not a page of this site')
+    if problems:
+        sys.exit('Broken internal links:\n  ' + '\n  '.join(sorted(set(problems))))
+
+
 def write(rel, text, written):
     path = OUT / rel.lstrip('/')
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -1087,7 +1111,7 @@ def lastmod(page, cache):
 def sitemap(pages):
     cache = {}
     rows = []
-    for p in sorted(filter(published, pages), key=lambda x: (x['path'].startswith('/he/') is False, x['path'])):
+    for p in sorted(filter(published, pages), key=lambda x: (x['path'].startswith('/en/'), x['path'])):
         alts = ''.join(f'\n    <xhtml:link rel="alternate" hreflang="{l}" href="{absolute(path)}"/>' for l, path in sorted(p['pair'].items()))
         if p['pair'].get('he'):
             alts += f'\n    <xhtml:link rel="alternate" hreflang="x-default" href="{absolute(p["pair"]["he"])}"/>'
@@ -1151,8 +1175,9 @@ def main():
         p['md'] = published(p)
     written = set()
     full = []
-    for page, main_html, scripts in built:
-        html_text = external_new_tab(document(page, main_html, scripts))
+    rendered = [(page, external_new_tab(document(page, main_html, scripts))) for page, main_html, scripts in built]
+    check_links(rendered)
+    for page, html_text in rendered:
         write(page['path'] + 'index.html', html_text, written)
         if page['md']:
             text = to_md.main_markdown(html_text, SITE_URL, page['h1'] or page['title'])
@@ -1232,8 +1257,8 @@ def not_found():
 <body>
 <main class="wrap nf">
   <h1>העמוד לא נמצא</h1>
-  <p class="lead">הכתובת השתנתה או שאינה קיימת. <a href="/he/">לעמוד הבית</a></p>
-  <p class="lead" lang="en" dir="ltr">This page does not exist. <a href="/">Go to the home page</a></p>
+  <p class="lead">הכתובת השתנתה או שאינה קיימת. <a href="/">לעמוד הבית</a></p>
+  <p class="lead" lang="en" dir="ltr">This page does not exist. <a href="/en/">Go to the home page</a></p>
 </main>
 </body>
 </html>

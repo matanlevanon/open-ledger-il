@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>An open-source alternative to paid invoicing software</title>
-<meta name="description" content="Subscription software, your accountant&#x27;s system or open source. Three ways for a small Israeli business to keep its books, and what to check in each.">
+<title>חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית</title>
+<meta name="description" content="שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.">
 <meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/guides/open-source-invoicing/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/open-source-invoicing/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/open-source-invoicing/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/open-source-invoicing/">
+<link rel="canonical" href="https://open-ledger.dev/guides/open-source-invoicing/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/open-source-invoicing/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/open-source-invoicing/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/open-source-invoicing/">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="An open-source alternative to paid invoicing software">
-<meta property="og:description" content="Subscription software, your accountant&#x27;s system or open source. Three ways for a small Israeli business to keep its books, and what to check in each.">
+<meta property="og:title" content="חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית">
+<meta property="og:description" content="שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/guides/open-source-invoicing/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-open-source-invoicing.png">
+<meta property="og:url" content="https://open-ledger.dev/guides/open-source-invoicing/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/he-guide-open-source-invoicing.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="An open-source alternative to paid invoicing software">
-<meta name="twitter:description" content="Subscription software, your accountant&#x27;s system or open source. Three ways for a small Israeli business to keep its books, and what to check in each.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-open-source-invoicing.png">
+<meta name="twitter:title" content="חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית">
+<meta name="twitter:description" content="שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-guide-open-source-invoicing.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,14 +286,14 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://open-ledger.matanlevanon.com/guides/"},{"@type":"ListItem","position":3,"name":"An open-source alternative to paid invoicing software: a plain comparison","item":"https://open-ledger.matanlevanon.com/guides/open-source-invoicing/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"An open-source alternative to paid invoicing software: a plain comparison","description":"Subscription software, your accountant's system or open source. Three ways for a small Israeli business to keep its books, and what to check in each.","inLanguage":"en","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.matanlevanon.com/guides/open-source-invoicing/","url":"https://open-ledger.matanlevanon.com/guides/open-source-invoicing/","image":"https://open-ledger.matanlevanon.com/assets/og/en-guide-open-source-invoicing.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"en","mainEntity":[{"@type":"Question","name":"Does open source mean no warranty?","acceptedAnswer":{"@type":"Answer","text":"The licence gives no warranty on the code. What you do get is the ability to read it and check it yourself."}},{"@type":"Question","name":"Must open-source software be registered with the Tax Authority too?","acceptedAnswer":{"@type":"Answer","text":"If others use it, yes. The duty includes software offered for free use."}},{"@type":"Question","name":"What matters most before choosing?","acceptedAnswer":{"@type":"Answer","text":"That your books stay yours, that you can export them in the Tax Authority format, and that the software is registered when it needs to be."}},{"@type":"Question","name":"Can I get help installing open-source software?","acceptedAnswer":{"@type":"Answer","text":"Yes. There is a step-by-step deploy guide, and you can also ask someone to set the system up for you."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"מדריכים","item":"https://open-ledger.dev/guides/"},{"@type":"ListItem","position":3,"name":"חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית","item":"https://open-ledger.dev/guides/open-source-invoicing/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית","description":"שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.","inLanguage":"he","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.dev/guides/open-source-invoicing/","url":"https://open-ledger.dev/guides/open-source-invoicing/","image":"https://open-ledger.dev/assets/og/he-guide-open-source-invoicing.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"he","mainEntity":[{"@type":"Question","name":"קוד פתוח פירושו בלי אחריות?","acceptedAnswer":{"@type":"Answer","text":"הרישיון לא נותן אחריות על הקוד. מה שכן מקבלים הוא היכולת לקרוא אותו ולבדוק אותו בעצמכם."}},{"@type":"Question","name":"גם תוכנה בקוד פתוח צריכה להיות רשומה ברשות המסים?","acceptedAnswer":{"@type":"Answer","text":"אם אחרים משתמשים בה, כן. החובה כוללת תוכנה שניתנת לשימוש בחינם."}},{"@type":"Question","name":"מה הכי חשוב לבדוק לפני שבוחרים?","acceptedAnswer":{"@type":"Answer","text":"שהספרים שלכם נשארים שלכם, שאפשר לייצא אותם בפורמט של רשות המסים, ושהתוכנה רשומה כשצריך."}},{"@type":"Question","name":"אפשר לקבל עזרה בהתקנה של קוד פתוח?","acceptedAnswer":{"@type":"Answer","text":"כן. יש מדריך פריסה שלב אחר שלב, ואפשר גם לבקש שמישהו יקים את המערכת עבורכם."}}]}</script>
 </head>
 <body>
-<div class="draft-bar" role="note">Draft. This guide is under review and not published yet.</div>
+<div class="draft-bar" role="note">טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.</div>
 <header>
   <div class="wrap nav">
     <a class="brand" href="/">
@@ -305,19 +305,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/guides/open-source-invoicing/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/guides/open-source-invoicing/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
-    <a href="/he/guides/open-source-invoicing/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
+    <a href="/en/guides/open-source-invoicing/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -332,60 +332,60 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">An open-source alternative to paid invoicing software: a plain comparison</li></ol></nav>
-    <h1>An open-source alternative to paid invoicing software: a plain comparison</h1>
-    <p class="lead">Subscription software, your accountant&#x27;s system or open source. Three ways for a small Israeli business to keep its books, and what to check in each.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li><a href="/guides/">מדריכים</a></li><li aria-current="page">חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית</li></ol></nav>
+    <h1>חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית</h1>
+    <p class="lead">שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.</p>
   </div>
   <section class="plain">
     <div class="wrap prose">
-      <p class="shot-cap" style="text-align:start">Updated 2026-10-14</p>
-      <p>A small business in Israel has to issue documents by the law and keep them for years. There are several ways to do it, each with its benefits and trade-offs. This guide compares three approaches, not products: subscription software, the accountant's system, and open source running in your own account.</p>
-<h2 id="what-every-system-must-do">What every system must do</h2>
-<p>Before the comparison, these requirements apply whichever way you choose <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li><b>A receipt for every payment</b>, close to the payment.</li><li><b>A continuous number series</b> per document type, with no gaps and no deletion.</li><li><b>Corrections by cancellation or credit</b>, not by editing.</li><li><b>Retention for 7 years</b> from the end of the tax year, or 6 years from filing the return, whichever is later.</li><li><b>A quarterly backup</b> kept away from the system.</li><li><b>Allocation numbers</b> on tax invoices above the threshold, for an עוסק מורשה <sup><a href="#src-4">[4]</a></sup>.</li><li><b>Registered software</b>, when it serves others <sup><a href="#src-2">[2]</a></sup>.</li></ul>
-<p>Each of the three approaches can meet them. The difference is who does the work, and who holds the data.</p>
-<h2 id="approach-1-subscription-software">Approach 1: subscription software</h2>
-<p>A company runs the software on its servers, you sign in through the browser and pay every month or year.</p>
-<p><b>What you get:</b> nothing to install. The company updates, backs up and maintains it. There is usually support.</p>
-<p><b>What to think about:</b></p>
-<ul><li>The data sits with the company. Check how you export it, and in what format.</li><li>Payment continues for as long as you use it, including years when you only need to keep old books.</li><li>Check that the software is registered with the Tax Authority and asks for allocation numbers, if you are an עוסק מורשה.</li></ul>
-<h2 id="approach-2-the-accountant-s-system">Approach 2: the accountant's system</h2>
-<p>Some accountants issue documents for the client, or give the client access to their own system.</p>
-<p><b>What you get:</b> someone who knows the rules holds the books. Less work for you.</p>
-<p><b>What to think about:</b></p>
-<ul><li>The data is tied to the accountant. Ask what happens if you change accountants.</li><li>Every document passes through someone else, which can slow things down.</li><li>Check whether you can get a full export, for example a unified file (מבנה אחיד).</li></ul>
-<h2 id="approach-3-open-source-in-your-own-account">Approach 3: open source in your own account</h2>
-<p>The software comes with its source code, and you run it in a cloud account or on a computer of your own.</p>
-<p><b>What you get:</b> your data sits with you. No licence fee. You can read the code and check how each rule is built. Under a licence such as the AGPL-3.0, anyone may use, change and share it, and whoever runs a changed version for others over a network offers them its source code <sup><a href="#src-3">[3]</a></sup>.</p>
-<p><b>What to think about:</b></p>
-<ul><li><b>Installing is yours</b>, or the job of whoever sets it up for you <sup><a href="#src-5">[5]</a></sup>.</li><li><b>Updates and backups are yours.</b> Pick software that backs itself up.</li><li><b>No warranty.</b> The licence gives no warranty on the code <sup><a href="#src-3">[3]</a></sup>.</li><li><b>Registration.</b> Running it for your own business needs no registration. Running it for other businesses does <sup><a href="#src-1">[1]</a></sup>. If someone gives you the software to use, check that it is registered <sup><a href="#src-2">[2]</a></sup>.</li></ul>
-<h2 id="how-to-choose">How to choose</h2>
-<p>A few questions help you decide:</p>
-<ol><li><b>Who should hold the data?</b> If you want the books in an account in your own name, the third approach fits.</li><li><b>How much time do you want to spend?</b> If you never want to touch an install, choose a subscription, your accountant, or a set-up service.</li><li><b>What happens the day you leave?</b> In every approach, make sure you can take the books, in a format the Tax Authority and another accountant can read.</li><li><b>Does the software meet the requirements?</b> Go through the list above for each option.</li></ol>
-<h2 id="how-open-ledger-il-does-it">How Open Ledger IL does it</h2>
-<p>Open Ledger IL is close to the third approach: the source is public under the FSL-1.1 licence, free for your own business, and runs in your own Cloudflare account. Each version becomes Apache 2.0 open source two years after release. It is registered with the Tax Authority, certificate 281801. It locks final documents, numbers them without gaps, asks for allocation numbers, backs up every quarter and produces a unified file. Install it yourself with the deploy guide, or ask for it to be set up for you.</p>
+      <p class="shot-cap" style="text-align:start">עודכן 2026-10-14</p>
+      <p>עסק קטן בישראל צריך להפיק מסמכים לפי החוק ולשמור אותם שנים. יש כמה דרכים לעשות את זה, ולכל אחת יתרונות ופשרות. המדריך משווה שלוש גישות, לא מוצרים: תוכנה במנוי, המערכת של רואה החשבון, וקוד פתוח שרץ אצלכם.</p>
+<h2 id="מה-כל-מערכת-חייבת-לעשות">מה כל מערכת חייבת לעשות</h2>
+<p>לפני ההשוואה, אלה הדרישות שחלות על כל דרך שתבחרו <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>קבלה על כל תשלום</b>, סמוך לתשלום.</li><li><b>סדרת מספרים רציפה</b> לכל סוג מסמך, בלי דילוגים ובלי מחיקה.</li><li><b>תיקון בביטול או בזיכוי</b>, לא בעריכה.</li><li><b>שמירה 7 שנים</b> מסוף שנת המס, או 6 שנים מהגשת הדוח, המאוחר מביניהם.</li><li><b>גיבוי רבעוני</b> מחוץ למערכת.</li><li><b>מספרי הקצאה</b> לחשבוניות מס מעל הסף, לעוסק מורשה <sup><a href="#src-4">[4]</a></sup>.</li><li><b>תוכנה רשומה</b> ברשות המסים, כשהיא משמשת אחרים <sup><a href="#src-2">[2]</a></sup>.</li></ul>
+<p>כל אחת משלוש הגישות יכולה לעמוד בדרישות. ההבדל הוא מי עושה את העבודה, ומי מחזיק את הנתונים. ההשוואה לא מדרגת מוצרים ולא משווה מחירים.</p>
+<h2 id="גישה-1-תוכנה-במנוי">גישה 1: תוכנה במנוי</h2>
+<p>חברה מפעילה את התוכנה על השרתים שלה, ואתם נכנסים דרך הדפדפן ומשלמים כל חודש או כל שנה.</p>
+<p><b>מה מקבלים:</b> אין מה להתקין. החברה מעדכנת, מגבה ומתחזקת. בדרך כלל יש תמיכה.</p>
+<p><b>על מה לחשוב:</b></p>
+<ul><li>הנתונים נמצאים אצל החברה. בדקו איך מייצאים אותם, ובאיזה פורמט.</li><li>התשלום ממשיך כל עוד משתמשים, כולל בשנים שצריך רק לשמור ספרים ישנים.</li><li>בדקו שהתוכנה רשומה ברשות המסים ושהיא מבקשת מספרי הקצאה, אם אתם עוסק מורשה.</li></ul>
+<h2 id="גישה-2-המערכת-של-רואה-החשבון">גישה 2: המערכת של רואה החשבון</h2>
+<p>חלק מרואי החשבון מפיקים את המסמכים בשביל הלקוח, או נותנים לו גישה למערכת שלהם.</p>
+<p><b>מה מקבלים:</b> מי שמכיר את הכללים מחזיק את הספרים. פחות עבודה בשבילכם.</p>
+<p><b>על מה לחשוב:</b></p>
+<ul><li>הנתונים קשורים לרואה החשבון. שאלו מה קורה אם תחליפו רואה חשבון.</li><li>כל מסמך עובר דרך מישהו אחר, וזה יכול להאט.</li><li>בדקו אם אפשר לקבל ייצוא מלא, למשל קובץ במבנה אחיד.</li></ul>
+<h2 id="גישה-3-קוד-פתוח-שרץ-אצלכם">גישה 3: קוד פתוח שרץ אצלכם</h2>
+<p>התוכנה זמינה עם קוד המקור, ואתם מריצים אותה בחשבון ענן או על מחשב שלכם.</p>
+<p><b>מה מקבלים:</b> הנתונים שלכם יושבים אצלכם. אין דמי רישיון. אפשר לקרוא את הקוד ולבדוק איך כל כלל ממומש. ברישיון כמו AGPL-3.0, כל אחד רשאי להשתמש, לשנות ולשתף, ומי שמריץ גרסה ששינה עבור אחרים ברשת מציע להם את קוד המקור <sup><a href="#src-3">[3]</a></sup>.</p>
+<p><b>על מה לחשוב:</b></p>
+<ul><li><b>ההתקנה עליכם</b>, או על מי שמקים בשבילכם <sup><a href="#src-5">[5]</a></sup>.</li><li><b>העדכונים והגיבויים עליכם.</b> בחרו תוכנה שמגבה לבד.</li><li><b>בלי אחריות.</b> הרישיון לא נותן אחריות על הקוד <sup><a href="#src-3">[3]</a></sup>.</li><li><b>רישום.</b> הרצה לעסק שלכם בלבד לא דורשת רישום. הרצה עבור עסקים אחרים כן <sup><a href="#src-1">[1]</a></sup>. אם מישהו נותן לכם את התוכנה לשימוש, בדקו שהיא רשומה <sup><a href="#src-2">[2]</a></sup>.</li></ul>
+<h2 id="איך-בוחרים">איך בוחרים</h2>
+<p>כמה שאלות שעוזרות להחליט:</p>
+<ol><li><b>מי צריך להחזיק את הנתונים?</b> אם חשוב לכם שהספרים יהיו בחשבון על שמכם, הגישה השלישית מתאימה.</li><li><b>כמה זמן אתם רוצים להשקיע?</b> מי שלא רוצה לגעת בהתקנה יעדיף מנוי, רואה חשבון, או הקמה בשירות.</li><li><b>מה קורה ביום שעוזבים?</b> בכל גישה, ודאו שאפשר לקחת את הספרים, בפורמט שרשות המסים ורואה חשבון אחר יכולים לקרוא.</li><li><b>האם התוכנה עומדת בדרישות?</b> עברו על הרשימה שלמעלה מול כל אפשרות.</li></ol>
+<h2 id="איך-open-ledger-il-עושה-את-זה">איך Open Ledger IL עושה את זה</h2>
+<p>Open Ledger IL קרובה לגישה השלישית: קוד המקור גלוי ברישיון FSL-1.1, חינמי לעסק שלכם, ורץ בחשבון Cloudflare שלכם. כל גרסה הופכת לקוד פתוח ברישיון Apache 2.0 שנתיים אחרי שהיא יוצאת. היא רשומה ברשות המסים, תעודה 281801, נועלת מסמכים סופיים, ממספרת בלי חורים, מבקשת מספרי הקצאה, מגבה כל רבעון ומפיקה קובץ במבנה אחיד. מתקינים לבד לפי מדריך הפריסה, או מבקשים הקמה עבורכם.</p>
       <div class="guide-cta">
-        <a class="btn btn-primary" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener" data-demo>Try the live demo</a>
-        <a class="btn btn-ghost" href="/pricing/">See pricing and setup</a>
+        <a class="btn btn-primary" href="https://demo.open-ledger.dev" target="_blank" rel="noopener" data-demo>נסו את ההדגמה</a>
+        <a class="btn btn-ghost" href="/pricing/">למחירים ולאפשרויות ההתקנה</a>
       </div>
-      <h2 id="faq">Questions and answers</h2>
-      <dl class="faq"><dt>Does open source mean no warranty?</dt><dd>The licence gives no warranty on the code. What you do get is the ability to read it and check it yourself.</dd><dt>Must open-source software be registered with the Tax Authority too?</dt><dd>If others use it, yes. The duty includes software offered for free use.</dd><dt>What matters most before choosing?</dt><dd>That your books stay yours, that you can export them in the Tax Authority format, and that the software is registered when it needs to be.</dd><dt>Can I get help installing open-source software?</dt><dd>Yes. There is a step-by-step deploy guide, and you can also ask someone to set the system up for you.</dd></dl>
-      <h2 id="sources">Sources</h2>
+      <h2 id="faq">שאלות ותשובות</h2>
+      <dl class="faq"><dt>קוד פתוח פירושו בלי אחריות?</dt><dd>הרישיון לא נותן אחריות על הקוד. מה שכן מקבלים הוא היכולת לקרוא אותו ולבדוק אותו בעצמכם.</dd><dt>גם תוכנה בקוד פתוח צריכה להיות רשומה ברשות המסים?</dt><dd>אם אחרים משתמשים בה, כן. החובה כוללת תוכנה שניתנת לשימוש בחינם.</dd><dt>מה הכי חשוב לבדוק לפני שבוחרים?</dt><dd>שהספרים שלכם נשארים שלכם, שאפשר לייצא אותם בפורמט של רשות המסים, ושהתוכנה רשומה כשצריך.</dd><dt>אפשר לקבל עזרה בהתקנה של קוד פתוח?</dt><dd>כן. יש מדריך פריסה שלב אחר שלב, ואפשר גם לבקש שמישהו יקים את המערכת עבורכם.</dd></dl>
+      <h2 id="sources">מקורות</h2>
       <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener" target="_blank">https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system</a></li><li id="src-3"><a href="https://www.gnu.org/licenses/agpl-3.0.html" rel="noopener" target="_blank">https://www.gnu.org/licenses/agpl-3.0.html</a></li><li id="src-4"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md</a></li><li id="src-5"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md</a></li></ol>
     </div>
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

@@ -1,51 +1,51 @@
-# Add or change a key after the install
+# הוספה או החלפה של מפתח אחרי ההתקנה
 
-Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
+הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-The Ledger reads its keys from its Worker in Cloudflare. A Worker is the program that runs the Ledger. You add or change a key there.
+הלדג'ר קורא את המפתחות שלו מה-Worker שלו ב-Cloudflare. Worker הוא התוכנה שמריצה את הלדג'ר. שם מוסיפים או מחליפים מפתח.
 
-## Where
+## איפה
 
-1. Sign in at dash.cloudflare.com.
-2. Open **Workers & Pages** and click **mtn-open-ledger**.
-3. Open **Settings**, then **Variables and Secrets**.
-4. Click **+ Add**. Pick **Secret** for keys and **Text** for plain settings. Type the name, paste the value.
-5. Click **Deploy**. The Ledger uses the new value within a minute.
+1. נכנסים ל-dash.cloudflare.com.
+2. פותחים **Workers & Pages** ולוחצים **mtn-open-ledger**.
+3. פותחים **Settings** ואז **Variables and Secrets**.
+4. לוחצים **+ Add**. בוחרים **Secret** למפתחות ו-**Text** להגדרות רגילות. מקלידים את השם ומדביקים את הערך.
+5. לוחצים **Deploy**. הלדג'ר משתמש בערך החדש תוך דקה.
 
-Names are exact, in capital letters.
+השמות מדויקים, באותיות גדולות.
 
-## Which names
+## אילו שמות
 
-- **Receipt reading with Gemini:** Secret `GEMINI_API_KEY` with the key, and Text `AI_PROVIDER` with the value `gemini`.
-- **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and Text `AI_PROVIDER` with the value `anthropic`.
-- **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and Text `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
-- **Slack alerts:** Secret `SLACK_WEBHOOK_URL`.
-- **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`.
-- **MCP token:** Secret `MCP_TOKEN`, see [Connect Claude](https://open-ledger.matanlevanon.com/help/connect-claude/).
+- **קריאת קבלות עם Gemini:** Secret בשם `GEMINI_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `gemini`.
+- **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `anthropic`.
+- **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ו-Text בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
+- **התראות Slack:** Secret בשם `SLACK_WEBHOOK_URL`.
+- **הוצאות מגוגל דרייב:** Secret בשם `GOOGLE_SERVICE_ACCOUNT_JSON` עם כל התוכן של קובץ ה-JSON, מה-`{` הראשון עד ה-`}` האחרון.
+- **טוקן MCP:** Secret בשם `MCP_TOKEN`, ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/).
 
-## Rules
+## כללים
 
-- Never paste a key in an email, a chat or a document. Paste it only into Cloudflare or the installer.
-- If a key leaks, make a new one at the provider, delete the old one there, and replace it here.
+- לא מדביקים מפתח במייל, בצ'אט או במסמך. רק ב-Cloudflare או בתוכנת ההתקנה.
+- אם מפתח דלף, יוצרים חדש אצל הספק, מוחקים שם את הישן, ומחליפים כאן.
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/keys-later/
+Source: https://open-ledger.dev/help/keys-later/

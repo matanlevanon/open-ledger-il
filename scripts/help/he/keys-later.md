@@ -26,7 +26,7 @@ order: 12
 - **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ו-Text בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
 - **התראות Slack:** Secret בשם `SLACK_WEBHOOK_URL`.
 - **הוצאות מגוגל דרייב:** Secret בשם `GOOGLE_SERVICE_ACCOUNT_JSON` עם כל התוכן של קובץ ה-JSON, מה-`{` הראשון עד ה-`}` האחרון.
-- **טוקן MCP:** Secret בשם `MCP_TOKEN`, ראו [חיבור Claude](/he/help/connect-claude/).
+- **טוקן MCP:** Secret בשם `MCP_TOKEN`, ראו [חיבור Claude](/help/connect-claude/).
 
 ## כללים
 

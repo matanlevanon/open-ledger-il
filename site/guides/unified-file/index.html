@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The unified file (מבנה אחיד) · Open Ledger IL</title>
-<meta name="description" content="What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.">
+<title>מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו</title>
+<meta name="description" content="מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.">
 <meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/guides/unified-file/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/unified-file/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/unified-file/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/unified-file/">
+<link rel="canonical" href="https://open-ledger.dev/guides/unified-file/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/unified-file/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/unified-file/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/unified-file/">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="The unified file (מבנה אחיד) · Open Ledger IL">
-<meta property="og:description" content="What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.">
+<meta property="og:title" content="מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו">
+<meta property="og:description" content="מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/guides/unified-file/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-unified-file.png">
+<meta property="og:url" content="https://open-ledger.dev/guides/unified-file/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/he-guide-unified-file.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The unified file (מבנה אחיד) · Open Ledger IL">
-<meta name="twitter:description" content="What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-unified-file.png">
+<meta name="twitter:title" content="מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו">
+<meta name="twitter:description" content="מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-guide-unified-file.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,14 +286,14 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://open-ledger.matanlevanon.com/guides/"},{"@type":"ListItem","position":3,"name":"The unified file (מבנה אחיד): what it is and when your accountant needs it","item":"https://open-ledger.matanlevanon.com/guides/unified-file/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The unified file (מבנה אחיד): what it is and when your accountant needs it","description":"What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.","inLanguage":"en","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.matanlevanon.com/guides/unified-file/","url":"https://open-ledger.matanlevanon.com/guides/unified-file/","image":"https://open-ledger.matanlevanon.com/assets/og/en-guide-unified-file.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"en","mainEntity":[{"@type":"Question","name":"What is in the file?","acceptedAnswer":{"@type":"Answer","text":"Two text files. INI.TXT with the business, the software and a summary of the records, and BKMVDATA.TXT with the documents, their lines and payments."}},{"@type":"Question","name":"Do quotes and payment requests go in?","acceptedAnswer":{"@type":"Answer","text":"No. They have no code in the specification's appendix, so they stay out."}},{"@type":"Question","name":"Do I produce the file myself?","acceptedAnswer":{"@type":"Answer","text":"Usually not. You produce it when someone asks for it, and sound software builds it from the data it already holds."}},{"@type":"Question","name":"Does a cancelled document appear in the file?","acceptedAnswer":{"@type":"Answer","text":"Yes. A cancelled document is included, marked as cancelled."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"מדריכים","item":"https://open-ledger.dev/guides/"},{"@type":"ListItem","position":3,"name":"מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו","item":"https://open-ledger.dev/guides/unified-file/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו","description":"מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.","inLanguage":"he","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.dev/guides/unified-file/","url":"https://open-ledger.dev/guides/unified-file/","image":"https://open-ledger.dev/assets/og/he-guide-unified-file.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"he","mainEntity":[{"@type":"Question","name":"מה יש בקובץ?","acceptedAnswer":{"@type":"Answer","text":"שני קבצי טקסט. INI.TXT עם פרטי העסק, התוכנה וסיכום הרשומות, ו-BKMVDATA.TXT עם המסמכים, השורות והתשלומים."}},{"@type":"Question","name":"הצעות מחיר ודרישות תשלום נכנסות לקובץ?","acceptedAnswer":{"@type":"Answer","text":"לא. אין להן קוד בנספח של המפרט, ולכן הן נשארות בחוץ."}},{"@type":"Question","name":"אני צריך להפיק את הקובץ בעצמי?","acceptedAnswer":{"@type":"Answer","text":"בדרך כלל לא. מפיקים אותו כשמבקשים אותו, ותוכנה תקינה מפיקה אותו מתוך הנתונים שכבר יש בה."}},{"@type":"Question","name":"מסמך שבוטל מופיע בקובץ?","acceptedAnswer":{"@type":"Answer","text":"כן. מסמך מבוטל נכלל, עם סימון שהוא בוטל."}}]}</script>
 </head>
 <body>
-<div class="draft-bar" role="note">Draft. This guide is under review and not published yet.</div>
+<div class="draft-bar" role="note">טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.</div>
 <header>
   <div class="wrap nav">
     <a class="brand" href="/">
@@ -305,19 +305,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/guides/unified-file/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/guides/unified-file/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
-    <a href="/he/guides/unified-file/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
+    <a href="/en/guides/unified-file/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -332,58 +332,58 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">The unified file (מבנה אחיד): what it is and when your accountant needs it</li></ol></nav>
-    <h1>The unified file (מבנה אחיד): what it is and when your accountant needs it</h1>
-    <p class="lead">What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li><a href="/guides/">מדריכים</a></li><li aria-current="page">מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו</li></ol></nav>
+    <h1>מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו</h1>
+    <p class="lead">מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.</p>
   </div>
   <section class="plain">
     <div class="wrap prose">
-      <p class="shot-cap" style="text-align:start">Updated 2026-10-14</p>
-      <p>A unified file (מבנה אחיד) is an export of the data in accounting software, in one format the Israel Tax Authority set. Every program writes it the same way, so whoever receives it can read it without knowing which software you used. This guide describes version 1.31 of the Tax Authority's instructions <sup><a href="#src-2">[2]</a></sup>.</p>
-<h2 id="what-is-inside-the-file">What is inside the file</h2>
-<p>The file is two text files, packed together <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li><b>INI.TXT</b>: the business details, the software that produced the file, and a summary row for each record type in the file <sup><a href="#src-1">[1]</a></sup>.</li><li><b>BKMVDATA.TXT</b>: the data itself, one record per line <sup><a href="#src-1">[1]</a></sup>.</li></ul>
-<p>Each record has a code. These are the main ones <sup><a href="#src-1">[1]</a></sup>:</p>
-<div class="table-wrap"><table><thead><tr><th>Code</th><th>What it holds</th></tr></thead><tbody><tr><td>A100</td><td>Opening record</td></tr><tr><td>B110</td><td>A bookkeeping account, for example a client account</td></tr><tr><td>C100</td><td>Document header: type, number, date, client and amounts</td></tr><tr><td>D110</td><td>Document lines</td></tr><tr><td>D120</td><td>Payment details on receipts</td></tr><tr><td>Z900</td><td>Closing record</td></tr></tbody></table></div>
-<p>Software that is also a double-entry ledger or a stock system adds more records, such as journal entries (B100) and stock items (M100) <sup><a href="#src-1">[1]</a></sup>.</p>
-<p>The two files are packed together: BKMVDATA.TXT is compressed in an inner ZIP file, which sits with INI.TXT in one folder inside a single ZIP file <sup><a href="#src-1">[1]</a></sup>. That is the file you hand over.</p>
-<p>Each field in a record has a fixed width, set by a table in the specification <sup><a href="#src-2">[2]</a></sup>. A text field is left aligned and padded with spaces. A number field is right aligned and padded with zeros <sup><a href="#src-2">[2]</a></sup>.</p>
-<h2 id="which-documents-go-in">Which documents go in</h2>
-<p>The file covers a period. Every numbered document of a type that has a code in appendix 1 of the specification goes in, by document date <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li>Tax invoices, tax invoice/receipts, receipts and credit invoices go in.</li><li>[TO CHECK] Whether a pro forma (חשבון עסקה) goes in. The requirements document in the repository <sup><a href="#src-3">[3]</a></sup> and the export code <sup><a href="#src-1">[1]</a></sup> disagree.</li><li>A cancelled document goes in too, marked in a dedicated field <sup><a href="#src-1">[1]</a></sup>.</li><li>Quotes and payment requests stay out, since they have no code in the appendix <sup><a href="#src-1">[1]</a></sup>.</li></ul>
-<h2 id="when-your-accountant-needs-the-file">When your accountant needs the file</h2>
-<p>[TO CHECK] The cases in which the Tax Authority or an accountant may ask for the file, and where that duty sits in the bookkeeping instructions or the computerized-system rules.</p>
-<p>What can be said without an outside source: the file is meant to be read by someone who does not use your software. An accountant on other software can load your documents from it. An audit can check the series, the amounts and the cancelled documents from it.</p>
-<h2 id="what-to-check-when-you-produce-a-file">What to check when you produce a file</h2>
-<p>Sound software shows a summary before the download that you can compare with your books <sup><a href="#src-1">[1]</a></sup>:</p>
-<ol><li><b>Counts per record type</b>: how many document headers, lines and payments.</li><li><b>Totals per document type</b>: how many documents of each type, and their total in shekels <sup><a href="#src-1">[1]</a></sup>.</li><li><b>Warnings</b>: for example a tax invoice still waiting for an allocation number and so left out <sup><a href="#src-1">[1]</a></sup>, or a software registration field still empty <sup><a href="#src-1">[1]</a></sup>.</li></ol>
-<p>Compare the summary with the income report for the same period before you hand the file over.</p>
-<h2 id="the-link-to-software-registration">The link to software registration</h2>
-<p>INI.TXT has fields that describe the software that produced the file, among them its Tax Authority registration number <sup><a href="#src-1">[1]</a></sup>. Software not yet registered prints zeros there <sup><a href="#src-1">[1]</a></sup>. [TO CHECK] Whether producing a unified file is a condition of software registration.</p>
-<h2 id="how-open-ledger-il-does-it">How Open Ledger IL does it</h2>
-<p>Open Ledger IL produces a unified file, version 1.31, for any period you pick, from Reports. Before the download it shows the summary per record type and a table per document type, with warnings about documents left out. Every field is checked against the record width in the specification, so a layout mistake cannot shift the columns. An accountant with access to the system can produce the file themselves.</p>
+      <p class="shot-cap" style="text-align:start">עודכן 2026-10-14</p>
+      <p>קובץ במבנה אחיד הוא ייצוא של הנתונים מתוכנת הנהלת חשבונות, בפורמט אחד שרשות המסים קבעה. כל תוכנה מפיקה אותו באותו מבנה, כך שמי שמקבל אותו יכול לקרוא אותו בלי לדעת באיזו תוכנה השתמשתם. הגרסה שהמדריך מתאר היא 1.31 של הוראות הרשות <sup><a href="#src-2">[2]</a></sup>.</p>
+<h2 id="מה-יש-בתוך-הקובץ">מה יש בתוך הקובץ</h2>
+<p>הקובץ בנוי משני קבצי טקסט, ארוזים יחד <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>INI.TXT</b>: פרטי העסק, פרטי התוכנה שהפיקה את הקובץ, ושורת סיכום לכל סוג רשומה שיש בקובץ <sup><a href="#src-1">[1]</a></sup>.</li><li><b>BKMVDATA.TXT</b>: הנתונים עצמם, רשומה בכל שורה <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<p>לכל רשומה יש קוד. אלה הקודים העיקריים <sup><a href="#src-1">[1]</a></sup>:</p>
+<div class="table-wrap"><table><thead><tr><th>קוד</th><th>מה הוא מכיל</th></tr></thead><tbody><tr><td>A100</td><td>רשומת פתיחה</td></tr><tr><td>B110</td><td>חשבון בהנהלת חשבונות, למשל חשבון לקוח</td></tr><tr><td>C100</td><td>כותרת מסמך: סוג, מספר, תאריך, לקוח וסכומים</td></tr><tr><td>D110</td><td>שורות המסמך</td></tr><tr><td>D120</td><td>פרטי התשלומים בקבלות</td></tr><tr><td>Z900</td><td>רשומת סיום</td></tr></tbody></table></div>
+<p>תוכנה שהיא גם מערכת הנהלת חשבונות כפולה או מערכת מלאי מוסיפה רשומות נוספות, למשל תנועות יומן (B100) ופריטים במלאי (M100) <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>שני הקבצים ארוזים יחד: BKMVDATA.TXT דחוס בקובץ ZIP פנימי, והוא יחד עם INI.TXT נמצא בתיקייה אחת בתוך קובץ ZIP אחד <sup><a href="#src-1">[1]</a></sup>. זה הקובץ שמעבירים.</p>
+<p>כל שדה ברשומה הוא ברוחב קבוע, לפי טבלה במפרט <sup><a href="#src-2">[2]</a></sup>. שדה טקסט מיושר לשמאל ומרופד ברווחים. שדה מספרי מיושר לימין ומרופד באפסים <sup><a href="#src-2">[2]</a></sup>.</p>
+<h2 id="אילו-מסמכים-נכנסים">אילו מסמכים נכנסים</h2>
+<p>הקובץ מכסה תקופה. נכנס כל מסמך ממוספר מסוג שיש לו קוד בנספח 1 של המפרט, לפי תאריך המסמך <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li>חשבוניות מס, חשבוניות מס/קבלה, קבלות וחשבוניות זיכוי נכנסים.</li><li>[TO CHECK] האם חשבון עסקה נכנס לקובץ. מסמך הדרישות במאגר <sup><a href="#src-3">[3]</a></sup> וקוד הייצוא <sup><a href="#src-1">[1]</a></sup> לא מסכימים.</li><li>מסמך שבוטל נכנס גם הוא, עם סימון בשדה מיוחד <sup><a href="#src-1">[1]</a></sup>.</li><li>הצעות מחיר ודרישות תשלום לא נכנסות, כי אין להן קוד בנספח <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<h2 id="מתי-רואה-החשבון-צריך-את-הקובץ">מתי רואה החשבון צריך את הקובץ</h2>
+<p>[TO CHECK] המקרים שבהם רשות המסים או רואה החשבון רשאים לדרוש את הקובץ, ומה מקור החובה בהוראות לניהול פנקסים או בכללים למערכת ממוחשבת.</p>
+<p>מה שאפשר לומר בלי מקור חיצוני: הקובץ נועד לקריאה על ידי מי שלא משתמש בתוכנה שלכם. רואה חשבון שעובד עם תוכנה אחרת יכול לקלוט ממנו את המסמכים. ביקורת יכולה לבדוק ממנו את הסדרות, את הסכומים ואת המסמכים שבוטלו.</p>
+<h2 id="מה-לבדוק-כשמפיקים-קובץ">מה לבדוק כשמפיקים קובץ</h2>
+<p>תוכנה תקינה מציגה לפני ההורדה סיכום שאפשר להשוות לספרים <sup><a href="#src-1">[1]</a></sup>:</p>
+<ol><li><b>ספירה לפי סוג רשומה</b>: כמה כותרות מסמך, כמה שורות וכמה תשלומים.</li><li><b>סיכום לפי סוג מסמך</b>: כמה מסמכים מכל סוג וסכום כולל בשקלים <sup><a href="#src-1">[1]</a></sup>.</li><li><b>אזהרות</b>: למשל חשבונית מס שעוד ממתינה למספר הקצאה ולכן לא נכנסה <sup><a href="#src-1">[1]</a></sup>, או שדה רישום תוכנה שעוד ריק <sup><a href="#src-1">[1]</a></sup>.</li></ol>
+<p>כדאי להשוות את הסיכום לדוח ההכנסות של אותה תקופה לפני שמעבירים את הקובץ. שמרו עותק של כל קובץ שהעברתם, עם התאריך ושם מי שקיבל אותו.</p>
+<h2 id="הקשר-לרישום-התוכנה">הקשר לרישום התוכנה</h2>
+<p>ב-INI.TXT יש שדות שמתארים את התוכנה שהפיקה את הקובץ, ובהם מספר רישום התוכנה ברשות המסים <sup><a href="#src-1">[1]</a></sup>. תוכנה שעוד לא נרשמה מדפיסה שם אפסים <sup><a href="#src-1">[1]</a></sup>. [TO CHECK] האם הפקת קובץ במבנה אחיד היא תנאי לרישום תוכנה.</p>
+<h2 id="איך-open-ledger-il-עושה-את-זה">איך Open Ledger IL עושה את זה</h2>
+<p>Open Ledger IL מפיקה קובץ במבנה אחיד גרסה 1.31 לכל תקופה שתבחרו, מתוך הדוחות. לפני ההורדה מוצג מסך הסיכום לפי סוג רשומה וטבלה לפי סוג מסמך, עם אזהרות על מסמכים שנשארו בחוץ. כל שדה נבדק מול רוחב הרשומה במפרט, כך שטעות פריסה לא יכולה להזיז את העמודות. רואה חשבון עם גישה למערכת יכול להפיק את הקובץ בעצמו.</p>
       <div class="guide-cta">
-        <a class="btn btn-primary" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener" data-demo>Try the live demo</a>
-        <a class="btn btn-ghost" href="/pricing/">See pricing and setup</a>
+        <a class="btn btn-primary" href="https://demo.open-ledger.dev" target="_blank" rel="noopener" data-demo>נסו את ההדגמה</a>
+        <a class="btn btn-ghost" href="/pricing/">למחירים ולאפשרויות ההתקנה</a>
       </div>
-      <h2 id="faq">Questions and answers</h2>
-      <dl class="faq"><dt>What is in the file?</dt><dd>Two text files. INI.TXT with the business, the software and a summary of the records, and BKMVDATA.TXT with the documents, their lines and payments.</dd><dt>Do quotes and payment requests go in?</dt><dd>No. They have no code in the specification&#x27;s appendix, so they stay out.</dd><dt>Do I produce the file myself?</dt><dd>Usually not. You produce it when someone asks for it, and sound software builds it from the data it already holds.</dd><dt>Does a cancelled document appear in the file?</dt><dd>Yes. A cancelled document is included, marked as cancelled.</dd></dl>
-      <h2 id="sources">Sources</h2>
+      <h2 id="faq">שאלות ותשובות</h2>
+      <dl class="faq"><dt>מה יש בקובץ?</dt><dd>שני קבצי טקסט. INI.TXT עם פרטי העסק, התוכנה וסיכום הרשומות, ו-BKMVDATA.TXT עם המסמכים, השורות והתשלומים.</dd><dt>הצעות מחיר ודרישות תשלום נכנסות לקובץ?</dt><dd>לא. אין להן קוד בנספח של המפרט, ולכן הן נשארות בחוץ.</dd><dt>אני צריך להפיק את הקובץ בעצמי?</dt><dd>בדרך כלל לא. מפיקים אותו כשמבקשים אותו, ותוכנה תקינה מפיקה אותו מתוך הנתונים שכבר יש בה.</dd><dt>מסמך שבוטל מופיע בקובץ?</dt><dd>כן. מסמך מבוטל נכלל, עם סימון שהוא בוטל.</dd></dl>
+      <h2 id="sources">מקורות</h2>
       <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/src/modules/exports/unified-file/build.ts" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/src/modules/exports/unified-file/build.ts</a></li><li id="src-2"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/src/modules/exports/unified-file/records.ts" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/src/modules/exports/unified-file/records.ts</a></li><li id="src-3"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-4"><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener" target="_blank">https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system</a></li></ol>
     </div>
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

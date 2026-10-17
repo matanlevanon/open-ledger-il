@@ -16,7 +16,7 @@ The Ledger sends email through Resend, a sending service with a free plan. Resen
 3. Resend shows DNS records: one or two for DKIM, one for SPF, and one MX on a `send.` subdomain. Add them where the domain's DNS lives. On Cloudflare, Resend offers to add them for you.
 4. Wait for **Verified**. Minutes, sometimes an hour.
 5. Open **API Keys**, click **Create API Key**, pick **Sending access**, and copy the key. It starts with `re_`.
-6. Give it to the Ledger in the installer's Extras step, or later as the secret `MAIL_API_KEY` plus the variable `MAIL_FROM`, see [Add or change a key](/help/keys-later/).
+6. Give it to the Ledger in the installer's Extras step, or later as the secret `MAIL_API_KEY` plus the variable `MAIL_FROM`, see [Add or change a key](/en/help/keys-later/).
 
 `MAIL_FROM` is the name and address clients see, for example `Acme Ltd <billing@acme.co.il>`. The address must be on the verified domain.
 

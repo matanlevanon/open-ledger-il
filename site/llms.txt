@@ -4,63 +4,63 @@
 
 ## Pages in English
 
-- [Open Ledger IL: invoices and books on your own Cloudflare](https://open-ledger.matanlevanon.com/): Source-available invoicing, receipts and bookkeeping for עוסק פטור and עוסק מורשה. Registered with the Israel Tax Authority. Runs on your Cloudflare.
-- [Open Ledger IL features: documents, reports, rules](https://open-ledger.matanlevanon.com/features/): Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.
-- [Open Ledger IL pricing: free, or set up for you](https://open-ledger.matanlevanon.com/pricing/): Run Open Ledger IL free from source, or have it set up for you for ₪699 once. What you need, how it works and the known limits.
-- [Open Ledger IL: Tax Authority certificate 281801](https://open-ledger.matanlevanon.com/registration/): Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.
-- [Open Ledger IL live demo: try it in your browser](https://open-ledger.matanlevanon.com/demo/): Open the Open Ledger IL demo: sample businesses, the real screens, private drafts and preview PDFs. No install. The sample data stays as it is.
-- [Open Ledger IL guides: invoicing for Israeli businesses](https://open-ledger.matanlevanon.com/guides/): Plain guides to Israeli invoicing: allocation numbers, the עוסק פטור ceiling, registered software, the unified file and which document is income.
-- [Open Ledger IL help: install, set up and daily use](https://open-ledger.matanlevanon.com/help/): Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.
-- [Open Ledger IL changelog: what changed in each version](https://open-ledger.matanlevanon.com/changelog/): Every Open Ledger IL release and what changed in it, newest first. The current version is 1.6.0.
-- [Open Ledger IL licence: FSL-1.1, free for your business](https://open-ledger.matanlevanon.com/license/): Open Ledger IL ships under the FSL-1.1 licence. Free for your own business, no reselling, and each version turns Apache 2.0 after two years.
+- [Open Ledger IL: invoices and books on your own Cloudflare](https://open-ledger.dev/en/): Source-available invoicing, receipts and bookkeeping for עוסק פטור and עוסק מורשה. Registered with the Israel Tax Authority. Runs on your Cloudflare.
+- [Open Ledger IL features: documents, reports, rules](https://open-ledger.dev/en/features/): Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.
+- [Open Ledger IL pricing: free, or set up for you](https://open-ledger.dev/en/pricing/): Run Open Ledger IL free from source, or have it set up for you for ₪699 once. What you need, how it works and the known limits.
+- [Open Ledger IL: Tax Authority certificate 281801](https://open-ledger.dev/en/registration/): Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.
+- [Open Ledger IL live demo: try it in your browser](https://open-ledger.dev/en/demo/): Open the Open Ledger IL demo: sample businesses, the real screens, private drafts and preview PDFs. No install. The sample data stays as it is.
+- [Open Ledger IL guides: invoicing for Israeli businesses](https://open-ledger.dev/en/guides/): Plain guides to Israeli invoicing: allocation numbers, the עוסק פטור ceiling, registered software, the unified file and which document is income.
+- [Open Ledger IL help: install, set up and daily use](https://open-ledger.dev/en/help/): Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.
+- [Open Ledger IL changelog: what changed in each version](https://open-ledger.dev/en/changelog/): Every Open Ledger IL release and what changed in it, newest first. The current version is 1.6.0.
+- [Open Ledger IL licence: FSL-1.1, free for your business](https://open-ledger.dev/en/license/): Open Ledger IL ships under the FSL-1.1 licence. Free for your own business, no reselling, and each version turns Apache 2.0 after two years.
 
 ## Help in English
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/): The accounts, details and 30 minutes you need before you run the Open Ledger IL installer, and which parts are optional.
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/): The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/): Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/): Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/): Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/): The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/): Sign in to your Ledger for the first time, fill in the business profile, logo, signature and numbering, and check one receipt before you go live.
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/): Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/): Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/): Use a card payment provider for collecting money and the Ledger for the receipts, by hand or automatically, without two documents for one payment.
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/): Allocation numbers with the installer or with your own setup: what each path takes, how to connect, and the 90-day reconnect.
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/): Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/): How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/): Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
+- [Before you install: what you need](https://open-ledger.dev/en/help/before-you-start/): The accounts, details and 30 minutes you need before you run the Open Ledger IL installer, and which parts are optional.
+- [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/): The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
+- [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/): Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
+- [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/): Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
+- [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/): Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
+- [From quote to receipt: your first documents](https://open-ledger.dev/en/help/first-invoice/): The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.
+- [First sign-in and setup](https://open-ledger.dev/en/help/first-sign-in/): Sign in to your Ledger for the first time, fill in the business profile, logo, signature and numbering, and check one receipt before you go live.
+- [Install Open Ledger IL step by step](https://open-ledger.dev/en/help/install/): Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
+- [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/): Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.dev/en/help/payment-providers/): Use a card payment provider for collecting money and the Ledger for the receipts, by hand or automatically, without two documents for one payment.
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.dev/en/help/tax-authority/): Allocation numbers with the installer or with your own setup: what each path takes, how to connect, and the 90-day reconnect.
+- [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/): Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
+- [Updates and backups](https://open-ledger.dev/en/help/updates-backups/): How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
+- [Give your accountant or assistant access](https://open-ledger.dev/en/help/users/): Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
 
 ## Pages in Hebrew
 
-- [Open Ledger IL: חשבוניות והנהלת חשבונות בענן שלך](https://open-ledger.matanlevanon.com/he/): מערכת בקוד מקור גלוי לחשבוניות, קבלות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.
-- [היכולות של Open Ledger IL: מסמכים, דוחות וכללים](https://open-ledger.matanlevanon.com/he/features/): כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.
-- [מחירים: Open Ledger IL בחינם או בהקמה עבורך](https://open-ledger.matanlevanon.com/he/pricing/): הפעלת Open Ledger IL בחינם מקוד המקור, או הקמה עבורך ב-₪699 חד פעמי. מה צריך, איך זה עובד ומה המגבלות.
-- [Open Ledger IL רשומה ברשות המסים: תעודה 281801](https://open-ledger.matanlevanon.com/he/registration/): Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. אפשר לבדוק במאגר של רשות המסים.
-- [הדגמה חיה של Open Ledger IL: נסו בדפדפן](https://open-ledger.matanlevanon.com/he/demo/): פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.
-- [מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל](https://open-ledger.matanlevanon.com/he/guides/): מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.
-- [עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש](https://open-ledger.matanlevanon.com/he/help/): צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.
-- [יומן שינויים של Open Ledger IL: מה חדש בכל גרסה](https://open-ledger.matanlevanon.com/he/changelog/): כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
-- [רישיון Open Ledger IL: FSL-1.1, חינם לעסק שלכם](https://open-ledger.matanlevanon.com/he/license/): Open Ledger IL ברישיון FSL-1.1. חינם לעסק שלכם, בלי מכירה חוזרת, וכל גרסה עוברת ל-Apache 2.0 אחרי שנתיים.
+- [Open Ledger IL: חשבוניות והנהלת חשבונות בענן שלך](https://open-ledger.dev/): מערכת בקוד מקור גלוי לחשבוניות, קבלות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.
+- [היכולות של Open Ledger IL: מסמכים, דוחות וכללים](https://open-ledger.dev/features/): כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.
+- [מחירים: Open Ledger IL בחינם או בהקמה עבורך](https://open-ledger.dev/pricing/): הפעלת Open Ledger IL בחינם מקוד המקור, או הקמה עבורך ב-₪699 חד פעמי. מה צריך, איך זה עובד ומה המגבלות.
+- [Open Ledger IL רשומה ברשות המסים: תעודה 281801](https://open-ledger.dev/registration/): Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. אפשר לבדוק במאגר של רשות המסים.
+- [הדגמה חיה של Open Ledger IL: נסו בדפדפן](https://open-ledger.dev/demo/): פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.
+- [מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל](https://open-ledger.dev/guides/): מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.
+- [עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש](https://open-ledger.dev/help/): צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.
+- [יומן שינויים של Open Ledger IL: מה חדש בכל גרסה](https://open-ledger.dev/changelog/): כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
+- [רישיון Open Ledger IL: FSL-1.1, חינם לעסק שלכם](https://open-ledger.dev/license/): Open Ledger IL ברישיון FSL-1.1. חינם לעסק שלכם, בלי מכירה חוזרת, וכל גרסה עוברת ל-Apache 2.0 אחרי שנתיים.
 
 ## Help in Hebrew
 
-- [לפני ההתקנה: מה צריך להכין](https://open-ledger.matanlevanon.com/he/help/before-you-start/): החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.
-- [יצירת ה-API token ב-Cloudflare](https://open-ledger.matanlevanon.com/he/help/cloudflare-token/): שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
-- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.matanlevanon.com/he/help/connect-claude/): נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
-- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.matanlevanon.com/he/help/email/): חיבור Resend כדי שהלדג'ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.
-- [הכנסת הוצאות ללדג'ר](https://open-ledger.matanlevanon.com/he/help/expenses/): העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
-- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.matanlevanon.com/he/help/first-invoice/): סדר המסמכים בלדג'ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.
-- [כניסה ראשונה והגדרות](https://open-ledger.matanlevanon.com/he/help/first-sign-in/): הכניסה הראשונה ללדג'ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.
-- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.matanlevanon.com/he/help/install/): כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
-- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.matanlevanon.com/he/help/keys-later/): הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
-- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.matanlevanon.com/he/help/payment-providers/): סולק גובה את הכסף והלדג'ר מוציא את הקבלות, ידנית או אוטומטית, בלי שני מסמכים לאותו תשלום.
-- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.matanlevanon.com/he/help/tax-authority/): מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.
-- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.matanlevanon.com/he/help/troubleshooting/): פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
-- [עדכונים וגיבויים](https://open-ledger.matanlevanon.com/he/help/updates-backups/): איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
-- [גישה לרואה חשבון או לעוזר](https://open-ledger.matanlevanon.com/he/help/users/): הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/): החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/): שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/): נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/): חיבור Resend כדי שהלדג'ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/): העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/): סדר המסמכים בלדג'ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/): הכניסה הראשונה ללדג'ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/): כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/): הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/): סולק גובה את הכסף והלדג'ר מוציא את הקבלות, ידנית או אוטומטית, בלי שני מסמכים לאותו תשלום.
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/): מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/): פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/): איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/): הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
 
 ## Optional
 
 - [Source code](https://github.com/matanlevanon/open-ledger-il): the repository, FSL-1.1-ALv2
-- [Full text of every page](https://open-ledger.matanlevanon.com/llms-full.txt): one Markdown file
+- [Full text of every page](https://open-ledger.dev/llms-full.txt): one Markdown file

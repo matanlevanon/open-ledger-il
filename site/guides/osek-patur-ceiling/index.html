@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The עוסק פטור ceiling · Open Ledger IL</title>
-<meta name="description" content="What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.">
+<title>תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה</title>
+<meta name="description" content="מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.">
 <meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/osek-patur-ceiling/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/osek-patur-ceiling/">
+<link rel="canonical" href="https://open-ledger.dev/guides/osek-patur-ceiling/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/osek-patur-ceiling/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/osek-patur-ceiling/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/osek-patur-ceiling/">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="The עוסק פטור ceiling · Open Ledger IL">
-<meta property="og:description" content="What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.">
+<meta property="og:title" content="תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה">
+<meta property="og:description" content="מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-osek-patur-ceiling.png">
+<meta property="og:url" content="https://open-ledger.dev/guides/osek-patur-ceiling/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/he-guide-osek-patur-ceiling.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The עוסק פטור ceiling · Open Ledger IL">
-<meta name="twitter:description" content="What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-osek-patur-ceiling.png">
+<meta name="twitter:title" content="תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה">
+<meta name="twitter:description" content="מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-guide-osek-patur-ceiling.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,14 +286,14 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://open-ledger.matanlevanon.com/guides/"},{"@type":"ListItem","position":3,"name":"The עוסק פטור ceiling: how to track it and what happens when you cross it","item":"https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The עוסק פטור ceiling: how to track it and what happens when you cross it","description":"What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.","inLanguage":"en","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/","url":"https://open-ledger.matanlevanon.com/guides/osek-patur-ceiling/","image":"https://open-ledger.matanlevanon.com/assets/og/en-guide-osek-patur-ceiling.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"en","mainEntity":[{"@type":"Question","name":"What is the ceiling this year?","acceptedAnswer":{"@type":"Answer","text":"₪122,833 for 2026. The ceiling is updated every year."}},{"@type":"Question","name":"Do I become מורשה on 1 January?","acceptedAnswer":{"@type":"Answer","text":"No. The switch happens when turnover goes past the ceiling, not on a fixed date."}},{"@type":"Question","name":"Is the test based on money received?","acceptedAnswer":{"@type":"Answer","text":"Not only. The test looks at expected turnover, not only money already received."}},{"@type":"Question","name":"How soon do I tell the VAT office?","acceptedAnswer":{"@type":"Answer","text":"Within 15 days of the event, under regulation 8(a) of the VAT registration regulations, as secondary sources summarise it."}},{"@type":"Question","name":"What is the VAT rate after the switch?","acceptedAnswer":{"@type":"Answer","text":"18%, the rate in force from 1 January 2025."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"מדריכים","item":"https://open-ledger.dev/guides/"},{"@type":"ListItem","position":3,"name":"תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה","item":"https://open-ledger.dev/guides/osek-patur-ceiling/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה","description":"מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.","inLanguage":"he","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.dev/guides/osek-patur-ceiling/","url":"https://open-ledger.dev/guides/osek-patur-ceiling/","image":"https://open-ledger.dev/assets/og/he-guide-osek-patur-ceiling.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"he","mainEntity":[{"@type":"Question","name":"מה התקרה השנה?","acceptedAnswer":{"@type":"Answer","text":"₪122,833 לשנת 2026. התקרה מתעדכנת כל שנה."}},{"@type":"Question","name":"עוברים למורשה באחד בינואר?","acceptedAnswer":{"@type":"Answer","text":"לא. המעבר קורה כשהמחזור עובר את התקרה, לא בתאריך קבוע."}},{"@type":"Question","name":"הבדיקה היא לפי כסף שהתקבל?","acceptedAnswer":{"@type":"Answer","text":"לא רק. הבדיקה מסתכלת על המחזור הצפוי, לא רק על הכסף שכבר נכנס."}},{"@type":"Question","name":"תוך כמה זמן מודיעים למע\"מ?","acceptedAnswer":{"@type":"Answer","text":"תוך 15 יום מהאירוע, לפי תקנה 8(א) לתקנות רישום במע\"מ, כפי שמסכמים מקורות משניים."}},{"@type":"Question","name":"מה שיעור המע\"מ אחרי המעבר?","acceptedAnswer":{"@type":"Answer","text":"18%, השיעור שחל מ-1.1.2025."}}]}</script>
 </head>
 <body>
-<div class="draft-bar" role="note">Draft. This guide is under review and not published yet.</div>
+<div class="draft-bar" role="note">טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.</div>
 <header>
   <div class="wrap nav">
     <a class="brand" href="/">
@@ -305,19 +305,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/guides/osek-patur-ceiling/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/guides/osek-patur-ceiling/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
-    <a href="/he/guides/osek-patur-ceiling/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
+    <a href="/en/guides/osek-patur-ceiling/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -332,59 +332,59 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">The עוסק פטור ceiling: how to track it and what happens when you cross it</li></ol></nav>
-    <h1>The עוסק פטור ceiling: how to track it and what happens when you cross it</h1>
-    <p class="lead">What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li><a href="/guides/">מדריכים</a></li><li aria-current="page">תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה</li></ol></nav>
+    <h1>תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה</h1>
+    <p class="lead">מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.</p>
   </div>
   <section class="plain">
     <div class="wrap prose">
-      <p class="shot-cap" style="text-align:start">Updated 2026-10-14</p>
-      <p>An עוסק פטור is a business whose annual turnover stays under a ceiling set by law. The ceiling for 2026 is ₪122,833 <sup><a href="#src-1">[1]</a></sup>. It is updated every year in line with the index, and next year's figure is usually published around January <sup><a href="#src-1">[1]</a></sup>.</p>
-<p>This guide covers how to track turnover through the year, and what happens the day it goes past the ceiling.</p>
-<h2 id="what-counts-as-turnover">What counts as turnover</h2>
-<p>Turnover is the total of your transactions, not your profit. As secondary sources summarise it, the test looks at expected turnover, not only money already received <sup><a href="#src-1">[1]</a></sup>. [TO CHECK] The wording of the law itself, since the secondary sources were not checked against the primary text.</p>
-<p>So adding up receipts is not enough. A payment request that is still open is money you expect, and it belongs in the picture now.</p>
-<h2 id="how-to-track-it-through-the-year">How to track it through the year</h2>
-<p>Good tracking rests on three figures:</p>
-<ol><li><b>Turnover to date</b>: the total of receipts since the start of the year.</li><li><b>Open requests</b>: payment requests and pro formas issued and not yet paid.</li><li><b>This year's ceiling</b>: the amount the law sets for the current year.</li></ol>
-<p>Add the first two and compare them with the third, and you see how much room is left. Set alerts before you reach the edge, for example at 70, 85 and 95 percent of the ceiling <sup><a href="#src-1">[1]</a></sup>.</p>
-<p>The ceiling itself changes every year. A system that keeps the ceiling in a table, one row per year, needs no code change when the figure is updated <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="what-happens-when-you-cross-it">What happens when you cross it</h2>
-<p>As secondary sources summarise it <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li><b>The switch is neither automatic nor on a fixed date.</b> It happens when turnover goes past the ceiling.</li><li><b>VAT applies from the moment you cross.</b> Earlier transactions stay exempt.</li><li><b>You tell the VAT office within 15 days of the event</b>, under regulation 8(a) of the VAT (registration) regulations <sup><a href="#src-2">[2]</a></sup>.</li></ul>
-<p>[TO CHECK] Whether the transaction that crosses the ceiling carries VAT in full, or only the part above the ceiling. The source document leaves this open too <sup><a href="#src-1">[1]</a></sup>.</p>
-<p>After the switch, the business issues tax invoices, charges VAT and files VAT reports. Open payment requests issued before the switch are re-priced with VAT <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="what-to-do-before-you-get-there">What to do before you get there</h2>
-<ul><li><b>Look early.</b> When the room left is small, plan the timing of the switch with your accountant.</li><li><b>Watch open requests.</b> One large transaction can take you past the ceiling.</li><li><b>Get ready for tax invoices.</b> After the switch, a tax invoice above the threshold needs an allocation number from the Tax Authority <sup><a href="#src-1">[1]</a></sup>. Setting up that connection takes time.</li></ul>
-<h2 id="what-changes-the-day-after">What changes the day after</h2>
-<p>An עוסק מורשה works by other rules. Know them before you reach the ceiling <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li><b>VAT</b>: the rate is 18%, from 1 January 2025 <sup><a href="#src-1">[1]</a></sup>.</li><li><b>A tax invoice within 14 days</b>: a service provider reporting on a cash basis issues a tax invoice within 14 days of receiving payment <sup><a href="#src-1">[1]</a></sup>.</li><li><b>Client details</b>: a tax invoice above a set amount before VAT needs the client's ID or VAT number <sup><a href="#src-1">[1]</a></sup>.</li><li><b>A periodic VAT report</b>: monthly or bi-monthly. Check with your accountant which applies to you <sup><a href="#src-1">[1]</a></sup>.</li></ul>
-<h2 id="the-switch-goes-one-way">The switch goes one way</h2>
-<p>An עוסק פטור that becomes מורשה does not go back through the system. The פטור document series close, and new series open for tax invoices, tax invoice/receipts and credit invoices <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="how-open-ledger-il-does-it">How Open Ledger IL does it</h2>
-<p>Open Ledger IL shows a ceiling meter on the dashboard: turnover to date plus open requests, against this year's ceiling. Alerts go out at 70, 85 and 95 percent, and when turnover plus open requests passes the ceiling. A receipt that would take turnover past the ceiling stops before it is issued, and the screen offers to confirm the switch with an effective date, to issue as פטור while you stay at or under the ceiling, or to cancel. After the switch, a 15-day task reminds you to tell the VAT office, and open payment requests are re-priced with VAT. Every alert and decision is logged.</p>
+      <p class="shot-cap" style="text-align:start">עודכן 2026-10-14</p>
+      <p>עוסק פטור הוא עסק שהמחזור השנתי שלו נשאר מתחת לתקרה שקובע החוק. התקרה לשנת 2026 היא ₪122,833 <sup><a href="#src-1">[1]</a></sup>. היא מתעדכנת כל שנה לפי המדד, והנתון לשנה הבאה מתפרסם בדרך כלל בסביבות ינואר <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>המדריך מסביר איך עוקבים אחרי המחזור לאורך השנה, ומה קורה ביום שהוא עובר את התקרה.</p>
+<h2 id="מה-נספר-במחזור">מה נספר במחזור</h2>
+<p>המחזור הוא סכום העסקאות, לא הרווח. לפי הסיכום במקורות משניים, הבדיקה מסתכלת על המחזור הצפוי ולא רק על הכסף שכבר התקבל <sup><a href="#src-1">[1]</a></sup>. [TO CHECK] נוסח הוראת החוק עצמה, כי המקורות המשניים לא אומתו מול הנוסח הראשי.</p>
+<p>לכן לא מספיק לסכם קבלות. דרישת תשלום שעוד פתוחה היא כסף שצפוי להיכנס, וכדאי לראות אותה כבר עכשיו.</p>
+<h2 id="איך-עוקבים-לאורך-השנה">איך עוקבים לאורך השנה</h2>
+<p>מעקב טוב בנוי משלושה מספרים:</p>
+<ol><li><b>המחזור עד היום</b>: סכום הקבלות מתחילת השנה.</li><li><b>דרישות פתוחות</b>: דרישות תשלום וחשבונות עסקה שהופקו ועוד לא שולמו.</li><li><b>התקרה של השנה</b>: הסכום שקובע החוק לשנה הנוכחית.</li></ol>
+<p>כשמחברים את הראשון והשני ומשווים לשלישי, רואים כמה מרווח נשאר. כדאי לקבוע התראות לפני שמגיעים לקצה, למשל ב-70, 85 ו-95 אחוז מהתקרה <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>התקרה עצמה משתנה כל שנה. מערכת שמחזיקה את התקרה כטבלה עם שורה לכל שנה לא צריכה שינוי בקוד כשהנתון מתעדכן <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="מה-קורה-כשעוברים-את-התקרה">מה קורה כשעוברים את התקרה</h2>
+<p>לפי הסיכום במקורות משניים <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>המעבר לא אוטומטי ולא בתאריך קבוע.</b> הוא קורה כשהמחזור עובר את התקרה.</li><li><b>מע"מ חל מרגע החריגה.</b> עסקאות קודמות נשארות פטורות.</li><li><b>הודעה למשרד מע"מ תוך 15 יום מהאירוע</b>, לפי תקנה 8(א) לתקנות מס ערך מוסף (רישום) <sup><a href="#src-2">[2]</a></sup>.</li></ul>
+<p>[TO CHECK] האם העסקה שבה עוברים את התקרה חייבת במע"מ במלואה, או רק החלק שמעל התקרה. זו שאלה פתוחה גם במסמך המקור <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>אחרי המעבר העסק מפיק חשבוניות מס, גובה מע"מ ומגיש דוחות מע"מ. דרישות תשלום פתוחות שהופקו לפני המעבר מתומחרות מחדש עם מע"מ <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="מה-עושים-לפני-שמגיעים-לשם">מה עושים לפני שמגיעים לשם</h2>
+<ul><li><b>בודקים מוקדם.</b> כשהמרווח קטן, מתכננים יחד עם רואה החשבון את מועד המעבר.</li><li><b>שמים לב לדרישות פתוחות.</b> עסקה גדולה אחת יכולה להעביר את התקרה.</li><li><b>שומרים תיעוד.</b> כדאי לרשום כל התראה והחלטה, כדי לדעת בדיעבד מתי בדיוק עברתם את התקרה.</li><li><b>מתכוננים לחשבוניות מס.</b> אחרי המעבר, חשבונית מס מעל הסף צריכה מספר הקצאה מרשות המסים <sup><a href="#src-1">[1]</a></sup>. החיבור לרשות לוקח זמן.</li></ul>
+<h2 id="מה-משתנה-ביום-שאחרי">מה משתנה ביום שאחרי</h2>
+<p>עוסק מורשה עובד לפי כללים אחרים. כדאי להכיר אותם לפני שמגיעים לתקרה <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>מע"מ</b>: השיעור הוא 18%, מ-1.1.2025 <sup><a href="#src-1">[1]</a></sup>.</li><li><b>חשבונית מס תוך 14 יום</b>: נותן שירות שמדווח על בסיס מזומן מפיק חשבונית מס תוך 14 יום מקבלת התשלום <sup><a href="#src-1">[1]</a></sup>.</li><li><b>פרטי הלקוח</b>: בחשבונית מס מעל סכום מסוים לפני מע"מ צריך את מספר הזהות או מספר העוסק של הלקוח <sup><a href="#src-1">[1]</a></sup>.</li><li><b>דוח מע"מ תקופתי</b>: חודשי או דו חודשי. בדקו עם רואה החשבון מה חל עליכם <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<h2 id="המעבר-הוא-בכיוון-אחד">המעבר הוא בכיוון אחד</h2>
+<p>עוסק פטור שעבר למעמד מורשה לא חוזר אחורה דרך המערכת. סדרות המסמכים של עוסק פטור נסגרות, ונפתחות סדרות חדשות של חשבוניות מס, חשבוניות מס/קבלה וחשבוניות זיכוי <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="איך-open-ledger-il-עושה-את-זה">איך Open Ledger IL עושה את זה</h2>
+<p>Open Ledger IL מציגה מד תקרה בלוח הבקרה: המחזור עד היום ועוד הדרישות הפתוחות, מול התקרה של השנה. התראות נשלחות ב-70, 85 ו-95 אחוז, וכשהמחזור יחד עם הדרישות הפתוחות עובר את התקרה. קבלה שתעביר את המחזור מעל התקרה נעצרת לפני ההפקה, והמסך מציע לאשר מעבר עם תאריך תחולה, להפיק כעוסק פטור כל עוד נשארים מתחת לתקרה, או לבטל. אחרי המעבר נפתחת משימה של 15 יום להודעה למשרד מע"מ, ודרישות תשלום פתוחות מתומחרות מחדש עם מע"מ. כל התראה והחלטה נרשמת ביומן.</p>
       <div class="guide-cta">
-        <a class="btn btn-primary" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener" data-demo>Try the live demo</a>
-        <a class="btn btn-ghost" href="/pricing/">See pricing and setup</a>
+        <a class="btn btn-primary" href="https://demo.open-ledger.dev" target="_blank" rel="noopener" data-demo>נסו את ההדגמה</a>
+        <a class="btn btn-ghost" href="/pricing/">למחירים ולאפשרויות ההתקנה</a>
       </div>
-      <h2 id="faq">Questions and answers</h2>
-      <dl class="faq"><dt>What is the ceiling this year?</dt><dd>₪122,833 for 2026. The ceiling is updated every year.</dd><dt>Do I become מורשה on 1 January?</dt><dd>No. The switch happens when turnover goes past the ceiling, not on a fixed date.</dd><dt>Is the test based on money received?</dt><dd>Not only. The test looks at expected turnover, not only money already received.</dd><dt>How soon do I tell the VAT office?</dt><dd>Within 15 days of the event, under regulation 8(a) of the VAT registration regulations, as secondary sources summarise it.</dd><dt>What is the VAT rate after the switch?</dt><dd>18%, the rate in force from 1 January 2025.</dd></dl>
-      <h2 id="sources">Sources</h2>
+      <h2 id="faq">שאלות ותשובות</h2>
+      <dl class="faq"><dt>מה התקרה השנה?</dt><dd>₪122,833 לשנת 2026. התקרה מתעדכנת כל שנה.</dd><dt>עוברים למורשה באחד בינואר?</dt><dd>לא. המעבר קורה כשהמחזור עובר את התקרה, לא בתאריך קבוע.</dd><dt>הבדיקה היא לפי כסף שהתקבל?</dt><dd>לא רק. הבדיקה מסתכלת על המחזור הצפוי, לא רק על הכסף שכבר נכנס.</dd><dt>תוך כמה זמן מודיעים למע&quot;מ?</dt><dd>תוך 15 יום מהאירוע, לפי תקנה 8(א) לתקנות רישום במע&quot;מ, כפי שמסכמים מקורות משניים.</dd><dt>מה שיעור המע&quot;מ אחרי המעבר?</dt><dd>18%, השיעור שחל מ-1.1.2025.</dd></dl>
+      <h2 id="sources">מקורות</h2>
       <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.btl.gov.il/Laws1/02_0022_100001.pdf" rel="noopener" target="_blank">https://www.btl.gov.il/Laws1/02_0022_100001.pdf</a></li></ol>
     </div>
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

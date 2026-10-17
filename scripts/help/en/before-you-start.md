@@ -21,7 +21,7 @@ The install takes about 30 minutes the first time. Most of that is creating acco
 
 You add each of these during the install or later.
 
-- **A domain**, for example acme.co.il, already in your Cloudflare account. Without one, the Ledger runs on a free Cloudflare address ending in workers.dev. See [Domain or workers.dev](/help/install/).
+- **A domain**, for example acme.co.il, already in your Cloudflare account. Without one, the Ledger runs on a free Cloudflare address ending in workers.dev. See [Domain or workers.dev](/en/help/install/).
 - **A Gemini or Anthropic API key**, so the Ledger reads receipts and supplier invoices for you. Without one, you type expense details by hand.
 - **A Resend API key**, so the Ledger emails documents to clients. Resend needs a domain. Without one, you download each PDF or share it on WhatsApp.
 - **A Slack webhook**, for alerts such as a Tax Authority login about to end.
@@ -32,4 +32,4 @@ Everything is created in your own accounts, in your name: the Cloudflare account
 
 ## Next
 
-[Install with the installer](/help/install/).
+[Install with the installer](/en/help/install/).

@@ -1,23 +1,23 @@
-# Create the Cloudflare API token
+# יצירת ה-API token ב-Cloudflare
 
-The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
+שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-The token is a password with limited rights. It lets the installer create the Ledger in your Cloudflare account. You delete it after the install.
+הטוקן הוא סיסמה עם הרשאות מוגבלות. הוא מאפשר לתוכנת ההתקנה ליצור את הלדג'ר בחשבון Cloudflare שלכם. מוחקים אותו אחרי ההתקנה.
 
-## Open the token page
+## פותחים את עמוד הטוקנים
 
-1. Open dash.cloudflare.com/profile/api-tokens in a new tab. Keep the installer open.
-2. Click **Create Token**.
-3. Scroll to the bottom of the list of templates. Find **Custom token** and click **Get started**.
-4. Token name: anything, for example `Ledger install`.
+1. פותחים את dash.cloudflare.com/profile/api-tokens בלשונית חדשה. משאירים את תוכנת ההתקנה פתוחה.
+2. לוחצים **Create Token**.
+3. גוללים לתחתית רשימת התבניות. מוצאים **Custom token** ולוחצים **Get started**.
+4. Token name: כל שם, למשל `Ledger install`.
 
-## Add the permission rows
+## מוסיפים את שורות ההרשאה
 
-Each row has three boxes: the type (**Account** or **Zone**), the permission, and the level (**Read** or **Edit**). The first row is there already. Click **+ Add more** for each next row.
+לכל שורה שלוש תיבות: הסוג (**Account** או **Zone**), ההרשאה, והרמה (**Read** או **Edit**). השורה הראשונה כבר קיימת. לכל שורה נוספת לוחצים **+ Add more**.
 
-Add these six rows:
+מוסיפים את שש השורות האלה:
 
 1. Account | Workers Scripts | Edit
 2. Account | D1 | Edit
@@ -26,49 +26,49 @@ Add these six rows:
 5. Account | Access: Organizations, Identity Providers, and Groups | Read
 6. Account | Account Settings | Read
 
-Only if your account has a domain, add three more:
+רק אם יש בחשבון דומיין, מוסיפים עוד שלוש:
 
 1. Zone | Zone | Read
 2. Zone | Workers Routes | Edit
 3. Zone | DNS | Edit
 
-How to tell if you have a domain: on dash.cloudflare.com, the **Domains** list (on older menus, **Websites**) shows it. A new account has none.
+איך יודעים אם יש דומיין: ב-dash.cloudflare.com, ברשימה **Domains** (בתפריטים ישנים **Websites**). בחשבון חדש אין.
 
-## Account and zone resources
+## Account Resources ו-Zone Resources
 
-1. Below the permissions, under **Account Resources**, choose **Include**, then the business's account.
-2. **Zone Resources** shows up only after you add a Zone row. With a domain: **Include**, then **Specific zone**, then the domain the Ledger will use. Without a domain you added no Zone rows, so this part does not show. Skip it.
-3. **Client IP Address Filtering** and **TTL**: leave empty.
+1. מתחת להרשאות, ב-**Account Resources**, בוחרים **Include** ואז את החשבון של העסק.
+2. **Zone Resources** מופיע רק אחרי שמוסיפים שורת Zone. עם דומיין: **Include**, אחר כך **Specific zone**, ואז הדומיין שהלדג'ר ישתמש בו. בלי דומיין לא הוספתם שורות Zone, אז החלק הזה לא מופיע. מדלגים.
+3. **Client IP Address Filtering** ו-**TTL**: משאירים ריק.
 
-## Create and copy
+## יוצרים ומעתיקים
 
-1. Click **Continue to summary**, then **Create Token**.
-2. Click **Copy** next to the token. Cloudflare shows it once. If you lose it, create a new one the same way.
-3. Paste it in the installer and click **Check token**.
+1. לוחצים **Continue to summary** ואז **Create Token**.
+2. לוחצים **Copy** ליד הטוקן. Cloudflare מציג אותו פעם אחת. אם הוא אבד, יוצרים חדש באותה דרך.
+3. מדביקים בתוכנת ההתקנה ולוחצים **Check token**.
 
-## If Check token fails
+## אם Check token נכשל
 
-- **A permission is missing:** the message names it. Edit the token on the token page, add the row, save, and click **Check token** again. The token value stays the same.
-- **Wrong account:** the token's **Account Resources** points at a different account. Edit it and pick the right one.
-- **Pasted with a space:** copy it again with the **Copy** button.
-- **Zero Trust or R2 not on yet:** finish step 1 of the installer first.
+- **חסרה הרשאה:** ההודעה אומרת איזו. עורכים את הטוקן בעמוד הטוקנים, מוסיפים את השורה, שומרים ולוחצים **Check token** שוב. הטוקן עצמו לא משתנה.
+- **חשבון לא נכון:** ה-**Account Resources** של הטוקן מצביע על חשבון אחר. עורכים ובוחרים את הנכון.
+- **הודבק עם רווח:** מעתיקים שוב עם כפתור **Copy**.
+- **Zero Trust או R2 עוד לא הופעלו:** מסיימים קודם את שלב 1 בתוכנת ההתקנה.
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/cloudflare-token/
+Source: https://open-ledger.dev/help/cloudflare-token/

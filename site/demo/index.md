@@ -1,27 +1,27 @@
-# Try the live demo
+# נסו את ההדגמה
 
-The live demo opens the real app on sample businesses. Nothing to install.
+ההדגמה החיה פותחת את המערכת האמיתית על עסקי דוגמה. אין מה להתקין.
 
-- Every visitor reads the same sample businesses: clients, documents, contracts and expenses.
-- Create your own drafts. Nobody else sees them, and they are deleted 30 minutes after you leave.
-- Issue, Send, Record payment and Sign show previews. A preview PDF carries the number 0000 and a watermark.
-- The sample data is read-only. The server refuses every change to it.
-- It opens in Hebrew, in the light theme.
+- כל המבקרים רואים את אותם עסקי דוגמה: לקוחות, מסמכים, חוזים והוצאות.
+- יוצרים טיוטות משלכם. אף אחד אחר לא רואה אותן, והן נמחקות 30 דקות אחרי שיוצאים.
+- הפקה, שליחה, רישום תשלום וחתימה מציגים תצוגה מקדימה. ב-PDF לתצוגה מופיע המספר 0000 וסימן מים.
+- נתוני הדוגמה לקריאה בלבד. השרת דוחה כל שינוי בהם.
+- ההדגמה נפתחת בעברית, בערכת הצבעים הבהירה.
 
-[Try the live demo](https://sampleledger.matanlevanon.com)
+[נסו את ההדגמה](https://demo.open-ledger.dev)
 
-No install. Sample data, opens in seconds.
+בלי התקנה. נתוני דוגמה, נפתח תוך שניות.
 
-## Your books in your pocket
+## הנהלת החשבונות בכיס
 
-Install it on your home screen. It opens ready for the next receipt.
+מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.
 
-**Quick** Take a photo, pick from the gallery or start a document.
+**מהיר** מצלמים, בוחרים מהגלריה או פותחים מסמך חדש.
 
-**Review and file** Claude fills in the fields. You check them and file.
+**בדיקה ותיוק** Claude ממלא את השדות. אתה בודק ומתייק.
 
-**Recent activity** The latest documents and expenses, with amount and status.
+**פעילות אחרונה** המסמכים וההוצאות האחרונים, עם סכום וסטטוס.
 
-**Dashboard** Open and overdue items, cash flow and the פטור ceiling.
+**לוח בקרה** פריטים פתוחים ובאיחור, תזרים ותקרת עוסק פטור.
 
-Source: https://open-ledger.matanlevanon.com/demo/
+Source: https://open-ledger.dev/demo/

@@ -61,10 +61,31 @@ test('every published page has a Markdown twin, linked from the page, and in llm
 });
 
 test('home and pricing carry the key facts block', () => {
-  for (const path of ['/', '/he/', '/pricing/', '/he/pricing/']) {
+  for (const path of ['/', '/en/', '/pricing/', '/en/pricing/']) {
     const p = all.find((x) => x.path === path);
     assert.ok(p.html.includes('id="key-facts"'), `${path}: key facts`);
     assert.match(p.html, /281801/);
     assert.match(p.html, /FSL-1\.1/);
   }
+});
+
+test('every page in the sitemap exists in site/', () => {
+  const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  assert.ok(locs.length > 0);
+  for (const loc of locs) {
+    assert.ok(loc.startsWith(`${SITE_URL}/`), `${loc} is not on ${SITE_URL}`);
+    const path = loc.slice(SITE_URL.length);
+    assert.ok(path.endsWith('/') && existsSync(join(SITE, path, 'index.html')), `${loc} has no page in site/`);
+  }
+  for (const href of [...sitemap.matchAll(/href="([^"]+)"/g)].map((m) => m[1])) {
+    assert.ok(existsSync(join(SITE, href.slice(SITE_URL.length), 'index.html')), `alternate ${href} has no page in site/`);
+  }
+});
+
+test('Hebrew sits at the root and English under /en/, in the sitemap and llms.txt', () => {
+  assert.ok(sitemap.includes(`<loc>${SITE_URL}/</loc>`));
+  assert.ok(sitemap.includes(`<loc>${SITE_URL}/en/</loc>`));
+  assert.ok(!sitemap.includes(`${SITE_URL}/he/`), 'no /he/ address left in the sitemap');
+  assert.ok(!llms.includes(`${SITE_URL}/he/`), 'no /he/ address left in llms.txt');
+  assert.ok(!full.includes(`${SITE_URL}/he/`), 'no /he/ address left in llms-full.txt');
 });

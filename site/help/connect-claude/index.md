@@ -1,67 +1,67 @@
-# Connect Claude or another AI app (MCP)
+# חיבור Claude או אפליקציית AI אחרת (MCP)
 
-Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
+נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-With MCP connected, you ask Claude things like "how much does Acme owe me" or "make a payment request for 3 hours of consulting", and Claude works in your Ledger. Claude creates drafts, and finalizes a document only after you confirm.
+עם MCP מחובר, שואלים את Claude דברים כמו "כמה Acme חייבים לי" או "תכין דרישת תשלום על 3 שעות ייעוץ", ו-Claude עובד בלדג'ר שלכם. Claude יוצר טיוטות, ומסיים מסמך רק אחרי שאתם מאשרים.
 
-## What you need
+## מה צריך
 
-- **The address:** your Ledger's address followed by `/mcp`, for example `https://ledger.acme.co.il/mcp`.
-- **The token:** shown once on the installer's last screen.
+- **הכתובת:** כתובת הלדג'ר עם `/mcp` בסוף, למשל `https://ledger.acme.co.il/mcp`.
+- **הטוקן:** מוצג פעם אחת במסך האחרון של תוכנת ההתקנה.
 
 ## Claude Desktop
 
-1. On the installer's last screen you clicked **Download for Claude Desktop**. The file `claude-desktop-<your address>.json` is in your Downloads folder.
-2. In Claude Desktop: **Settings > Developer > Edit Config**. The file `claude_desktop_config.json` opens.
-3. Copy the `open-ledger` entry from the downloaded file into `mcpServers` in that file. Save.
-4. Restart Claude Desktop. This needs Node.js on the computer, from nodejs.org.
+1. במסך האחרון של תוכנת ההתקנה לחצתם **Download for Claude Desktop**. הקובץ `claude-desktop-<הכתובת שלכם>.json` נמצא בתיקיית ההורדות.
+2. ב-Claude Desktop: **Settings > Developer > Edit Config**. נפתח הקובץ `claude_desktop_config.json`.
+3. מעתיקים את הרשומה `open-ledger` מהקובץ שהורדתם לתוך `mcpServers` בקובץ הזה. שומרים.
+4. מפעילים מחדש את Claude Desktop. צריך Node.js במחשב, מ-nodejs.org.
 
 ## Claude Code
 
-Click **Download for Claude Code** on the installer's last screen and save the file as `.mcp.json` in the folder you work in. Or add the server with the address and the header `Authorization: Bearer <token>`.
+לוחצים **Download for Claude Code** במסך האחרון של תוכנת ההתקנה ושומרים את הקובץ בשם `.mcp.json` בתיקייה שבה עובדים. או מוסיפים שרת עם הכתובת והכותרת `Authorization: Bearer <token>`.
 
-## Lost the token
+## הטוקן אבד
 
-Cloudflare never shows a secret again, so you make a new token. The old one stops working at that moment.
+Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הישן מפסיק לעבוד באותו רגע.
 
-### In the Ledger
+### בלדג'ר
 
-1. Open **Settings > MCP**. Only an owner sees this tab.
-2. Click **Make a new token**, then **Make the token** to confirm.
-3. Copy the token, or click **Download for Claude Desktop** or **Download for Claude Code**. It is shown once.
-4. Put it in the Claude config and restart Claude.
+1. פותחים **Settings > MCP**. רק בעלים רואים את הלשונית הזו.
+2. לוחצים **Make a new token**, ואז **Make the token** לאישור.
+3. מעתיקים את הטוקן, או לוחצים **Download for Claude Desktop** או **Download for Claude Code**. הוא מוצג פעם אחת.
+4. מכניסים אותו להגדרות של Claude ומפעילים אותו מחדש.
 
-The same tab shows the MCP address with a **Copy** button, when the token was last used, and a switch that turns MCP off for every app.
+באותה לשונית מופיעה כתובת ה-MCP עם כפתור **Copy**, מתי הטוקן היה בשימוש לאחרונה, ומתג שמכבה את ה-MCP לכל האפליקציות.
 
-### No MCP tab yet
+### אין עדיין לשונית MCP
 
-The tab is in Ledgers updated after 17 October 2026. On an older Ledger, update first, see [Updates](https://open-ledger.matanlevanon.com/help/updates-backups/). Or set the token in Cloudflare:
+הלשונית קיימת בלדג'רים שעודכנו אחרי 17 באוקטובר 2026. בלדג'ר ישן, מעדכנים קודם, ראו [עדכונים](https://open-ledger.dev/help/updates-backups/). או קובעים את הטוקן ב-Cloudflare:
 
-1. Look in Downloads for `claude-desktop-....json`. If it is there, the old token is inside and nothing else is needed.
-2. Otherwise make a token in PowerShell on your computer:
+1. מחפשים בתיקיית ההורדות קובץ `claude-desktop-....json`. אם הוא שם, הטוקן הישן בתוכו ואין צורך בשום דבר נוסף.
+2. אחרת יוצרים טוקן ב-PowerShell במחשב שלכם:
 
 `$b = New-Object byte 32; Security.Cryptography.RandomNumberGenerator::Create().GetBytes($b); Convert::ToBase64String($b)`
 
-1. In dash.cloudflare.com: **Workers & Pages**, click **mtn-open-ledger**, then **Settings > Variables and Secrets**. Edit **MCP_TOKEN**, paste the line it printed, and click **Deploy**.
+1. ב-dash.cloudflare.com: **Workers & Pages**, לוחצים **mtn-open-ledger**, ואז **Settings > Variables and Secrets**. עורכים את **MCP_TOKEN**, מדביקים את השורה שהודפסה ולוחצים **Deploy**.
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/connect-claude/
+Source: https://open-ledger.dev/help/connect-claude/

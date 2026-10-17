@@ -1,84 +1,84 @@
-**Free** · Source available · Registered with the Israel Tax Authority · v1.6.0
+**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.6.0
 
-# Invoices, receipts and books for an Israeli business, on infrastructure you own.
+# חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, על תשתית שבבעלותך.
 
-Quotes, receipts, tax invoices, contracts and expenses, with legal numbering and ITA allocation numbers. It runs in your own Cloudflare account. Your data stays yours.
+הצעות מחיר, קבלות, חשבוניות מס, חוזים והוצאות, עם מספור חוקי ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר שלך.
 
-[Try the live demo](https://sampleledger.matanlevanon.com)
+[נסו את ההדגמה](https://demo.open-ledger.dev)
 
-No install. Sample data, opens in seconds.
+בלי התקנה. נתוני דוגמה, נפתח תוך שניות.
 
-[Get the code](https://github.com/matanlevanon/open-ledger-il) [Read the deploy guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) [See setup options](https://open-ledger.matanlevanon.com/pricing/)
+[לקוד](https://github.com/matanlevanon/open-ledger-il) [למדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) [לאפשרויות ההתקנה](https://open-ledger.dev/pricing/)
 
-All screenshots on this page use an invented demo business.
+כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.
 
-## Your books in your pocket
+## הנהלת החשבונות בכיס
 
-Install it on your home screen. It opens ready for the next receipt.
+מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.
 
-**Quick** Take a photo, pick from the gallery or start a document.
+**מהיר** מצלמים, בוחרים מהגלריה או פותחים מסמך חדש.
 
-**Review and file** Claude fills in the fields. You check them and file.
+**בדיקה ותיוק** Claude ממלא את השדות. אתה בודק ומתייק.
 
-**Recent activity** The latest documents and expenses, with amount and status.
+**פעילות אחרונה** המסמכים וההוצאות האחרונים, עם סכום וסטטוס.
 
-**Dashboard** Open and overdue items, cash flow and the פטור ceiling.
+**לוח בקרה** פריטים פתוחים ובאיחור, תזרים ותקרת עוסק פטור.
 
-What it does
+מה היא עושה
 
-## Everything a small Israeli business issues and files
+## כל מה שעסק ישראלי קטן מפיק ומתייק
 
-For a עוסק פטור today and a עוסק מורשה tomorrow.
+לעוסק פטור היום ולעוסק מורשה מחר.
 
-### Every Israeli document type
+### כל סוגי המסמכים
 
-Quotes, payment requests, receipts and tax invoices, in English or Hebrew and English.
+הצעות מחיר, דרישות תשלום, קבלות וחשבוניות מס, בעברית או בעברית ואנגלית.
 
-### Numbering that cannot break
+### מספור שלא נשבר
 
-Gapless series, locked final documents and signed PDFs.
+סדרות בלי חורים, מסמך סופי נעול ו-PDF חתום.
 
-### ITA allocation numbers
+### מספרי הקצאה
 
-Israel Invoices API v2, with a retry queue.
+API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.
 
-### Contracts and work orders
+### חוזים והזמנות עבודה
 
-The client signs on any screen. A signed work order becomes a pro forma.
+הלקוח חותם בכל מסך. הזמנה חתומה הופכת לחשבון עסקה.
 
-### Expenses read by Claude
+### הוצאות ש-Claude קורא
 
-Snap a receipt or import a month from Google Drive.
+מצלמים קבלה או מייבאים חודש מ-Google Drive.
 
-### Reports for your accountant
+### דוחות לרואה החשבון
 
-P&L, client ledgers, the unified file and an accountant login.
+רווח והפסד, כרטסות, מבנה אחיד וכניסה לרואה החשבון.
 
-[See every feature](https://open-ledger.matanlevanon.com/features/)
+[לכל היכולות](https://open-ledger.dev/features/)
 
-## Key facts
+## עובדות עיקריות
 
-- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
-- It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
-- It is free for your own business under the FSL-1.1 licence.
-- Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.
-- It supports עוסק פטור and עוסק מורשה businesses.
-- It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
+- Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
+- היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
+- היא חינמית לעסק שלכם, ברישיון FSL-1.1.
+- הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה לגרסה הראשונה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
+- היא תומכת בעוסק פטור ובעוסק מורשה.
+- היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
 
-## Free from source, or set up for you
+## חינם מקוד המקור, או הקמה עבורך
 
-The code is free for your own business. Prefer not to do it yourself? We set it up for you for ₪699 (first release, 30% off ₪999), once, with no subscription.
+הקוד חינמי לעסק שלכם. לא רוצים להתקין לבד? אנחנו מקימים עבורך ב-₪699 (גרסה ראשונה, 30% הנחה מ-₪999), חד פעמי, בלי מנוי.
 
-[See pricing and setup](https://open-ledger.matanlevanon.com/pricing/)
+[למחירים ולאפשרויות ההתקנה](https://open-ledger.dev/pricing/)
 
-## Try it before you install it
+## קודם מנסים, אחר כך מתקינים
 
-- Every visitor reads the same sample businesses: clients, documents, contracts and expenses.
-- Create your own drafts. Nobody else sees them, and they are deleted 30 minutes after you leave.
-- Issue, Send, Record payment and Sign show previews. A preview PDF carries the number 0000 and a watermark.
+- כל המבקרים רואים את אותם עסקי דוגמה: לקוחות, מסמכים, חוזים והוצאות.
+- יוצרים טיוטות משלכם. אף אחד אחר לא רואה אותן, והן נמחקות 30 דקות אחרי שיוצאים.
+- הפקה, שליחה, רישום תשלום וחתימה מציגים תצוגה מקדימה. ב-PDF לתצוגה מופיע המספר 0000 וסימן מים.
 
-[Try the live demo](https://sampleledger.matanlevanon.com)
+[נסו את ההדגמה](https://demo.open-ledger.dev)
 
-No install. Sample data, opens in seconds.
+בלי התקנה. נתוני דוגמה, נפתח תוך שניות.
 
-Source: https://open-ledger.matanlevanon.com/
+Source: https://open-ledger.dev/

@@ -44,4 +44,4 @@ Do this before the first document in that series. The start number locks the mom
 
 ## Next
 
-[From quote to receipt](/help/first-invoice/).
+[From quote to receipt](/en/help/first-invoice/).

@@ -1,50 +1,50 @@
-# Send documents by email, and keep them out of spam
+# שליחת מסמכים במייל, בלי ספאם
 
-Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
+חיבור Resend כדי שהלדג'ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-The Ledger sends email through Resend, a sending service with a free plan. Resend sends only from a domain you own and verify. Without a domain, download each PDF or use the WhatsApp button on the document page.
+הלדג'ר שולח מיילים דרך Resend, שירות שליחה עם תוכנית חינמית. Resend שולח רק מדומיין שלכם ומאומת. בלי דומיין, מורידים כל PDF או משתמשים בכפתור הוואטסאפ בעמוד המסמך.
 
-## Set up Resend
+## הגדרת Resend
 
-1. Sign up at resend.com.
-2. Open **Domains**, click **Add Domain**, and type your domain, for example `acme.co.il`.
-3. Resend shows DNS records: one or two for DKIM, one for SPF, and one MX on a `send.` subdomain. Add them where the domain's DNS lives. On Cloudflare, Resend offers to add them for you.
-4. Wait for **Verified**. Minutes, sometimes an hour.
-5. Open **API Keys**, click **Create API Key**, pick **Sending access**, and copy the key. It starts with `re_`.
-6. Give it to the Ledger in the installer's Extras step, or later as the secret `MAIL_API_KEY` plus the variable `MAIL_FROM`, see [Add or change a key](https://open-ledger.matanlevanon.com/help/keys-later/).
+1. נרשמים ב-resend.com.
+2. פותחים **Domains**, לוחצים **Add Domain** ומקלידים את הדומיין, למשל `acme.co.il`.
+3. Resend מציג רשומות DNS: אחת או שתיים ל-DKIM, אחת ל-SPF, ו-MX על תת-דומיין `send.`. מוסיפים אותן איפה שה-DNS של הדומיין מנוהל. ב-Cloudflare, Resend מציע להוסיף אותן בשבילכם.
+4. מחכים ל-**Verified**. דקות, לפעמים שעה.
+5. פותחים **API Keys**, לוחצים **Create API Key**, בוחרים **Sending access** ומעתיקים את המפתח. הוא מתחיל ב-`re_`.
+6. נותנים אותו ללדג'ר בשלב התוספות של תוכנת ההתקנה, או אחר כך כסוד `MAIL_API_KEY` יחד עם המשתנה `MAIL_FROM`, ראו [הוספה או החלפה של מפתח](https://open-ledger.dev/help/keys-later/).
 
-`MAIL_FROM` is the name and address clients see, for example `Acme Ltd <billing@acme.co.il>`. The address must be on the verified domain.
+`MAIL_FROM` הוא השם והכתובת שהלקוחות רואים, למשל `Acme Ltd <billing@acme.co.il>`. הכתובת חייבת להיות על הדומיין המאומת.
 
-## Keep it out of spam
+## איך לא להגיע לספאם
 
-1. **DMARC.** Add a TXT record named `_dmarc` with the value `v=DMARC1; p=none;`. After two weeks of clean reports, change `p=none` to `p=quarantine`. Gmail and Yahoo expect a DMARC record from every sender.
-2. **Turn off tracking.** In Resend, **Domains >** your domain **> Configuration**: turn off open tracking and click tracking. Tracking pixels and rewritten links push mail into Promotions and spam.
-3. **A real reply address.** Send from an address that receives mail, such as `billing@` with a mailbox or forwarding behind it. Replies tell Gmail people want your mail.
-4. **One sender for documents only.** Do not send newsletters from the address that sends receipts.
-5. **Test once.** Send a receipt to your own Gmail, open it, click the three dots, **Show original**, and check that SPF, DKIM and DMARC all say **PASS**.
+1. **DMARC.** מוסיפים רשומת TXT בשם `_dmarc` עם הערך `v=DMARC1; p=none;`. אחרי שבועיים של דוחות נקיים, משנים `p=none` ל-`p=quarantine`. ג'ימייל ויאהו מצפים לרשומת DMARC מכל שולח.
+2. **מכבים מעקב.** ב-Resend, **Domains >** הדומיין שלכם **> Configuration**: מכבים open tracking ו-click tracking. פיקסלים של מעקב וקישורים מוחלפים דוחפים מיילים לקידומי מכירות ולספאם.
+3. **כתובת שעונים ממנה.** שולחים מכתובת שמקבלת מייל, כמו `billing@` עם תיבה או הפניה מאחוריה. תשובות מראות לג'ימייל שאנשים רוצים את המייל שלכם.
+4. **שולח אחד רק למסמכים.** לא שולחים ניוזלטרים מהכתובת ששולחת קבלות.
+5. **בודקים פעם אחת.** שולחים קבלה לג'ימייל שלכם, פותחים, לוחצים על שלוש הנקודות, **Show original**, ובודקים ש-SPF, DKIM ו-DMARC מראים **PASS**.
 
-## The first email to a client
+## המייל הראשון ללקוח
 
-The Ledger asks for the client's consent before the first digital document. Ask the client to add your address to their contacts, and the next ones reach the inbox.
+הלדג'ר מבקש הסכמה של הלקוח לפני המסמך הדיגיטלי הראשון. בקשו מהלקוח להוסיף את הכתובת שלכם לאנשי הקשר, והבאים יגיעו לתיבה הראשית.
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/email/
+Source: https://open-ledger.dev/help/email/

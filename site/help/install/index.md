@@ -1,101 +1,101 @@
-# Install Open Ledger IL step by step
+# התקנת Open Ledger IL צעד אחר צעד
 
-Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
+כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-## The installer comes with your purchase
+## תוכנת ההתקנה מגיעה עם הרכישה
 
-Buy the connected installer for ₪99, a first-release price (regular ₪199). The licence key and the download link reach your email within a minute.
+קונים את תוכנת ההתקנה המחוברת ב-₪99, מחיר השקה לגרסה הראשונה (מחיר רגיל ₪199). מפתח הרישיון וקישור ההורדה מגיעים למייל תוך דקה.
 
-- No Tax Authority API app to apply for. You connect through MTN's approved app.
-- No Israeli server or relay to run. Every Tax Authority call leaves from an Israeli address, so it never gets the 403 a Worker abroad gets.
-- No command line. A wizard creates the database, the files, the sign-in and the address in your Cloudflare account, in about 3 minutes.
-- Run it again later to update, and your data stays.
+- בלי בקשה לאפליקציית API ברשות המסים. מתחברים דרך האפליקציה המאושרת של MTN.
+- בלי שרת ישראלי או ממסר להפעיל. כל פנייה לרשות המסים יוצאת מכתובת ישראלית, ולכן לא נחסמת כמו Worker שרץ בחו"ל.
+- בלי שורת פקודה. אשף מקים בחשבון Cloudflare שלכם את מסד הנתונים, הקבצים, הכניסה והכתובת, בערך ב-3 דקות.
+- הרצה חוזרת בהמשך מעדכנת, והנתונים נשארים.
 
-[Buy the installer](https://get.matanlevanon.com/buy)[Or set it up yourself, free](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+[לרכישת תוכנת ההתקנה](https://get.open-ledger.dev/buy?lang=he)[או התקנה עצמית, בחינם](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
 
-The installer is the paid, connected way to install Open Ledger IL. You buy it once on the shop, and the purchase email brings the licence key and the download link. Read [Before you install](https://open-ledger.matanlevanon.com/help/before-you-start/) first.
+תוכנת ההתקנה היא הדרך בתשלום, המחוברת, להתקין את Open Ledger IL. קונים אותה פעם אחת בחנות, ומייל הרכישה מביא את מפתח הרישיון ואת קישור ההורדה. קודם קראו את [לפני ההתקנה](https://open-ledger.dev/help/before-you-start/).
 
-## What the installer saves you
+## מה תוכנת ההתקנה חוסכת
 
-Setting up from the source code is free, and the [setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) covers it. The installer skips the hard parts:
+התקנה מקוד המקור חינמית, ו[מדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) מסביר אותה. תוכנת ההתקנה מדלגת על החלקים הקשים:
 
-- **No Tax Authority API app.** On your own, you register in the Tax Authority developer portal, apply for an API app, wait for approval, and keep its client secret safe. The installer connects you through MTN's approved app. You sign in with your own Tax Authority user and that is all.
-- **No Israeli server.** The Tax Authority turns away calls from outside Israel, and Cloudflare often serves a Worker from Frankfurt. On your own, you run a relay on a server with an Israeli address. With the installer, every call goes out through MTN's Israeli route.
-- **No command line.** No Node.js, no wrangler, no database ids, no secrets to type. The wizard creates everything in your Cloudflare account in about 3 minutes.
-- **Updates in one step.** Run the new installer, and your data stays.
+- **בלי אפליקציית API ברשות המסים.** לבד, נרשמים בפורטל המפתחים של רשות המסים, מבקשים אפליקציית API, מחכים לאישור ושומרים על ה-client secret שלה. תוכנת ההתקנה מחברת אתכם דרך האפליקציה המאושרת של MTN. נכנסים עם המשתמש שלכם ברשות המסים וזהו.
+- **בלי שרת בישראל.** רשות המסים חוסמת פניות מחוץ לישראל, ו-Cloudflare מריץ לא פעם את ה-Worker מפרנקפורט. לבד, מפעילים ממסר על שרת עם כתובת ישראלית. עם תוכנת ההתקנה, כל פנייה יוצאת דרך הנתיב הישראלי של MTN.
+- **בלי שורת פקודה.** בלי Node.js, בלי wrangler, בלי מזהי מסד נתונים ובלי סודות להקליד. האשף מקים הכול בחשבון Cloudflare שלכם בערך ב-3 דקות.
+- **עדכון בצעד אחד.** מריצים את תוכנת ההתקנה החדשה, והנתונים נשארים.
 
-## 1. Download and open the installer
+## 1. מורידים ופותחים את תוכנת ההתקנה
 
-1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, about 100 MB.
-2. The link works for 72 hours and 5 downloads. If it no longer works, open it anyway and click **Email me a fresh link**.
-3. Double-click the file. Windows shows **Windows protected your PC**. Click **More info**, then **Run anyway**. The file is not signed with a paid certificate yet, so Windows warns about every new copy.
-4. The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.
+1. לוחצים על קישור ההורדה במייל הרכישה. הקובץ הוא `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, בערך 100MB.
+2. הקישור עובד 72 שעות ו-5 הורדות. אם הוא כבר לא עובד, פותחים אותו בכל זאת ולוחצים **Email me a fresh link**.
+3. לוחצים פעמיים על הקובץ. Windows מציג **Windows protected your PC**. לוחצים **More info** ואז **Run anyway**. הקובץ עדיין לא חתום בתעודה בתשלום, ולכן Windows מזהיר על כל עותק חדש.
+4. תוכנת ההתקנה נפתחת בדפדפן. משאירים פתוחים את הלשונית ואת החלון השחור הקטן עד הסוף. סגירה של אחד מהם עוצרת את ההתקנה.
 
-## 2. Licence key and business
+## 2. מפתח רישיון ופרטי העסק
 
-1. Paste the licence key and the business tax number.
-2. Fill in the business name, the owner email and the business type: עוסק פטור, עוסק מורשה or חברה בע"מ. The Ledger asks once more on its first screen, so a mistake here is easy to fix.
-3. Under **More people who may sign in**, add your accountant or a second email of your own, one per line. You also add people later, see [Give your accountant access](https://open-ledger.matanlevanon.com/help/users/).
+1. מדביקים את מפתח הרישיון ואת מספר העוסק.
+2. ממלאים שם עסק, מייל של הבעלים וסוג עסק: עוסק פטור, עוסק מורשה או חברה בע"מ. הלדג'ר שואל שוב במסך הראשון שלו, אז טעות כאן קלה לתיקון.
+3. תחת **More people who may sign in** מוסיפים את רואה החשבון או מייל נוסף שלכם, אחד בכל שורה. אפשר להוסיף אנשים גם אחר כך, ראו [גישה לרואה חשבון](https://open-ledger.dev/help/users/).
 
-## 3. Cloudflare account
+## 3. חשבון Cloudflare
 
-The Ledger runs in your own Cloudflare account. The installer shows three steps, in order.
+הלדג'ר רץ בחשבון Cloudflare שלכם. תוכנת ההתקנה מציגה שלושה שלבים, לפי הסדר.
 
-1. **No Cloudflare account yet?** Sign up at dash.cloudflare.com/sign-up with the business email and verify the email. Skip any offer to add a website.
-2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Do not create a bucket, the installer does that. Tick **I did it**.
-3. **Create the API token.** Follow [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/). This is the step where most people get stuck. Tick **I did it**.
-4. Paste the token and click **Check token**. Pick the account.
+1. **אין עדיין חשבון Cloudflare?** נרשמים ב-dash.cloudflare.com/sign-up עם המייל של העסק ומאשרים את המייל. מדלגים על ההצעה להוסיף אתר.
+2. **מפעילים Zero Trust ו-R2.** לוחצים **Show me how** בשלב הזה. שניהם חינמיים ושניהם מבקשים כרטיס. לא יוצרים bucket, תוכנת ההתקנה עושה את זה. מסמנים **I did it**.
+3. **יוצרים API token.** לפי [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/). כאן רוב האנשים נתקעים. מסמנים **I did it**.
+4. מדביקים את הטוקן ולוחצים **Check token**. בוחרים את החשבון.
 
-## 4. Domain or workers.dev
+## 4. דומיין או workers.dev
 
-After the token check, the installer asks for the Ledger's web address.
+אחרי בדיקת הטוקן, תוכנת ההתקנה שואלת על הכתובת של הלדג'ר.
 
-- **With a domain in Cloudflare:** type an address on it, for example `ledger.acme.co.il`. The installer creates it.
-- **Without a domain:** tick **Use the free Cloudflare address instead of a domain** and choose a workers.dev name, for example the business name in English. Clients see this address in the links you send. Moving to your own domain later changes the address.
+- **עם דומיין ב-Cloudflare:** מקלידים כתובת עליו, למשל `ledger.acme.co.il`. תוכנת ההתקנה יוצרת אותה.
+- **בלי דומיין:** מסמנים **Use the free Cloudflare address instead of a domain** ובוחרים שם ל-workers.dev, למשל שם העסק באנגלית. הלקוחות רואים את הכתובת הזו בקישורים שאתם שולחים. מעבר לדומיין שלכם בהמשך משנה את הכתובת.
 
-## 5. Tax Authority
+## 5. רשות המסים
 
-Pick how the Ledger gets allocation numbers for tax invoices. The connected edition fills this in for you: the Ledger connects through MTN, with nothing to type. After the install you sign in once with your Tax Authority user, see [Connect to the Tax Authority](https://open-ledger.matanlevanon.com/help/tax-authority/).
+בוחרים איך הלדג'ר מקבל מספרי הקצאה לחשבוניות מס. במהדורה המחוברת זה כבר ממולא: הלדג'ר מתחבר דרך MTN, בלי שום הקלדה. אחרי ההתקנה נכנסים פעם אחת עם המשתמש שלכם ברשות המסים, ראו [חיבור לרשות המסים](https://open-ledger.dev/help/tax-authority/).
 
-## 6. Extras
+## 6. תוספות
 
-All optional. Each **?** button explains where to get the key.
+הכול לא חובה. כל כפתור **?** מסביר מאיפה להביא את המפתח.
 
-- **Expense reading:** pick Gemini or Anthropic and paste the key. A Gemini key from aistudio.google.com starts with `AQ.`, older ones with `AIza`.
-- **Email sending:** the Resend API key and the sender, written as `Business Name <billing@your-domain.co.il>`. See [Send documents by email](https://open-ledger.matanlevanon.com/help/email/).
-- **Slack alerts:** the webhook address.
+- **קריאת הוצאות:** בוחרים Gemini או Anthropic ומדביקים את המפתח. מפתח Gemini מ-aistudio.google.com מתחיל ב-`AQ.`, מפתחות ישנים ב-`AIza`.
+- **שליחת מיילים:** מפתח ה-API של Resend והשולח, בצורה `Business Name <billing@your-domain.co.il>`. ראו [שליחת מסמכים במייל](https://open-ledger.dev/help/email/).
+- **התראות Slack:** כתובת ה-webhook.
 
-Skip anything you do not have. You add it later, see [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/).
+מדלגים על מה שאין לכם. אפשר להוסיף אחר כך, ראו [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/).
 
-## 7. Install and finish
+## 7. התקנה וסיום
 
-1. Check the summary and click **Install**. It takes about 3 minutes.
-2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. Cloudflare never shows it again. See [Connect Claude](https://open-ledger.matanlevanon.com/help/connect-claude/).
-3. The installer leaves a summary file on the Desktop, without secrets.
-4. Delete the Cloudflare API token: dash.cloudflare.com/profile/api-tokens, the three dots next to the token, **Delete**. The Ledger does not need it any more.
+1. בודקים את הסיכום ולוחצים **Install**. זה לוקח בערך 3 דקות.
+2. המסך האחרון מציג את כתובת הלדג'ר ו-**MCP token**. מעתיקים את הטוקן עכשיו, או לוחצים על אחד מכפתורי ההורדה. Cloudflare לא מציג אותו שוב. ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/).
+3. תוכנת ההתקנה משאירה קובץ סיכום על שולחן העבודה, בלי סודות.
+4. מוחקים את ה-API token: ב-dash.cloudflare.com/profile/api-tokens, שלוש הנקודות ליד הטוקן, **Delete**. הלדג'ר כבר לא צריך אותו.
 
-## Next
+## הצעד הבא
 
-[First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/).
+[כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/).
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/install/
+Source: https://open-ledger.dev/help/install/

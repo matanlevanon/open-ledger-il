@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Open Ledger IL help: install, set up and daily use</title>
-<meta name="description" content="Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/help/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/">
+<title>עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש</title>
+<meta name="description" content="צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.">
+<link rel="canonical" href="https://open-ledger.dev/help/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/">
 <link rel="alternate" type="text/markdown" href="/help/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="Open Ledger IL help: install, set up and daily use">
-<meta property="og:description" content="Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.">
+<meta property="og:title" content="עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש">
+<meta property="og:description" content="צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/help/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
+<meta property="og:url" content="https://open-ledger.dev/help/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Open Ledger IL help: install, set up and daily use">
-<meta name="twitter:description" content="Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
+<meta name="twitter:title" content="עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש">
+<meta name="twitter:description" content="צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/default.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,9 +286,9 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Help","item":"https://open-ledger.matanlevanon.com/help/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"עזרה","item":"https://open-ledger.dev/help/"}]}</script>
 </head>
 <body>
 <header>
@@ -302,19 +302,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/" aria-current="page">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/" aria-current="page">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/help/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/help/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/" aria-current="page">Help</a>
-    <a href="/he/help/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/" aria-current="page">עזרה</a>
+    <a href="/en/help/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -329,23 +329,23 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li aria-current="page">Help</li></ol></nav>
-    <h1>Help</h1>
-    <p class="lead">Step-by-step instructions, in the order you need them. Start at the top if this is your first install.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li aria-current="page">עזרה</li></ol></nav>
+    <h1>עזרה</h1>
+    <p class="lead">הוראות צעד אחר צעד, לפי הסדר שבו תצטרכו אותן. בהתקנה ראשונה, התחילו מלמעלה.</p>
   </div>
-  <section class="plain"><div class="wrap"><ul class="guide-list"><li><a href="/help/before-you-start/">Before you install: what you need</a><p>The accounts, details and 30 minutes you need before you run the Open Ledger IL installer, and which parts are optional.</p></li><li><a href="/help/install/">Install Open Ledger IL step by step</a><p>Every screen of the Windows installer, from the licence key to the Ledger&#x27;s address, with what to fill in and what to skip.</p></li><li><a href="/help/cloudflare-token/">Create the Cloudflare API token</a><p>The exact permission rows, account and zone settings for the installer&#x27;s Cloudflare token, with and without a domain.</p></li><li><a href="/help/first-sign-in/">First sign-in and setup</a><p>Sign in to your Ledger for the first time, fill in the business profile, logo, signature and numbering, and check one receipt before you go live.</p></li><li><a href="/help/users/">Give your accountant or assistant access</a><p>Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.</p></li><li><a href="/help/tax-authority/">Connect to the Tax Authority for allocation numbers</a><p>Allocation numbers with the installer or with your own setup: what each path takes, how to connect, and the 90-day reconnect.</p></li><li><a href="/help/first-invoice/">From quote to receipt: your first documents</a><p>The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.</p></li><li><a href="/help/payment-providers/">Take payments with Grow, Cardcom or another provider</a><p>Use a card payment provider for collecting money and the Ledger for the receipts, by hand or automatically, without two documents for one payment.</p></li><li><a href="/help/expenses/">Get your expenses into the Ledger</a><p>Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.</p></li><li><a href="/help/email/">Send documents by email, and keep them out of spam</a><p>Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.</p></li><li><a href="/help/connect-claude/">Connect Claude or another AI app (MCP)</a><p>Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.</p></li><li><a href="/help/keys-later/">Add or change a key after the install</a><p>Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.</p></li><li><a href="/help/updates-backups/">Updates and backups</a><p>How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.</p></li><li><a href="/help/troubleshooting/">Common problems and how to fix them</a><p>Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.</p></li></ul></div></section>
+  <section class="plain"><div class="wrap"><ul class="guide-list"><li><a href="/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a><p>החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.</p></li><li><a href="/help/install/">התקנת Open Ledger IL צעד אחר צעד</a><p>כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג&#x27;ר, עם מה למלא ומה אפשר לדלג.</p></li><li><a href="/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a><p>שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.</p></li><li><a href="/help/first-sign-in/">כניסה ראשונה והגדרות</a><p>הכניסה הראשונה ללדג&#x27;ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.</p></li><li><a href="/help/users/">גישה לרואה חשבון או לעוזר</a><p>הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג&#x27;ר, בלדג&#x27;ר וב-Cloudflare Access, והסרה שלהם.</p></li><li><a href="/help/tax-authority/">חיבור לרשות המסים למספרי הקצאה</a><p>מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.</p></li><li><a href="/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a><p>סדר המסמכים בלדג&#x27;ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.</p></li><li><a href="/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a><p>סולק גובה את הכסף והלדג&#x27;ר מוציא את הקבלות, ידנית או אוטומטית, בלי שני מסמכים לאותו תשלום.</p></li><li><a href="/help/expenses/">הכנסת הוצאות ללדג&#x27;ר</a><p>העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.</p></li><li><a href="/help/email/">שליחת מסמכים במייל, בלי ספאם</a><p>חיבור Resend כדי שהלדג&#x27;ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.</p></li><li><a href="/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a><p>נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג&#x27;ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.</p></li><li><a href="/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a><p>הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג&#x27;ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.</p></li><li><a href="/help/updates-backups/">עדכונים וגיבויים</a><p>איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג&#x27;ר שומר גיבויים.</p></li><li><a href="/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a><p>פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.</p></li></ul></div></section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

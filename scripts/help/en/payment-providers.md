@@ -33,4 +33,4 @@ An automation tool such as Make, Zapier or n8n connects the provider to it:
 3. Record the payment against the open payment request with `record_payment` and `confirm: true`. The scenario needs the payment request's document id. Keep a small table of payment link to document id, filled when you send each request.
 4. The Ledger issues the receipt.
 
-This takes an afternoon to set up and test. Start with one small payment. For the MCP token, see [Connect Claude or another app](/help/connect-claude/).
+This takes an afternoon to set up and test. Start with one small payment. For the MCP token, see [Connect Claude or another app](/en/help/connect-claude/).

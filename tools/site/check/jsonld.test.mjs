@@ -36,7 +36,7 @@ test('every page has JSON-LD that parses, with schema.org types and their requir
 });
 
 test('home and pricing carry a SoftwareApplication with the Free and ₪699 offers', () => {
-  for (const path of ['/', '/he/', '/pricing/', '/he/pricing/']) {
+  for (const path of ['/', '/en/', '/pricing/', '/en/pricing/']) {
     const p = all.find((x) => x.path === path);
     const app = blocks(p.html).find((b) => b['@type'] === 'SoftwareApplication');
     assert.ok(app, `${path}: SoftwareApplication`);
@@ -50,7 +50,7 @@ test('home and pricing carry a SoftwareApplication with the Free and ₪699 offe
 });
 
 test('inner pages carry a BreadcrumbList that ends at the page itself', () => {
-  for (const p of all.filter((x) => x.path !== '/' && x.path !== '/he/')) {
+  for (const p of all.filter((x) => x.path !== '/' && x.path !== '/en/')) {
     const crumbs = blocks(p.html).find((b) => b['@type'] === 'BreadcrumbList');
     assert.ok(crumbs, `${p.path}: BreadcrumbList`);
     const items = crumbs.itemListElement;
@@ -82,7 +82,7 @@ test('guides carry an Article and an FAQPage with questions and answers', () => 
 });
 
 test('the registration page describes the certificate in a WebPage', () => {
-  for (const path of ['/registration/', '/he/registration/']) {
+  for (const path of ['/registration/', '/en/registration/']) {
     const page = blocks(all.find((x) => x.path === path).html).find((b) => b['@type'] === 'WebPage');
     assert.match(page.description, /281801/);
     assert.match(page.description, /1\.1\.0/);

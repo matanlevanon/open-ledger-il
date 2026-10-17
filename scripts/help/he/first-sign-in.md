@@ -44,4 +44,4 @@ order: 4
 
 ## הצעד הבא
 
-[מהצעת מחיר לקבלה](/he/help/first-invoice/).
+[מהצעת מחיר לקבלה](/help/first-invoice/).

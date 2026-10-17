@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Open Ledger IL features: documents, reports, rules</title>
-<meta name="description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/features/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/features/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/features/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/features/">
+<title>היכולות של Open Ledger IL: מסמכים, דוחות וכללים</title>
+<meta name="description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.">
+<link rel="canonical" href="https://open-ledger.dev/features/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/features/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/features/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/features/">
 <link rel="alternate" type="text/markdown" href="/features/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="Open Ledger IL features: documents, reports, rules">
-<meta property="og:description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.">
+<meta property="og:title" content="היכולות של Open Ledger IL: מסמכים, דוחות וכללים">
+<meta property="og:description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/features/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-features.png">
+<meta property="og:url" content="https://open-ledger.dev/features/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/he-features.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Open Ledger IL features: documents, reports, rules">
-<meta name="twitter:description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-features.png">
+<meta name="twitter:title" content="היכולות של Open Ledger IL: מסמכים, דוחות וכללים">
+<meta name="twitter:description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-features.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,9 +286,9 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://open-ledger.matanlevanon.com/features/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"יכולות","item":"https://open-ledger.dev/features/"}]}</script>
 </head>
 <body>
 <header>
@@ -302,19 +302,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/" aria-current="page">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/" aria-current="page">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/features/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/features/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/" aria-current="page">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a>
-    <a href="/he/features/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/" aria-current="page">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a>
+    <a href="/en/features/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -329,135 +329,135 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li aria-current="page">Features</li></ol></nav>
-    <h1>Every feature</h1>
-    <p class="lead">For a עוסק פטור today and a עוסק מורשה tomorrow.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li aria-current="page">יכולות</li></ol></nav>
+    <h1>כל היכולות</h1>
+    <p class="lead">לעוסק פטור היום ולעוסק מורשה מחר.</p>
   </div>
   <section id="list" class="plain">
     <div class="wrap">
       <div class="sec-head">
-        <div class="eyebrow">Feature list</div>
-        <h2>Every feature</h2>
-        <p>What ships today, grouped by job.</p>
+        <div class="eyebrow">רשימת יכולות</div>
+        <h2>כל היכולות</h2>
+        <p>מה שקיים היום בקוד, לפי תחום.</p>
       </div>
       <div class="flist">
         <div class="fgroup">
-          <h3>Documents</h3>
+          <h3>מסמכים</h3>
           <ul>
-            <li>Quotes, payment requests and pro formas (חשבון עסקה)</li>
-            <li>Receipts and credit receipts as עוסק פטור</li>
-            <li>Tax invoices, invoice/receipts and credit invoices as עוסק מורשה</li>
-            <li>English or bilingual Hebrew and English documents</li>
-            <li>Duplicate any document in one click</li>
-            <li>Create a receipt from any open document, with its payment filled in</li>
-            <li>Cheque payments with bank, branch and account number</li>
-            <li>Delete a draft only after you confirm</li>
+            <li>הצעות מחיר, דרישות תשלום וחשבונות עסקה</li>
+            <li>קבלות וקבלות זיכוי כעוסק פטור</li>
+            <li>חשבוניות מס, חשבוניות מס קבלה וחשבוניות זיכוי כעוסק מורשה</li>
+            <li>מסמכים באנגלית או בעברית ואנגלית</li>
+            <li>שכפול כל מסמך בלחיצה</li>
+            <li>הפקת קבלה מכל מסמך פתוח, עם התשלום כבר ממולא</li>
+            <li>תשלום בצ׳ק עם בנק, סניף ומספר חשבון</li>
+            <li>מחיקת טיוטה רק אחרי אישור</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Numbering and compliance</h3>
+          <h3>מספור ותאימות</h3>
           <ul>
-            <li>One gapless series per document type, with your own starting numbers</li>
-            <li>Final documents locked by database triggers and a hash chain</li>
-            <li>PDF with your logo and signature, sealed with a PAdES digital signature</li>
-            <li>ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue</li>
-            <li>פטור ceiling meter with alerts and a guided switch to מורשה</li>
-            <li>Issuing on/off switch, to keep issuing in your current system</li>
+            <li>סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך</li>
+            <li>מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב</li>
+            <li>PDF עם הלוגו והחתימה שלך, חתום בחתימה דיגיטלית PAdES</li>
+            <li>מספרי הקצאה מרשות המסים, ניסוי וייצור, עם תור ניסיונות חוזרים</li>
+            <li>מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה</li>
+            <li>מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Currency</h3>
+          <h3>מטבע</h3>
           <ul>
-            <li>Documents in ILS, USD, EUR and other currencies</li>
-            <li>Bank of Israel rates, cached daily</li>
-            <li>A receipt takes the rate of the document it pays</li>
-            <li>Type your own rate, or tick &quot;use latest rate&quot;</li>
-            <li>Foreign and ILS totals printed in their own columns</li>
-            <li>Client balances kept in the client’s currency</li>
+            <li>מסמכים בשקלים, דולרים, אירו ומטבעות נוספים</li>
+            <li>שערי בנק ישראל, נשמרים מדי יום</li>
+            <li>קבלה מקבלת את השער של המסמך שהיא משלמת</li>
+            <li>הקלדת שער משלך, או סימון &quot;שער אחרון&quot;</li>
+            <li>סכומים במטבע חוץ ובשקלים מודפסים כל אחד בעמודה שלו</li>
+            <li>יתרות הלקוח נשמרות במטבע שלו</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Sending</h3>
+          <h3>שליחה</h3>
           <ul>
-            <li>Email with To, CC and BCC on every document</li>
-            <li>A CC list per client and a BCC copy list for your own records</li>
-            <li>WhatsApp short link that opens a preview page with your logo</li>
-            <li>A ready greeting in English or Hebrew, by the client’s language</li>
-            <li>Digital-document consent recorded per client</li>
-            <li>Payment reminders before and after the due date</li>
-            <li>A clear confirmation once a document is marked as sent</li>
+            <li>מייל עם נמען, CC ו-BCC בכל מסמך</li>
+            <li>רשימת CC לכל לקוח ורשימת BCC לעותק שלך</li>
+            <li>קישור וואטסאפ מקוצר שנפתח לעמוד תצוגה עם הלוגו שלך</li>
+            <li>ברכה מוכנה בעברית או באנגלית, לפי שפת הלקוח</li>
+            <li>הסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח</li>
+            <li>תזכורות תשלום לפני מועד התשלום ואחריו</li>
+            <li>אישור ברור אחרי שמסמך סומן כנשלח</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Recurring documents</h3>
+          <h3>מסמכים חוזרים</h3>
           <ul>
-            <li>Weekly, monthly, quarterly or yearly schedules for retainers and pro formas</li>
-            <li>Payment terms in days, set on each copy</li>
-            <li>An end date to stop the schedule</li>
-            <li>Issue and email on its own, or wait for your approval</li>
-            <li>Approvals page on the computer and the phone</li>
-            <li>Slack notice when a copy waits for approval</li>
+            <li>תזמון שבועי, חודשי, רבעוני או שנתי לריטיינרים ולחשבונות עסקה</li>
+            <li>תנאי תשלום בימים, לכל עותק</li>
+            <li>תאריך סיום לתזמון</li>
+            <li>הפקה ושליחה אוטומטית, או המתנה לאישורך</li>
+            <li>עמוד אישורים במחשב ובטלפון</li>
+            <li>הודעת Slack כשעותק ממתין לאישור</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Clients and dashboard</h3>
+          <h3>לקוחות ולוח בקרה</h3>
           <ul>
-            <li>A page per client with contacts, documents and a ledger per currency</li>
-            <li>Open balances, aging and an overdue list</li>
-            <li>Create a receipt straight from the overdue card</li>
-            <li>Cash flow, income by month and top clients</li>
-            <li>Sortable tables, newest first by default</li>
+            <li>עמוד לכל לקוח עם אנשי קשר, מסמכים וכרטסת לכל מטבע</li>
+            <li>יתרות פתוחות, גיול ורשימת איחורים</li>
+            <li>הפקת קבלה ישירות מכרטיס האיחורים</li>
+            <li>תזרים, הכנסות לפי חודש ולקוחות מובילים</li>
+            <li>טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Contracts and work orders</h3>
+          <h3>חוזים והזמנות עבודה</h3>
           <ul>
-            <li>Contract and work order templates with fields you define, in English and Hebrew</li>
-            <li>Service Agreement included in the first work order, signed once</li>
-            <li>Client signs on the phone or the computer: fill in, draw, confirm with an email code</li>
-            <li>Signed PDF with an evidence page and a certified PAdES signature</li>
-            <li>Work order numbers on their own series, filled in for you</li>
-            <li>Signing reminders, and contracts signed elsewhere uploaded to the client record</li>
-            <li>Turn a signed work order into a pro forma</li>
+            <li>תבניות חוזה והזמנת עבודה עם שדות משלך, בעברית ובאנגלית</li>
+            <li>הסכם השירותים מצורף להזמנת העבודה הראשונה, חתימה אחת</li>
+            <li>הלקוח חותם בטלפון או במחשב: ממלא, חותם בציור ומאשר בקוד במייל</li>
+            <li>PDF חתום עם דף ראיות וחתימת PAdES מאושרת</li>
+            <li>מספרי הזמנות עבודה בסדרה משלהם, ממולאים אוטומטית</li>
+            <li>תזכורות חתימה, והעלאת חוזים שנחתמו מחוץ למערכת לכרטיס הלקוח</li>
+            <li>הפיכת הזמנת עבודה חתומה לחשבון עסקה</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Business documents</h3>
+          <h3>מסמכי העסק</h3>
           <ul>
-            <li>VAT and company certificates, bookkeeping and withholding confirmations</li>
-            <li>Claude reads the type, names and dates</li>
-            <li>Expiry warnings on the dashboard</li>
-            <li>Your assistant and accountant open the same list</li>
+            <li>תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור</li>
+            <li>Claude קורא את הסוג, השמות והתאריכים</li>
+            <li>התראה בלוח הבקרה לפני שמסמך פג תוקף</li>
+            <li>העוזר ורואה החשבון רואים את אותה רשימה</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Expenses and import</h3>
+          <h3>הוצאות וייבוא</h3>
           <ul>
-            <li>Upload a receipt or snap a photo, Claude reads supplier, date and amount</li>
-            <li>Import a month of expenses from Google Drive</li>
-            <li>Import customers and past documents from another system</li>
-            <li>Imported documents keep the exchange rate printed on them, never a guessed one</li>
-            <li>Documents with no printed rate are flagged for you to fill in</li>
+            <li>העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום</li>
+            <li>ייבוא חודש שלם של הוצאות מ-Google Drive</li>
+            <li>ייבוא לקוחות ומסמכי עבר ממערכת אחרת</li>
+            <li>מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש</li>
+            <li>מסמך בלי שער מודפס מסומן כדי שתשלים אותו</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>Reports, exports and backups</h3>
+          <h3>דוחות, ייצוא וגיבויים</h3>
           <ul>
-            <li>Income, expenses, profit and loss, open items and client ledgers</li>
-            <li>Download as PDF, XLSX or CSV</li>
-            <li>Monthly accountant pack and an accountant login with an end date and access log</li>
-            <li>Unified file (מבנה אחיד) v1.31 for the Tax Authority</li>
-            <li>PCN874 export (allocation-number column)</li>
-            <li>Quarterly backups to R2 and Google Drive</li>
+            <li>הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות לקוחות</li>
+            <li>הורדה כ-PDF, XLSX או CSV</li>
+            <li>חבילה חודשית לרואה החשבון וכניסה לרואה החשבון עם תאריך סיום ויומן גישה</li>
+            <li>קובץ במבנה אחיד גרסה 1.31 לרשות המסים</li>
+            <li>ייצוא PCN874 (עמודת מספר ההקצאה)</li>
+            <li>גיבוי רבעוני ל-R2 ול-Google Drive</li>
           </ul>
         </div>
         <div class="fgroup">
-          <h3>On your phone</h3>
+          <h3>בטלפון</h3>
           <ul>
-            <li>Installs on the home screen like an app</li>
-            <li>Quick page: photo, gallery, new document and recent activity</li>
-            <li>Bottom tab bar and tables that turn into cards</li>
-            <li>Photos taken offline upload when you are back online</li>
+            <li>מותקנת במסך הבית כמו אפליקציה</li>
+            <li>מסך &quot;מהיר&quot;: צילום, גלריה, מסמך חדש ופעילות אחרונה</li>
+            <li>סרגל ניווט תחתון וטבלאות שהופכות לכרטיסים</li>
+            <li>תמונות שצולמו בלי קליטה עולות כשחוזרים לרשת</li>
           </ul>
         </div>
       </div>
@@ -466,33 +466,33 @@ section[id] { scroll-margin-top: 64px; }
   <section id="screens">
     <div class="wrap">
       <div class="sec-head">
-        <div class="eyebrow">Screenshots</div>
-        <h2>What you get</h2>
+        <div class="eyebrow">צילומי מסך</div>
+        <h2>מה מקבלים</h2>
       </div>
       <div class="gallery">
         <figure class="gcard">
-          <picture><source type="image/webp" srcset="/assets/screenshots/documents.b18fe5c5.webp"><img src="/assets/screenshots/documents.64bb140b.png" alt="Documents list with status, related documents and open amounts" width="1440" height="960" loading="lazy" decoding="async"></picture>
-          <figcaption><b>Documents and their relations.</b> Every document with its status, the documents it came from or led to, and what is still open.</figcaption>
+          <picture><source type="image/webp" srcset="/assets/screenshots/documents.b18fe5c5.webp"><img src="/assets/screenshots/documents.64bb140b.png" alt="רשימת מסמכים עם סטטוס, מסמכים קשורים ויתרות" width="1440" height="960" loading="lazy" decoding="async"></picture>
+          <figcaption><b>מסמכים והקשרים ביניהם.</b> כל מסמך עם הסטטוס שלו, המסמכים שממנו נוצר או שנוצרו ממנו, ומה עוד פתוח.</figcaption>
         </figure>
         <figure class="gcard">
-          <picture><source type="image/webp" srcset="/assets/screenshots/payment-requests.a27e270c.webp"><img src="/assets/screenshots/payment-requests.058c40a1.png" alt="Payment requests list with overdue and open totals" width="1440" height="960" loading="lazy" decoding="async"></picture>
-          <figcaption><b>Payment requests that close.</b> Record a payment and the receipt links back to the request. Partial payments keep the rest open.</figcaption>
+          <picture><source type="image/webp" srcset="/assets/screenshots/payment-requests.a27e270c.webp"><img src="/assets/screenshots/payment-requests.058c40a1.png" alt="רשימת דרישות תשלום עם סכומים פתוחים ובאיחור" width="1440" height="960" loading="lazy" decoding="async"></picture>
+          <figcaption><b>דרישות תשלום שנסגרות.</b> רושמים תשלום והקבלה מקושרת לדרישה. תשלום חלקי משאיר את היתרה פתוחה.</figcaption>
         </figure>
         <figure class="gcard">
-          <picture><source type="image/webp" srcset="/assets/screenshots/clients.759c5611.webp"><img src="/assets/screenshots/clients.c37a51aa.png" alt="Client page with details, contacts and ledger" width="1440" height="960" loading="lazy" decoding="async"></picture>
-          <figcaption><b>Clients and their ledger.</b> One page per client with contacts, consent status, documents and a running ledger per currency.</figcaption>
+          <picture><source type="image/webp" srcset="/assets/screenshots/clients.759c5611.webp"><img src="/assets/screenshots/clients.c37a51aa.png" alt="עמוד לקוח עם פרטים, אנשי קשר וכרטסת" width="1440" height="960" loading="lazy" decoding="async"></picture>
+          <figcaption><b>לקוחות והכרטסת שלהם.</b> עמוד לכל לקוח עם אנשי קשר, סטטוס הסכמה, מסמכים וכרטסת רצה לפי מטבע.</figcaption>
         </figure>
         <figure class="gcard">
-          <picture><source type="image/webp" srcset="/assets/screenshots/expenses.afc0ef4c.webp"><img src="/assets/screenshots/expenses.947590c4.png" alt="Expenses list with suppliers and categories" width="1440" height="960" loading="lazy" decoding="async"></picture>
-          <figcaption><b>Expenses to review and file.</b> Documents read by Claude land in New. Check the supplier, amount and category, then file.</figcaption>
+          <picture><source type="image/webp" srcset="/assets/screenshots/expenses-he.270ec68a.webp"><img src="/assets/screenshots/expenses-he.07c3d8ce.png" alt="רשימת הוצאות עם ספקים וקטגוריות" width="1440" height="960" loading="lazy" decoding="async"></picture>
+          <figcaption><b>הוצאות לבדיקה ותיוק.</b> מסמכים ש-Claude קרא נכנסים ל&quot;חדש&quot;. בודקים ספק, סכום וקטגוריה ומתייקים.</figcaption>
         </figure>
         <figure class="gcard">
-          <picture><source type="image/webp" srcset="/assets/screenshots/reports.a06d4cee.webp"><img src="/assets/screenshots/reports.7bad1609.png" alt="Reports catalog" width="1440" height="960" loading="lazy" decoding="async"></picture>
-          <figcaption><b>Reports for you and your accountant.</b> Income, expenses, profit and loss, open items and ledgers. Download as PDF, XLSX or CSV.</figcaption>
+          <picture><source type="image/webp" srcset="/assets/screenshots/reports.a06d4cee.webp"><img src="/assets/screenshots/reports.7bad1609.png" alt="קטלוג הדוחות" width="1440" height="960" loading="lazy" decoding="async"></picture>
+          <figcaption><b>דוחות לך ולרואה החשבון.</b> הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות. הורדה כ-PDF, XLSX או CSV.</figcaption>
         </figure>
         <figure class="gcard">
-          <picture><source type="image/webp" srcset="/assets/screenshots/settings-business.87ad3b53.webp"><img src="/assets/screenshots/settings-business.1099cddc.png" alt="Business settings with logo and signature" width="1440" height="960" loading="lazy" decoding="async"></picture>
-          <figcaption><b>Your business, your brand.</b> Business details, logo, signature, payment methods and bank details printed on your documents.</figcaption>
+          <picture><source type="image/webp" srcset="/assets/screenshots/settings-business.87ad3b53.webp"><img src="/assets/screenshots/settings-business.1099cddc.png" alt="הגדרות העסק עם לוגו וחתימה" width="1440" height="960" loading="lazy" decoding="async"></picture>
+          <figcaption><b>העסק שלך, המיתוג שלך.</b> פרטי העסק, לוגו, חתימה, אמצעי תשלום ופרטי בנק שמודפסים על המסמכים.</figcaption>
         </figure>
       </div>
     </div>
@@ -500,50 +500,50 @@ section[id] { scroll-margin-top: 64px; }
   <section id="rules">
     <div class="wrap">
       <div class="sec-head">
-        <div class="eyebrow">The rules</div>
-        <h2>Six rules the code enforces</h2>
-        <p>The database refuses to break them.</p>
+        <div class="eyebrow">הכללים</div>
+        <h2>שישה כללים שהקוד אוכף</h2>
+        <p>מסד הנתונים מסרב לשבור אותם.</p>
       </div>
       <ul class="rules">
         <li>
-          <b>A final document never changes</b>
-          <span>A mistake is fixed with a credit document or a cancellation, never an edit. Database triggers block updates to a final row.</span>
+          <b>מסמך סופי לא משתנה</b>
+          <span>טעות מתקנים במסמך זיכוי או בביטול, לעולם לא בעריכה. טריגרים במסד הנתונים חוסמים עדכון של שורה סופית.</span>
         </li>
         <li>
-          <b>Numbers come only from finalize</b>
-          <span>Drafts carry no number, so a deleted draft never leaves a gap in the series.</span>
+          <b>מספר ניתן רק בהפקה</b>
+          <span>לטיוטה אין מספר, כך שטיוטה שנמחקה לא משאירה חור בסדרה.</span>
         </li>
         <li>
-          <b>No tax invoice PDF without its allocation number</b>
-          <span>When the ITA requires a מספר הקצאה, the PDF waits for it.</span>
+          <b>אין PDF לחשבונית מס בלי מספר הקצאה</b>
+          <span>כשרשות המסים דורשת מספר הקצאה, ה-PDF ממתין לו.</span>
         </li>
         <li>
-          <b>A demand and its receipt count once</b>
-          <span>A payment request or pro forma is a charge, the receipt is the income. Reports never add both.</span>
+          <b>דרישה והקבלה שלה נספרות פעם אחת</b>
+          <span>דרישת תשלום או חשבון עסקה הם חיוב, הקבלה היא ההכנסה. הדוחות אף פעם לא מחברים את שתיהן.</span>
         </li>
         <li>
-          <b>Rates are dated</b>
-          <span>VAT, the פטור ceiling and exchange rates are stored with the date they apply from.</span>
+          <b>שיעורים מתוארכים</b>
+          <span>מע&quot;מ, תקרת עוסק פטור ושערי מטבע נשמרים עם התאריך שממנו הם חלים.</span>
         </li>
         <li>
-          <b>Sandbox and production never mix</b>
-          <span>ITA sandbox and production credentials, tokens and numbers are kept apart.</span>
+          <b>ניסוי וייצור לא מתערבבים</b>
+          <span>פרטי הגישה, הטוקנים והמספרים של סביבת הניסוי והייצור ברשות המסים נשמרים בנפרד.</span>
         </li>
       </ul>
     </div>
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

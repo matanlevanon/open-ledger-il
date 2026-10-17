@@ -1,5 +1,5 @@
-# Guides
+# מדריכים
 
-The guides are being written and reviewed. They will appear here once published.
+המדריכים נכתבים ועוברים בדיקה. הם יופיעו כאן אחרי הפרסום.
 
-Source: https://open-ledger.matanlevanon.com/guides/
+Source: https://open-ledger.dev/guides/

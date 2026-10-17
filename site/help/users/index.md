@@ -1,62 +1,62 @@
-# Give your accountant or assistant access
+# גישה לרואה חשבון או לעוזר
 
-Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
+הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-Each person gets a role per business.
+לכל אדם יש תפקיד בכל עסק.
 
-- **Owner:** everything, including Settings, users, numbering and the Tax Authority connection.
-- **Assistant:** clients, quotes, payment requests, receipts, sending and expenses. No Settings, users or Tax Authority.
-- **Accountant:** reads what you allow, until an end date. Every request is logged. An accountant never issues or cancels a document.
+- **Owner (בעלים):** הכול, כולל הגדרות, משתמשים, מספור וחיבור לרשות המסים.
+- **Assistant (עוזר):** לקוחות, הצעות מחיר, דרישות תשלום, קבלות, שליחה והוצאות. בלי הגדרות, משתמשים או רשות המסים.
+- **Accountant (רואה חשבון):** רואה את מה שאתם מאשרים, עד תאריך סיום. כל פעולה נרשמת. רואה חשבון אף פעם לא מוציא או מבטל מסמך.
 
-## Add a person
+## הוספת אדם
 
-Two places, both needed.
+שני מקומות, שניהם חובה.
 
-### 1. In the Ledger
+### 1. בלדג'ר
 
-1. Pick the business in the switcher at the top.
-2. In the sidebar, open **Accountant > Users**.
-3. Click **Invite someone**.
-4. Type the email and pick the role. An accountant also needs an end date and the feature switches: income documents, expenses, reports, the monthly pack, the unified file.
-5. Click **Send invite**.
+1. בוחרים את העסק בבורר שלמעלה.
+2. בתפריט הצד פותחים **Accountant > Users**.
+3. לוחצים **Invite someone**.
+4. מקלידים מייל ובוחרים תפקיד. לרואה חשבון צריך גם תאריך סיום ומתגים: מסמכי הכנסה, הוצאות, דוחות, החבילה החודשית, מבנה אחיד.
+5. לוחצים **Send invite**.
 
-For your own second email, pick **Owner**.
+למייל נוסף שלכם בוחרים **Owner**.
 
-### 2. In Cloudflare Access
+### 2. ב-Cloudflare Access
 
-Emails you listed in the installer are there already. For anyone new:
+מיילים שהכנסתם בתוכנת ההתקנה כבר שם. לכל אחד חדש:
 
-1. Sign in at dash.cloudflare.com and open **Zero Trust**.
-2. Go to **Access > Applications** and open **MTN Open Ledger**.
-3. Open the **Policies** tab and edit the sign-in policy.
-4. Under **Include > Emails**, add the email.
-5. Click **Save**.
+1. נכנסים ל-dash.cloudflare.com ופותחים **Zero Trust**.
+2. נכנסים ל-**Access > Applications** ופותחים את **MTN Open Ledger**.
+3. פותחים את הלשונית **Policies** ועורכים את מדיניות הכניסה.
+4. תחת **Include > Emails** מוסיפים את המייל.
+5. לוחצים **Save**.
 
-Until step 5, Cloudflare stops the person at its own sign-in page.
+עד שלב 5, Cloudflare עוצר את האדם בעמוד הכניסה שלו.
 
-## Remove a person
+## הסרת אדם
 
-1. In the Ledger: **Accountant > Users**, click **Revoke** on the row.
-2. In Cloudflare Access: remove the email from **Include > Emails** and save.
+1. בלדג'ר: **Accountant > Users**, לוחצים **Revoke** בשורה שלו.
+2. ב-Cloudflare Access: מוחקים את המייל מ-**Include > Emails** ושומרים.
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/users/
+Source: https://open-ledger.dev/help/users/

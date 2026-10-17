@@ -1,61 +1,61 @@
-# Common problems and how to fix them
+# בעיות נפוצות ואיך פותרים אותן
 
-Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
+פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-## The installer
+## תוכנת ההתקנה
 
-- **Windows protected your PC.** Click **More info**, then **Run anyway**.
-- **The antivirus removed the file.** Restore it from the antivirus quarantine and allow it, or download it again from the purchase email.
-- **Nothing opens after double-click.** Wait 20 seconds, the file is large. The installer opens a browser tab at an address starting with `http://127.0.0.1`. If no tab opens, copy that address from the small black window into your browser.
-- **The licence key is refused.** Type it as `OL-XXXX-XXXX-XXXX-XXXX`, and check the tax number. The key works only for the tax number it was bought for. Reinstalling the same business with the same key is fine.
+- **Windows protected your PC.** לוחצים **More info** ואז **Run anyway**.
+- **האנטי-וירוס מחק את הקובץ.** משחזרים אותו מההסגר של האנטי-וירוס ומאשרים, או מורידים שוב ממייל הרכישה.
+- **לחיצה כפולה ושום דבר לא נפתח.** מחכים 20 שניות, הקובץ גדול. תוכנת ההתקנה פותחת לשונית בדפדפן בכתובת שמתחילה ב-`http://127.0.0.1`. אם לא נפתחה לשונית, מעתיקים את הכתובת מהחלון השחור הקטן לדפדפן.
+- **מפתח הרישיון נדחה.** מקלידים אותו בצורה `OL-XXXX-XXXX-XXXX-XXXX` ובודקים את מספר העוסק. המפתח עובד רק למספר שבשבילו נקנה. התקנה חוזרת של אותו עסק עם אותו מפתח עובדת.
 
 ## Cloudflare
 
-- **Zone Resources is missing.** It shows up only after a Zone permission row. Without a domain, skip it and use the free workers.dev address. See [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/).
-- **Check token fails.** The message names the missing permission. Edit the token, add the row, save, and check again.
-- **Zero Trust or R2 asks for a card.** Both free plans ask for a payment method and charge nothing.
-- **Purchase R2 Plan.** Click it and confirm the free tier. The first 10 GB a month are free.
+- **אין Zone Resources.** הוא מופיע רק אחרי שורת הרשאה מסוג Zone. בלי דומיין, מדלגים ומשתמשים בכתובת החינמית של workers.dev. ראו [יצירת ה-API token](https://open-ledger.dev/help/cloudflare-token/).
+- **Check token נכשל.** ההודעה אומרת איזו הרשאה חסרה. עורכים את הטוקן, מוסיפים את השורה, שומרים ובודקים שוב.
+- **Zero Trust או R2 מבקשים כרטיס.** שתי התוכניות החינמיות מבקשות אמצעי תשלום ולא מחייבות.
+- **Purchase R2 Plan.** לוחצים ומאשרים את התוכנית החינמית. 10GB הראשונים בחודש בחינם.
 
-## Keys
+## מפתחות
 
-- **A Gemini key is refused.** New keys from Google AI Studio start with `AQ.`. The installer from version 1.6.0 of 17 October 2026 accepts them. With an older installer, pick **No** for expense reading and add the key afterwards, see [Add or change a key](https://open-ledger.matanlevanon.com/help/keys-later/).
-- **An Anthropic key is refused.** It starts with `sk-ant-`. Copy it again from console.anthropic.com.
+- **מפתח Gemini נדחה.** מפתחות חדשים מ-Google AI Studio מתחילים ב-`AQ.`. תוכנת ההתקנה של גרסה 1.6.0 מ-17 באוקטובר 2026 מקבלת אותם. עם תוכנת התקנה ישנה, בוחרים **No** בקריאת הוצאות ומוסיפים את המפתח אחר כך, ראו [הוספה או החלפה של מפתח](https://open-ledger.dev/help/keys-later/).
+- **מפתח Anthropic נדחה.** הוא מתחיל ב-`sk-ant-`. מעתיקים אותו שוב מ-console.anthropic.com.
 
-## Signing in
+## כניסה
 
-- **A Cloudflare page asks for an email.** That is the sign-in. Type the owner email and paste the code from the email.
-- **No code arrives.** Check spam, and check that the email is the one given in the installer.
-- **Someone else is stopped at the Cloudflare page.** Add their email in Cloudflare Access, see [Give your accountant access](https://open-ledger.matanlevanon.com/help/users/).
+- **עמוד של Cloudflare מבקש מייל.** זו הכניסה. מקלידים את מייל הבעלים ומדביקים את הקוד מהמייל.
+- **הקוד לא מגיע.** בודקים בספאם, ובודקים שזה המייל שהוזן בתוכנת ההתקנה.
+- **מישהו אחר נעצר בעמוד של Cloudflare.** מוסיפים את המייל שלו ב-Cloudflare Access, ראו [גישה לרואה חשבון](https://open-ledger.dev/help/users/).
 
-## Downloads and email
+## הורדות ומייל
 
-- **The download link says it expired or ran out.** Click **Email me a fresh link** on that page.
-- **Clients get your documents in spam.** See [Keep them out of spam](https://open-ledger.matanlevanon.com/help/email/).
-- **Lost the MCP token.** See [Connect Claude](https://open-ledger.matanlevanon.com/help/connect-claude/).
+- **קישור ההורדה פג או נגמר.** לוחצים **Email me a fresh link** באותו עמוד.
+- **לקוחות מקבלים את המסמכים בספאם.** ראו [שליחת מסמכים בלי ספאם](https://open-ledger.dev/help/email/).
+- **טוקן ה-MCP אבד.** ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/).
 
-## Tax Authority
+## רשות המסים
 
-- **ITA says reconnect.** The login lasts 90 days. Open **ITA** and click **Connect again**.
-- **An invoice waits for a number for 24 hours.** Request the number in the Tax Authority web app and type it on the ITA page.
+- **ITA מבקש להתחבר מחדש.** הכניסה תקפה 90 יום. פותחים **ITA** ולוחצים **Connect again**.
+- **חשבונית מחכה למספר 24 שעות.** מבקשים את המספר באתר של רשות המסים ומקלידים אותו בעמוד ITA.
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 
-Source: https://open-ledger.matanlevanon.com/help/troubleshooting/
+Source: https://open-ledger.dev/help/troubleshooting/

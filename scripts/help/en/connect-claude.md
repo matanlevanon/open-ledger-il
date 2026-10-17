@@ -40,7 +40,7 @@ The same tab shows the MCP address with a **Copy** button, when the token was la
 
 ### No MCP tab yet
 
-The tab is in Ledgers updated after 17 October 2026. On an older Ledger, update first, see [Updates](/help/updates-backups/). Or set the token in Cloudflare:
+The tab is in Ledgers updated after 17 October 2026. On an older Ledger, update first, see [Updates](/en/help/updates-backups/). Or set the token in Cloudflare:
 
 1. Look in Downloads for `claude-desktop-....json`. If it is there, the old token is inside and nothing else is needed.
 2. Otherwise make a token in PowerShell on your computer:

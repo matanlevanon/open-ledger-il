@@ -8,7 +8,7 @@ cta: buy
 order: 2
 ---
 
-The installer is the paid, connected way to install Open Ledger IL. You buy it once on the shop, and the purchase email brings the licence key and the download link. Read [Before you install](/help/before-you-start/) first.
+The installer is the paid, connected way to install Open Ledger IL. You buy it once on the shop, and the purchase email brings the licence key and the download link. Read [Before you install](/en/help/before-you-start/) first.
 
 ## What the installer saves you
 
@@ -30,7 +30,7 @@ Setting up from the source code is free, and the [setup guide]({{repo}}/blob/mai
 
 1. Paste the licence key and the business tax number.
 2. Fill in the business name, the owner email and the business type: עוסק פטור, עוסק מורשה or חברה בע"מ. The Ledger asks once more on its first screen, so a mistake here is easy to fix.
-3. Under **More people who may sign in**, add your accountant or a second email of your own, one per line. You also add people later, see [Give your accountant access](/help/users/).
+3. Under **More people who may sign in**, add your accountant or a second email of your own, one per line. You also add people later, see [Give your accountant access](/en/help/users/).
 
 ## 3. Cloudflare account
 
@@ -38,7 +38,7 @@ The Ledger runs in your own Cloudflare account. The installer shows three steps,
 
 1. **No Cloudflare account yet?** Sign up at dash.cloudflare.com/sign-up with the business email and verify the email. Skip any offer to add a website.
 2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Do not create a bucket, the installer does that. Tick **I did it**.
-3. **Create the API token.** Follow [Create the Cloudflare API token](/help/cloudflare-token/). This is the step where most people get stuck. Tick **I did it**.
+3. **Create the API token.** Follow [Create the Cloudflare API token](/en/help/cloudflare-token/). This is the step where most people get stuck. Tick **I did it**.
 4. Paste the token and click **Check token**. Pick the account.
 
 ## 4. Domain or workers.dev
@@ -50,25 +50,25 @@ After the token check, the installer asks for the Ledger's web address.
 
 ## 5. Tax Authority
 
-Pick how the Ledger gets allocation numbers for tax invoices. The connected edition fills this in for you: the Ledger connects through MTN, with nothing to type. After the install you sign in once with your Tax Authority user, see [Connect to the Tax Authority](/help/tax-authority/).
+Pick how the Ledger gets allocation numbers for tax invoices. The connected edition fills this in for you: the Ledger connects through MTN, with nothing to type. After the install you sign in once with your Tax Authority user, see [Connect to the Tax Authority](/en/help/tax-authority/).
 
 ## 6. Extras
 
 All optional. Each **?** button explains where to get the key.
 
 - **Expense reading:** pick Gemini or Anthropic and paste the key. A Gemini key from aistudio.google.com starts with `AQ.`, older ones with `AIza`.
-- **Email sending:** the Resend API key and the sender, written as `Business Name <billing@your-domain.co.il>`. See [Send documents by email](/help/email/).
+- **Email sending:** the Resend API key and the sender, written as `Business Name <billing@your-domain.co.il>`. See [Send documents by email](/en/help/email/).
 - **Slack alerts:** the webhook address.
 
-Skip anything you do not have. You add it later, see [Add or change a key after the install](/help/keys-later/).
+Skip anything you do not have. You add it later, see [Add or change a key after the install](/en/help/keys-later/).
 
 ## 7. Install and finish
 
 1. Check the summary and click **Install**. It takes about 3 minutes.
-2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. Cloudflare never shows it again. See [Connect Claude](/help/connect-claude/).
+2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. Cloudflare never shows it again. See [Connect Claude](/en/help/connect-claude/).
 3. The installer leaves a summary file on the Desktop, without secrets.
 4. Delete the Cloudflare API token: dash.cloudflare.com/profile/api-tokens, the three dots next to the token, **Delete**. The Ledger does not need it any more.
 
 ## Next
 
-[First sign-in and setup](/help/first-sign-in/).
+[First sign-in and setup](/en/help/first-sign-in/).

@@ -37,7 +37,7 @@ An עוסק פטור issues no tax invoices, so it needs no connection. Connect 
 
 No app at all? The Ledger also runs in manual mode: each invoice that needs a number waits on the ITA page, you request the number in the Tax Authority web app, and type it back.
 
-[Buy the installer](/help/install/) to skip steps 1 to 3.
+[Buy the installer](/en/help/install/) to skip steps 1 to 3.
 
 ## Every 90 days
 

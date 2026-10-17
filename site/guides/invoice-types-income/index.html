@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pro forma, payment request and receipt · Open Ledger IL</title>
-<meta name="description" content="Pro forma, payment request, receipt and tax invoice in Israel. Which one is income, and why a report never counts a request and its receipt twice.">
+<title>חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה</title>
+<meta name="description" content="מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.">
 <meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/guides/invoice-types-income/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/invoice-types-income/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/invoice-types-income/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/invoice-types-income/">
+<link rel="canonical" href="https://open-ledger.dev/guides/invoice-types-income/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/invoice-types-income/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/invoice-types-income/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/invoice-types-income/">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="Pro forma, payment request and receipt · Open Ledger IL">
-<meta property="og:description" content="Pro forma, payment request, receipt and tax invoice in Israel. Which one is income, and why a report never counts a request and its receipt twice.">
+<meta property="og:title" content="חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה">
+<meta property="og:description" content="מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/guides/invoice-types-income/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-invoice-types-income.png">
+<meta property="og:url" content="https://open-ledger.dev/guides/invoice-types-income/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/he-guide-invoice-types-income.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Pro forma, payment request and receipt · Open Ledger IL">
-<meta name="twitter:description" content="Pro forma, payment request, receipt and tax invoice in Israel. Which one is income, and why a report never counts a request and its receipt twice.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-invoice-types-income.png">
+<meta name="twitter:title" content="חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה">
+<meta name="twitter:description" content="מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-guide-invoice-types-income.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,14 +286,14 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://open-ledger.matanlevanon.com/guides/"},{"@type":"ListItem","position":3,"name":"Pro forma, payment request and receipt: the difference, and what counts as income","item":"https://open-ledger.matanlevanon.com/guides/invoice-types-income/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Pro forma, payment request and receipt: the difference, and what counts as income","description":"Pro forma, payment request, receipt and tax invoice in Israel. Which one is income, and why a report never counts a request and its receipt twice.","inLanguage":"en","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.matanlevanon.com/guides/invoice-types-income/","url":"https://open-ledger.matanlevanon.com/guides/invoice-types-income/","image":"https://open-ledger.matanlevanon.com/assets/og/en-guide-invoice-types-income.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"en","mainEntity":[{"@type":"Question","name":"Is a pro forma (חשבון עסקה) an invoice?","acceptedAnswer":{"@type":"Answer","text":"No. It is a request for payment, and it prints \"אינו חשבונית מס\" (not a tax invoice)."}},{"@type":"Question","name":"Which document is recorded as income?","acceptedAnswer":{"@type":"Answer","text":"The receipt, for an עוסק פטור. For an עוסק מורשה, the tax invoice or the tax invoice/receipt."}},{"@type":"Question","name":"Does a pro forma need an allocation number?","acceptedAnswer":{"@type":"Answer","text":"No, in normal use. Only when it serves as the advance approval the specification describes."}},{"@type":"Question","name":"How soon after a payment do I issue a tax invoice?","acceptedAnswer":{"@type":"Answer","text":"A service provider on a cash basis issues a tax invoice within 14 days of the payment."}},{"@type":"Question","name":"Does a payment request go into the income report?","acceptedAnswer":{"@type":"Answer","text":"No. Quotes and payment requests are not counted in income reports, since they are not bookkeeping documents."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"מדריכים","item":"https://open-ledger.dev/guides/"},{"@type":"ListItem","position":3,"name":"חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה","item":"https://open-ledger.dev/guides/invoice-types-income/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה","description":"מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.","inLanguage":"he","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.dev/guides/invoice-types-income/","url":"https://open-ledger.dev/guides/invoice-types-income/","image":"https://open-ledger.dev/assets/og/he-guide-invoice-types-income.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"he","mainEntity":[{"@type":"Question","name":"חשבון עסקה הוא חשבונית?","acceptedAnswer":{"@type":"Answer","text":"לא. הוא בקשת תשלום, והוא מודפס עם הכיתוב \"אינו חשבונית מס\"."}},{"@type":"Question","name":"איזה מסמך נרשם כהכנסה?","acceptedAnswer":{"@type":"Answer","text":"הקבלה, אצל עוסק פטור. אצל עוסק מורשה, חשבונית המס או חשבונית המס/קבלה."}},{"@type":"Question","name":"חשבון עסקה צריך מספר הקצאה?","acceptedAnswer":{"@type":"Answer","text":"לא, בשימוש הרגיל. רק כשהוא משמש כאישור מוקדם במקרה שהמפרט מתאר."}},{"@type":"Question","name":"תוך כמה זמן מפיקים חשבונית מס אחרי תשלום?","acceptedAnswer":{"@type":"Answer","text":"נותן שירות על בסיס מזומן מפיק חשבונית מס תוך 14 יום מהתשלום."}},{"@type":"Question","name":"דרישת תשלום נכנסת לדוח ההכנסות?","acceptedAnswer":{"@type":"Answer","text":"לא. הצעות מחיר ודרישות תשלום לא נספרות בדוחות ההכנסות, כי הן לא מסמכי הנהלת חשבונות."}}]}</script>
 </head>
 <body>
-<div class="draft-bar" role="note">Draft. This guide is under review and not published yet.</div>
+<div class="draft-bar" role="note">טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.</div>
 <header>
   <div class="wrap nav">
     <a class="brand" href="/">
@@ -305,19 +305,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/guides/invoice-types-income/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/guides/invoice-types-income/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
-    <a href="/he/guides/invoice-types-income/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
+    <a href="/en/guides/invoice-types-income/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -332,62 +332,63 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">Pro forma, payment request and receipt: the difference, and what counts as income</li></ol></nav>
-    <h1>Pro forma, payment request and receipt: the difference, and what counts as income</h1>
-    <p class="lead">Pro forma, payment request, receipt and tax invoice in Israel. Which one is income, and why a report never counts a request and its receipt twice.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li><a href="/guides/">מדריכים</a></li><li aria-current="page">חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה</li></ol></nav>
+    <h1>חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה</h1>
+    <p class="lead">מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.</p>
   </div>
   <section class="plain">
     <div class="wrap prose">
-      <p class="shot-cap" style="text-align:start">Updated 2026-10-14</p>
-      <p>A small business issues several kinds of documents, and each has a different job. Some ask for money, some record money received, and only some count as income. Mix them up and the reports go wrong: the same payment counted twice, or income not counted at all.</p>
-<h2 id="documents-that-ask-for-money">Documents that ask for money</h2>
-<p>These go out before the client pays. They are not bookkeeping documents, and they do not count as income <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li><b>Quote</b>: what the work will cost. It stays editable until it becomes another document <sup><a href="#src-1">[1]</a></sup>.</li><li><b>Payment request</b>: a request to pay an amount <sup><a href="#src-1">[1]</a></sup>.</li><li><b>Pro forma invoice (חשבון עסקה)</b>: the same job as a payment request. It prints "אינו חשבונית מס" (not a tax invoice) on every copy <sup><a href="#src-1">[1]</a></sup>. It is available to both an עוסק פטור and an עוסק מורשה <sup><a href="#src-1">[1]</a></sup>.</li></ul>
-<p>Each has its own number series <sup><a href="#src-1">[1]</a></sup>. A plain pro forma never gets a Tax Authority allocation number, whatever the amount <sup><a href="#src-2">[2]</a></sup>.</p>
-<h2 id="documents-that-record-money-received">Documents that record money received</h2>
-<ul><li><b>Receipt</b>: records a payment received. A receipt is required for every payment, issued close to it <sup><a href="#src-1">[1]</a></sup>. For an עוסק פטור, the receipt is the income.</li><li><b>Tax invoice/receipt</b>: for an עוסק מורשה, one document that both charges VAT and records the payment <sup><a href="#src-1">[1]</a></sup>.</li></ul>
-<h2 id="tax-invoice">Tax invoice</h2>
-<p>A tax invoice belongs to an עוסק מורשה. It shows the words "חשבונית מס" and "עוסק מורשה" with the VAT number, a serial number, the date, the client name, a description, the amount before VAT, the VAT and the total <sup><a href="#src-1">[1]</a></sup>. A tax invoice above ₪5,000 before VAT to a client who is an עוסק מורשה needs an allocation number <sup><a href="#src-2">[2]</a></sup>.</p>
-<p>A service provider reporting on a cash basis issues a tax invoice within 14 days of receiving payment, under section 46(a) of the VAT law <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="what-counts-as-income">What counts as income</h2>
-<p>The simple rule: <b>a document that asks for money is a charge, a document that records money is income</b> <sup><a href="#src-1">[1]</a></sup>.</p>
-<p>When a client gets a payment request and then pays, there are two documents: the request and the receipt. Only the receipt is income. A report that adds both shows double the truth <sup><a href="#src-1">[1]</a></sup>.</p>
-<p>To prevent that, the receipt should be created from the request and point back to it. Then you can see that the request is closed, and the money is counted once.</p>
-<h2 id="the-usual-flow">The usual flow</h2>
+      <p class="shot-cap" style="text-align:start">עודכן 2026-10-14</p>
+      <p>עסק קטן מפיק כמה סוגי מסמכים, ולכל אחד תפקיד אחר. חלקם מבקשים כסף, חלקם מתעדים כסף שהתקבל, ורק חלקם נחשבים הכנסה. כשמבלבלים ביניהם, הדוחות יוצאים שגויים: אותו תשלום נספר פעמיים, או שהכנסה לא נספרת בכלל.</p>
+<h2 id="מסמכים-שמבקשים-כסף">מסמכים שמבקשים כסף</h2>
+<p>אלה המסמכים שיוצאים לפני שהלקוח שילם. הם לא מסמכי הנהלת חשבונות, ולא נספרים כהכנסה <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>הצעת מחיר</b>: מה יעלה העבודה. נשארת ניתנת לעריכה עד שהיא הופכת למסמך אחר <sup><a href="#src-1">[1]</a></sup>.</li><li><b>דרישת תשלום</b>: בקשה לשלם סכום <sup><a href="#src-1">[1]</a></sup>.</li><li><b>חשבון עסקה</b>: אותו תפקיד כמו דרישת תשלום. הוא מודפס עם הכיתוב "אינו חשבונית מס" בכל עותק <sup><a href="#src-1">[1]</a></sup>. הוא זמין גם לעוסק פטור וגם לעוסק מורשה <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<p>לכל אחד מהם סדרת מספרים משלו <sup><a href="#src-1">[1]</a></sup>. חשבון עסקה רגיל לא מקבל מספר הקצאה מרשות המסים, בכל סכום <sup><a href="#src-2">[2]</a></sup>.</p>
+<h2 id="מסמכים-שמתעדים-כסף-שהתקבל">מסמכים שמתעדים כסף שהתקבל</h2>
+<ul><li><b>קבלה</b>: מתעדת תשלום שהתקבל. חובה להפיק קבלה על כל תשלום, סמוך לקבלתו <sup><a href="#src-1">[1]</a></sup>. אצל עוסק פטור, הקבלה היא ההכנסה.</li><li><b>חשבונית מס/קבלה</b>: אצל עוסק מורשה, מסמך אחד שגם מחייב מע"מ וגם מתעד את התשלום <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<h2 id="חשבונית-מס">חשבונית מס</h2>
+<p>חשבונית מס שייכת לעוסק מורשה. מופיעים בה הכיתוב "חשבונית מס", הכיתוב "עוסק מורשה" ומספר העוסק, מספר סידורי, תאריך, שם הלקוח, תיאור, סכום לפני מע"מ, המע"מ והסכום הכולל <sup><a href="#src-1">[1]</a></sup>. חשבונית מס מעל ₪5,000 לפני מע"מ ללקוח עוסק מורשה צריכה מספר הקצאה <sup><a href="#src-2">[2]</a></sup>.</p>
+<p>נותן שירות שמדווח על בסיס מזומן מפיק חשבונית מס תוך 14 יום מקבלת התשלום, לפי סעיף 46(א) לחוק מע"מ <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="מה-נחשב-הכנסה">מה נחשב הכנסה</h2>
+<p>הכלל הפשוט: <b>מסמך שמבקש כסף הוא חיוב, מסמך שמתעד כסף הוא הכנסה</b> <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>כשלקוח מקבל דרישת תשלום ואחר כך משלם, נוצרים שני מסמכים: הדרישה והקבלה. רק הקבלה היא ההכנסה. דוח שמחבר את שניהם מראה כפול מהאמת <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>כדי שזה לא יקרה, כדאי שהקבלה תיווצר מתוך הדרישה, ותצביע עליה. כך רואים שהדרישה נסגרה, ושהכסף נספר פעם אחת.</p>
+<p>אותו כלל חל גם על הקובץ במבנה אחיד: הצעות מחיר ודרישות תשלום לא נכנסות אליו <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="הזרימה-הנפוצה">הזרימה הנפוצה</h2>
 <p><b>עוסק פטור:</b></p>
-<ol><li>A quote, if needed.</li><li>A payment request or a pro forma.</li><li>A receipt when the money arrives.</li></ol>
-<p><b>עוסק מורשה providing services on a cash basis</b> <sup><a href="#src-1">[1]</a></sup>:</p>
-<ol><li>A pro forma.</li><li>When the money arrives, a tax invoice/receipt, within 14 days of the payment.</li></ol>
-<p>A partial payment leaves the rest open on the request, and another receipt closes it.</p>
-<h2 id="foreign-currency">Foreign currency</h2>
-<p>A pro forma can be in a foreign currency, for example for a client abroad. By default it shows only the foreign currency, with no shekel amount <sup><a href="#src-1">[1]</a></sup>. When the client pays, the receipt or tax invoice/receipt made from it takes over its lines and the agreed rate <sup><a href="#src-1">[1]</a></sup>.</p>
-<p>The books themselves are kept in shekels. A bookkeeping document in a foreign currency shows the currency, the foreign amount and the shekel amount (instruction 22) <sup><a href="#src-1">[1]</a></sup>. So the rate matters: it sets the amount recorded as income.</p>
-<h2 id="corrections">Corrections</h2>
-<p>None of these documents is edited once issued. A bookkeeping document is corrected by cancellation or credit (instruction 18) <sup><a href="#src-1">[1]</a></sup>. Quotes and payment requests are not bookkeeping documents, but they are numbered in their own series too <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="how-open-ledger-il-does-it">How Open Ledger IL does it</h2>
-<p>In Open Ledger IL, quotes, payment requests and pro formas are numbered in their own series and never counted in income reports. Recording a payment on a request issues a receipt linked to it, and a partial payment leaves the rest open. A pro forma prints "אינו חשבונית מס", and converting it to a receipt or a tax invoice/receipt carries over its lines and the agreed rate. For an עוסק מורשה, the app reminds you to issue the tax invoice within 14 days of the payment.</p>
+<ol><li>הצעת מחיר, אם צריך.</li><li>דרישת תשלום או חשבון עסקה.</li><li>קבלה כשהכסף מגיע.</li></ol>
+<p><b>עוסק מורשה שנותן שירות על בסיס מזומן</b> <sup><a href="#src-1">[1]</a></sup>:</p>
+<ol><li>חשבון עסקה.</li><li>כשהכסף מגיע, חשבונית מס/קבלה, תוך 14 יום מהתשלום.</li></ol>
+<p>תשלום חלקי משאיר את היתרה פתוחה בדרישה, וקבלה נוספת סוגרת אותה.</p>
+<h2 id="מטבע-חוץ">מטבע חוץ</h2>
+<p>חשבון עסקה יכול להיות במטבע חוץ, למשל ללקוח בחו"ל. כברירת מחדל הוא מציג רק את המטבע הזר, בלי סכום בשקלים <sup><a href="#src-1">[1]</a></sup>. כשהלקוח משלם, הקבלה או חשבונית המס/קבלה שנוצרות ממנו מקבלות את השורות ואת השער שסוכם <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>הספרים עצמם נרשמים בשקלים. מסמך הנהלת חשבונות במטבע חוץ מציג את המטבע, את הסכום במטבע הזר ואת הסכום בשקלים (הוראה 22) <sup><a href="#src-1">[1]</a></sup>. לכן השער חשוב: הוא קובע את הסכום שנרשם כהכנסה.</p>
+<h2 id="תיקון">תיקון</h2>
+<p>אף אחד מהמסמכים האלה לא נערך אחרי שהופק. מסמך הנהלת חשבונות מתקנים בביטול או בזיכוי (הוראה 18) <sup><a href="#src-1">[1]</a></sup>. הצעת מחיר ודרישת תשלום הן לא מסמכי הנהלת חשבונות, אבל גם הן ממוספרות בסדרה משלהן <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="איך-open-ledger-il-עושה-את-זה">איך Open Ledger IL עושה את זה</h2>
+<p>ב-Open Ledger IL הצעת מחיר, דרישת תשלום וחשבון עסקה ממוספרים בסדרות משלהם ולא נספרים בדוחות ההכנסות. רישום תשלום על דרישה מפיק קבלה שמקושרת אליה, ותשלום חלקי משאיר את היתרה פתוחה. חשבון עסקה מודפס עם "אינו חשבונית מס", והמרה שלו לקבלה או לחשבונית מס/קבלה מעבירה את השורות ואת השער שסוכם. אצל עוסק מורשה, המערכת מזכירה להפיק חשבונית מס תוך 14 יום מהתשלום.</p>
       <div class="guide-cta">
-        <a class="btn btn-primary" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener" data-demo>Try the live demo</a>
-        <a class="btn btn-ghost" href="/pricing/">See pricing and setup</a>
+        <a class="btn btn-primary" href="https://demo.open-ledger.dev" target="_blank" rel="noopener" data-demo>נסו את ההדגמה</a>
+        <a class="btn btn-ghost" href="/pricing/">למחירים ולאפשרויות ההתקנה</a>
       </div>
-      <h2 id="faq">Questions and answers</h2>
-      <dl class="faq"><dt>Is a pro forma (חשבון עסקה) an invoice?</dt><dd>No. It is a request for payment, and it prints &quot;אינו חשבונית מס&quot; (not a tax invoice).</dd><dt>Which document is recorded as income?</dt><dd>The receipt, for an עוסק פטור. For an עוסק מורשה, the tax invoice or the tax invoice/receipt.</dd><dt>Does a pro forma need an allocation number?</dt><dd>No, in normal use. Only when it serves as the advance approval the specification describes.</dd><dt>How soon after a payment do I issue a tax invoice?</dt><dd>A service provider on a cash basis issues a tax invoice within 14 days of the payment.</dd><dt>Does a payment request go into the income report?</dt><dd>No. Quotes and payment requests are not counted in income reports, since they are not bookkeeping documents.</dd></dl>
-      <h2 id="sources">Sources</h2>
+      <h2 id="faq">שאלות ותשובות</h2>
+      <dl class="faq"><dt>חשבון עסקה הוא חשבונית?</dt><dd>לא. הוא בקשת תשלום, והוא מודפס עם הכיתוב &quot;אינו חשבונית מס&quot;.</dd><dt>איזה מסמך נרשם כהכנסה?</dt><dd>הקבלה, אצל עוסק פטור. אצל עוסק מורשה, חשבונית המס או חשבונית המס/קבלה.</dd><dt>חשבון עסקה צריך מספר הקצאה?</dt><dd>לא, בשימוש הרגיל. רק כשהוא משמש כאישור מוקדם במקרה שהמפרט מתאר.</dd><dt>תוך כמה זמן מפיקים חשבונית מס אחרי תשלום?</dt><dd>נותן שירות על בסיס מזומן מפיק חשבונית מס תוך 14 יום מהתשלום.</dd><dt>דרישת תשלום נכנסת לדוח ההכנסות?</dt><dd>לא. הצעות מחיר ודרישות תשלום לא נספרות בדוחות ההכנסות, כי הן לא מסמכי הנהלת חשבונות.</dd></dl>
+      <h2 id="sources">מקורות</h2>
       <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md</a></li></ol>
     </div>
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

@@ -1,89 +1,89 @@
-# Pricing and setup options
+# מחירים ואפשרויות התקנה
 
-Pricing
+מחירים
 
-## Install it yourself, or have it set up for you
+## להתקין בעצמך, או לקבל אותה מוקמת
 
-### Free from source
+### חינם מקוד המקור
 
-Free
+חינם
 
-- No license fee, no usage limits
-- You register your own ITA API app
-- Step-by-step setup guide
+- בלי דמי רישיון ובלי מגבלת שימוש
+- רושמים אפליקציית API משלך ברשות המסים
+- מדריך התקנה שלב אחר שלב
 
-[Read the setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+[למדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
 
-First release: 30% off for a limited time
+גרסה ראשונה: 30% הנחה לזמן מוגבל
 
-### Set up for you
+### הקמה עבורך
 
-₪999 ₪699 one time
+₪999 ₪699 חד פעמי
 
-- We create every account for you, with your own emails
-- Tax Authority: your own ITA API app, or the connection through MTN
-- Handed over working, with full control to you
-- No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year
+- אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך
+- רשות המסים: אפליקציית API משלך, או חיבור דרך MTN
+- נמסרת לך פועלת, עם שליטה מלאה בידיך
+- בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה
 
-Book a call
+לתיאום שיחה
 
-## Key facts
+## עובדות עיקריות
 
-- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
-- It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
-- It is free for your own business under the FSL-1.1 licence.
-- Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.
-- It supports עוסק פטור and עוסק מורשה businesses.
-- It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
+- Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
+- היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
+- היא חינמית לעסק שלכם, ברישיון FSL-1.1.
+- הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה לגרסה הראשונה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
+- היא תומכת בעוסק פטור ובעוסק מורשה.
+- היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
 
-How it works
+איך זה עובד
 
-## Three steps to your first document
+## שלושה שלבים למסמך הראשון
 
-You deploy your own copy. Nobody else runs it or holds your data.
+אתה פורס עותק משלך. אף אחד אחר לא מריץ אותו ולא מחזיק את המידע שלך.
 
-1. **Deploy your copy** Create one D1 database and two R2 buckets, connect the Worker to your fork on GitHub, and add your domain. Every push to main deploys.
-2. **Lock it down** Cloudflare Access signs you in with your own email. Add the secrets: the PDF signing key, the mail key, and ITA credentials when you are מורשה.
-3. **Set up the business** Business profile, logo, signature and the starting number of each series, so numbering continues from your previous system.
+1. **פריסת עותק משלך** יוצרים מסד נתונים D1 אחד ושני דליי R2, מחברים את ה-Worker ל-fork שלך ב-GitHub ומוסיפים דומיין. כל push ל-main נפרס.
+2. **נעילה** Cloudflare Access מכניס אותך עם המייל שלך. מוסיפים סודות: מפתח החתימה, מפתח המייל ופרטי רשות המסים כשאתה עוסק מורשה.
+3. **הגדרת העסק** פרטי העסק, לוגו, חתימה ומספר ההתחלה של כל סדרה, כדי שהמספור ימשיך מהמערכת הקודמת.
 
 `git clone https://github.com/matanlevanon/open-ledger-il.git`
 
-Starts on the Workers Free plan. Setup takes an afternoon.
+מתחילה בתוכנית Workers Free. ההקמה לוקחת אחר צהריים.
 
-## What you need
+## מה צריך
 
-It starts on free tiers.
+מתחילים בתוכניות חינמיות.
 
-| Requirement | Notes |
+| דרישה | הערות |
 | --- | --- |
-| **Cloudflare account** Required | Workers Free runs it: the Worker, D1, R2, Browser Rendering and 5 scheduled jobs. Workers Paid, from $5 a month, lifts the limits below. |
-| **PDF signing key and certificate** Required | For the PAdES signature on every PDF. One command makes both, docs/deploy.md step 8. |
-| **Node.js and Wrangler** Required | On your computer, to apply database migrations and set secrets. |
-| **A domain on Cloudflare** Optional | Your own ledger address, for example ledger.example.com. Without one, it runs on the free workers.dev address. Email from your own address still needs a domain. |
-| **Resend account** Optional | To email documents, reminders and the accountant pack. The free tier covers a small business. |
-| **ITA API credentials** Optional | Only as עוסק מורשה, for allocation numbers on tax invoices. |
-| **Anthropic API key** Optional | For Claude to read expenses and past documents. Pay per use, a few cents per document. |
-| **Google Cloud service account** Optional | For the Drive expense import and backup copies. Free. |
+| **חשבון Cloudflare** חובה | Workers Free מריץ אותה: ה-Worker, D1, R2, Browser Rendering ו-5 משימות מתוזמנות. Workers Paid, החל מ-5$ לחודש, מסיר את המגבלות שלמטה. |
+| **מפתח ותעודה לחתימת PDF** חובה | לחתימת PAdES על כל PDF. פקודה אחת יוצרת את שניהם, docs/deploy.md שלב 8. |
+| **Node.js ו-Wrangler** חובה | במחשב שלך, להרצת מיגרציות למסד הנתונים ולהגדרת סודות. |
+| **דומיין ב-Cloudflare** רשות | כתובת משלך למערכת, למשל ledger.example.com. בלי דומיין היא רצה בכתובת workers.dev החינמית. כדי לשלוח מייל מכתובת משלך צריך דומיין. |
+| **חשבון Resend** רשות | לשליחת מסמכים, תזכורות וחבילת רואה החשבון במייל. התוכנית החינמית מספיקה לעסק קטן. |
+| **פרטי גישה ל-API של רשות המסים** רשות | רק לעוסק מורשה, למספרי הקצאה על חשבוניות מס. |
+| **מפתח API של Anthropic** רשות | כדי ש-Claude יקרא הוצאות ומסמכי עבר. תשלום לפי שימוש, כמה סנטים למסמך. |
+| **חשבון שירות ב-Google Cloud** רשות | לייבוא הוצאות מ-Drive ולעותקי גיבוי. חינם. |
 
-Workers Paid and known limits
+Workers Paid ומגבלות ידועות
 
-### When to move to Workers Paid.
+### מתי לעבור ל-Workers Paid.
 
-The ledger uses 5 scheduled jobs, the most Workers Free allows. Free has three other limits worth knowing:
+המערכת משתמשת ב-5 משימות מתוזמנות, המקסימום ב-Workers Free. לתוכנית החינמית יש עוד שלוש מגבלות שכדאי להכיר:
 
-- Cron CPU: 10 ms per scheduled run on Free. Most jobs fit. The monthly accountant pack and the quarterly backup build files and are the ones likely to need Paid.
-- Browser Rendering, which draws every PDF: 10 minutes a day on Free, 10 hours a month on Paid.
-- D1 point-in-time recovery: 7 days on Free, 30 days on Paid. For legal books, 30 days is the one to have.
+- זמן מעבד למשימה מתוזמנת: 10 מילישניות בתוכנית החינמית. רוב המשימות נכנסות. חבילת רואה החשבון החודשית והגיבוי הרבעוני בונים קבצים, והן אלה שכנראה ידרשו Paid.
+- Browser Rendering, שמפיק כל PDF: 10 דקות ביום בחינם, 10 שעות בחודש ב-Paid.
+- שחזור לנקודת זמן ב-D1: 7 ימים בחינם, 30 ימים ב-Paid. לספרים חוקיים, 30 ימים זה מה שצריך.
 
-### What it will not do
+### מה היא לא עושה
 
-- It is not tax or legal advice. Check your setup with your accountant before you issue a real document.
-- One business per deployment.
-- Israel only: the document types, VAT and ITA rules are Israeli.
-- It records payments. It does not charge cards or collect money.
-- The PCN874 export fills the allocation-number column. The other columns are a stub.
-- You run it: updates, secrets and the Cloudflare bill are yours.
+- זה לא ייעוץ מס או ייעוץ משפטי. בדוק את ההגדרות עם רואה החשבון שלך לפני שאתה מפיק מסמך אמיתי.
+- עסק אחד לכל התקנה.
+- ישראל בלבד: סוגי המסמכים, המע"מ וכללי רשות המסים הם ישראליים.
+- המערכת רושמת תשלומים. היא לא סולקת כרטיסים ולא גובה כסף.
+- ייצוא PCN874 ממלא את עמודת מספר ההקצאה. שאר העמודות עדיין חלקיות.
+- אתה מריץ אותה: עדכונים, סודות וחשבון Cloudflare הם שלך.
 
-[Do you need to register the software with the Tax Authority?](https://open-ledger.matanlevanon.com/registration/)
+[צריך לרשום את התוכנה ברשות המסים?](https://open-ledger.dev/registration/)
 
-Source: https://open-ledger.matanlevanon.com/pricing/
+Source: https://open-ledger.dev/pricing/

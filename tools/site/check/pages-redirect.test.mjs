@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT, SITE_URL } from './site-files.mjs';
 
-for (const [file, target] of [['index.html', `${SITE_URL}/`], ['he.html', `${SITE_URL}/he/`]]) {
+for (const [file, target] of [['index.html', `${SITE_URL}/en/`], ['he.html', `${SITE_URL}/`]]) {
   test(`docs/${file} redirects to ${target}`, () => {
     const html = readFileSync(join(ROOT, 'docs', file), 'utf8');
     assert.ok(html.includes(`<link rel="canonical" href="${target}">`));

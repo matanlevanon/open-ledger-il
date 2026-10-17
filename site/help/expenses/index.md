@@ -1,81 +1,81 @@
-# Get your expenses into the Ledger
+# הכנסת הוצאות ללדג'ר
 
-Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
+העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-## Forward receipts by email
+## העברת קבלות במייל
 
-The easiest way for receipts that reach your inbox. Your Ledger has a private address. Everything forwarded there becomes an expense, read by AI and waiting for your check.
+הדרך הכי קלה לקבלות שמגיעות למייל. ללדג'ר שלכם יש כתובת פרטית. כל מה שמועבר אליה הופך להוצאה, נקרא עם AI ומחכה לבדיקה שלכם.
 
-### Find your address
+### מוצאים את הכתובת
 
-Open **Settings > Expenses > Email inbox**. The address looks like `expenses+r7k2m9x4qp@open-ledger.dev`. Click **Copy**. The installer sets it up. If the page says the inbox is not set up, run the installer again.
+פותחים **Settings > Expenses > Email inbox**. הכתובת נראית כך: `expenses+r7k2m9x4qp@open-ledger.dev`. לוחצים **Copy**. תוכנת ההתקנה מגדירה אותה. אם העמוד אומר שהתיבה לא מוגדרת, מריצים שוב את תוכנת ההתקנה.
 
-### Set it up in Gmail, once
+### הגדרה בג'ימייל, פעם אחת
 
-1. In Gmail, click the gear, then **See all settings**, then the tab **Forwarding and POP/IMAP**.
-2. Click **Add a forwarding address**, paste the address and confirm.
-3. Gmail sends a confirmation code to that address. It shows up in the Ledger under **Email inbox**: "Gmail sent a confirmation code". Type the code in Gmail and click **Verify**.
-4. Leave **Disable forwarding** selected. You forward only receipts, not all your mail.
-5. In the Gmail search box, paste the search from the Ledger page, for example `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. Add your suppliers if you like: `from:(billing@supplier.com)`.
-6. Click the search options icon, then **Create filter**. Tick **Forward it to**, pick the address, and click **Create filter**.
+1. בג'ימייל לוחצים על גלגל השיניים, אחר כך **See all settings** (הצגת כל ההגדרות), ואז הלשונית **Forwarding and POP/IMAP** (העברה ו-POP/IMAP).
+2. לוחצים **Add a forwarding address** (הוספת כתובת להעברה), מדביקים את הכתובת ומאשרים.
+3. ג'ימייל שולח קוד אישור לכתובת. הוא מופיע בלדג'ר תחת **Email inbox**: "Gmail sent a confirmation code". מקלידים את הקוד בג'ימייל ולוחצים **Verify**.
+4. משאירים מסומן **Disable forwarding**. מעבירים רק קבלות, לא את כל המייל.
+5. בתיבת החיפוש של ג'ימייל מדביקים את החיפוש מעמוד הלדג'ר, למשל `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. אפשר להוסיף ספקים: `from:(billing@supplier.com)`.
+6. לוחצים על סמל אפשרויות החיפוש, ואז **Create filter** (יצירת מסנן). מסמנים **Forward it to** (העברה אל), בוחרים את הכתובת ולוחצים **Create filter**.
 
-From now on, every matching email goes to the Ledger by itself. To send one by hand, forward it to the same address.
+מעכשיו כל מייל מתאים מגיע ללדג'ר לבד. לשליחה ידנית, מעבירים לאותה כתובת.
 
-### Outlook
+### אאוטלוק
 
-**Settings > Mail > Rules > Add new rule.** Condition: **Has attachment**, and words in the subject such as invoice or receipt. Action: **Forward to** the address.
+**Settings > Mail > Rules > Add new rule.** תנאי: **Has attachment**, ומילים בנושא כמו invoice או קבלה. פעולה: **Forward to** לכתובת.
 
-### What happens to each email
+### מה קורה לכל מייל
 
-- Each PDF, JPG, PNG, WebP or HEIC attachment becomes one expense. Small logo images are skipped.
-- An email with no attachment becomes one expense from its text, marked "From email text, check the amount".
-- The same file twice is one expense.
-- Only email forwarded from your own addresses counts. The list is under **Allowed senders**, and starts with the owner and assistant emails. Anything else is ignored and listed under **Last received**.
-- The address passes through MTN's email gateway, which stores nothing. With your own domain on Cloudflare, you route an address such as `receipts@your-domain.co.il` straight to your Ledger instead. The repository's `docs/expense-inbox.md` explains how.
+- כל קובץ מצורף מסוג PDF, JPG, PNG, WebP או HEIC הופך להוצאה אחת. תמונות לוגו קטנות מדולגות.
+- מייל בלי קובץ מצורף הופך להוצאה אחת מהטקסט שלו, עם הסימון "From email text, check the amount".
+- אותו קובץ פעמיים הוא הוצאה אחת.
+- נספר רק מייל שהועבר מהכתובות שלכם. הרשימה נמצאת תחת **Allowed senders**, ומתחילה במיילים של הבעלים והעוזרים. כל השאר מתעלם ומופיע תחת **Last received**.
+- הכתובת עוברת דרך שער המייל של MTN, שלא שומר כלום. עם דומיין משלכם ב-Cloudflare, מנתבים כתובת כמו `receipts@your-domain.co.il` ישר ללדג'ר. הקובץ `docs/expense-inbox.md` במאגר מסביר איך.
 
-### A new address
+### כתובת חדשה
 
-If the address leaks or gets spam, click **Make a new address**. The old one stops at once. Update the Gmail filter with the new one.
+אם הכתובת דלפה או מקבלת ספאם, לוחצים **Make a new address**. הישנה מפסיקה מיד. מעדכנים את המסנן בג'ימייל עם החדשה.
 
-## Upload
+## העלאה
 
-The quickest way.
+הדרך המהירה.
 
-1. Open **Expenses** and click **Upload expense**.
-2. Pick the file: PDF, JPG or PNG. On a phone, take a photo of the paper receipt.
-3. With a Gemini or Anthropic key set, the Ledger reads the supplier, date, amounts and VAT, and fills them in. Check them and save.
-4. Without a key, type the details yourself.
+1. פותחים **Expenses** ולוחצים **Upload expense**.
+2. בוחרים קובץ: PDF, JPG או PNG. בטלפון, מצלמים את הקבלה.
+3. עם מפתח Gemini או Anthropic, הלדג'ר קורא ספק, תאריך, סכומים ומע"מ וממלא אותם. בודקים ושומרים.
+4. בלי מפתח, מקלידים את הפרטים לבד.
 
-To add a reading key after the install, see [Add or change a key](https://open-ledger.matanlevanon.com/help/keys-later/).
+להוספת מפתח קריאה אחרי ההתקנה ראו [הוספה או החלפה של מפתח](https://open-ledger.dev/help/keys-later/).
 
-## A month from Google Drive
+## חודש מגוגל דרייב
 
-For people who already keep receipts in Drive, one folder per month named `YYYY-MM`, for example `2026-10`.
+למי שכבר שומר קבלות בדרייב, בתיקייה לכל חודש בשם `YYYY-MM`, למשל `2026-10`.
 
-1. Follow the Drive setup in the repository: a Google Cloud project, the Drive and Sheets APIs, a service account, and the expenses folder shared with that account as Editor. The guide is `docs/drive-expenses-setup.md` on GitHub.
-2. Give the Ledger the service account's JSON key as the secret `GOOGLE_SERVICE_ACCOUNT_JSON`, see [Add or change a key](https://open-ledger.matanlevanon.com/help/keys-later/).
-3. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
-4. In **Expenses**, pick the month and click **Import month**. Each file goes through AI reading and waits for your check. Running it twice adds nothing twice.
-5. To import every morning, turn on **Daily sync** in **Settings > Expenses**.
+1. עוקבים אחרי הגדרת הדרייב במאגר הקוד: פרויקט ב-Google Cloud, הפעלת Drive API ו-Sheets API, Service Account, ושיתוף תיקיית ההוצאות איתו כעורך. המדריך הוא `docs/drive-expenses-setup.md` ב-GitHub.
+2. נותנים ללדג'ר את מפתח ה-JSON של ה-Service Account כסוד `GOOGLE_SERVICE_ACCOUNT_JSON`, ראו [הוספה או החלפה של מפתח](https://open-ledger.dev/help/keys-later/).
+3. ב-**Settings > Expenses** מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי `/folders/`, ולוחצים **Save folder**.
+4. ב-**Expenses** בוחרים חודש ולוחצים **Import month**. כל קובץ נקרא עם AI ומחכה לבדיקה שלכם. הרצה כפולה לא מכפילה כלום.
+5. לייבוא כל בוקר, מפעילים **Daily sync** ב-**Settings > Expenses**.
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/expenses/
+Source: https://open-ledger.dev/help/expenses/

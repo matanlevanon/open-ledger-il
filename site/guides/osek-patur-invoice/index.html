@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Invoices for an עוסק פטור · Open Ledger IL</title>
-<meta name="description" content="An עוסק פטור issues no tax invoices. Which documents it does issue, what they must show, and how to number, correct and send them digitally.">
+<title>חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם</title>
+<meta name="description" content="עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.">
 <meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/guides/osek-patur-invoice/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/osek-patur-invoice/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/osek-patur-invoice/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/osek-patur-invoice/">
+<link rel="canonical" href="https://open-ledger.dev/guides/osek-patur-invoice/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/osek-patur-invoice/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/osek-patur-invoice/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/osek-patur-invoice/">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="Invoices for an עוסק פטור · Open Ledger IL">
-<meta property="og:description" content="An עוסק פטור issues no tax invoices. Which documents it does issue, what they must show, and how to number, correct and send them digitally.">
+<meta property="og:title" content="חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם">
+<meta property="og:description" content="עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/guides/osek-patur-invoice/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-osek-patur-invoice.png">
+<meta property="og:url" content="https://open-ledger.dev/guides/osek-patur-invoice/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/he-guide-osek-patur-invoice.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Invoices for an עוסק פטור · Open Ledger IL">
-<meta name="twitter:description" content="An עוסק פטור issues no tax invoices. Which documents it does issue, what they must show, and how to number, correct and send them digitally.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-osek-patur-invoice.png">
+<meta name="twitter:title" content="חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם">
+<meta name="twitter:description" content="עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-guide-osek-patur-invoice.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,14 +286,14 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://open-ledger.matanlevanon.com/guides/"},{"@type":"ListItem","position":3,"name":"Invoices for an עוסק פטור: which documents you may issue and what they say","item":"https://open-ledger.matanlevanon.com/guides/osek-patur-invoice/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Invoices for an עוסק פטור: which documents you may issue and what they say","description":"An עוסק פטור issues no tax invoices. Which documents it does issue, what they must show, and how to number, correct and send them digitally.","inLanguage":"en","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.matanlevanon.com/guides/osek-patur-invoice/","url":"https://open-ledger.matanlevanon.com/guides/osek-patur-invoice/","image":"https://open-ledger.matanlevanon.com/assets/og/en-guide-osek-patur-invoice.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"en","mainEntity":[{"@type":"Question","name":"Can an עוסק פטור issue a tax invoice?","acceptedAnswer":{"@type":"Answer","text":"No. An עוסק פטור charges no VAT and issues no tax invoices. The document that records a payment is a receipt."}},{"@type":"Question","name":"What is the difference between a payment request and a receipt?","acceptedAnswer":{"@type":"Answer","text":"A payment request asks for money and is not a bookkeeping document. A receipt records money received, and it is the income."}},{"@type":"Question","name":"Can I send a receipt by email?","acceptedAnswer":{"@type":"Answer","text":"Yes, with conditions. You need the client's consent, a secured electronic signature on the file, and a notice to the assessing officer before the first digital document."}},{"@type":"Question","name":"What do I do when a receipt has a mistake?","acceptedAnswer":{"@type":"Answer","text":"You do not edit it. You cancel it or issue a credit document, and the original is kept."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"מדריכים","item":"https://open-ledger.dev/guides/"},{"@type":"ListItem","position":3,"name":"חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם","item":"https://open-ledger.dev/guides/osek-patur-invoice/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם","description":"עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.","inLanguage":"he","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.dev/guides/osek-patur-invoice/","url":"https://open-ledger.dev/guides/osek-patur-invoice/","image":"https://open-ledger.dev/assets/og/he-guide-osek-patur-invoice.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"he","mainEntity":[{"@type":"Question","name":"האם עוסק פטור יכול להפיק חשבונית מס?","acceptedAnswer":{"@type":"Answer","text":"לא. עוסק פטור לא גובה מע\"מ ולא מפיק חשבוניות מס. המסמך שמתעד תשלום הוא קבלה."}},{"@type":"Question","name":"מה ההבדל בין דרישת תשלום לקבלה?","acceptedAnswer":{"@type":"Answer","text":"דרישת תשלום מבקשת כסף ואינה מסמך הנהלת חשבונות. קבלה מתעדת כסף שהתקבל, והיא ההכנסה."}},{"@type":"Question","name":"אפשר לשלוח קבלה במייל?","acceptedAnswer":{"@type":"Answer","text":"כן, בתנאים. צריך הסכמה של הלקוח, חתימה אלקטרונית מאובטחת על הקובץ והודעה לפקיד השומה לפני המסמך הדיגיטלי הראשון."}},{"@type":"Question","name":"מה עושים כשטועים בקבלה?","acceptedAnswer":{"@type":"Answer","text":"לא עורכים אותה. מבטלים אותה או מפיקים מסמך זיכוי, והמקור נשמר."}}]}</script>
 </head>
 <body>
-<div class="draft-bar" role="note">Draft. This guide is under review and not published yet.</div>
+<div class="draft-bar" role="note">טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.</div>
 <header>
   <div class="wrap nav">
     <a class="brand" href="/">
@@ -305,19 +305,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/guides/osek-patur-invoice/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/guides/osek-patur-invoice/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
-    <a href="/he/guides/osek-patur-invoice/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
+    <a href="/en/guides/osek-patur-invoice/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -332,60 +332,60 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">Invoices for an עוסק פטור: which documents you may issue and what they say</li></ol></nav>
-    <h1>Invoices for an עוסק פטור: which documents you may issue and what they say</h1>
-    <p class="lead">An עוסק פטור issues no tax invoices. Which documents it does issue, what they must show, and how to number, correct and send them digitally.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li><a href="/guides/">מדריכים</a></li><li aria-current="page">חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם</li></ol></nav>
+    <h1>חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם</h1>
+    <p class="lead">עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.</p>
   </div>
   <section class="plain">
     <div class="wrap prose">
-      <p class="shot-cap" style="text-align:start">Updated 2026-10-14</p>
-      <p>An עוסק פטור is a business whose annual turnover is under the ceiling. It charges its clients no VAT, so it issues no tax invoices either <sup><a href="#src-1">[1]</a></sup>. The question "which invoice does an עוסק פטור issue" turns into another one: which documents may it issue, and what must they say.</p>
-<h2 id="the-documents-an-עוסק-פטור-issues">The documents an עוסק פטור issues</h2>
-<p>Under the bookkeeping instructions and the VAT law, these are the documents an עוסק פטור works with <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li><b>Receipt.</b> Records money received. A receipt is required for every payment, issued close to the payment <sup><a href="#src-1">[1]</a></sup>. This is the document that counts as income.</li><li><b>Credit receipt.</b> Corrects a receipt already issued, when money goes back or there was a mistake.</li><li><b>Pro forma invoice (חשבון עסקה).</b> Asks for payment before it arrives. It prints "אינו חשבונית מס" (not a tax invoice) and is not income <sup><a href="#src-1">[1]</a></sup>.</li><li><b>Payment request.</b> Like a pro forma: it asks for money and is not a bookkeeping document <sup><a href="#src-1">[1]</a></sup>.</li><li><b>Quote.</b> Not a bookkeeping document. It stays editable until it becomes another document <sup><a href="#src-1">[1]</a></sup>.</li></ul>
-<p>Tax invoices, tax invoice/receipts and credit invoices belong to an עוסק מורשה. When an עוסק פטור becomes מורשה, the פטור series close and new ones open <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="what-a-receipt-from-an-עוסק-פטור-shows">What a receipt from an עוסק פטור shows</h2>
-<p>The documents of an עוסק פטור carry the words "עוסק פטור" and the ID number <sup><a href="#src-1">[1]</a></sup>. Beyond that, the receipt shows the business details, the document number from its series, the date, the client details, the amount and the payment method. [TO CHECK] The full list of receipt fields under the bookkeeping instructions.</p>
-<p>A few rules apply to every document <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li><b>Language.</b> Records are kept in Hebrew or Arabic (instruction 21). English can sit next to the Hebrew.</li><li><b>Currency.</b> Amounts are recorded in shekels. A document in a foreign currency also shows the currency and the foreign amount (instruction 22).</li><li><b>Original and copy.</b> The original is issued once. Every other copy is marked as a copy.</li></ul>
-<h2 id="numbering-one-series-no-gaps">Numbering: one series, no gaps</h2>
-<p>Each document type has one continuous number series. No gaps, and no deleting a document once issued <sup><a href="#src-1">[1]</a></sup>. A draft has no number, so a deleted draft leaves no gap. The number is given only at the moment of issue.</p>
-<h2 id="correcting-a-mistake">Correcting a mistake</h2>
-<p>An issued document is never edited. A mistake is fixed in one of two ways (instruction 18) <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li><b>Cancellation</b>, for a document not sent yet. It is marked "בוטל" (cancelled), and a copy is kept.</li><li><b>Credit</b>, a new document that offsets the original, in full or in part.</li></ul>
-<h2 id="sending-digitally">Sending digitally</h2>
-<p>You may send a receipt as a file, with conditions (instruction 18ב) <sup><a href="#src-1">[1]</a></sup>:</p>
-<ol><li>A notice to the assessing officer by registered mail, before the first digital document.</li><li>The client's consent to receive digital documents.</li><li>A secured electronic signature on the file.</li></ol>
-<h2 id="keeping-and-backing-up">Keeping and backing up</h2>
-<p>Documents are kept 7 years from the end of the tax year, or 6 years from filing the return, whichever is later (instruction 25) <sup><a href="#src-1">[1]</a></sup>. A computerized system backs up its data every quarter, in the first week of the quarter, and keeps the backup away from the system <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="allocation-numbers">Allocation numbers</h2>
-<p>An עוסק פטור needs no allocation numbers. Everything issued while the business is פטור falls outside the rule <sup><a href="#src-3">[3]</a></sup>.</p>
-<h2 id="registered-software">Registered software</h2>
-<p>An עוסק פטור who uses software that someone else sells, rents out or lets others use needs software registered with the Tax Authority. The producer registers it <sup><a href="#src-2">[2]</a></sup>. A business that writes software and runs it for itself only needs no registration <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="how-open-ledger-il-does-it">How Open Ledger IL does it</h2>
-<p>In עוסק פטור mode, Open Ledger IL offers only the documents allowed: receipt, credit receipt, pro forma, payment request and quote. "עוסק פטור" and the ID number print in the header. Recording a payment issues the receipt in the same step. Numbers are given at issue, database triggers block edits to a final document, and every PDF carries a digital signature. Sending by email stays blocked until the client has consented.</p>
+      <p class="shot-cap" style="text-align:start">עודכן 2026-10-14</p>
+      <p>עוסק פטור הוא עוסק שהמחזור השנתי שלו מתחת לתקרה, והוא לא גובה מע"מ מלקוחותיו. לכן הוא גם לא מפיק חשבוניות מס <sup><a href="#src-1">[1]</a></sup>. השאלה "איזו חשבונית מפיק עוסק פטור" מתבררת כשאלה אחרת: אילו מסמכים מותר לו להפיק, ומה צריך להיות כתוב בהם.</p>
+<h2 id="המסמכים-שעוסק-פטור-מפיק">המסמכים שעוסק פטור מפיק</h2>
+<p>לפי ההוראות לניהול פנקסים וחוק מע"מ, אלה המסמכים בעבודה של עוסק פטור <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>קבלה</b>. מתעדת כסף שהתקבל. חובה להפיק קבלה על כל תשלום, סמוך לקבלת התשלום <sup><a href="#src-1">[1]</a></sup>. זה המסמך שנחשב הכנסה.</li><li><b>קבלת זיכוי</b>. מתקנת קבלה שכבר יצאה, כשמחזירים כסף או כשהייתה טעות.</li><li><b>חשבון עסקה</b>. מבקש תשלום לפני שהוא מתקבל. הוא מודפס עם הכיתוב "אינו חשבונית מס", ואינו נחשב הכנסה <sup><a href="#src-1">[1]</a></sup>.</li><li><b>דרישת תשלום</b>. כמו חשבון עסקה: מבקשת כסף, ואינה מסמך הנהלת חשבונות <sup><a href="#src-1">[1]</a></sup>.</li><li><b>הצעת מחיר</b>. אינה מסמך הנהלת חשבונות, ונשארת ניתנת לעריכה עד שהיא הופכת למסמך אחר <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<p>חשבונית מס, חשבונית מס/קבלה וחשבונית זיכוי שייכות לעוסק מורשה. כשעוסק פטור עובר למעמד מורשה, הסדרות של עוסק פטור נסגרות ונפתחות סדרות חדשות <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="מה-כתוב-בקבלה-של-עוסק-פטור">מה כתוב בקבלה של עוסק פטור</h2>
+<p>על המסמכים של עוסק פטור מופיעים הכיתוב "עוסק פטור" ומספר הזהות <sup><a href="#src-1">[1]</a></sup>. מעבר לזה, הקבלה מציגה את פרטי העסק, את מספר המסמך מהסדרה שלו, את התאריך, את פרטי הלקוח, את הסכום ואת אמצעי התשלום. [TO CHECK] רשימת השדות המלאה לקבלה לפי ההוראות לניהול פנקסים.</p>
+<p>כמה כללים שחלים על כל מסמך <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>שפה.</b> הרשומות נכתבות בעברית או בערבית (הוראה 21). אפשר לצרף אנגלית לצד העברית.</li><li><b>מטבע.</b> הסכומים נרשמים בשקלים. מסמך במטבע חוץ מציג גם את המטבע ואת הסכום במטבע החוץ (הוראה 22).</li><li><b>מקור והעתק.</b> המקור מופק פעם אחת. כל עותק אחר מסומן כהעתק.</li></ul>
+<h2 id="מספור-סדרה-אחת-בלי-חורים">מספור: סדרה אחת בלי חורים</h2>
+<p>לכל סוג מסמך יש סדרת מספרים אחת ורציפה. אין דילוגים, ואין מחיקה של מסמך שכבר הופק <sup><a href="#src-1">[1]</a></sup>. טיוטה לא מקבלת מספר, כך שטיוטה שנמחקה לא משאירה חור. המספר ניתן רק ברגע ההפקה.</p>
+<h2 id="תיקון-טעות">תיקון טעות</h2>
+<p>מסמך שהופק לא נערך. טעות מתקנים באחת משתי דרכים (הוראה 18) <sup><a href="#src-1">[1]</a></sup>:</p>
+<ul><li><b>ביטול</b>: למסמך שעוד לא נשלח. המסמך מסומן "בוטל", ועותק שלו נשמר.</li><li><b>זיכוי</b>: מסמך חדש שמקזז את המקורי, כולו או חלקו.</li></ul>
+<h2 id="שליחה-דיגיטלית">שליחה דיגיטלית</h2>
+<p>מותר לשלוח קבלה כקובץ, אבל יש תנאים (הוראה 18ב) <sup><a href="#src-1">[1]</a></sup>:</p>
+<ol><li>הודעה לפקיד השומה בדואר רשום, לפני המסמך הדיגיטלי הראשון.</li><li>הסכמה של הלקוח לקבל מסמכים דיגיטליים.</li><li>חתימה אלקטרונית מאובטחת על הקובץ.</li></ol>
+<h2 id="שמירה-וגיבוי">שמירה וגיבוי</h2>
+<p>את המסמכים שומרים 7 שנים מסוף שנת המס, או 6 שנים מהגשת הדוח, המאוחר מביניהם (הוראה 25) <sup><a href="#src-1">[1]</a></sup>. מערכת ממוחשבת מגבה את הנתונים פעם ברבעון, בשבוע הראשון של הרבעון, ושומרת את הגיבוי מחוץ למערכת <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="מספר-הקצאה">מספר הקצאה</h2>
+<p>עוסק פטור לא צריך מספרי הקצאה. כל מה שמופק בזמן שהעסק פטור נמצא מחוץ לחובה <sup><a href="#src-3">[3]</a></sup>.</p>
+<h2 id="תוכנה-רשומה">תוכנה רשומה</h2>
+<p>עוסק פטור שמשתמש בתוכנה שמישהו אחר מוכר, משכיר או נותן לשימוש, צריך תוכנה שרשומה ברשות המסים. יצרן התוכנה הוא שרושם אותה <sup><a href="#src-2">[2]</a></sup>. מי שכותב תוכנה ומפעיל אותה לעסק שלו בלבד לא צריך רישום <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="איך-open-ledger-il-עושה-את-זה">איך Open Ledger IL עושה את זה</h2>
+<p>במצב עוסק פטור, Open Ledger IL מציעה רק את המסמכים המותרים: קבלה, קבלת זיכוי, חשבון עסקה, דרישת תשלום והצעת מחיר. הכיתוב "עוסק פטור" ומספר הזהות מודפסים בכותרת. רישום תשלום מפיק את הקבלה באותו צעד. המספור נקבע בהפקה, טריגרים במסד הנתונים חוסמים עריכה של מסמך סופי, וכל PDF חתום בחתימה דיגיטלית. שליחה במייל נחסמת עד שיש הסכמה של הלקוח.</p>
       <div class="guide-cta">
-        <a class="btn btn-primary" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener" data-demo>Try the live demo</a>
-        <a class="btn btn-ghost" href="/pricing/">See pricing and setup</a>
+        <a class="btn btn-primary" href="https://demo.open-ledger.dev" target="_blank" rel="noopener" data-demo>נסו את ההדגמה</a>
+        <a class="btn btn-ghost" href="/pricing/">למחירים ולאפשרויות ההתקנה</a>
       </div>
-      <h2 id="faq">Questions and answers</h2>
-      <dl class="faq"><dt>Can an עוסק פטור issue a tax invoice?</dt><dd>No. An עוסק פטור charges no VAT and issues no tax invoices. The document that records a payment is a receipt.</dd><dt>What is the difference between a payment request and a receipt?</dt><dd>A payment request asks for money and is not a bookkeeping document. A receipt records money received, and it is the income.</dd><dt>Can I send a receipt by email?</dt><dd>Yes, with conditions. You need the client&#x27;s consent, a secured electronic signature on the file, and a notice to the assessing officer before the first digital document.</dd><dt>What do I do when a receipt has a mistake?</dt><dd>You do not edit it. You cancel it or issue a credit document, and the original is kept.</dd></dl>
-      <h2 id="sources">Sources</h2>
+      <h2 id="faq">שאלות ותשובות</h2>
+      <dl class="faq"><dt>האם עוסק פטור יכול להפיק חשבונית מס?</dt><dd>לא. עוסק פטור לא גובה מע&quot;מ ולא מפיק חשבוניות מס. המסמך שמתעד תשלום הוא קבלה.</dd><dt>מה ההבדל בין דרישת תשלום לקבלה?</dt><dd>דרישת תשלום מבקשת כסף ואינה מסמך הנהלת חשבונות. קבלה מתעדת כסף שהתקבל, והיא ההכנסה.</dd><dt>אפשר לשלוח קבלה במייל?</dt><dd>כן, בתנאים. צריך הסכמה של הלקוח, חתימה אלקטרונית מאובטחת על הקובץ והודעה לפקיד השומה לפני המסמך הדיגיטלי הראשון.</dd><dt>מה עושים כשטועים בקבלה?</dt><dd>לא עורכים אותה. מבטלים אותה או מפיקים מסמך זיכוי, והמקור נשמר.</dd></dl>
+      <h2 id="sources">מקורות</h2>
       <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener" target="_blank">https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system</a></li><li id="src-3"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md</a></li></ol>
     </div>
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

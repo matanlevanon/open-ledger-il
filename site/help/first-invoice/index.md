@@ -1,57 +1,57 @@
-# From quote to receipt: your first documents
+# מהצעת מחיר לקבלה: המסמכים הראשונים
 
-The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.
+סדר המסמכים בלדג'ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-## The order
+## הסדר
 
-1. **Quote:** the price you offer. No tax meaning.
-2. **Payment request** (דרישת תשלום): asks for the money. No tax meaning either.
-3. **Receipt**, or for an עוסק מורשה a **tax invoice/receipt:** issued when the money arrives. This is the document that counts as income.
+1. **הצעת מחיר (Quote):** המחיר שאתם מציעים. בלי משמעות מס.
+2. **דרישת תשלום (Payment request):** מבקשת את הכסף. גם בלי משמעות מס.
+3. **קבלה**, ולעוסק מורשה **חשבונית מס קבלה:** יוצאת כשהכסף מגיע. זה המסמך שנחשב הכנסה.
 
-You skip steps you do not need. A client who already paid gets a receipt straight away.
+מדלגים על מה שלא צריך. לקוח ששילם כבר מקבל קבלה מיד.
 
-## Make a payment request
+## דרישת תשלום
 
-1. Click **Create new**, then **Payment Request**.
-2. Pick the client or add a new one. Add the lines: a service from **Services**, or free text, quantity and price.
-3. Tick the payment methods to show.
-4. Click **Save and finalize**. Finalizing gives it a number and locks it.
-5. Send it: by email from the document page, or with the WhatsApp button, or download the PDF.
+1. לוחצים **Create new** ואז **Payment Request**.
+2. בוחרים לקוח או מוסיפים חדש. מוסיפים שורות: שירות מ-**Services** או טקסט חופשי, כמות ומחיר.
+3. מסמנים את אמצעי התשלום שיופיעו.
+4. לוחצים **Save and finalize**. הסיום נותן מספר ונועל את המסמך.
+5. שולחים: במייל מעמוד המסמך, בכפתור הוואטסאפ, או מורידים PDF.
 
-## When the money arrives
+## כשהכסף מגיע
 
-1. Open the payment request. In the list it has a **Record payment** button.
-2. Fill in how and when the client paid, and the amount.
-3. Confirm. The Ledger issues the receipt, numbered and signed, and links it to the request.
-4. Send the receipt the same way.
+1. פותחים את דרישת התשלום. ברשימה יש לה כפתור **Record payment**.
+2. ממלאים איך ומתי הלקוח שילם ואת הסכום.
+3. מאשרים. הלדג'ר מוציא קבלה ממוספרת וחתומה ומקשר אותה לדרישה.
+4. שולחים את הקבלה באותה דרך.
 
-## Mistakes
+## טעויות
 
-- **Before you send:Cancel** on the document page.
-- **After you send:** a final document never changes. Open the receipt and click **Issue credit** for all or part of it.
+- **לפני ששלחתם:Cancel** בעמוד המסמך.
+- **אחרי ששלחתם:** מסמך סופי לא משתנה. פותחים את הקבלה ולוחצים **Issue credit** על כולה או על חלק ממנה.
 
-## Recurring
+## חיוב חודשי
 
-For a monthly retainer, **Income > Recurring** issues a payment request or a receipt every month, and sends it if you choose **Issue and send automatically**.
+לריטיינר חודשי, **Income > Recurring** מוציא דרישת תשלום או קבלה כל חודש, ושולח אותה אם בוחרים **Issue and send automatically**.
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [First sign-in and setup](https://open-ledger.matanlevanon.com/help/first-sign-in/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/first-invoice/
+Source: https://open-ledger.dev/help/first-invoice/

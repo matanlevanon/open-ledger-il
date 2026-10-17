@@ -26,7 +26,7 @@ Names are exact, in capital letters.
 - **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and Text `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
 - **Slack alerts:** Secret `SLACK_WEBHOOK_URL`.
 - **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`.
-- **MCP token:** Secret `MCP_TOKEN`, see [Connect Claude](/help/connect-claude/).
+- **MCP token:** Secret `MCP_TOKEN`, see [Connect Claude](/en/help/connect-claude/).
 
 ## Rules
 

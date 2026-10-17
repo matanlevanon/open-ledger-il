@@ -1,18 +1,18 @@
-# Licence
+# רישיון
 
-The Open Ledger IL code ships under the Functional Source License, version 1.1, with Apache 2.0 as the future licence (FSL-1.1-ALv2).
+הקוד של Open Ledger IL מופץ ברישיון Functional Source License, גרסה 1.1, עם Apache 2.0 כרישיון עתידי (FSL-1.1-ALv2).
 
-- Use it for your own business, at no cost.
-- Read the code and change it.
-- Share copies, changed or not, under the same licence.
-- Do not sell it, host it for others, or offer it in a product or service that competes with Open Ledger IL or with MTN’s paid services for it.
-- Each version becomes available under the Apache License 2.0 two years after its release.
-- It comes with no warranty.
+- משתמשים בו לעסק שלכם, בלי תשלום.
+- קוראים את הקוד ומשנים אותו.
+- משתפים עותקים, עם שינויים או בלי, באותו רישיון.
+- אסור למכור את הקוד, לארח אותו עבור אחרים, או להציע אותו במוצר או בשירות שמתחרה ב-Open Ledger IL או בשירותים בתשלום של MTN.
+- כל גרסה עוברת לרישיון Apache 2.0 שנתיים אחרי שהיא יוצאת.
+- הקוד מגיע בלי אחריות.
 
-Setting it up for you is a paid service. It does not change the licence of the code.
+הקמה עבורך היא שירות בתשלום. היא לא משנה את רישיון הקוד.
 
-[Read the full licence text](https://github.com/matanlevanon/open-ledger-il/blob/main/LICENSE)
+[לנוסח המלא של הרישיון](https://github.com/matanlevanon/open-ledger-il/blob/main/LICENSE)
 
-[The FSL on fsl.software](https://fsl.software/)
+[רישיון FSL באתר fsl.software](https://fsl.software/)
 
-Source: https://open-ledger.matanlevanon.com/license/
+Source: https://open-ledger.dev/license/

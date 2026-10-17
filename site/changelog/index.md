@@ -1,6 +1,8 @@
-# Changelog
+# יומן שינויים
 
-Every release, newest first. The current version is 1.6.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
+
+יומן השינויים נכתב באנגלית.
 
 ## 1.6.0 (2026-10-13)
 
@@ -189,4 +191,4 @@ The first public release of MTN - Open Ledger IL: invoicing, expenses and books 
 - A phone layout: bigger text and buttons, a bottom tab bar, tables shown as cards.
 - A product page in English and Hebrew, published from `/docs` with GitHub Pages.
 
-Source: https://open-ledger.matanlevanon.com/changelog/
+Source: https://open-ledger.dev/changelog/

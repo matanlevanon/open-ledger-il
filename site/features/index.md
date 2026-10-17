@@ -1,137 +1,137 @@
-# Every feature
+# כל היכולות
 
-For a עוסק פטור today and a עוסק מורשה tomorrow.
+לעוסק פטור היום ולעוסק מורשה מחר.
 
-Feature list
+רשימת יכולות
 
-## Every feature
+## כל היכולות
 
-What ships today, grouped by job.
+מה שקיים היום בקוד, לפי תחום.
 
-### Documents
+### מסמכים
 
-- Quotes, payment requests and pro formas (חשבון עסקה)
-- Receipts and credit receipts as עוסק פטור
-- Tax invoices, invoice/receipts and credit invoices as עוסק מורשה
-- English or bilingual Hebrew and English documents
-- Duplicate any document in one click
-- Create a receipt from any open document, with its payment filled in
-- Cheque payments with bank, branch and account number
-- Delete a draft only after you confirm
+- הצעות מחיר, דרישות תשלום וחשבונות עסקה
+- קבלות וקבלות זיכוי כעוסק פטור
+- חשבוניות מס, חשבוניות מס קבלה וחשבוניות זיכוי כעוסק מורשה
+- מסמכים באנגלית או בעברית ואנגלית
+- שכפול כל מסמך בלחיצה
+- הפקת קבלה מכל מסמך פתוח, עם התשלום כבר ממולא
+- תשלום בצ׳ק עם בנק, סניף ומספר חשבון
+- מחיקת טיוטה רק אחרי אישור
 
-### Numbering and compliance
+### מספור ותאימות
 
-- One gapless series per document type, with your own starting numbers
-- Final documents locked by database triggers and a hash chain
-- PDF with your logo and signature, sealed with a PAdES digital signature
-- ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue
-- פטור ceiling meter with alerts and a guided switch to מורשה
-- Issuing on/off switch, to keep issuing in your current system
+- סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך
+- מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב
+- PDF עם הלוגו והחתימה שלך, חתום בחתימה דיגיטלית PAdES
+- מספרי הקצאה מרשות המסים, ניסוי וייצור, עם תור ניסיונות חוזרים
+- מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה
+- מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך
 
-### Currency
+### מטבע
 
-- Documents in ILS, USD, EUR and other currencies
-- Bank of Israel rates, cached daily
-- A receipt takes the rate of the document it pays
-- Type your own rate, or tick "use latest rate"
-- Foreign and ILS totals printed in their own columns
-- Client balances kept in the client’s currency
+- מסמכים בשקלים, דולרים, אירו ומטבעות נוספים
+- שערי בנק ישראל, נשמרים מדי יום
+- קבלה מקבלת את השער של המסמך שהיא משלמת
+- הקלדת שער משלך, או סימון "שער אחרון"
+- סכומים במטבע חוץ ובשקלים מודפסים כל אחד בעמודה שלו
+- יתרות הלקוח נשמרות במטבע שלו
 
-### Sending
+### שליחה
 
-- Email with To, CC and BCC on every document
-- A CC list per client and a BCC copy list for your own records
-- WhatsApp short link that opens a preview page with your logo
-- A ready greeting in English or Hebrew, by the client’s language
-- Digital-document consent recorded per client
-- Payment reminders before and after the due date
-- A clear confirmation once a document is marked as sent
+- מייל עם נמען, CC ו-BCC בכל מסמך
+- רשימת CC לכל לקוח ורשימת BCC לעותק שלך
+- קישור וואטסאפ מקוצר שנפתח לעמוד תצוגה עם הלוגו שלך
+- ברכה מוכנה בעברית או באנגלית, לפי שפת הלקוח
+- הסכמה לקבלת מסמכים דיגיטליים נשמרת לכל לקוח
+- תזכורות תשלום לפני מועד התשלום ואחריו
+- אישור ברור אחרי שמסמך סומן כנשלח
 
-### Recurring documents
+### מסמכים חוזרים
 
-- Weekly, monthly, quarterly or yearly schedules for retainers and pro formas
-- Payment terms in days, set on each copy
-- An end date to stop the schedule
-- Issue and email on its own, or wait for your approval
-- Approvals page on the computer and the phone
-- Slack notice when a copy waits for approval
+- תזמון שבועי, חודשי, רבעוני או שנתי לריטיינרים ולחשבונות עסקה
+- תנאי תשלום בימים, לכל עותק
+- תאריך סיום לתזמון
+- הפקה ושליחה אוטומטית, או המתנה לאישורך
+- עמוד אישורים במחשב ובטלפון
+- הודעת Slack כשעותק ממתין לאישור
 
-### Clients and dashboard
+### לקוחות ולוח בקרה
 
-- A page per client with contacts, documents and a ledger per currency
-- Open balances, aging and an overdue list
-- Create a receipt straight from the overdue card
-- Cash flow, income by month and top clients
-- Sortable tables, newest first by default
+- עמוד לכל לקוח עם אנשי קשר, מסמכים וכרטסת לכל מטבע
+- יתרות פתוחות, גיול ורשימת איחורים
+- הפקת קבלה ישירות מכרטיס האיחורים
+- תזרים, הכנסות לפי חודש ולקוחות מובילים
+- טבלאות עם מיון, החדש ביותר ראשון כברירת מחדל
 
-### Contracts and work orders
+### חוזים והזמנות עבודה
 
-- Contract and work order templates with fields you define, in English and Hebrew
-- Service Agreement included in the first work order, signed once
-- Client signs on the phone or the computer: fill in, draw, confirm with an email code
-- Signed PDF with an evidence page and a certified PAdES signature
-- Work order numbers on their own series, filled in for you
-- Signing reminders, and contracts signed elsewhere uploaded to the client record
-- Turn a signed work order into a pro forma
+- תבניות חוזה והזמנת עבודה עם שדות משלך, בעברית ובאנגלית
+- הסכם השירותים מצורף להזמנת העבודה הראשונה, חתימה אחת
+- הלקוח חותם בטלפון או במחשב: ממלא, חותם בציור ומאשר בקוד במייל
+- PDF חתום עם דף ראיות וחתימת PAdES מאושרת
+- מספרי הזמנות עבודה בסדרה משלהם, ממולאים אוטומטית
+- תזכורות חתימה, והעלאת חוזים שנחתמו מחוץ למערכת לכרטיס הלקוח
+- הפיכת הזמנת עבודה חתומה לחשבון עסקה
 
-### Business documents
+### מסמכי העסק
 
-- VAT and company certificates, bookkeeping and withholding confirmations
-- Claude reads the type, names and dates
-- Expiry warnings on the dashboard
-- Your assistant and accountant open the same list
+- תעודת עוסק, תעודת התאגדות, אישור ניהול ספרים וניכוי מס במקור
+- Claude קורא את הסוג, השמות והתאריכים
+- התראה בלוח הבקרה לפני שמסמך פג תוקף
+- העוזר ורואה החשבון רואים את אותה רשימה
 
-### Expenses and import
+### הוצאות וייבוא
 
-- Upload a receipt or snap a photo, Claude reads supplier, date and amount
-- Import a month of expenses from Google Drive
-- Import customers and past documents from another system
-- Imported documents keep the exchange rate printed on them, never a guessed one
-- Documents with no printed rate are flagged for you to fill in
+- העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום
+- ייבוא חודש שלם של הוצאות מ-Google Drive
+- ייבוא לקוחות ומסמכי עבר ממערכת אחרת
+- מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש
+- מסמך בלי שער מודפס מסומן כדי שתשלים אותו
 
-### Reports, exports and backups
+### דוחות, ייצוא וגיבויים
 
-- Income, expenses, profit and loss, open items and client ledgers
-- Download as PDF, XLSX or CSV
-- Monthly accountant pack and an accountant login with an end date and access log
-- Unified file (מבנה אחיד) v1.31 for the Tax Authority
-- PCN874 export (allocation-number column)
-- Quarterly backups to R2 and Google Drive
+- הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות לקוחות
+- הורדה כ-PDF, XLSX או CSV
+- חבילה חודשית לרואה החשבון וכניסה לרואה החשבון עם תאריך סיום ויומן גישה
+- קובץ במבנה אחיד גרסה 1.31 לרשות המסים
+- ייצוא PCN874 (עמודת מספר ההקצאה)
+- גיבוי רבעוני ל-R2 ול-Google Drive
 
-### On your phone
+### בטלפון
 
-- Installs on the home screen like an app
-- Quick page: photo, gallery, new document and recent activity
-- Bottom tab bar and tables that turn into cards
-- Photos taken offline upload when you are back online
+- מותקנת במסך הבית כמו אפליקציה
+- מסך "מהיר": צילום, גלריה, מסמך חדש ופעילות אחרונה
+- סרגל ניווט תחתון וטבלאות שהופכות לכרטיסים
+- תמונות שצולמו בלי קליטה עולות כשחוזרים לרשת
 
-Screenshots
+צילומי מסך
 
-## What you get
+## מה מקבלים
 
-**Documents and their relations.** Every document with its status, the documents it came from or led to, and what is still open.
+**מסמכים והקשרים ביניהם.** כל מסמך עם הסטטוס שלו, המסמכים שממנו נוצר או שנוצרו ממנו, ומה עוד פתוח.
 
-**Payment requests that close.** Record a payment and the receipt links back to the request. Partial payments keep the rest open.
+**דרישות תשלום שנסגרות.** רושמים תשלום והקבלה מקושרת לדרישה. תשלום חלקי משאיר את היתרה פתוחה.
 
-**Clients and their ledger.** One page per client with contacts, consent status, documents and a running ledger per currency.
+**לקוחות והכרטסת שלהם.** עמוד לכל לקוח עם אנשי קשר, סטטוס הסכמה, מסמכים וכרטסת רצה לפי מטבע.
 
-**Expenses to review and file.** Documents read by Claude land in New. Check the supplier, amount and category, then file.
+**הוצאות לבדיקה ותיוק.** מסמכים ש-Claude קרא נכנסים ל"חדש". בודקים ספק, סכום וקטגוריה ומתייקים.
 
-**Reports for you and your accountant.** Income, expenses, profit and loss, open items and ledgers. Download as PDF, XLSX or CSV.
+**דוחות לך ולרואה החשבון.** הכנסות, הוצאות, רווח והפסד, פריטים פתוחים וכרטסות. הורדה כ-PDF, XLSX או CSV.
 
-**Your business, your brand.** Business details, logo, signature, payment methods and bank details printed on your documents.
+**העסק שלך, המיתוג שלך.** פרטי העסק, לוגו, חתימה, אמצעי תשלום ופרטי בנק שמודפסים על המסמכים.
 
-The rules
+הכללים
 
-## Six rules the code enforces
+## שישה כללים שהקוד אוכף
 
-The database refuses to break them.
+מסד הנתונים מסרב לשבור אותם.
 
-- **A final document never changes** A mistake is fixed with a credit document or a cancellation, never an edit. Database triggers block updates to a final row.
-- **Numbers come only from finalize** Drafts carry no number, so a deleted draft never leaves a gap in the series.
-- **No tax invoice PDF without its allocation number** When the ITA requires a מספר הקצאה, the PDF waits for it.
-- **A demand and its receipt count once** A payment request or pro forma is a charge, the receipt is the income. Reports never add both.
-- **Rates are dated** VAT, the פטור ceiling and exchange rates are stored with the date they apply from.
-- **Sandbox and production never mix** ITA sandbox and production credentials, tokens and numbers are kept apart.
+- **מסמך סופי לא משתנה** טעות מתקנים במסמך זיכוי או בביטול, לעולם לא בעריכה. טריגרים במסד הנתונים חוסמים עדכון של שורה סופית.
+- **מספר ניתן רק בהפקה** לטיוטה אין מספר, כך שטיוטה שנמחקה לא משאירה חור בסדרה.
+- **אין PDF לחשבונית מס בלי מספר הקצאה** כשרשות המסים דורשת מספר הקצאה, ה-PDF ממתין לו.
+- **דרישה והקבלה שלה נספרות פעם אחת** דרישת תשלום או חשבון עסקה הם חיוב, הקבלה היא ההכנסה. הדוחות אף פעם לא מחברים את שתיהן.
+- **שיעורים מתוארכים** מע"מ, תקרת עוסק פטור ושערי מטבע נשמרים עם התאריך שממנו הם חלים.
+- **ניסוי וייצור לא מתערבבים** פרטי הגישה, הטוקנים והמספרים של סביבת הניסוי והייצור ברשות המסים נשמרים בנפרד.
 
-Source: https://open-ledger.matanlevanon.com/features/
+Source: https://open-ledger.dev/features/

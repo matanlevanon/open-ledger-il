@@ -1,64 +1,64 @@
-# First sign-in and setup
+# כניסה ראשונה והגדרות
 
-Sign in to your Ledger for the first time, fill in the business profile, logo, signature and numbering, and check one receipt before you go live.
+הכניסה הראשונה ללדג'ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.
 
-Updated 2026-10-17
+עודכן 2026-10-17
 
-## Sign in
+## כניסה
 
-1. Open the Ledger's address from the installer's last screen or the Desktop summary.
-2. Cloudflare shows its sign-in page. Type the owner email and click **Send me a code**.
-3. Copy the code from the email and paste it. You are in.
+1. פותחים את כתובת הלדג'ר מהמסך האחרון של תוכנת ההתקנה או מקובץ הסיכום על שולחן העבודה.
+2. Cloudflare מציג עמוד כניסה. מקלידים את המייל של הבעלים ולוחצים **Send me a code**.
+3. מעתיקים את הקוד מהמייל ומדביקים. נכנסתם.
 
-Every sign-in works this way. A person whose email is not on the list never reaches the Ledger, Cloudflare stops them first.
+כל כניסה עובדת כך. מי שהמייל שלו לא ברשימה לא מגיע ללדג'ר בכלל, Cloudflare עוצר אותו קודם.
 
-## Business profile
+## פרטי העסק
 
-The first sign-in opens the setup screen. The Ledger creates no document until the required fields hold a value: the business name in English and Hebrew, the tax number and the address. The same form lives in **Settings > Business**.
+הכניסה הראשונה פותחת את מסך ההגדרה. הלדג'ר לא יוצר אף מסמך עד שהשדות החובה מלאים: שם העסק באנגלית ובעברית, מספר העוסק והכתובת. אותו טופס נמצא ב-**Settings > Business**.
 
-Optional fields print on documents when set: tagline, email, phone, website, and on payment requests also bank details and payment links.
+שדות רשות מודפסים על המסמכים כשהם מלאים: שורת תיאור, מייל, טלפון, אתר, ובדרישות תשלום גם פרטי בנק וקישורי תשלום.
 
-## Logo and signature
+## לוגו וחתימה
 
-- **Settings > Business > Logo > Upload image.** PNG, JPEG, WebP or SVG, up to 2 MB.
-- **Settings > Signature > Signature image > Upload image.** A transparent PNG works best. It prints above the signer line on every issued document.
+- **Settings > Business > Logo > Upload image.** קובץ PNG, JPEG, WebP או SVG, עד 2MB.
+- **Settings > Signature > Signature image > Upload image.** הכי טוב PNG עם רקע שקוף. החתימה מודפסת מעל שורת החותם בכל מסמך.
 
-## Numbering, if you used another system before
+## מספור, אם עבדתם קודם בתוכנה אחרת
 
-**Settings > Numbering** lists one series per document type, each starting at 1. If you issued receipts or invoices in another system this year, set each series to one more than the last number you issued there.
+ב-**Settings > Numbering** יש סדרה לכל סוג מסמך, וכל סדרה מתחילה ב-1. אם הוצאתם השנה קבלות או חשבוניות בתוכנה אחרת, קובעים לכל סדרה את המספר הבא אחרי האחרון שהוצאתם שם.
 
-Do this before the first document in that series. The start number locks the moment a document takes a number, and the Ledger refuses any later change.
+עושים את זה לפני המסמך הראשון בסדרה. מספר ההתחלה ננעל ברגע שמסמך מקבל מספר, והלדג'ר לא מאפשר לשנות אותו אחר כך.
 
-## Payment methods
+## אמצעי תשלום
 
-**Settings > Payment methods.** Add the ways clients pay you: bank transfer with your account details, Bit, card, a payment link. Payment requests list the ones you tick.
+**Settings > Payment methods.** מוסיפים את הדרכים שבהן לקוחות משלמים לכם: העברה בנקאית עם פרטי החשבון, ביט, כרטיס, קישור תשלום. דרישות תשלום מציגות את מה שסימנתם.
 
-## Check before you go live
+## בדיקה לפני שמתחילים
 
-1. Issue one receipt to yourself for a small amount.
-2. Open the client copy and the filed copy. Check the header, the tax number, the logo and the signature.
-3. Check with your accountant: the document types you need, the business type, and sending documents digitally.
+1. מוציאים קבלה אחת לעצמכם על סכום קטן.
+2. פותחים את העותק ללקוח ואת העותק המתויק. בודקים כותרת, מספר עוסק, לוגו וחתימה.
+3. בודקים עם רואה החשבון: אילו סוגי מסמכים צריך, את סוג העסק, ושליחת מסמכים דיגיטלית.
 
-## Next
+## הצעד הבא
 
-[From quote to receipt](https://open-ledger.matanlevanon.com/help/first-invoice/).
+[מהצעת מחיר לקבלה](https://open-ledger.dev/help/first-invoice/).
 
-Still stuck? [Write to us from the pricing page.](https://open-ledger.matanlevanon.com/pricing/#setup)
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
-## More help
+## עוד עזרה
 
-- [Before you install: what you need](https://open-ledger.matanlevanon.com/help/before-you-start/)
-- [Install Open Ledger IL step by step](https://open-ledger.matanlevanon.com/help/install/)
-- [Create the Cloudflare API token](https://open-ledger.matanlevanon.com/help/cloudflare-token/)
-- [Give your accountant or assistant access](https://open-ledger.matanlevanon.com/help/users/)
-- [Connect to the Tax Authority for allocation numbers](https://open-ledger.matanlevanon.com/help/tax-authority/)
-- [From quote to receipt: your first documents](https://open-ledger.matanlevanon.com/help/first-invoice/)
-- [Take payments with Grow, Cardcom or another provider](https://open-ledger.matanlevanon.com/help/payment-providers/)
-- [Get your expenses into the Ledger](https://open-ledger.matanlevanon.com/help/expenses/)
-- [Send documents by email, and keep them out of spam](https://open-ledger.matanlevanon.com/help/email/)
-- [Connect Claude or another AI app (MCP)](https://open-ledger.matanlevanon.com/help/connect-claude/)
-- [Add or change a key after the install](https://open-ledger.matanlevanon.com/help/keys-later/)
-- [Updates and backups](https://open-ledger.matanlevanon.com/help/updates-backups/)
-- [Common problems and how to fix them](https://open-ledger.matanlevanon.com/help/troubleshooting/)
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
-Source: https://open-ledger.matanlevanon.com/help/first-sign-in/
+Source: https://open-ledger.dev/help/first-sign-in/

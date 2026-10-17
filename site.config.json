@@ -1,8 +1,8 @@
 {
-  "siteUrl": "https://open-ledger.matanlevanon.com",
+  "siteUrl": "https://open-ledger.dev",
   "repoUrl": "https://github.com/matanlevanon/open-ledger-il",
-  "demoUrl": "https://sampleledger.matanlevanon.com",
-  "shopUrl": "https://get.matanlevanon.com",
+  "demoUrl": "https://demo.open-ledger.dev",
+  "shopUrl": "https://get.open-ledger.dev",
   "shopLive": false,
   "contactEndpoint": "https://contact.matanlevanon.com/lead",
   "analytics": {

@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Common problems and how to fix them</title>
-<meta name="description" content="Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/help/troubleshooting/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/help/troubleshooting/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/help/troubleshooting/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/help/troubleshooting/">
+<title>בעיות נפוצות ואיך פותרים אותן</title>
+<meta name="description" content="פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.">
+<link rel="canonical" href="https://open-ledger.dev/help/troubleshooting/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/troubleshooting/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/troubleshooting/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/troubleshooting/">
 <link rel="alternate" type="text/markdown" href="/help/troubleshooting/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="Common problems and how to fix them">
-<meta property="og:description" content="Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.">
+<meta property="og:title" content="בעיות נפוצות ואיך פותרים אותן">
+<meta property="og:description" content="פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/help/troubleshooting/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
+<meta property="og:url" content="https://open-ledger.dev/help/troubleshooting/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/default.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Common problems and how to fix them">
-<meta name="twitter:description" content="Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/default.png">
+<meta name="twitter:title" content="בעיות נפוצות ואיך פותרים אותן">
+<meta name="twitter:description" content="פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/default.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,10 +286,10 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Help","item":"https://open-ledger.matanlevanon.com/help/"},{"@type":"ListItem","position":3,"name":"Common problems and how to fix them","item":"https://open-ledger.matanlevanon.com/help/troubleshooting/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Common problems and how to fix them","description":"Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.","inLanguage":"en","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.matanlevanon.com/help/troubleshooting/","url":"https://open-ledger.matanlevanon.com/help/troubleshooting/","image":"https://open-ledger.matanlevanon.com/assets/og/default.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"עזרה","item":"https://open-ledger.dev/help/"},{"@type":"ListItem","position":3,"name":"בעיות נפוצות ואיך פותרים אותן","item":"https://open-ledger.dev/help/troubleshooting/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"בעיות נפוצות ואיך פותרים אותן","description":"פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.","inLanguage":"he","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.dev/help/troubleshooting/","url":"https://open-ledger.dev/help/troubleshooting/","image":"https://open-ledger.dev/assets/og/default.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
 </head>
 <body>
 <header>
@@ -303,19 +303,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/" aria-current="page">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/" aria-current="page">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/help/troubleshooting/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/help/troubleshooting/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/" aria-current="page">Help</a>
-    <a href="/he/help/troubleshooting/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/" aria-current="page">עזרה</a>
+    <a href="/en/help/troubleshooting/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -330,46 +330,46 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/help/">Help</a></li><li aria-current="page">Common problems and how to fix them</li></ol></nav>
-    <h1>Common problems and how to fix them</h1>
-    <p class="lead">Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li><a href="/help/">עזרה</a></li><li aria-current="page">בעיות נפוצות ואיך פותרים אותן</li></ol></nav>
+    <h1>בעיות נפוצות ואיך פותרים אותן</h1>
+    <p class="lead">פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.</p>
   </div>
   <section class="plain">
     <div class="wrap help-wrap">
-    <nav class="help-nav" aria-label="Topics"><p>Topics</p><ol><li><a href="/help/before-you-start/">Before you install</a></li><li><a href="/help/install/">Install</a></li><li><a href="/help/cloudflare-token/">Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in</a></li><li><a href="/help/users/">Accountant and team access</a></li><li><a href="/help/tax-authority/">Tax Authority</a></li><li><a href="/help/first-invoice/">Quote to receipt</a></li><li><a href="/help/payment-providers/">Payment providers</a></li><li><a href="/help/expenses/">Expenses</a></li><li><a href="/help/email/">Email and spam</a></li><li><a href="/help/connect-claude/">Connect Claude (MCP)</a></li><li><a href="/help/keys-later/">Add a key later</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li><li><a href="/help/troubleshooting/" aria-current="page">Common problems</a></li></ol></nav>
+    <nav class="help-nav" aria-label="נושאים"><p>נושאים</p><ol><li><a href="/help/before-you-start/">לפני ההתקנה</a></li><li><a href="/help/install/">התקנה</a></li><li><a href="/help/cloudflare-token/">API token ב-Cloudflare</a></li><li><a href="/help/first-sign-in/">כניסה ראשונה</a></li><li><a href="/help/users/">גישה לרואה חשבון וצוות</a></li><li><a href="/help/tax-authority/">רשות המסים</a></li><li><a href="/help/first-invoice/">מהצעת מחיר לקבלה</a></li><li><a href="/help/payment-providers/">סולקים</a></li><li><a href="/help/expenses/">הוצאות</a></li><li><a href="/help/email/">מייל וספאם</a></li><li><a href="/help/connect-claude/">חיבור Claude (MCP)</a></li><li><a href="/help/keys-later/">הוספת מפתח</a></li><li><a href="/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/help/troubleshooting/" aria-current="page">בעיות נפוצות</a></li></ol></nav>
     <div class="prose">
-      <p class="shot-cap" style="text-align:start">Updated 2026-10-17</p>
+      <p class="shot-cap" style="text-align:start">עודכן 2026-10-17</p>
       
-      <h2 id="the-installer">The installer</h2>
-<ul><li><b>Windows protected your PC.</b> Click <b>More info</b>, then <b>Run anyway</b>.</li><li><b>The antivirus removed the file.</b> Restore it from the antivirus quarantine and allow it, or download it again from the purchase email.</li><li><b>Nothing opens after double-click.</b> Wait 20 seconds, the file is large. The installer opens a browser tab at an address starting with <code>http://127.0.0.1</code>. If no tab opens, copy that address from the small black window into your browser.</li><li><b>The licence key is refused.</b> Type it as <code>OL-XXXX-XXXX-XXXX-XXXX</code>, and check the tax number. The key works only for the tax number it was bought for. Reinstalling the same business with the same key is fine.</li></ul>
+      <h2 id="תוכנת-ההתקנה">תוכנת ההתקנה</h2>
+<ul><li><b>Windows protected your PC.</b> לוחצים <b>More info</b> ואז <b>Run anyway</b>.</li><li><b>האנטי-וירוס מחק את הקובץ.</b> משחזרים אותו מההסגר של האנטי-וירוס ומאשרים, או מורידים שוב ממייל הרכישה.</li><li><b>לחיצה כפולה ושום דבר לא נפתח.</b> מחכים 20 שניות, הקובץ גדול. תוכנת ההתקנה פותחת לשונית בדפדפן בכתובת שמתחילה ב-<code>http://127.0.0.1</code>. אם לא נפתחה לשונית, מעתיקים את הכתובת מהחלון השחור הקטן לדפדפן.</li><li><b>מפתח הרישיון נדחה.</b> מקלידים אותו בצורה <code>OL-XXXX-XXXX-XXXX-XXXX</code> ובודקים את מספר העוסק. המפתח עובד רק למספר שבשבילו נקנה. התקנה חוזרת של אותו עסק עם אותו מפתח עובדת.</li></ul>
 <h2 id="cloudflare">Cloudflare</h2>
-<ul><li><b>Zone Resources is missing.</b> It shows up only after a Zone permission row. Without a domain, skip it and use the free workers.dev address. See <a href="/help/cloudflare-token/">Create the Cloudflare API token</a>.</li><li><b>Check token fails.</b> The message names the missing permission. Edit the token, add the row, save, and check again.</li><li><b>Zero Trust or R2 asks for a card.</b> Both free plans ask for a payment method and charge nothing.</li><li><b>Purchase R2 Plan.</b> Click it and confirm the free tier. The first 10 GB a month are free.</li></ul>
-<h2 id="keys">Keys</h2>
-<ul><li><b>A Gemini key is refused.</b> New keys from Google AI Studio start with <code>AQ.</code>. The installer from version 1.6.0 of 17 October 2026 accepts them. With an older installer, pick <b>No</b> for expense reading and add the key afterwards, see <a href="/help/keys-later/">Add or change a key</a>.</li><li><b>An Anthropic key is refused.</b> It starts with <code>sk-ant-</code>. Copy it again from console.anthropic.com.</li></ul>
-<h2 id="signing-in">Signing in</h2>
-<ul><li><b>A Cloudflare page asks for an email.</b> That is the sign-in. Type the owner email and paste the code from the email.</li><li><b>No code arrives.</b> Check spam, and check that the email is the one given in the installer.</li><li><b>Someone else is stopped at the Cloudflare page.</b> Add their email in Cloudflare Access, see <a href="/help/users/">Give your accountant access</a>.</li></ul>
-<h2 id="downloads-and-email">Downloads and email</h2>
-<ul><li><b>The download link says it expired or ran out.</b> Click <b>Email me a fresh link</b> on that page.</li><li><b>Clients get your documents in spam.</b> See <a href="/help/email/">Keep them out of spam</a>.</li><li><b>Lost the MCP token.</b> See <a href="/help/connect-claude/">Connect Claude</a>.</li></ul>
-<h2 id="tax-authority">Tax Authority</h2>
-<ul><li><b>ITA says reconnect.</b> The login lasts 90 days. Open <b>ITA</b> and click <b>Connect again</b>.</li><li><b>An invoice waits for a number for 24 hours.</b> Request the number in the Tax Authority web app and type it on the ITA page.</li></ul>
+<ul><li><b>אין Zone Resources.</b> הוא מופיע רק אחרי שורת הרשאה מסוג Zone. בלי דומיין, מדלגים ומשתמשים בכתובת החינמית של workers.dev. ראו <a href="/help/cloudflare-token/">יצירת ה-API token</a>.</li><li><b>Check token נכשל.</b> ההודעה אומרת איזו הרשאה חסרה. עורכים את הטוקן, מוסיפים את השורה, שומרים ובודקים שוב.</li><li><b>Zero Trust או R2 מבקשים כרטיס.</b> שתי התוכניות החינמיות מבקשות אמצעי תשלום ולא מחייבות.</li><li><b>Purchase R2 Plan.</b> לוחצים ומאשרים את התוכנית החינמית. 10GB הראשונים בחודש בחינם.</li></ul>
+<h2 id="מפתחות">מפתחות</h2>
+<ul><li><b>מפתח Gemini נדחה.</b> מפתחות חדשים מ-Google AI Studio מתחילים ב-<code>AQ.</code>. תוכנת ההתקנה של גרסה 1.6.0 מ-17 באוקטובר 2026 מקבלת אותם. עם תוכנת התקנה ישנה, בוחרים <b>No</b> בקריאת הוצאות ומוסיפים את המפתח אחר כך, ראו <a href="/help/keys-later/">הוספה או החלפה של מפתח</a>.</li><li><b>מפתח Anthropic נדחה.</b> הוא מתחיל ב-<code>sk-ant-</code>. מעתיקים אותו שוב מ-console.anthropic.com.</li></ul>
+<h2 id="כניסה">כניסה</h2>
+<ul><li><b>עמוד של Cloudflare מבקש מייל.</b> זו הכניסה. מקלידים את מייל הבעלים ומדביקים את הקוד מהמייל.</li><li><b>הקוד לא מגיע.</b> בודקים בספאם, ובודקים שזה המייל שהוזן בתוכנת ההתקנה.</li><li><b>מישהו אחר נעצר בעמוד של Cloudflare.</b> מוסיפים את המייל שלו ב-Cloudflare Access, ראו <a href="/help/users/">גישה לרואה חשבון</a>.</li></ul>
+<h2 id="הורדות-ומייל">הורדות ומייל</h2>
+<ul><li><b>קישור ההורדה פג או נגמר.</b> לוחצים <b>Email me a fresh link</b> באותו עמוד.</li><li><b>לקוחות מקבלים את המסמכים בספאם.</b> ראו <a href="/help/email/">שליחת מסמכים בלי ספאם</a>.</li><li><b>טוקן ה-MCP אבד.</b> ראו <a href="/help/connect-claude/">חיבור Claude</a>.</li></ul>
+<h2 id="רשות-המסים">רשות המסים</h2>
+<ul><li><b>ITA מבקש להתחבר מחדש.</b> הכניסה תקפה 90 יום. פותחים <b>ITA</b> ולוחצים <b>Connect again</b>.</li><li><b>חשבונית מחכה למספר 24 שעות.</b> מבקשים את המספר באתר של רשות המסים ומקלידים אותו בעמוד ITA.</li></ul>
       
-      <p>Still stuck? <a href="/pricing/#setup">Write to us from the pricing page.</a></p>
-      <div class="help-more"><h2 id="more">More help</h2><ul><li><a href="/help/before-you-start/">Before you install: what you need</a></li><li><a href="/help/install/">Install Open Ledger IL step by step</a></li><li><a href="/help/cloudflare-token/">Create the Cloudflare API token</a></li><li><a href="/help/first-sign-in/">First sign-in and setup</a></li><li><a href="/help/users/">Give your accountant or assistant access</a></li><li><a href="/help/tax-authority/">Connect to the Tax Authority for allocation numbers</a></li><li><a href="/help/first-invoice/">From quote to receipt: your first documents</a></li><li><a href="/help/payment-providers/">Take payments with Grow, Cardcom or another provider</a></li><li><a href="/help/expenses/">Get your expenses into the Ledger</a></li><li><a href="/help/email/">Send documents by email, and keep them out of spam</a></li><li><a href="/help/connect-claude/">Connect Claude or another AI app (MCP)</a></li><li><a href="/help/keys-later/">Add or change a key after the install</a></li><li><a href="/help/updates-backups/">Updates and backups</a></li></ul></div>
+      <p>עדיין תקועים? <a href="/pricing/#setup">כתבו לנו מעמוד המחירים.</a></p>
+      <div class="help-more"><h2 id="more">עוד עזרה</h2><ul><li><a href="/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a></li><li><a href="/help/install/">התקנת Open Ledger IL צעד אחר צעד</a></li><li><a href="/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a></li><li><a href="/help/first-sign-in/">כניסה ראשונה והגדרות</a></li><li><a href="/help/users/">גישה לרואה חשבון או לעוזר</a></li><li><a href="/help/tax-authority/">חיבור לרשות המסים למספרי הקצאה</a></li><li><a href="/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a></li><li><a href="/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a></li><li><a href="/help/expenses/">הכנסת הוצאות ללדג&#x27;ר</a></li><li><a href="/help/email/">שליחת מסמכים במייל, בלי ספאם</a></li><li><a href="/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a></li><li><a href="/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a></li><li><a href="/help/updates-backups/">עדכונים וגיבויים</a></li></ul></div>
     </div>
     </div>
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

@@ -1,30 +1,30 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bookkeeping on your own cloud · Open Ledger IL</title>
-<meta name="description" content="What it means to run your bookkeeping in your own cloud account, what Cloudflare Workers is, what costs money and what stays free.">
+<title>הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול</title>
+<meta name="description" content="מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.">
 <meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://open-ledger.matanlevanon.com/guides/own-cloud-bookkeeping/">
-<link rel="alternate" hreflang="he" href="https://open-ledger.matanlevanon.com/he/guides/own-cloud-bookkeeping/">
-<link rel="alternate" hreflang="en" href="https://open-ledger.matanlevanon.com/guides/own-cloud-bookkeeping/">
-<link rel="alternate" hreflang="x-default" href="https://open-ledger.matanlevanon.com/he/guides/own-cloud-bookkeeping/">
+<link rel="canonical" href="https://open-ledger.dev/guides/own-cloud-bookkeeping/">
+<link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/own-cloud-bookkeeping/">
+<link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/own-cloud-bookkeeping/">
+<link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/own-cloud-bookkeeping/">
 <meta property="og:site_name" content="Open Ledger IL">
-<meta property="og:title" content="Bookkeeping on your own cloud · Open Ledger IL">
-<meta property="og:description" content="What it means to run your bookkeeping in your own cloud account, what Cloudflare Workers is, what costs money and what stays free.">
+<meta property="og:title" content="הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול">
+<meta property="og:description" content="מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://open-ledger.matanlevanon.com/guides/own-cloud-bookkeeping/">
-<meta property="og:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-own-cloud-bookkeeping.png">
+<meta property="og:url" content="https://open-ledger.dev/guides/own-cloud-bookkeeping/">
+<meta property="og:image" content="https://open-ledger.dev/assets/og/he-guide-own-cloud-bookkeeping.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Bookkeeping on your own cloud · Open Ledger IL">
-<meta name="twitter:description" content="What it means to run your bookkeeping in your own cloud account, what Cloudflare Workers is, what costs money and what stays free.">
-<meta name="twitter:image" content="https://open-ledger.matanlevanon.com/assets/og/en-guide-own-cloud-bookkeeping.png">
+<meta name="twitter:title" content="הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול">
+<meta name="twitter:description" content="מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.">
+<meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-guide-own-cloud-bookkeeping.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-hebrew.7fec3b95.woff2) format('woff2');unicode-range:U+0307-0308,U+0590-05FF,U+200C-2010,U+20AA,U+25CC,U+FB1D-FB4F}@font-face{font-family:Heebo;font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/heebo-latin.964dfe7c.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}</style>
 <style>
 :root { --bg: #f6f8fb; --bg-2: #eef2f7; --surface: #ffffff; --surface-2: #f1f4f9; --border: #dbe2ec; --border-soft: #e6ebf2;
@@ -286,14 +286,14 @@ section[id] { scroll-margin-top: 64px; }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.matanlevanon.com/#organization","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","logo":"https://open-ledger.matanlevanon.com/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.matanlevanon.com/#website","name":"Open Ledger IL","url":"https://open-ledger.matanlevanon.com/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://open-ledger.matanlevanon.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://open-ledger.matanlevanon.com/guides/"},{"@type":"ListItem","position":3,"name":"Bookkeeping on your own cloud: what Cloudflare is, and why it costs little","item":"https://open-ledger.matanlevanon.com/guides/own-cloud-bookkeeping/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bookkeeping on your own cloud: what Cloudflare is, and why it costs little","description":"What it means to run your bookkeeping in your own cloud account, what Cloudflare Workers is, what costs money and what stays free.","inLanguage":"en","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.matanlevanon.com/guides/own-cloud-bookkeeping/","url":"https://open-ledger.matanlevanon.com/guides/own-cloud-bookkeeping/","image":"https://open-ledger.matanlevanon.com/assets/og/en-guide-own-cloud-bookkeeping.png","author":{"@id":"https://open-ledger.matanlevanon.com/#organization"},"publisher":{"@id":"https://open-ledger.matanlevanon.com/#organization"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"en","mainEntity":[{"@type":"Question","name":"Do I need a server?","acceptedAnswer":{"@type":"Answer","text":"No. The code runs on Cloudflare Workers, and there is no computer to keep on or update."}},{"@type":"Question","name":"What costs money?","acceptedAnswer":{"@type":"Answer","text":"The free plan runs the system. Workers Paid starts at $5 a month and lifts the limits."}},{"@type":"Question","name":"Who sees the data?","acceptedAnswer":{"@type":"Answer","text":"The data sits in your own Cloudflare account. Signing in goes through Cloudflare Access with your email."}},{"@type":"Question","name":"Do I need a domain?","acceptedAnswer":{"@type":"Answer","text":"Not necessarily. Without one, it runs on the free workers.dev address. To send email from your own address, you need a domain."}},{"@type":"Question","name":"What happens to the data if I stop using it?","acceptedAnswer":{"@type":"Answer","text":"It stays in your Cloudflare account. You can export it, for example as a unified file for your accountant."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"מדריכים","item":"https://open-ledger.dev/guides/"},{"@type":"ListItem","position":3,"name":"הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול","item":"https://open-ledger.dev/guides/own-cloud-bookkeeping/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול","description":"מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.","inLanguage":"he","dateModified":"2026-10-14","mainEntityOfPage":"https://open-ledger.dev/guides/own-cloud-bookkeeping/","url":"https://open-ledger.dev/guides/own-cloud-bookkeeping/","image":"https://open-ledger.dev/assets/og/he-guide-own-cloud-bookkeeping.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"he","mainEntity":[{"@type":"Question","name":"צריך שרת?","acceptedAnswer":{"@type":"Answer","text":"לא. הקוד רץ ב-Cloudflare Workers, ואין מחשב שצריך להחזיק דלוק או לעדכן."}},{"@type":"Question","name":"מה עולה כסף?","acceptedAnswer":{"@type":"Answer","text":"התוכנית החינמית מריצה את המערכת. תוכנית Workers Paid מתחילה ב-$5 לחודש ומסירה מגבלות."}},{"@type":"Question","name":"מי רואה את הנתונים?","acceptedAnswer":{"@type":"Answer","text":"הנתונים יושבים בחשבון Cloudflare שלכם. הכניסה למערכת עוברת דרך Cloudflare Access עם המייל שלכם."}},{"@type":"Question","name":"צריך דומיין?","acceptedAnswer":{"@type":"Answer","text":"לא חובה. בלי דומיין המערכת רצה בכתובת workers.dev החינמית. כדי לשלוח מייל מכתובת משלכם צריך דומיין."}},{"@type":"Question","name":"מה קורה עם הנתונים אם מפסיקים להשתמש?","acceptedAnswer":{"@type":"Answer","text":"הם נשארים בחשבון Cloudflare שלכם. אפשר לייצא אותם, למשל בקובץ במבנה אחיד לרואה החשבון."}}]}</script>
 </head>
 <body>
-<div class="draft-bar" role="note">Draft. This guide is under review and not published yet.</div>
+<div class="draft-bar" role="note">טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.</div>
 <header>
   <div class="wrap nav">
     <a class="brand" href="/">
@@ -305,19 +305,19 @@ section[id] { scroll-margin-top: 64px; }
       </svg>
       Open Ledger IL
     </a>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
-      <a class="lang" href="/he/guides/own-cloud-bookkeeping/" hreflang="he" lang="he">עברית</a>
-      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu"><span aria-hidden="true"></span></button>
+      <a class="lang" href="/en/guides/own-cloud-bookkeeping/" hreflang="en" lang="en">English</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="תפריט"><span aria-hidden="true"></span></button>
     </div>
   </div>
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/" aria-current="page">Guides</a><a href="/help/">Help</a>
-    <a href="/he/guides/own-cloud-bookkeeping/" hreflang="he" lang="he">עברית</a>
-    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
+    <a href="/en/guides/own-cloud-bookkeeping/" hreflang="en" lang="en">English</a>
+    <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
 </header>
 <script>
@@ -332,60 +332,60 @@ section[id] { scroll-margin-top: 64px; }
 </script>
 <main id="top">
   <div class="wrap page">
-    <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/">Home</a></li><li><a href="/guides/">Guides</a></li><li aria-current="page">Bookkeeping on your own cloud: what Cloudflare is, and why it costs little</li></ol></nav>
-    <h1>Bookkeeping on your own cloud: what Cloudflare is, and why it costs little</h1>
-    <p class="lead">What it means to run your bookkeeping in your own cloud account, what Cloudflare Workers is, what costs money and what stays free.</p>
+    <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li><a href="/guides/">מדריכים</a></li><li aria-current="page">הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול</li></ol></nav>
+    <h1>הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול</h1>
+    <p class="lead">מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.</p>
   </div>
   <section class="plain">
     <div class="wrap prose">
-      <p class="shot-cap" style="text-align:start">Updated 2026-10-14</p>
-      <p>Most invoicing software runs on the servers of the company that sells it. You pay a subscription, and your data sits with that company. There is another way: run the software in a cloud account in your own name. This guide covers what that means, and why on Cloudflare it can cost very little.</p>
-<h2 id="what-cloudflare-workers-is">What Cloudflare Workers is</h2>
-<p>Cloudflare is an internet infrastructure company. Workers is its service for running code without a server: the code runs when someone calls it, and there is no computer to keep on, no operating system to update and no server backups to manage <sup><a href="#src-1">[1]</a></sup>.</p>
-<p>Around Workers sit the other services a bookkeeping system needs:</p>
-<ul><li><b>D1</b>: a database. Clients, documents and payments live here.</li><li><b>R2</b>: file storage. PDFs and backups live here.</li><li><b>Browser Rendering</b>: a browser in the cloud that draws PDFs <sup><a href="#src-2">[2]</a></sup>.</li><li><b>Cloudflare Access</b>: sign-in with your email, with no passwords to manage.</li></ul>
-<h2 id="why-it-costs-little">Why it costs little</h2>
-<p>These services are priced by use, and each has a free allowance <sup><a href="#src-1">[1]</a></sup>. A small business bookkeeping system starts on the free plan <sup><a href="#src-5">[5]</a></sup>.</p>
-<p>The free plan runs the Worker, D1, R2, Browser Rendering and 5 scheduled jobs <sup><a href="#src-5">[5]</a></sup>. Workers Paid starts at $5 a month <sup><a href="#src-1">[1]</a></sup>.</p>
-<h2 id="when-to-move-to-the-paid-plan">When to move to the paid plan</h2>
-<p>The free plan has limits worth knowing <sup><a href="#src-5">[5]</a></sup>:</p>
-<ul><li><b>CPU per scheduled run</b>: 10 ms on the free plan <sup><a href="#src-1">[1]</a></sup>. Most jobs fit. Jobs that build files, such as a monthly accountant pack or a quarterly backup, are the ones likely to need the paid plan.</li><li><b>Browser Rendering</b>: 10 minutes a day free, 10 hours a month on the paid plan <sup><a href="#src-2">[2]</a></sup>.</li><li><b>D1 point-in-time recovery</b>: 7 days free, 30 days on the paid plan <sup><a href="#src-3">[3]</a></sup>. For legal books, 30 days is the one to have.</li></ul>
-<h2 id="your-data-with-you">Your data, with you</h2>
-<p>When the system runs in your account, the database and the files are in your name. No company sits in the middle that must stay in business for you to reach your books.</p>
-<p>The bookkeeping instructions require keeping documents 7 years from the end of the tax year, or 6 years from filing the return, whichever is later, and a quarterly backup kept away from the system <sup><a href="#src-4">[4]</a></sup>. On your own cloud that is your job, so the software should do it for you: files locked for the retention period, and an automatic backup.</p>
-<h2 id="backup-and-restore">Backup and restore</h2>
-<p>There are two kinds of protection, and you want both:</p>
-<ul><li><b>Point-in-time recovery</b>: D1 keeps a history of the database and lets you go back to a moment. How far back depends on the plan <sup><a href="#src-3">[3]</a></sup>.</li><li><b>A backup away from the system</b>: the instructions require a quarterly backup, in the first week of the quarter, kept away from the system <sup><a href="#src-4">[4]</a></sup>. An export of the database to separate storage, and a copy in another service, meet that.</li></ul>
-<p>A backup is only worth something if you can restore from it. So the software should test a restore with every backup.</p>
-<h2 id="what-is-yours-to-handle">What is yours to handle</h2>
-<p>Your own cloud gives you control, and control comes with responsibility:</p>
-<ul><li><b>Updates</b>: you decide when to move to a new version.</li><li><b>Secrets</b>: the signing key, the mail key and the Tax Authority credentials stay with you.</li><li><b>The bill</b>: past the free allowance, the Cloudflare charge is yours.</li></ul>
-<h2 id="what-you-need-to-start">What you need to start</h2>
-<p>A Cloudflare account, a PDF signing key and certificate, and Node.js with Wrangler on your computer to apply database migrations and set secrets <sup><a href="#src-5">[5]</a></sup>. A domain is optional. Without one, it runs on the free workers.dev address <sup><a href="#src-5">[5]</a></sup>.</p>
-<h2 id="how-open-ledger-il-does-it">How Open Ledger IL does it</h2>
-<p>Open Ledger IL is one Worker in your own Cloudflare account: D1 for data, R2 for files locked for the retention period, Browser Rendering for PDFs and Cloudflare Access for sign-in. It starts on Workers Free, and backs up every quarter to R2 and Google Drive with a restore test. Install it yourself with the deploy guide, or ask for it to be set up for you.</p>
+      <p class="shot-cap" style="text-align:start">עודכן 2026-10-14</p>
+      <p>רוב תוכנות החשבוניות רצות על השרתים של החברה שמוכרת אותן. אתם משלמים מנוי, והנתונים שלכם נמצאים אצלה. יש דרך אחרת: להריץ את התוכנה בחשבון ענן שרשום על שמכם. המדריך מסביר מה זה אומר, ולמה ב-Cloudflare זה יכול לעלות מעט מאוד.</p>
+<h2 id="מה-זה-cloudflare-workers">מה זה Cloudflare Workers</h2>
+<p>Cloudflare היא חברת תשתית אינטרנט. Workers הוא השירות שלה להרצת קוד בלי שרת: הקוד רץ כשמישהו פונה אליו, ולא צריך להחזיק מחשב דלוק, לעדכן מערכת הפעלה או לנהל גיבויים של שרת <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>סביב Workers יש שירותים נוספים שמערכת הנהלת חשבונות צריכה:</p>
+<ul><li><b>D1</b>: מסד נתונים. שם נשמרים הלקוחות, המסמכים והתשלומים.</li><li><b>R2</b>: אחסון קבצים. שם נשמרים קובצי ה-PDF והגיבויים.</li><li><b>Browser Rendering</b>: דפדפן שרץ בענן ומפיק קובצי PDF <sup><a href="#src-2">[2]</a></sup>.</li><li><b>Cloudflare Access</b>: כניסה עם המייל שלכם, בלי לנהל סיסמאות.</li></ul>
+<h2 id="למה-זה-זול">למה זה זול</h2>
+<p>השירותים האלה מתומחרים לפי שימוש, ויש להם מכסות חינמיות <sup><a href="#src-1">[1]</a></sup>. מערכת הנהלת חשבונות של עסק קטן מתחילה בתוכנית החינמית <sup><a href="#src-5">[5]</a></sup>.</p>
+<p>התוכנית החינמית מריצה את ה-Worker, את D1, את R2, את Browser Rendering ו-5 משימות מתוזמנות <sup><a href="#src-5">[5]</a></sup>. תוכנית Workers Paid מתחילה ב-$5 לחודש <sup><a href="#src-1">[1]</a></sup>.</p>
+<h2 id="מתי-כדאי-לעבור-לתוכנית-בתשלום">מתי כדאי לעבור לתוכנית בתשלום</h2>
+<p>לתוכנית החינמית יש מגבלות שכדאי להכיר <sup><a href="#src-5">[5]</a></sup>:</p>
+<ul><li><b>זמן מעבד למשימה מתוזמנת</b>: 10 מילישניות בתוכנית החינמית <sup><a href="#src-1">[1]</a></sup>. רוב המשימות נכנסות. משימות שבונות קבצים, כמו חבילה חודשית לרואה החשבון או גיבוי רבעוני, הן אלה שכנראה ידרשו את התוכנית בתשלום.</li><li><b>Browser Rendering</b>: 10 דקות ביום בחינם, 10 שעות בחודש בתוכנית בתשלום <sup><a href="#src-2">[2]</a></sup>.</li><li><b>שחזור לנקודת זמן ב-D1</b>: 7 ימים בחינם, 30 ימים בתוכנית בתשלום <sup><a href="#src-3">[3]</a></sup>. לספרים חוקיים, 30 ימים זה מה שכדאי שיהיה.</li></ul>
+<h2 id="הנתונים-שלכם-אצלכם">הנתונים שלכם, אצלכם</h2>
+<p>כשהמערכת רצה בחשבון שלכם, מסד הנתונים והקבצים רשומים על שמכם. אין חברה באמצע שצריכה להיות פעילה כדי שתגיעו לספרים.</p>
+<p>ההוראות לניהול פנקסים דורשות לשמור את המסמכים 7 שנים מסוף שנת המס, או 6 שנים מהגשת הדוח, המאוחר מביניהם, ולגבות כל רבעון אל מחוץ למערכת <sup><a href="#src-4">[4]</a></sup>. בענן משלכם אתם אחראים לזה, ולכן כדאי שהתוכנה תעשה את זה לבד: נעילת קבצים לתקופת השמירה וגיבוי אוטומטי.</p>
+<h2 id="גיבוי-ושחזור">גיבוי ושחזור</h2>
+<p>יש שני סוגים של הגנה, וכדאי שיהיו שניהם:</p>
+<ul><li><b>שחזור לנקודת זמן</b>: D1 שומר היסטוריה של מסד הנתונים ומאפשר לחזור לרגע מסוים. התקופה תלויה בתוכנית <sup><a href="#src-3">[3]</a></sup>.</li><li><b>גיבוי מחוץ למערכת</b>: ההוראות דורשות גיבוי רבעוני, בשבוע הראשון של הרבעון, שנשמר הרחק מהמערכת <sup><a href="#src-4">[4]</a></sup>. ייצוא של מסד הנתונים לאחסון נפרד, ועותק בשירות אחר, עונים על זה.</li></ul>
+<p>גיבוי שווה משהו רק אם אפשר לשחזר ממנו. לכן כדאי שהתוכנה תבדוק שחזור בכל גיבוי.</p>
+<h2 id="מה-האחריות-שלכם">מה האחריות שלכם</h2>
+<p>ענן משלכם נותן שליטה, ועם השליטה באה אחריות:</p>
+<ul><li><b>עדכונים</b>: אתם מחליטים מתי לעדכן גרסה.</li><li><b>סודות</b>: מפתחות החתימה, מפתח המייל ופרטי הגישה לרשות המסים שמורים אצלכם.</li><li><b>החשבון</b>: אם עוברים את המכסה החינמית, החיוב מ-Cloudflare הוא שלכם.</li><li><b>הגישה</b>: מי שנכנס לחשבון Cloudflare שולט במערכת, ולכן כדאי להגן עליו באימות דו שלבי.</li></ul>
+<h2 id="מה-צריך-כדי-להתחיל">מה צריך כדי להתחיל</h2>
+<p>חשבון Cloudflare, מפתח ותעודה לחתימת PDF, ו-Node.js עם Wrangler במחשב שלכם להרצת מיגרציות ולהגדרת סודות <sup><a href="#src-5">[5]</a></sup>. דומיין לא חובה. בלי דומיין המערכת רצה בכתובת workers.dev החינמית <sup><a href="#src-5">[5]</a></sup>.</p>
+<h2 id="איך-open-ledger-il-עושה-את-זה">איך Open Ledger IL עושה את זה</h2>
+<p>Open Ledger IL היא Worker אחד שרץ בחשבון Cloudflare שלכם: D1 לנתונים, R2 לקבצים עם נעילה לתקופת השמירה, Browser Rendering ל-PDF ו-Cloudflare Access לכניסה. היא מתחילה בתוכנית Workers Free, ומגבה כל רבעון ל-R2 ול-Google Drive עם בדיקת שחזור. אפשר להתקין לבד לפי מדריך הפריסה, או לבקש הקמה.</p>
       <div class="guide-cta">
-        <a class="btn btn-primary" href="https://sampleledger.matanlevanon.com" target="_blank" rel="noopener" data-demo>Try the live demo</a>
-        <a class="btn btn-ghost" href="/pricing/">See pricing and setup</a>
+        <a class="btn btn-primary" href="https://demo.open-ledger.dev" target="_blank" rel="noopener" data-demo>נסו את ההדגמה</a>
+        <a class="btn btn-ghost" href="/pricing/">למחירים ולאפשרויות ההתקנה</a>
       </div>
-      <h2 id="faq">Questions and answers</h2>
-      <dl class="faq"><dt>Do I need a server?</dt><dd>No. The code runs on Cloudflare Workers, and there is no computer to keep on or update.</dd><dt>What costs money?</dt><dd>The free plan runs the system. Workers Paid starts at $5 a month and lifts the limits.</dd><dt>Who sees the data?</dt><dd>The data sits in your own Cloudflare account. Signing in goes through Cloudflare Access with your email.</dd><dt>Do I need a domain?</dt><dd>Not necessarily. Without one, it runs on the free workers.dev address. To send email from your own address, you need a domain.</dd><dt>What happens to the data if I stop using it?</dt><dd>It stays in your Cloudflare account. You can export it, for example as a unified file for your accountant.</dd></dl>
-      <h2 id="sources">Sources</h2>
+      <h2 id="faq">שאלות ותשובות</h2>
+      <dl class="faq"><dt>צריך שרת?</dt><dd>לא. הקוד רץ ב-Cloudflare Workers, ואין מחשב שצריך להחזיק דלוק או לעדכן.</dd><dt>מה עולה כסף?</dt><dd>התוכנית החינמית מריצה את המערכת. תוכנית Workers Paid מתחילה ב-$5 לחודש ומסירה מגבלות.</dd><dt>מי רואה את הנתונים?</dt><dd>הנתונים יושבים בחשבון Cloudflare שלכם. הכניסה למערכת עוברת דרך Cloudflare Access עם המייל שלכם.</dd><dt>צריך דומיין?</dt><dd>לא חובה. בלי דומיין המערכת רצה בכתובת workers.dev החינמית. כדי לשלוח מייל מכתובת משלכם צריך דומיין.</dd><dt>מה קורה עם הנתונים אם מפסיקים להשתמש?</dt><dd>הם נשארים בחשבון Cloudflare שלכם. אפשר לייצא אותם, למשל בקובץ במבנה אחיד לרואה החשבון.</dd></dl>
+      <h2 id="sources">מקורות</h2>
       <ol class="sources"><li id="src-1"><a href="https://developers.cloudflare.com/workers/platform/pricing/" rel="noopener" target="_blank">https://developers.cloudflare.com/workers/platform/pricing/</a></li><li id="src-2"><a href="https://developers.cloudflare.com/browser-rendering/platform/pricing/" rel="noopener" target="_blank">https://developers.cloudflare.com/browser-rendering/platform/pricing/</a></li><li id="src-3"><a href="https://developers.cloudflare.com/d1/reference/time-travel/" rel="noopener" target="_blank">https://developers.cloudflare.com/d1/reference/time-travel/</a></li><li id="src-4"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-5"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md</a></li></ol>
     </div>
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/">Home</a><a href="/features/">Features</a><a href="/pricing/">Pricing</a><a href="/registration/">Registration</a><a href="/demo/">Demo</a><a href="/guides/">Guides</a><a href="/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">Deploy guide</a>
-      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">Setup guide</a>
-      <a href="/license/">FSL-1.1 licence</a>
-      <a href="/changelog/">Changelog</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md" target="_blank" rel="noopener">מדריך פריסה</a>
+      <a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/setup.md" target="_blank" rel="noopener">מדריך הגדרה</a>
+      <a href="/license/">רישיון FSL-1.1</a>
+      <a href="/changelog/">יומן שינויים</a>
     </div>
-    <div>Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority</div>
+    <div>מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים</div>
   </div>
 </footer>
 </body>

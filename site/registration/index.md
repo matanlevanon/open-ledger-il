@@ -1,21 +1,21 @@
-# Registered with the Israel Tax Authority
+# רשומה ברשות המסים
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.6.0, and new versions are added to the certificate as they are filed. [2]
+חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.6.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
 
-The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
+רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
 
-You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients’ books, and you register first.
+אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.
 
-Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings > Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.
+מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות > הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.
 
-To get ITA API credentials for allocation numbers as עוסק מורשה, you still sign up on the ITA developer portal. Confirm your setup with your accountant.
+כדי לקבל פרטי גישה ל-API של רשות המסים למספרי הקצאה כעוסק מורשה, עדיין נרשמים בפורטל המפתחים של הרשות. בדוק את ההגדרות עם רואה החשבון שלך.
 
-[The Tax Authority registry of registered software](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+[מאגר התוכנות הרשומות של רשות המסים](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
 
-**References**
+**מקורות**
 
-1. Israel Tax Authority, "Application to register software for a computerized accounting system", service page, updated 29.05.2025. Who must register: יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם) [gov.il](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
-2. Israel Tax Authority, registry of registered accounting software. [gov.il](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
-3. Legal framework: Income Tax (Bookkeeping) Instructions, 1973, the computerized-system rules under instruction 36.
+1. רשות המסים, "בקשה לרישום תוכנה המיועדת לניהול מערכת חשבונות ממוחשבת", עמוד השירות, עודכן 29.05.2025. מי חייב ברישום: יצרני תוכנות לניהול מערכת חשבונות ממוחשבת המיועדת למכירה, להשכרה או לשימושם של אחרים (כולל שימוש בחינם) [gov.il](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
+2. רשות המסים, מאגר התוכנות הרשומות לניהול מערכת חשבונות ממוחשבת. [gov.il](https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems)
+3. המסגרת החוקית: הוראות מס הכנסה (ניהול פנקסי חשבונות), התשל"ג-1973, הכללים למערכת ממוחשבת לפי הוראה 36.
 
-Source: https://open-ledger.matanlevanon.com/registration/
+Source: https://open-ledger.dev/registration/
