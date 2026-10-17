@@ -11,7 +11,7 @@ import { Sidebar } from './Sidebar';
 import { useStackTables } from './stackTables';
 import { TopBar } from './TopBar';
 
-const FOOTER_EMAIL = 'open-ledger@matanlevanon.com';
+const FOOTER_EMAIL = 'hello@open-ledger.dev';
 
 interface AppShellProps {
   children: ReactNode;
