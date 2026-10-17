@@ -455,7 +455,7 @@ export const settings: Record<keyof typeof en, string> = {
   // R35: Settings > Expenses > Email inbox.
   'settings.inbox.title': 'תיבת דואר לקבלות',
   'settings.inbox.hint': 'העבירו קבלות לכתובת הזו. כל אחת הופכת להוצאה שמחכה לבדיקה שלכם.',
-  'settings.inbox.notSetUp': 'תיבת הדואר לא מוגדרת. הריצו שוב את תוכנת ההתקנה כדי לקבל כתובת.',
+  'settings.inbox.notSetUp': 'אין כתובת מתוכנת ההתקנה. הריצו אותה שוב כדי לקבל כתובת, או הפנו כתובת בדומיין שלכם ל-Worker של הלדג\'ר.',
   'settings.inbox.address': 'כתובת התיבה',
   'settings.inbox.copy': 'העתקה',
   'settings.inbox.copied': 'הועתק.',
@@ -468,7 +468,7 @@ export const settings: Record<keyof typeof en, string> = {
   'settings.inbox.remove': 'הסרה',
   'settings.inbox.addSender': 'הוספת שולח',
   'settings.inbox.gmailTitle': 'הגדרה ב-Gmail',
-  'settings.inbox.gmailStep1': 'Gmail > הגדרות (גלגל השיניים) > הצגת כל ההגדרות > העברה ו-POP/IMAP > הוספת כתובת להעברה. הדביקו את הכתובת. Gmail שולח קוד, והוא מופיע בעמוד הזה. הקלידו אותו ב-Gmail ולחצו על אימות. אל תפעילו העברה של כל הדואר.',
+  'settings.inbox.gmailStep1': 'Gmail > הגדרות (גלגל השיניים) > הצגת כל ההגדרות > העברה ו-POP/IMAP > הוספת כתובת להעברה. הדביקו את הכתובת. Gmail שולח קוד או קישור, והם מופיעים בעמוד הזה. הקלידו את הקוד ב-Gmail ולחצו על אימות, או פתחו את הקישור. אל תפעילו העברה של כל הדואר.',
   'settings.inbox.gmailStep2': 'בתיבת החיפוש של Gmail הדביקו את החיפוש שלמטה, לחצו על הצגת אפשרויות חיפוש ואז על יצירת מסנן. סמנו העברה אל, בחרו את הכתובת ולחצו על יצירת מסנן.',
   'settings.inbox.gmailSearch': 'חיפוש ב-Gmail',
   'settings.inbox.gmailSearchHint': 'הוסיפו לחיפוש את הספקים שלכם, למשל from:(billing@supplier.com).',

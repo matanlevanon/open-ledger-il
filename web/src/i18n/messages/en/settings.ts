@@ -457,7 +457,7 @@ export const settings = {
   // R35: Settings > Expenses > Email inbox.
   'settings.inbox.title': 'Email inbox',
   'settings.inbox.hint': 'Forward receipts to this address. Each one becomes an expense waiting for your check.',
-  'settings.inbox.notSetUp': 'The email inbox is not set up. Run the installer again to get an address.',
+  'settings.inbox.notSetUp': 'No inbox address from the installer. Run the installer again to get one, or route an address on your own domain to this Ledger\'s Worker.',
   'settings.inbox.address': 'Inbox address',
   'settings.inbox.copy': 'Copy',
   'settings.inbox.copied': 'Copied.',
@@ -470,7 +470,7 @@ export const settings = {
   'settings.inbox.remove': 'Remove',
   'settings.inbox.addSender': 'Add sender',
   'settings.inbox.gmailTitle': 'Set it up in Gmail',
-  'settings.inbox.gmailStep1': 'Gmail > Settings (gear) > See all settings > Forwarding and POP/IMAP > Add a forwarding address. Paste the address. Gmail sends a code, which appears on this page. Type it in Gmail and click Verify. Do not turn on forwarding of all mail.',
+  'settings.inbox.gmailStep1': 'Gmail > Settings (gear) > See all settings > Forwarding and POP/IMAP > Add a forwarding address. Paste the address. Gmail sends a code or a link, which appears on this page. Type the code in Gmail and click Verify, or open the link. Do not turn on forwarding of all mail.',
   'settings.inbox.gmailStep2': 'In the Gmail search box, paste the search below, click Show search options, then Create filter. Tick Forward it to, pick the address, and click Create filter.',
   'settings.inbox.gmailSearch': 'Gmail search',
   'settings.inbox.gmailSearchHint': 'Add your suppliers to the search, for example from:(billing@supplier.com).',

@@ -137,19 +137,20 @@ export function InboxSection() {
             <input type="checkbox" role="switch" checked={state.enabled} disabled={busy} onChange={(e) => void toggle(e.target.checked)} />
             {t('settings.inbox.enabled')}
           </label>
-
-          {state.gmail && (
-            <p className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-sm text-ink" data-testid="inbox-gmail">
-              {state.gmail.code ? t('settings.inbox.gmailCode', { code: state.gmail.code }) : t('settings.inbox.gmailNoCode')}{' '}
-              {state.gmail.link && (
-                <a href={state.gmail.link} target="_blank" rel="noopener noreferrer" className="text-brand underline">
-                  {t('settings.inbox.gmailLink')}
-                </a>
-              )}{' '}
-              <span className="text-xs text-muted">{day(state.gmail.at)}</span>
-            </p>
-          )}
         </>
+      )}
+
+      {/* Shown with or without a gateway address: an own-domain route to this Worker gets Gmail's check too. */}
+      {state.gmail && (
+        <p className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-sm text-ink" data-testid="inbox-gmail">
+          {state.gmail.code ? t('settings.inbox.gmailCode', { code: state.gmail.code }) : t('settings.inbox.gmailNoCode')}{' '}
+          {state.gmail.link && (
+            <a href={state.gmail.link} target="_blank" rel="noopener noreferrer" className="text-brand underline">
+              {t('settings.inbox.gmailLink')}
+            </a>
+          )}{' '}
+          <span className="text-xs text-muted">{day(state.gmail.at)}</span>
+        </p>
       )}
 
       <div className="flex flex-col gap-2">

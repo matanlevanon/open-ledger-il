@@ -106,8 +106,15 @@ describe('Settings > Expenses > Email inbox', () => {
   it('says how to set it up when there is no address yet', async () => {
     state = { ...state, configured: false, address: null, canRotate: false };
     renderIt();
-    expect(await screen.findByTestId('inbox-not-set-up')).toHaveTextContent('The email inbox is not set up.');
+    expect(await screen.findByTestId('inbox-not-set-up')).toHaveTextContent('No inbox address from the installer.');
     expect(screen.queryByRole('button', { name: 'Make a new address' })).toBeNull();
+  });
+
+  it('shows the Gmail confirmation link with no gateway address (own-domain route)', async () => {
+    state = { ...state, configured: false, address: null, canRotate: false, gmail: { code: null, link: 'https://mail.google.com/mail/vf-abc', at: '2026-10-17T20:46:08.951Z' } };
+    renderIt();
+    expect(await screen.findByTestId('inbox-gmail')).toHaveTextContent('Gmail sent a confirmation email.');
+    expect(screen.getByRole('link', { name: 'Open the confirmation link' })).toHaveAttribute('href', 'https://mail.google.com/mail/vf-abc');
   });
 
   it('stays hidden for a 403', async () => {
