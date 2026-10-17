@@ -1,0 +1,7 @@
+# Reviewed findings in old commits. Each line is a gitleaks fingerprint.
+# Fake Cloudflare Web Analytics token in a site test (0123456789abcdef...), not a secret.
+515aebfee19b5732e222bc85949ddbdc708c4979:tools/site/check/analytics.test.mjs:generic-api-key:35
+515aebfee19b5732e222bc85949ddbdc708c4979:tools/site/check/analytics.test.mjs:generic-api-key:39
+# A D1 database id in tools/ita-auth/wrangler.toml, replaced by the placeholder in a8da70c.
+# An id alone grants no access: D1 needs an API token of the owning account.
+e8dadd749715d18d22ef6953cc3b1bd10c67d1bf:tools/ita-auth/wrangler.toml:cloudflare-d1-database-id:16
