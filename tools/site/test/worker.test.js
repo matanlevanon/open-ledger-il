@@ -1,18 +1,85 @@
 import { env } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
 import config from '../../../site.config.json';
-import worker, { contentSecurityPolicy, verificationFor } from '../src/index.js';
+import worker, { LEGACY_HOSTS, contentSecurityPolicy, legacyPath, verificationFor } from '../src/index.js';
 
 const SITE = config.siteUrl.replace(/\/+$/, '');
 const REPO = config.repoUrl.replace(/\/+$/, '');
 const get = (url, init) => worker.fetch(new Request(url, init), env);
+const OLD = `https://${config.legacyHosts[0]}`;
+const moved = async (url) => {
+  const res = await get(url);
+  return [res.status, res.headers.get('Location')];
+};
+
+describe('the move to siteUrl, Hebrew at the root and English under /en/', () => {
+  it('reads the legacy hosts from site.config.json', () => {
+    expect(LEGACY_HOSTS.length).toBeGreaterThan(0);
+    expect(LEGACY_HOSTS).not.toContain(new URL(SITE).hostname);
+  });
+
+  it('sends old Hebrew pages, /he and /he/..., to the root form', async () => {
+    expect(await moved(`${OLD}/he`)).toEqual([301, `${SITE}/`]);
+    expect(await moved(`${OLD}/he/`)).toEqual([301, `${SITE}/`]);
+    expect(await moved(`${OLD}/he/pricing/`)).toEqual([301, `${SITE}/pricing/`]);
+    expect(await moved(`${OLD}/he/help/install/`)).toEqual([301, `${SITE}/help/install/`]);
+  });
+
+  it('sends every other old path to /en/...', async () => {
+    expect(await moved(`${OLD}/`)).toEqual([301, `${SITE}/en/`]);
+    expect(await moved(`${OLD}/pricing/`)).toEqual([301, `${SITE}/en/pricing/`]);
+    expect(await moved(`${OLD}/help/install/`)).toEqual([301, `${SITE}/en/help/install/`]);
+    expect(await moved(`${OLD}/guides/unified-file/`)).toEqual([301, `${SITE}/en/guides/unified-file/`]);
+    expect(await moved(`${OLD}/index.md`)).toEqual([301, `${SITE}/en/index.md`]);
+  });
+
+  it('keeps the path of the crawler files and the assets', async () => {
+    for (const f of ['/robots.txt', '/sitemap.xml', '/llms.txt', '/llms-full.txt', '/favicon.svg', '/assets/logo.png']) {
+      expect(await moved(`${OLD}${f}`)).toEqual([301, `${SITE}${f}`]);
+    }
+  });
+
+  it('keeps the query string', async () => {
+    expect(await moved(`${OLD}/pricing/?utm_source=x&a=1`)).toEqual([301, `${SITE}/en/pricing/?utm_source=x&a=1`]);
+    expect(await moved(`${OLD}/he/demo/?ref=mail`)).toEqual([301, `${SITE}/demo/?ref=mail`]);
+  });
+
+  it('treats the www. of a legacy host the same', async () => {
+    expect(await moved(`https://www.${config.legacyHosts[0]}/he/features/`)).toEqual([301, `${SITE}/features/`]);
+    expect(await moved(`https://www.${config.legacyHosts[0]}/features/`)).toEqual([301, `${SITE}/en/features/`]);
+  });
+
+  it('sends an old /he/ path on siteUrl itself to the root form', async () => {
+    expect(await moved(`${SITE}/he/`)).toEqual([301, `${SITE}/`]);
+    expect(await moved(`${SITE}/he`)).toEqual([301, `${SITE}/`]);
+    expect(await moved(`${SITE}/he/pricing/?x=1`)).toEqual([301, `${SITE}/pricing/?x=1`]);
+  });
+
+  it('makes no loop: every redirect target on siteUrl answers 200 with no further redirect', async () => {
+    const starts = ['/', '/he', '/he/', '/pricing/', '/he/pricing/', '/help/install/', '/he/help/install/', '/en/', '/en/pricing/', '/robots.txt', '/sitemap.xml', '/llms.txt', '/llms-full.txt'];
+    for (const start of starts) {
+      const res = await get(`${OLD}${start}`);
+      expect(res.status, start).toBe(301);
+      const next = await get(res.headers.get('Location'));
+      expect(next.status, `${start} -> ${res.headers.get('Location')}`).toBe(200);
+    }
+  });
+
+  it('does not touch /help/ or /en/ on siteUrl, which only start like /he', async () => {
+    expect((await get(`${SITE}/help/install/`)).status).toBe(200);
+    expect((await get(`${SITE}/en/help/install/`)).status).toBe(200);
+    expect(legacyPath('/help/')).toBe('/en/help/');
+    expect(legacyPath('/hello')).toBe('/en/hello');
+  });
+});
 
 describe('redirects', () => {
   it('sends the www. host to siteUrl, keeping the path and query', async () => {
     const host = new URL(SITE).hostname;
-    const res = await get(`https://www.${host}/he/pricing/?x=1`);
+    const res = await get(`https://www.${host}/en/pricing/?x=1`);
     expect(res.status).toBe(301);
-    expect(res.headers.get('Location')).toBe(`${SITE}/he/pricing/?x=1`);
+    expect(res.headers.get('Location')).toBe(`${SITE}/en/pricing/?x=1`);
+    expect(await moved(`https://www.${host}/he/pricing/`)).toEqual([301, `${SITE}/pricing/`]);
   });
 
   it('sends the workers.dev address to siteUrl', async () => {
@@ -25,7 +92,7 @@ describe('redirects', () => {
     let res = await get(`${SITE}/index.html`);
     expect([res.status, res.headers.get('Location')]).toEqual([301, `${SITE}/`]);
     res = await get(`${SITE}/he.html`);
-    expect([res.status, res.headers.get('Location')]).toEqual([301, `${SITE}/he/`]);
+    expect([res.status, res.headers.get('Location')]).toEqual([301, `${SITE}/`]);
     res = await get(`${SITE}/docs/deploy.md`);
     expect([res.status, res.headers.get('Location')]).toEqual([301, `${REPO}/blob/main/docs/deploy.md`]);
     res = await get(`${SITE}/docs/`);
@@ -71,9 +138,10 @@ describe('headers', () => {
 
   it('sends the hreflang Link header on the home pages only', async () => {
     const link = (await get(`${SITE}/`)).headers.get('Link');
-    expect(link).toContain(`<${SITE}/>; rel="alternate"; hreflang="en"`);
-    expect(link).toContain(`<${SITE}/he/>; rel="alternate"; hreflang="he"`);
-    expect(link).toContain('hreflang="x-default"');
+    expect(link).toContain(`<${SITE}/>; rel="alternate"; hreflang="he"`);
+    expect(link).toContain(`<${SITE}/en/>; rel="alternate"; hreflang="en"`);
+    expect(link).toContain(`<${SITE}/>; rel="alternate"; hreflang="x-default"`);
+    expect((await get(`${SITE}/en/`)).headers.get('Link')).toBe(link);
     expect((await get(`${SITE}/favicon.svg`)).headers.get('Link')).toBeNull();
   });
 });
@@ -85,6 +153,17 @@ describe('search console verification', () => {
     const res = await get(`${SITE}/${file}`);
     expect(res.status).toBe(200);
     expect(await res.text()).toBe(`google-site-verification: ${file}`);
+  });
+
+  it('serves the verification file on the legacy hosts too, with no redirect', async () => {
+    const file = config.searchVerification?.googleFile;
+    if (!file) return;
+    for (const host of LEGACY_HOSTS) {
+      const res = await get(`https://${host}/${file}`);
+      expect(res.status).toBe(200);
+      expect(res.headers.get('Location')).toBeNull();
+      expect(await res.text()).toBe(`google-site-verification: ${file}`);
+    }
   });
 
   it('serves nothing when the config has no file', () => {

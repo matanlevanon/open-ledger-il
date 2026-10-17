@@ -1,12 +1,21 @@
 # open-ledger-site: serves the product site built into site/ (tools/site/README.md).
 # Workers Builds deploys it from this repository on every push:
 #   npx wrangler deploy --config tools/site/wrangler.toml
-# No routes or domains here. Add the custom domain in the dashboard, so a fork deploys this file
-# unchanged. Every address the site uses is in site.config.json at the repository root.
+# The official Worker is named open-ledger-il in the dashboard. A manual deploy of it adds
+# --name open-ledger-il. Every address the pages use is in site.config.json at the repository root.
+# The routes below are the official site's. A fork replaces them with its own domain, or deletes
+# them and adds the domain in the dashboard.
 name = "open-ledger-site"
 main = "src/index.js"
 compatibility_date = "2026-08-01"
 workers_dev = true
+# open-ledger.dev serves the site. www.open-ledger.dev and the old open-ledger.matanlevanon.com
+# answer 301 to the same page on it (src/index.js, legacyHosts in site.config.json).
+routes = [
+  { pattern = "open-ledger.dev", custom_domain = true },
+  { pattern = "www.open-ledger.dev", custom_domain = true },
+  { pattern = "open-ledger.matanlevanon.com", custom_domain = true },
+]
 # The workers.dev address answers with a 301 to siteUrl (src/index.js), so one host is indexed.
 preview_urls = false
 

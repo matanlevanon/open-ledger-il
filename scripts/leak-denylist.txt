@@ -76,3 +76,6 @@ allow-in:site.config.json,scripts/build-site.py,site/**,README.md:sampleledger.m
 allow-in:site.config.json,scripts/build-site.py,site/**,README.md:get.matanlevanon.com
 # The old GitHub Pages files are redirect pages to the new site (R32 task 9).
 allow-in:docs/index.html,docs/he.html:open-ledger.matanlevanon.com
+# The old site host answers 301 to open-ledger.dev (R36). The site Worker's custom domain list
+# names it, and its README says so.
+allow-in:tools/site/wrangler.toml,tools/site/README.md:open-ledger.matanlevanon.com

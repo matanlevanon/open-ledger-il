@@ -7,15 +7,25 @@ On top of the files it:
 
 - answers the `www.` host and the workers.dev address with a 301 to `siteUrl`, so one host is
   indexed
-- answers the GitHub Pages era paths with a 301: `/index.html` to `/`, `/he.html` to `/he/`, and
+- answers every host in `legacyHosts` (and its `www.`) with a 301 to the same page on `siteUrl`,
+  path and query kept. Hebrew moved from `/he/` to the root and English from the root to `/en/`,
+  so `/he/...` goes to `/...` and every other path to `/en/...`. `robots.txt`, `sitemap.xml`,
+  `llms.txt`, `llms-full.txt`, `favicon.svg` and `/assets/*` keep their path
+- answers an old `/he/...` path on `siteUrl` itself with a 301 to its root form
+- answers the GitHub Pages era paths with a 301: `/index.html` and `/he.html` to `/`, and
   `/docs/*` to the same file in the repository
 - adds a Content-Security-Policy, `X-Content-Type-Options`, `Referrer-Policy` and
   `Permissions-Policy` to every reply
 - caches hashed assets for a year, other assets for a day and pages for 10 minutes
 - sends a `Link` header with the hreflang alternates on the two home pages
 
-Every address comes from `site.config.json` at the repository root. A fork changes that file and
-deploys this folder unchanged. `wrangler.toml` holds no route or domain.
+Every address the pages use comes from `site.config.json` at the repository root. `wrangler.toml`
+lists the official site's custom domains: `open-ledger.dev`, `www.open-ledger.dev` and the old
+`open-ledger.matanlevanon.com`. A fork changes `siteUrl`, empties `legacyHosts`, and replaces
+those routes with its own domain or deletes them.
+
+The official Worker is named `open-ledger-il` in the dashboard. A manual deploy of it runs
+`npx wrangler deploy --config tools/site/wrangler.toml --name open-ledger-il`.
 
 ## Connect Workers Builds
 
@@ -33,13 +43,14 @@ Every push to `main` that touches those paths builds and deploys the site.
 
 ## Add the custom domain
 
-Workers & Pages > open-ledger-site > Settings > Domains & Routes > Add > Custom domain, for
-example `open-ledger.example.com`. Put the same address in `siteUrl` in `site.config.json`.
+A deploy adds the custom domains listed in `wrangler.toml`. To check, or to add one by hand:
+Workers & Pages > your Worker > Settings > Domains & Routes > Add > Custom domain, for example
+`open-ledger.example.com`. Put the same address in `siteUrl` in `site.config.json`.
 
 ## Check it
 
-1. Open the address. The English home page loads, and `/he/` the Hebrew one.
-2. `curl -sI https://<your address>/index.html` answers `301` with `Location: https://<your address>/`.
+1. Open the address. The Hebrew home page loads, and `/en/` the English one.
+2. `curl -sI https://<your address>/he/pricing/` answers `301` with `Location: https://<your address>/pricing/`.
 3. `curl -sI https://<your address>/` shows `Content-Security-Policy` and the `Link` header.
 4. `curl -sI https://open-ledger-site.<your subdomain>.workers.dev/` answers `301` to your address.
 

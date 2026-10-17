@@ -1,5 +1,8 @@
 {
   "siteUrl": "https://open-ledger.dev",
+  "legacyHosts": [
+    "open-ledger.matanlevanon.com"
+  ],
   "repoUrl": "https://github.com/matanlevanon/open-ledger-il",
   "demoUrl": "https://demo.open-ledger.dev",
   "shopUrl": "https://get.open-ledger.dev",
