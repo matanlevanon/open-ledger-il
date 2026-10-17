@@ -313,7 +313,7 @@ function footerHtml(lang: Lang, doc: RenderDocument, page: { number: number; of:
 <div class="footer">
   <div>
     <div>${esc(doc.signed === true ? t.createdAndSignedUsing : t.createdUsing)}</div>
-    <div class="muted">${esc(computerizedLabel(lang))}</div>
+    <div class="computerized">${esc(computerizedLabel(lang))}</div>
   </div>
   <div class="footer-right">${esc(typeName)} / ${esc(numberPart)} | ${esc(t.page)} ${page.number} ${esc(t.of)} ${page.of}</div>
 </div>`;
@@ -505,7 +505,7 @@ function bilingualFooterHtml(doc: RenderDocument, page: { number: number; of: nu
 <div class="footer">
   <div>
     <div>${bl(doc.signed === true ? 'createdAndSignedUsing' : 'createdUsing')}</div>
-    <div class="muted">${esc(computerizedLabel('en'))}</div>
+    <div class="computerized">${esc(computerizedLabel('en'))}</div>
   </div>
   <div class="footer-right">${blText(doc.typeNameEn, doc.typeNameHe)} / ${numberPart} | ${bl('page')} ${page.number} ${bl('of')} ${page.of}</div>
 </div>`;

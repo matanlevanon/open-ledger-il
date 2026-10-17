@@ -165,6 +165,14 @@ describe('renderDocument: copy marking', () => {
     const html = renderDocument(sampleRenderDocument(), 'client');
     expect(html).toContain('מסמך ממוחשב');
   });
+
+  it('prints מסמך ממוחשב prominently, not muted (instruction 18ב(א))', () => {
+    for (const variant of ['client', 'filed'] as const) {
+      const html = renderDocument(sampleRenderDocument(), variant);
+      expect(html).toMatch(/<div class="computerized">[^<]*מסמך ממוחשב/);
+      expect(html).not.toMatch(/<div class="muted">[^<]*מסמך ממוחשב/);
+    }
+  });
 });
 
 describe('renderDocument: allocation number slot', () => {

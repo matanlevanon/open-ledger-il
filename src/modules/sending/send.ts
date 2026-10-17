@@ -5,7 +5,7 @@ import type { Env } from '../../env';
 import { clientDisplayName } from '../clients/display';
 import { getDoc } from '../documents/repo';
 import { displayNumber } from '../documents/types';
-import { BrowserRenderingPdfEngine, type PdfEngine, resolveSigningIdentity, renderAndStore } from '../pdf';
+import { BrowserRenderingPdfEngine, type PdfEngine, assertSigningForSend, resolveSigningIdentity, renderAndStore } from '../pdf';
 import { finalCc, splitCc } from './cc';
 import { isConsentGranted } from './consent';
 import type { Mailer } from './mailer';
@@ -92,6 +92,7 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
   const doc = await getDoc(db, input.documentId, businessId);
   if (doc.status !== 'final') throw new ValidationError('Finalize the document before you send it.');
   if (doc.client_id === null) throw new ValidationError('This document has no client to send to.');
+  await assertSigningForSend(db, businessId);
 
   if (!(await isConsentGranted(db, doc.client_id))) {
     const consentClient = await first<{ name_en: string | null; name_he: string | null }>(

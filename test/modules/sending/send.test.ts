@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { run } from '../../../src/core/db';
 import { finalizeDocument } from '../../../src/core/numbering';
 import { ConsentRequiredError } from '../../../src/core/errors';
 import { acceptConsent } from '../../../src/modules/sending/consent';
@@ -98,6 +99,20 @@ describe('sendDocumentEmail', () => {
     const d = deps({ SIGNING_KEY_PEM: undefined, SIGNING_CERT_PEM: undefined });
 
     await expect(sendDocumentEmail(d, { documentId: docId, actor })).rejects.toThrow(/signing/i);
+  });
+
+  it('refuses to send in signature mode none (instruction 18ב), and sends nothing', async () => {
+    const clientId = await insertSendingClient();
+    await acceptConsent(db(), { clientId, ip: null, userAgent: null });
+    const docId = await finalizedPaymentRequest(clientId);
+    await run(db(), "INSERT INTO settings (key, value) VALUES ('signature_mode', 'none')");
+    const d = deps();
+    try {
+      await expect(sendDocumentEmail(d, { documentId: docId, actor })).rejects.toMatchObject({ code: 'signature_required_to_send' });
+      expect((d.mailer as FakeMailer).sent).toHaveLength(0);
+    } finally {
+      await run(db(), "DELETE FROM settings WHERE key = 'signature_mode'");
+    }
   });
 
   it('refuses a document with no client', async () => {

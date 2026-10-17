@@ -4,7 +4,7 @@ import { ConfigError, ConsentRequiredError, ValidationError } from '../../core/e
 import type { Env } from '../../env';
 import { clientDisplayName } from '../clients/display';
 import { getDoc } from '../documents/repo';
-import { BrowserRenderingPdfEngine, type PdfEngine, renderAndStore, resolveSigningIdentity } from '../pdf';
+import { BrowserRenderingPdfEngine, type PdfEngine, assertSigningForSend, renderAndStore, resolveSigningIdentity } from '../pdf';
 import { isConsentGranted } from './consent';
 import type { Mailer } from './mailer';
 import { shareDoc, signShareCode, whatsappMessage } from './share-page';
@@ -40,6 +40,7 @@ export async function createWhatsAppLink(deps: WhatsAppLinkDeps, documentId: num
   const doc = await getDoc(db, documentId, businessId);
   if (doc.status !== 'final') throw new ValidationError('Finalize the document before you send it.');
   if (doc.client_id === null) throw new ValidationError('This document has no client to send to.');
+  await assertSigningForSend(db, businessId);
 
   if (!(await isConsentGranted(db, doc.client_id))) {
     const consentClient = await first<{ name_en: string | null; name_he: string | null }>(

@@ -99,6 +99,8 @@ table.payments-table th, table.payments-table td { padding: 1.5mm 2.5mm; border-
   color: #6b7280;
 }
 .footer-right { white-space: nowrap; }
+/* Instruction 18ב(א): the words מסמך ממוחשב must stand out on the document. */
+.computerized { color: #111827; font-weight: 700; font-size: 10pt; }
 
 .draft-stamp {
   position: fixed;

@@ -1,5 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { run } from '../../../src/core/db';
 import { finalizeDocument } from '../../../src/core/numbering';
 import { ConsentRequiredError } from '../../../src/core/errors';
 import { acceptConsent } from '../../../src/modules/sending/consent';
@@ -48,6 +49,19 @@ describe('createWhatsAppLink', () => {
     await expect(createWhatsAppLink(deps(), docId, actor)).rejects.toMatchObject({
       details: { clientName: 'לקוח עברי בע"מ' },
     });
+  });
+
+  it('refuses a WhatsApp link in signature mode none (instruction 18ב)', async () => {
+    const clientId = await insertSendingClient({ phone: '+972501234567' });
+    await acceptConsent(db(), { clientId, ip: null, userAgent: null });
+    const docId = await insertPaymentRequest(clientId);
+    await finalizeDocument(db(), docId, { actor: OWNER_ACTOR });
+    await run(db(), "INSERT INTO settings (key, value) VALUES ('signature_mode', 'none')");
+    try {
+      await expect(createWhatsAppLink(deps(), docId, actor)).rejects.toMatchObject({ code: 'signature_required_to_send' });
+    } finally {
+      await run(db(), "DELETE FROM settings WHERE key = 'signature_mode'");
+    }
   });
 
   it('builds a signed 30-day link and a wa.me URL once consent is granted', async () => {

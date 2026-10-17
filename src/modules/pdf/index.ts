@@ -133,7 +133,7 @@ export const pdfModule: ModuleDef = {
 
 export { renderDocument } from './render';
 export { BrowserRenderingPdfEngine, FakePdfEngine, type PdfEngine } from './engine';
-export { resolveSigningIdentity } from './signing';
+export { assertSigningForSend, resolveSigningIdentity } from './signing';
 export { assertClientCopyMayRelease, hasStoredPdf, loadRenderDocument, r2Key, renderAndStore, renderDraftPdf, sha256Hex } from './store';
 export type { RenderAndStoreResult } from './store';
 export type { RenderClient, RenderDocument, RenderLine, RenderPayment, RenderVariant } from './types';
