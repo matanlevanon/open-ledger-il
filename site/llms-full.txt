@@ -1541,7 +1541,7 @@ Source: https://open-ledger.dev/help/connect-claude/
 
 ## מצב חתימה None
 
-ב-**Settings > Signature** יש שני מצבים. **Secured signature** הוא ברירת המחדל. במצב **None** קובצי ה-PDF יוצאים בלי חתימה דיגיטלית, ולכן מסמך שנשלח במייל לא עומד בסעיף 18ב. השתמשו ב-None רק אם אתם מדפיסים את המסמכים וחותמים עליהם ביד.
+ב-**Settings > Signature** יש שני מצבים. **Secured signature** הוא ברירת המחדל. במצב **None** קובצי ה-PDF בלי חתימה דיגיטלית ולא עומדים בסעיף 18ב, ולכן הלדג'ר לא שולח אותם במייל או בוואטסאפ. עדיין אפשר לצפות בהם ולהוריד אותם. השתמשו ב-None רק אם אתם מדפיסים את המסמכים וחותמים עליהם ביד.
 
 ## תשלום במזומן
 
@@ -2601,7 +2601,7 @@ The client's page shows the consent status, date and method. To record a withdra
 
 ## Signature mode None
 
-**Settings > Signature** has two modes. **Secured signature** is the default. With **None**, PDFs carry no digital signature, so an emailed document does not meet 18ב. Use None only if you print your documents and sign them by hand.
+**Settings > Signature** has two modes. **Secured signature** is the default. With **None**, PDFs carry no digital signature and do not meet 18ב, so the Ledger refuses to send them by email or WhatsApp. You still view and download them. Use None only if you print your documents and sign them by hand.
 
 ## Cash payments
 

@@ -71,7 +71,7 @@ The client's page shows the consent status, date and method. To record a withdra
 
 ## Signature mode None
 
-**Settings > Signature** has two modes. **Secured signature** is the default. With **None**, PDFs carry no digital signature, so an emailed document does not meet 18ב. Use None only if you print your documents and sign them by hand.
+**Settings > Signature** has two modes. **Secured signature** is the default. With **None**, PDFs carry no digital signature and do not meet 18ב, so the Ledger refuses to send them by email or WhatsApp. You still view and download them. Use None only if you print your documents and sign them by hand.
 
 ## Cash payments
 
