@@ -50,7 +50,7 @@ const INPUT_SCHEMA = {
 export class AiExternalDocExtractor implements ExternalDocExtractor {
   constructor(
     private readonly env: Env,
-    private readonly fetchFn: typeof fetch = fetch,
+    private readonly fetchFn: typeof fetch = (input, init) => fetch(input, init),
   ) {}
 
   async extract(input: ExternalDocExtractInput): Promise<ExtractedExternalDoc> {

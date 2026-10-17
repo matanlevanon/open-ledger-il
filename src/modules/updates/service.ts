@@ -47,7 +47,7 @@ export function updateRepo(env: Env): string | null {
   return REPO_PATTERN.test(repo) ? repo : null;
 }
 
-export async function checkForUpdate(env: Env, fetcher: typeof fetch = fetch, current = APP_VERSION): Promise<UpdateCheck> {
+export async function checkForUpdate(env: Env, fetcher: typeof fetch = (input, init) => fetch(input, init), current = APP_VERSION): Promise<UpdateCheck> {
   const checkedAt = nowIso();
   const base = { current, latest: null, releaseUrl: null, releaseName: null, publishedAt: null, checkedAt };
   const repo = updateRepo(env);

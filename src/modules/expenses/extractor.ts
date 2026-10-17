@@ -47,7 +47,7 @@ const INPUT_SCHEMA = {
 export class AiExtractor implements Extractor {
   constructor(
     private readonly env: Env,
-    private readonly fetchFn: typeof fetch = fetch,
+    private readonly fetchFn: typeof fetch = (input, init) => fetch(input, init),
   ) {}
 
   async extract(input: ExtractInput): Promise<ExtractedExpense> {

@@ -55,7 +55,7 @@ function keyFor(env: Env, provider: AiProvider): string | undefined {
 }
 
 /** The reader for this Worker, or null when no provider has a key (manual entry). */
-export function documentReaderFor(env: Env, fetchFn: FetchFn = fetch): DocumentReader | null {
+export function documentReaderFor(env: Env, fetchFn: FetchFn = (input, init) => fetch(input, init)): DocumentReader | null {
   const provider = chooseProvider(env);
   if (!provider) return null;
   const apiKey = keyFor(env, provider);
@@ -71,7 +71,7 @@ export class AnthropicReader implements DocumentReader {
   constructor(
     private readonly apiKey: string,
     private readonly model: string,
-    private readonly fetchFn: FetchFn = fetch,
+    private readonly fetchFn: FetchFn = (input, init) => fetch(input, init),
   ) {}
 
   async read(req: ReadDocumentRequest): Promise<unknown> {
@@ -110,7 +110,7 @@ export class GeminiReader implements DocumentReader {
   constructor(
     private readonly apiKey: string,
     private readonly model: string,
-    private readonly fetchFn: FetchFn = fetch,
+    private readonly fetchFn: FetchFn = (input, init) => fetch(input, init),
   ) {}
 
   async read(req: ReadDocumentRequest): Promise<unknown> {

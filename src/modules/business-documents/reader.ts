@@ -29,7 +29,7 @@ const SCHEMA = {
  * Reads a certificate with the provider from Phase 0 (Anthropic or Gemini). Null when no key is
  * set: the upload still works and the owner types the fields.
  */
-export function businessDocumentReaderFor(env: Env, fetchFn: typeof fetch = fetch): BusinessDocumentReader | null {
+export function businessDocumentReaderFor(env: Env, fetchFn: typeof fetch = (input, init) => fetch(input, init)): BusinessDocumentReader | null {
   const reader = documentReaderFor(env, fetchFn);
   if (!reader) return null;
   return {
