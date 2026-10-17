@@ -282,6 +282,8 @@ section[id] { scroll-margin-top: 64px; }
 .prose .table-wrap { overflow-x: auto; margin: 16px 0; }
 .prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
 .prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose table.compare { table-layout: fixed; min-width: 560px; }
+.prose table.compare th:first-child { width: 24%; }
 .prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
@@ -343,7 +345,7 @@ section[id] { scroll-margin-top: 64px; }
       <p>חשבונית מס לעוסק מורשה ישראלי מעל הסף צריכה מספר הקצאה מרשות המסים. עם חיבור, הלדג'ר מבקש את המספר כשמסיימים את החשבונית ומדפיס אותו על המסמך.</p>
 <p>עוסק פטור לא מוציא חשבוניות מס, ולכן לא צריך חיבור. מתחברים כשעוברים לעוסק מורשה.</p>
 <h2 id="שתי-דרכים-להתחבר">שתי דרכים להתחבר</h2>
-<div class="table-wrap"><table><thead><tr><th></th><th>עם תוכנת ההתקנה</th><th>התקנה עצמית מקוד המקור</th></tr></thead><tbody><tr><td>אפליקציית API ברשות המסים</td><td>האפליקציה המאושרת של MTN. אין מה לבקש</td><td>נרשמים בפורטל המפתחים, מבקשים אפליקציה משלכם ומחכים לאישור</td></tr><tr><td>Client id ו-secret</td><td>אין. תוכנת ההתקנה מגדירה את החיבור</td><td>שומרים אותם כסודות ב-Worker</td></tr><tr><td>פניות מישראל</td><td>תמיד, דרך הנתיב הישראלי של MTN</td><td>רשות המסים חוסמת פניות מחוץ לישראל. לפעמים תופסים את מרכז הנתונים של Cloudflare בתל אביב, או מפעילים ממסר משלכם על שרת בישראל</td></tr><tr><td>זמן הקמה</td><td>חלק מההתקנה של 3 דקות</td><td>שעות, ועוד זמן המתנה לאישור</td></tr><tr><td>עלות</td><td>כלול במחיר תוכנת ההתקנה</td><td>חינם, ועוד שרת אם מפעילים</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="compare"><thead><tr><th></th><th>עם תוכנת ההתקנה</th><th>התקנה עצמית מקוד המקור</th></tr></thead><tbody><tr><td>אפליקציית API ברשות המסים</td><td>האפליקציה המאושרת של MTN. אין מה לבקש</td><td>נרשמים בפורטל המפתחים, מבקשים אפליקציה משלכם ומחכים לאישור</td></tr><tr><td>Client id ו-secret</td><td>אין. תוכנת ההתקנה מגדירה את החיבור</td><td>שומרים אותם כסודות ב-Worker</td></tr><tr><td>פניות מישראל</td><td>תמיד, דרך הנתיב הישראלי של MTN</td><td>רשות המסים חוסמת פניות מחוץ לישראל. לפעמים תופסים את מרכז הנתונים של Cloudflare בתל אביב, או מפעילים ממסר משלכם על שרת בישראל</td></tr><tr><td>זמן הקמה</td><td>חלק מההתקנה של 3 דקות</td><td>שעות, ועוד זמן המתנה לאישור</td></tr><tr><td>עלות</td><td>כלול במחיר תוכנת ההתקנה</td><td>חינם, ועוד שרת אם מפעילים</td></tr></tbody></table></div>
 <h2 id="עם-תוכנת-ההתקנה">עם תוכנת ההתקנה</h2>
 <ol><li>בלדג'ר פותחים <b>ITA</b> בתפריט הצד.</li><li>לוחצים <b>Connect to ITA</b>.</li><li>נפתח עמוד הכניסה של רשות המסים. נכנסים עם המשתמש של העסק ברשות המסים: קוד המשתמש והקוד החד פעמי שמגיע לטלפון.</li><li>מאשרים את הבקשה. מסך ההסכמה מציג את האפליקציה של MTN. חוזרים ללדג'ר, והעמוד מציג <b>Connected</b> עם מספר הימים שנשארו.</li></ol>
 <h2 id="התקנה-עצמית">התקנה עצמית</h2>

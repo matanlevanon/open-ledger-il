@@ -119,7 +119,9 @@ def to_html(md, shift=0, refs=True):
             rows = data
             head = ''.join(f'<th>{inline(c, refs)}</th>' for c in rows[0]) if rows else ''
             body = ''.join('<tr>' + ''.join(f'<td>{inline(c, refs)}</td>' for c in r) + '</tr>' for r in rows[1:])
-            parts.append(f'<div class="table-wrap"><table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
+            # An empty first header cell marks a side-by-side comparison: equal option columns.
+            cls = ' class="compare"' if rows and not rows[0][0].strip() else ''
+            parts.append(f'<div class="table-wrap"><table{cls}><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>')
         elif kind == 'code':
             parts.append(f'<p class="cmd" dir="ltr"><code>{html.escape(data)}</code></p>')
         else:

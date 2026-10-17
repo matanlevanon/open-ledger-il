@@ -282,6 +282,8 @@ section[id] { scroll-margin-top: 64px; }
 .prose .table-wrap { overflow-x: auto; margin: 16px 0; }
 .prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
 .prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: start; vertical-align: top; }
+.prose table.compare { table-layout: fixed; min-width: 560px; }
+.prose table.compare th:first-child { width: 24%; }
 .prose th { background: var(--surface-2); }
 .prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
@@ -343,7 +345,7 @@ section[id] { scroll-margin-top: 64px; }
       <p>A tax invoice to an Israeli עוסק מורשה above the threshold needs an allocation number (מספר הקצאה) from the Tax Authority. With a connection, the Ledger asks for the number when you finalize the invoice and prints it on the document.</p>
 <p>An עוסק פטור issues no tax invoices, so it needs no connection. Connect later, when you become עוסק מורשה.</p>
 <h2 id="two-ways-to-connect">Two ways to connect</h2>
-<div class="table-wrap"><table><thead><tr><th></th><th>With the installer</th><th>Self setup from the source code</th></tr></thead><tbody><tr><td>Tax Authority API app</td><td>MTN's approved app. Nothing to apply for</td><td>Register in the developer portal, apply for your own app, wait for approval</td></tr><tr><td>Client id and secret</td><td>None. The installer sets the connection</td><td>You store them as Worker secrets</td></tr><tr><td>Calls from Israel</td><td>Always, through MTN's Israeli route</td><td>The Tax Authority turns away calls from outside Israel. You catch Cloudflare's Tel Aviv data center some of the time, or run your own relay on an Israeli server</td></tr><tr><td>Setup time</td><td>Part of the 3-minute install</td><td>Hours, plus the approval wait</td></tr><tr><td>Cost</td><td>Included in the installer price</td><td>Free, plus any server you run</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="compare"><thead><tr><th></th><th>With the installer</th><th>Self setup from the source code</th></tr></thead><tbody><tr><td>Tax Authority API app</td><td>MTN's approved app. Nothing to apply for</td><td>Register in the developer portal, apply for your own app, wait for approval</td></tr><tr><td>Client id and secret</td><td>None. The installer sets the connection</td><td>You store them as Worker secrets</td></tr><tr><td>Calls from Israel</td><td>Always, through MTN's Israeli route</td><td>The Tax Authority turns away calls from outside Israel. You catch Cloudflare's Tel Aviv data center some of the time, or run your own relay on an Israeli server</td></tr><tr><td>Setup time</td><td>Part of the 3-minute install</td><td>Hours, plus the approval wait</td></tr><tr><td>Cost</td><td>Included in the installer price</td><td>Free, plus any server you run</td></tr></tbody></table></div>
 <h2 id="with-the-installer">With the installer</h2>
 <ol><li>In the Ledger, open <b>ITA</b> in the sidebar.</li><li>Click <b>Connect to ITA</b>.</li><li>The Tax Authority's sign-in page opens. Sign in with the business's own Tax Authority user: the user code and the one-time code sent to your phone.</li><li>Approve the request. The consent screen names MTN's app. You come back to the Ledger, and the page shows <b>Connected</b>, with the days left.</li></ol>
 <h2 id="self-setup">Self setup</h2>
