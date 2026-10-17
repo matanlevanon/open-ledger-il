@@ -4,7 +4,7 @@ description: הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל 
 updated: 2026-10-17
 published: true
 nav: הוספת מפתח
-order: 12
+order: 13
 ---
 
 הלדג'ר קורא את המפתחות שלו מה-Worker שלו ב-Cloudflare. Worker הוא התוכנה שמריצה את הלדג'ר. שם מוסיפים או מחליפים מפתח.

@@ -64,6 +64,13 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/connect-claude/"/>
   </url>
   <url>
+    <loc>https://open-ledger.dev/help/digital-signature/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/digital-signature/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/digital-signature/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/digital-signature/"/>
+  </url>
+  <url>
     <loc>https://open-ledger.dev/help/email/</loc>
     <lastmod>2026-10-17</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/email/"/>
@@ -223,6 +230,13 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/connect-claude/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/help/digital-signature/</loc>
+    <lastmod>2026-10-17</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/digital-signature/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/digital-signature/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/digital-signature/"/>
   </url>
   <url>
     <loc>https://open-ledger.dev/en/help/email/</loc>

@@ -4,7 +4,7 @@ description: סולק גובה את הכסף והלדג'ר מוציא את הק�
 updated: 2026-10-17
 published: true
 nav: סולקים
-order: 8
+order: 9
 ---
 
 הלדג'ר מוציא את המסמכים. סולק כמו Grow, Cardcom, PayPlus או ביט גובה את הכסף. השניים עובדים זה לצד זה.

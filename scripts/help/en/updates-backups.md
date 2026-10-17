@@ -4,7 +4,7 @@ description: How to check for a new Open Ledger IL version and update with the i
 updated: 2026-10-17
 published: true
 nav: Updates and backups
-order: 13
+order: 14
 ---
 
 ## Check for updates

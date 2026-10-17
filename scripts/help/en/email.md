@@ -4,7 +4,7 @@ description: Connect Resend so the Ledger emails receipts and invoices from your
 updated: 2026-10-17
 published: true
 nav: Email and spam
-order: 10
+order: 11
 ---
 
 The Ledger sends email through Resend, a sending service with a free plan. Resend sends only from a domain you own and verify. Without a domain, download each PDF or use the WhatsApp button on the document page.

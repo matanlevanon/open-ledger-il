@@ -4,7 +4,7 @@ description: Add the Gemini, Anthropic, Resend, Slack or Google Drive key to you
 updated: 2026-10-17
 published: true
 nav: Add a key later
-order: 12
+order: 13
 ---
 
 The Ledger reads its keys from its Worker in Cloudflare. A Worker is the program that runs the Ledger. You add or change a key there.

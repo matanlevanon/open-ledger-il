@@ -43,6 +43,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Give your accountant or assistant access](https://open-ledger.dev/en/help/users/)
 - [Connect to the Tax Authority for allocation numbers](https://open-ledger.dev/en/help/tax-authority/)
 - [From quote to receipt: your first documents](https://open-ledger.dev/en/help/first-invoice/)
+- [Digital signatures: what the Tax Authority requires and how the Ledger meets each rule](https://open-ledger.dev/en/help/digital-signature/)
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)

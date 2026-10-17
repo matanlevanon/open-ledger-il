@@ -4,7 +4,7 @@ description: Give Claude Desktop or Claude Code access to your Ledger with the M
 updated: 2026-10-17
 published: true
 nav: Connect Claude (MCP)
-order: 11
+order: 12
 ---
 
 With MCP connected, you ask Claude things like "how much does Acme owe me" or "make a payment request for 3 hours of consulting", and Claude works in your Ledger. Claude creates drafts, and finalizes a document only after you confirm.

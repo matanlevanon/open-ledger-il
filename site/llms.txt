@@ -19,6 +19,7 @@
 - [Before you install: what you need](https://open-ledger.dev/en/help/before-you-start/): The accounts, details and 30 minutes you need before you run the Open Ledger IL installer, and which parts are optional.
 - [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/): The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/): Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
+- [Digital signatures: what the Tax Authority requires and how the Ledger meets each rule](https://open-ledger.dev/en/help/digital-signature/): The rules for emailing receipts and invoices under instruction 18ב, the Ledger feature behind each rule, and the one step left to you.
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/): Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/): Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
 - [From quote to receipt: your first documents](https://open-ledger.dev/en/help/first-invoice/): The order of documents in the Ledger, from a quote and a payment request to the receipt, and why the receipt is the one that counts.
@@ -48,6 +49,7 @@
 - [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/): החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.
 - [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/): שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/): נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
+- [חתימה דיגיטלית: מה רשות המסים דורשת ואיך הלדג'ר עומד בכל כלל](https://open-ledger.dev/help/digital-signature/): הכללים למשלוח קבלות וחשבוניות במייל, לפי סעיף 18ב וחוק חתימה אלקטרונית, היכולת בלדג'ר שעונה על כל כלל, והצעד היחיד שנשאר לכם.
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/): חיבור Resend כדי שהלדג'ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/): העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
 - [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/): סדר המסמכים בלדג'ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.

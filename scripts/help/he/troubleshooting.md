@@ -4,7 +4,7 @@ description: פתרונות למקומות שבהם נתקעים: אזהרות W
 updated: 2026-10-17
 published: true
 nav: בעיות נפוצות
-order: 14
+order: 15
 ---
 
 ## תוכנת ההתקנה

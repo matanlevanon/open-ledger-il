@@ -4,7 +4,7 @@ description: Fixes for the places people get stuck: Windows warnings, the Cloudf
 updated: 2026-10-17
 published: true
 nav: Common problems
-order: 14
+order: 15
 ---
 
 ## The installer

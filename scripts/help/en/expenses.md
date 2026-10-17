@@ -4,7 +4,7 @@ description: Forward receipts by email, upload them, or import a month from Goog
 updated: 2026-10-17
 published: true
 nav: Expenses
-order: 9
+order: 10
 ---
 
 ## Forward receipts by email

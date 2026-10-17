@@ -4,7 +4,7 @@ description: Use a card payment provider for collecting money and the Ledger for
 updated: 2026-10-17
 published: true
 nav: Payment providers
-order: 8
+order: 9
 ---
 
 The Ledger issues the documents. A payment provider such as Grow, Cardcom, PayPlus or Bit collects the money. The two work side by side.

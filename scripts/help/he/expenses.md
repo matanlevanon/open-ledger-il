@@ -4,7 +4,7 @@ description: העברת קבלות במייל, העלאה, או ייבוא חו�
 updated: 2026-10-17
 published: true
 nav: הוצאות
-order: 9
+order: 10
 ---
 
 ## העברת קבלות במייל

@@ -4,7 +4,7 @@ description: נותנים ל-Claude Desktop או ל-Claude Code גישה ללד�
 updated: 2026-10-17
 published: true
 nav: חיבור Claude (MCP)
-order: 11
+order: 12
 ---
 
 עם MCP מחובר, שואלים את Claude דברים כמו "כמה Acme חייבים לי" או "תכין דרישת תשלום על 3 שעות ייעוץ", ו-Claude עובד בלדג'ר שלכם. Claude יוצר טיוטות, ומסיים מסמך רק אחרי שאתם מאשרים.

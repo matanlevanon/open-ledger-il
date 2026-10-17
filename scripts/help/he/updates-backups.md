@@ -4,7 +4,7 @@ description: איך בודקים אם יש גרסה חדשה של Open Ledger IL
 updated: 2026-10-17
 published: true
 nav: עדכונים וגיבויים
-order: 13
+order: 14
 ---
 
 ## בדיקת עדכונים

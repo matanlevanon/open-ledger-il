@@ -51,6 +51,7 @@
 - [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
 - [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
 - [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [חתימה דיגיטלית: מה רשות המסים דורשת ואיך הלדג'ר עומד בכל כלל](https://open-ledger.dev/help/digital-signature/)
 - [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
