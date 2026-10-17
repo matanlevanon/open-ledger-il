@@ -224,6 +224,7 @@ describe('what becomes an expense', () => {
     const rows = (await expensesWithNote(`Unread ${tag}`)).results;
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ status: 'new', amount_minor: 0, supplier_id: null });
+    expect(String(rows[0]!.notes)).toMatch(/ \| Not read automatically: \S/);
   });
 
   it('the inbox switched off refuses with 403 and creates nothing', async () => {

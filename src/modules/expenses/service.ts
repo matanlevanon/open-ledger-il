@@ -325,19 +325,23 @@ export async function ingestInboxFile(env: Env, deps: Deps, input: InboxIngestIn
     const expense = await createExpenseFromExtraction(env, deps, file, actor, input.readAs);
     await run(env.DB, 'UPDATE expenses SET notes = ?, updated_at = ? WHERE id = ?', input.note, nowIso(), expense.id);
     return { kind: 'created', expense: { ...expense, notes: input.note }, read: true };
-  } catch {
+  } catch (err) {
     // No reading key, a format the reader refuses, or an answer that does not fit: the owner types it.
+    // The reason goes into the log and onto the expense, so a failed read is never silent.
+    const reason = (err instanceof Error ? err.message : String(err)).replace(/\s+/g, ' ').slice(0, 200);
+    console.error('expense read failed', { filename: input.filename, reason });
+    const note = `${input.note} | Not read automatically: ${reason}`.slice(0, 700);
     const { lastRowId } = await run(
       env.DB,
       `INSERT INTO expenses (file_id, status, document_date, notes, business_id) VALUES (?, 'new', ?, ?, ?)`,
       file.id,
       nowIso().slice(0, 10),
-      input.note,
+      note,
       actorBiz(actor),
     );
     await transaction(env.DB, [
       stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id),
-      auditStatement(env.DB, actor, 'expense.create', 'expense', lastRowId, { status: 'new', source: 'inbox', read: false }),
+      auditStatement(env.DB, actor, 'expense.create', 'expense', lastRowId, { status: 'new', source: 'inbox', read: false, reason }),
     ]);
     return { kind: 'created', expense: (await first<ExpenseRow>(env.DB, 'SELECT * FROM expenses WHERE id = ?', lastRowId))!, read: false };
   }
