@@ -54,7 +54,17 @@ describe('POST /mcp: protocol', () => {
     const body = (await res.json()) as any;
     const names = body.result.tools.map((t: any) => t.name).sort();
     expect(names).toEqual(
-      ['ceiling_status', 'client_balance', 'create_draft', 'finalize_document', 'income_report', 'list_clients', 'record_payment'].sort(),
+      [
+        'add_expense',
+        'ceiling_status',
+        'client_balance',
+        'create_draft',
+        'finalize_document',
+        'income_report',
+        'list_clients',
+        'list_expenses',
+        'record_payment',
+      ].sort(),
     );
     for (const tool of body.result.tools) {
       expect(typeof tool.description).toBe('string');

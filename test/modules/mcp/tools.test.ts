@@ -111,6 +111,67 @@ describe('MCP tools (runs/R14-ops.md)', () => {
     expect(ils.total_minor).toBeGreaterThanOrEqual(30000);
   });
 
+  it('add_expense records an expense waiting for review, without a file', async () => {
+    const supplierName = `MCP Supplier ${crypto.randomUUID().slice(0, 8)}`;
+    const { isError, data } = await call('add_expense', {
+      supplierName,
+      documentNumber: 'INV-1',
+      date: today,
+      currency: 'ILS',
+      amount: '117.00',
+      vatAmount: '17.00',
+    });
+    expect(isError).toBe(false);
+    expect(data.status).toBe('new');
+    expect(data.amountMinor).toBe(11700);
+    expect(data.vatAmountMinor).toBe(1700);
+    expect(data.amountIlsMinor).toBe(11700);
+    expect(data.fileAttached).toBe(false);
+    const row = await env.DB.prepare('SELECT notes FROM expenses WHERE id = ?').bind(data.expenseId).first<{ notes: string }>();
+    expect(row?.notes).toMatch(/no file/i);
+    const audit = await env.DB.prepare("SELECT details FROM audit_log WHERE entity = 'expense' AND entity_id = ? AND action = 'expense.create'")
+      .bind(String(data.expenseId))
+      .first<{ details: string }>();
+    expect(audit?.details).toContain('mcp');
+
+    const again = await call('add_expense', { supplierName, documentNumber: 'INV-1', date: today, currency: 'ILS', amount: '117.00' });
+    expect(again.data.status).toBe('duplicate');
+    expect(again.data.duplicateOfId).toBe(data.expenseId);
+  });
+
+  it('add_expense stores the attached file, and the same file again is a duplicate', async () => {
+    const pdf = btoa(`%PDF-1.4 test ${crypto.randomUUID()}`);
+    const first = await call('add_expense', { supplierName: 'File Supplier', currency: 'ILS', amount: '20', fileBase64: pdf, filename: 'invoice.pdf' });
+    expect(first.isError).toBe(false);
+    expect(first.data.fileAttached).toBe(true);
+    const file = await env.DB.prepare('SELECT r2_key, content_type FROM expense_files WHERE expense_id = ?')
+      .bind(first.data.expenseId)
+      .first<{ r2_key: string; content_type: string }>();
+    expect(file?.content_type).toBe('application/pdf');
+    expect(await env.FILES.get(file!.r2_key)).not.toBeNull();
+
+    const second = await call('add_expense', { supplierName: 'File Supplier', currency: 'ILS', amount: '20', fileBase64: pdf, filename: 'invoice.pdf' });
+    expect(second.data.duplicate).toBe(true);
+    expect(second.data.expenseId).toBe(first.data.expenseId);
+  });
+
+  it('add_expense refuses a bad amount, a file without a name and an unknown file type', async () => {
+    expect((await call('add_expense', { supplierName: 'X', currency: 'ILS', amount: '1,000' })).isError).toBe(true);
+    expect((await call('add_expense', { supplierName: 'X', currency: 'ILS', amount: '1', fileBase64: btoa('x') })).isError).toBe(true);
+    const exe = await call('add_expense', { supplierName: 'X', currency: 'ILS', amount: '1', fileBase64: btoa('x'), filename: 'a.exe' });
+    expect(exe.isError).toBe(true);
+    expect(exe.data).toMatch(/PDF or an image/);
+  });
+
+  it('list_expenses filters by status', async () => {
+    await call('add_expense', { supplierName: 'List Supplier', currency: 'ILS', amount: '5', date: today });
+    const { isError, data } = await call('list_expenses', { status: 'new', from: today, to: today });
+    expect(isError).toBe(false);
+    expect(data.length).toBeGreaterThan(0);
+    expect(data.every((e: any) => e.status === 'new')).toBe(true);
+    expect(data.some((e: any) => e.supplier === 'List Supplier')).toBe(true);
+  });
+
   it('ceiling_status reports the legal mode', async () => {
     const { isError, data } = await call('ceiling_status', {});
     expect(isError).toBe(false);

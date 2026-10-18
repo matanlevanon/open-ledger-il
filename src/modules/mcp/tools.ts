@@ -14,6 +14,9 @@ import { dateString, draftInput, paymentInput } from '../documents/schemas';
 import { type Ctx, createDraft, finalize, recordPayment } from '../documents/service';
 import { displayNumber } from '../documents/types';
 import { boiRateSource } from '../fx';
+import type { Env } from '../../env';
+import { recordGivenExpense, listExpenses } from '../expenses/service';
+import { EXPENSE_STATUSES, ExtractedExpenseSchema } from '../expenses/types';
 
 /** MCP acts as the owner of one business. It has no per-request signed-in user, only the bearer token. */
 export function mcpUser(businessId: number): AuthUser {
@@ -39,6 +42,8 @@ export interface McpEnv {
   today?: () => string;
   /** R24: the business every tool reads and writes. */
   businessId: number;
+  /** The Worker bindings, for tools that store a file in R2 (add_expense). */
+  bindings?: Env;
 }
 
 function ctxOf(env: McpEnv): Ctx {
@@ -130,6 +135,58 @@ async function incomeReport(db: D1Database, from: string, to: string, businessId
     to,
   );
   return { from, to, byCurrency: rows };
+}
+
+// ---------------------------------------------------------------------------
+// add_expense, list_expenses
+// ---------------------------------------------------------------------------
+
+/** The decoded file may be at most 10 MB, the same order as an email attachment. */
+export const MCP_EXPENSE_FILE_MAX_BYTES = 10 * 1024 * 1024;
+
+const FILE_TYPES: Record<string, string> = {
+  pdf: 'application/pdf',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  webp: 'image/webp',
+  gif: 'image/gif',
+  heic: 'image/heic',
+};
+
+const addExpenseInput = ExtractedExpenseSchema.extend({
+  note: z.string().trim().max(500).nullish(),
+  fileBase64: z.string().max(Math.ceil((MCP_EXPENSE_FILE_MAX_BYTES * 4) / 3) + 8).nullish(),
+  filename: z.string().trim().min(1).max(200).nullish(),
+});
+
+const listExpensesInput = z.object({
+  status: z.enum(EXPENSE_STATUSES).optional(),
+  from: dateString.optional(),
+  to: dateString.optional(),
+  limit: z.number().int().min(1).max(200).default(50),
+});
+
+function decodeBase64(text: string): ArrayBuffer {
+  const clean = text.replace(/^data:[^,]*,/, '').replace(/\s+/g, '');
+  let binary: string;
+  try {
+    binary = atob(clean);
+  } catch {
+    throw new ValidationError('fileBase64 is not valid base64.');
+  }
+  if (binary.length === 0) throw new ValidationError('fileBase64 is empty.');
+  if (binary.length > MCP_EXPENSE_FILE_MAX_BYTES) throw new ValidationError('The file is larger than 10 MB.');
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function fileTypeOf(filename: string): string {
+  const ext = filename.toLowerCase().split('.').pop() ?? '';
+  const type = FILE_TYPES[ext];
+  if (!type) throw new ValidationError('Send a PDF or an image (png, jpg, webp, gif, heic). Name the file with its extension.');
+  return type;
 }
 
 // ---------------------------------------------------------------------------
@@ -280,6 +337,92 @@ export const MCP_TOOLS: McpTool[] = [
       const input = incomeReportInput.parse(args);
       if (input.from > input.to) throw new ValidationError('"from" must be on or before "to".');
       return incomeReport(env.db, input.from, input.to, env.businessId);
+    },
+  },
+  {
+    name: 'add_expense',
+    description:
+      'Record a supplier invoice or receipt as an expense. You read the document and send its fields; the Ledger does not read it again. ' +
+      'The expense waits on the Expenses screen for the owner to check and file, so nothing is final. ' +
+      'Attach the original with fileBase64 and filename when you can; otherwise the owner attaches it later. ' +
+      'Amounts are decimal strings in major units, for example "117.00", and amount is the total including VAT.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        supplierName: { type: 'string', description: 'Supplier name as printed on the document.' },
+        supplierId: { type: 'string', description: 'Supplier tax id (ח.פ. / ע.מ.), if shown.' },
+        documentNumber: { type: 'string', description: 'Invoice or receipt number.' },
+        date: { type: 'string', description: 'Document date, YYYY-MM-DD.' },
+        currency: { type: 'string', description: 'ILS, USD, EUR or GBP.' },
+        amount: { type: 'string', description: 'Total including VAT, for example "117.00".' },
+        vatAmount: { type: 'string', description: 'VAT part of the total, for example "17.00". Leave out when there is no VAT.' },
+        documentType: { type: 'string', description: 'For example tax invoice, receipt, tax invoice receipt.' },
+        note: { type: 'string', description: 'Short note saved on the expense.' },
+        fileBase64: { type: 'string', description: 'The original file, base64. Up to 10 MB.' },
+        filename: { type: 'string', description: 'File name with extension (pdf, png, jpg, webp, gif, heic). Required with fileBase64.' },
+      },
+      required: ['supplierName', 'currency', 'amount'],
+    },
+    async handler(env, args) {
+      const input = addExpenseInput.parse(args);
+      const { note, fileBase64, filename, ...fields } = input;
+      let file: { bytes: ArrayBuffer; filename: string; contentType: string } | null = null;
+      if (fileBase64) {
+        if (!filename) throw new ValidationError('Send filename with fileBase64.');
+        if (!env.bindings) throw new ValidationError('This server cannot store files.');
+        file = { bytes: decodeBase64(fileBase64), filename, contentType: fileTypeOf(filename) };
+      }
+      if (!env.bindings) throw new ValidationError('This server cannot record expenses.');
+      const result = await recordGivenExpense(
+        { ...env.bindings, DB: env.db },
+        boiRateSource(env.db),
+        { fields, file, note: note ?? (file ? null : 'Added by Claude, no file attached yet.'), source: 'mcp' },
+        { ...env.actor, businessId: env.businessId },
+      );
+      if (result.kind === 'duplicate') return { duplicate: true, expenseId: result.expenseId, message: 'This file is already recorded.' };
+      const e = result.expense;
+      return {
+        expenseId: e.id,
+        status: e.status,
+        statusReason: e.status_reason,
+        duplicateOfId: e.duplicate_of_id,
+        currency: e.currency,
+        amountMinor: e.amount_minor,
+        vatAmountMinor: e.vat_amount_minor,
+        amountIlsMinor: e.amount_ils_minor,
+        fileAttached: e.file_id !== null,
+      };
+    },
+  },
+  {
+    name: 'list_expenses',
+    description: 'List expenses, newest document date first. Filter by status (new, filed, not_expense, duplicate, returned) and date range.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', enum: [...EXPENSE_STATUSES] },
+        from: { type: 'string', description: 'YYYY-MM-DD' },
+        to: { type: 'string', description: 'YYYY-MM-DD' },
+        limit: { type: 'number', description: '1 to 200. Default 50.' },
+      },
+    },
+    async handler(env, args) {
+      const input = listExpensesInput.parse(args ?? {});
+      if (input.from && input.to && input.from > input.to) throw new ValidationError('"from" must be on or before "to".');
+      const rows = await listExpenses(env.db, { status: input.status, from: input.from, to: input.to, limit: input.limit }, env.businessId);
+      return rows.map((r) => ({
+        id: r.id,
+        status: r.status,
+        supplier: r.supplier_name ?? null,
+        documentNumber: r.document_number,
+        date: r.document_date,
+        currency: r.currency,
+        amountMinor: r.amount_minor,
+        vatAmountMinor: r.vat_amount_minor,
+        amountIlsMinor: r.amount_ils_minor,
+        category: r.category_name ?? null,
+        fileAttached: r.file_id !== null,
+      }));
     },
   },
   {

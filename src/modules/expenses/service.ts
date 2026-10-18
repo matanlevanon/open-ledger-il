@@ -156,16 +156,18 @@ export interface DuplicateCheck {
 
 async function checkDuplicate(
   db: D1Database,
-  args: { fileSha256: string; fileId: number; supplierId: number; documentNumber: string | null; businessId: number },
+  args: { fileSha256: string | null; fileId: number | null; supplierId: number; documentNumber: string | null; businessId: number },
 ): Promise<DuplicateCheck> {
-  const byHash = await first<{ expense_id: number | null }>(
-    db,
-    `SELECT expense_id FROM expense_files WHERE sha256 = ? AND id != ? AND expense_id IS NOT NULL AND business_id = ? ORDER BY id LIMIT 1`,
-    args.fileSha256,
-    args.fileId,
-    args.businessId,
-  );
-  if (byHash?.expense_id) return { duplicateOfId: byHash.expense_id, reason: 'Same file already recorded' };
+  if (args.fileSha256 && args.fileId) {
+    const byHash = await first<{ expense_id: number | null }>(
+      db,
+      `SELECT expense_id FROM expense_files WHERE sha256 = ? AND id != ? AND expense_id IS NOT NULL AND business_id = ? ORDER BY id LIMIT 1`,
+      args.fileSha256,
+      args.fileId,
+      args.businessId,
+    );
+    if (byHash?.expense_id) return { duplicateOfId: byHash.expense_id, reason: 'Same file already recorded' };
+  }
 
   if (args.documentNumber) {
     const byNumber = await first<{ id: number }>(
@@ -231,6 +233,18 @@ async function createExpenseFromExtraction(
   const extracted = await deps.extractor.extract(
     readAs ? { ...readAs, filename: file.filename } : { bytes: await downloadForExtraction(env, file), contentType: file.content_type, filename: file.filename },
   );
+  return insertExpense(env, deps.fx, extracted, file, actor);
+}
+
+/** Resolves the supplier, checks duplicates, converts to ILS and inserts the expense. `file` is null when none came with it. */
+async function insertExpense(
+  env: Env,
+  fx: RateSource,
+  extracted: ExtractedExpense,
+  file: ExpenseFileRow | null,
+  actor: AuditActor,
+  auditExtra: Record<string, unknown> = {},
+): Promise<ExpenseRow> {
   const currency = assertCurrency(extracted.currency);
   const amountMinor = parseMajor(extracted.amount, currency);
   const vatAmountMinor = extracted.vatAmount ? parseMajor(extracted.vatAmount, currency) : 0;
@@ -238,15 +252,15 @@ async function createExpenseFromExtraction(
   const supplierId = await resolveSupplier(env.DB, extracted, actor);
 
   const duplicate = await checkDuplicate(env.DB, {
-    fileSha256: file.sha256,
-    fileId: file.id,
+    fileSha256: file?.sha256 ?? null,
+    fileId: file?.id ?? null,
     supplierId,
     documentNumber: extracted.documentNumber ?? null,
     businessId: actorBiz(actor),
   });
   const status: ExpenseStatus = duplicate.duplicateOfId ? 'duplicate' : 'new';
 
-  const ils = await convertToIls(deps.fx, currency, documentDate, amountMinor);
+  const ils = await convertToIls(fx, currency, documentDate, amountMinor);
 
   const { lastRowId } = await run(
     env.DB,
@@ -255,7 +269,7 @@ async function createExpenseFromExtraction(
        document_number, document_date, document_type, currency, amount_minor, vat_amount_minor,
        amount_ils_minor, fx_rate, fx_rate_date, fx_source, extracted_json, business_id
      ) VALUES (?, ?, (SELECT default_category_id FROM suppliers WHERE id = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    file.id,
+    file?.id ?? null,
     supplierId,
     supplierId,
     status,
@@ -275,8 +289,8 @@ async function createExpenseFromExtraction(
     actorBiz(actor),
   );
   await transaction(env.DB, [
-    stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id),
-    auditStatement(env.DB, actor, 'expense.create', 'expense', lastRowId, { status, supplierId, amountMinor }),
+    ...(file ? [stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id)] : []),
+    auditStatement(env.DB, actor, 'expense.create', 'expense', lastRowId, { status, supplierId, amountMinor, ...auditExtra }),
   ]);
   return (await first<ExpenseRow>(env.DB, 'SELECT * FROM expenses WHERE id = ?', lastRowId))!;
 }
@@ -345,6 +359,37 @@ export async function ingestInboxFile(env: Env, deps: Deps, input: InboxIngestIn
     ]);
     return { kind: 'created', expense: (await first<ExpenseRow>(env.DB, 'SELECT * FROM expenses WHERE id = ?', lastRowId))!, read: false };
   }
+}
+
+/** An expense whose fields someone else already read, for example Claude through MCP. The file is optional. */
+export interface GivenExpenseInput {
+  fields: ExtractedExpense;
+  file?: { bytes: ArrayBuffer; filename: string; contentType: string } | null;
+  note?: string | null;
+  source: string;
+}
+
+/**
+ * Records an expense from fields read elsewhere. It waits for review like any other (status
+ * 'new', or 'duplicate' when the supplier and number or the file match one already there).
+ */
+export async function recordGivenExpense(env: Env, fx: RateSource, input: GivenExpenseInput, actor: AuditActor): Promise<InboxIngestResult> {
+  let file: ExpenseFileRow | null = null;
+  if (input.file) {
+    const sha256 = await sha256Hex(input.file.bytes);
+    const seen = await first<{ expense_id: number }>(
+      env.DB,
+      'SELECT expense_id FROM expense_files WHERE sha256 = ? AND business_id = ? AND expense_id IS NOT NULL ORDER BY id LIMIT 1',
+      sha256,
+      actorBiz(actor),
+    );
+    if (seen) return { kind: 'duplicate', expenseId: seen.expense_id };
+    file = await recordFile(env, { ...input.file, source: 'upload' }, actor);
+  }
+  const expense = await insertExpense(env, fx, input.fields, file, actor, { source: input.source, file: file !== null });
+  const note = input.note?.trim() || null;
+  if (note) await run(env.DB, 'UPDATE expenses SET notes = ?, updated_at = ? WHERE id = ?', note.slice(0, 700), nowIso(), expense.id);
+  return { kind: 'created', expense: { ...expense, notes: note ?? expense.notes }, read: true };
 }
 
 const DRIVE_ROOT_SETTING_KEY = 'expenses.drive_root_folder_id';
