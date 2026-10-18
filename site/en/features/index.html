@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Open Ledger IL features: documents, reports, rules</title>
-<meta name="description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.">
+<meta name="description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses by email and AI, Claude via MCP.">
 <link rel="canonical" href="https://open-ledger.dev/en/features/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/features/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/features/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/en/features/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="Open Ledger IL features: documents, reports, rules">
-<meta property="og:description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.">
+<meta property="og:description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses by email and AI, Claude via MCP.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://open-ledger.dev/en/features/">
 <meta property="og:image" content="https://open-ledger.dev/assets/og/en-features.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Open Ledger IL features: documents, reports, rules">
-<meta name="twitter:description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.">
+<meta name="twitter:description" content="Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses by email and AI, Claude via MCP.">
 <meta name="twitter:image" content="https://open-ledger.dev/assets/og/en-features.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
@@ -362,6 +362,7 @@ section[id] { scroll-margin-top: 64px; }
             <li>One gapless series per document type, with your own starting numbers</li>
             <li>Final documents locked by database triggers and a hash chain</li>
             <li>PDF with your logo and signature, sealed with a PAdES digital signature</li>
+            <li>Documents go out by email or WhatsApp only with the secured signature, as instruction 18ב requires</li>
             <li>ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue</li>
             <li>פטור ceiling meter with alerts and a guided switch to מורשה</li>
             <li>Issuing on/off switch, to keep issuing in your current system</li>
@@ -435,7 +436,8 @@ section[id] { scroll-margin-top: 64px; }
         <div class="fgroup">
           <h3>Expenses and import</h3>
           <ul>
-            <li>Upload a receipt or snap a photo, Claude reads supplier, date and amount</li>
+            <li>Forward receipts by email to your private address, or let a Gmail filter do it</li>
+            <li>Upload a receipt or snap a photo, Claude or Gemini reads supplier, date and amount</li>
             <li>Import a month of expenses from Google Drive</li>
             <li>Import customers and past documents from another system</li>
             <li>Imported documents keep the exchange rate printed on them, never a guessed one</li>
@@ -451,6 +453,23 @@ section[id] { scroll-margin-top: 64px; }
             <li>Unified file (מבנה אחיד) v1.31 for the Tax Authority</li>
             <li>PCN874 export (allocation-number column)</li>
             <li>Quarterly backups to R2 and Google Drive</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Claude and AI (MCP)</h3>
+          <ul>
+            <li>Connect Claude Desktop or Claude Code with your Ledger address and a token</li>
+            <li>Ask about balances and open documents, or have Claude draft documents you approve</li>
+            <li>Settings &gt; MCP: copy the address, make a new token when one is lost, or switch MCP off</li>
+            <li>Document reading with your own Anthropic or Gemini key</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Install and updates</h3>
+          <ul>
+            <li>A Windows installer sets up everything in your Cloudflare account in about 3 minutes</li>
+            <li>Updates find your Ledger and keep the data, the keys and the business details</li>
+            <li>Remembers your answers on your computer, and the Cloudflare token if you choose</li>
           </ul>
         </div>
         <div class="fgroup">

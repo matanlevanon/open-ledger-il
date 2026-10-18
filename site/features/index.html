@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>היכולות של Open Ledger IL: מסמכים, דוחות וכללים</title>
-<meta name="description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.">
+<meta name="description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות במייל ובקריאת AI, וחיבור Claude.">
 <link rel="canonical" href="https://open-ledger.dev/features/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/features/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/features/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/features/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="היכולות של Open Ledger IL: מסמכים, דוחות וכללים">
-<meta property="og:description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.">
+<meta property="og:description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות במייל ובקריאת AI, וחיבור Claude.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://open-ledger.dev/features/">
 <meta property="og:image" content="https://open-ledger.dev/assets/og/he-features.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="היכולות של Open Ledger IL: מסמכים, דוחות וכללים">
-<meta name="twitter:description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.">
+<meta name="twitter:description" content="כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות במייל ובקריאת AI, וחיבור Claude.">
 <meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-features.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
@@ -362,6 +362,7 @@ section[id] { scroll-margin-top: 64px; }
             <li>סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך</li>
             <li>מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב</li>
             <li>PDF עם הלוגו והחתימה שלך, חתום בחתימה דיגיטלית PAdES</li>
+            <li>מסמכים יוצאים במייל או בוואטסאפ רק עם החתימה המאובטחת, כפי שסעיף 18ב דורש</li>
             <li>מספרי הקצאה מרשות המסים, ניסוי וייצור, עם תור ניסיונות חוזרים</li>
             <li>מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה</li>
             <li>מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך</li>
@@ -435,7 +436,8 @@ section[id] { scroll-margin-top: 64px; }
         <div class="fgroup">
           <h3>הוצאות וייבוא</h3>
           <ul>
-            <li>העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום</li>
+            <li>מעבירים קבלות במייל לכתובת פרטית, או נותנים למסנן בג&#x27;ימייל לעשות את זה</li>
+            <li>העלאת קבלה או צילום, Claude או Gemini קוראים ספק, תאריך וסכום</li>
             <li>ייבוא חודש שלם של הוצאות מ-Google Drive</li>
             <li>ייבוא לקוחות ומסמכי עבר ממערכת אחרת</li>
             <li>מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש</li>
@@ -451,6 +453,23 @@ section[id] { scroll-margin-top: 64px; }
             <li>קובץ במבנה אחיד גרסה 1.31 לרשות המסים</li>
             <li>ייצוא PCN874 (עמודת מספר ההקצאה)</li>
             <li>גיבוי רבעוני ל-R2 ול-Google Drive</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>Claude ו-AI (MCP)</h3>
+          <ul>
+            <li>מחברים את Claude Desktop או Claude Code עם כתובת הלדג&#x27;ר וטוקן</li>
+            <li>שואלים על יתרות ומסמכים פתוחים, או נותנים ל-Claude לנסח מסמכים שאתם מאשרים</li>
+            <li>Settings &gt; MCP: העתקת הכתובת, טוקן חדש כשהישן אבד, או כיבוי MCP</li>
+            <li>קריאת מסמכים עם מפתח Anthropic או Gemini משלכם</li>
+          </ul>
+        </div>
+        <div class="fgroup">
+          <h3>התקנה ועדכונים</h3>
+          <ul>
+            <li>תוכנת התקנה ל-Windows מקימה הכול בחשבון Cloudflare שלכם בערך ב-3 דקות</li>
+            <li>עדכון מוצא את הלדג&#x27;ר ושומר את הנתונים, המפתחות ופרטי העסק</li>
+            <li>זוכרת את התשובות שלכם במחשב, ואת טוקן ה-Cloudflare אם תבחרו</li>
           </ul>
         </div>
         <div class="fgroup">

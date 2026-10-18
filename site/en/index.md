@@ -46,9 +46,9 @@ Israel Invoices API v2, with a retry queue.
 
 The client signs on any screen. A signed work order becomes a pro forma.
 
-### Expenses read by Claude
+### Expenses read by AI
 
-Snap a receipt or import a month from Google Drive.
+Forward a receipt by email, snap a photo, or import a month from Google Drive.
 
 ### Reports for your accountant
 

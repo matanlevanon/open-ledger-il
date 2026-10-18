@@ -1,7 +1,7 @@
 ---
 title: יצירת ה-API token ב-Cloudflare
 description: שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
-updated: 2026-10-17
+updated: 2026-10-18
 published: true
 nav: API token ב-Cloudflare
 order: 3
@@ -41,7 +41,7 @@ order: 3
 
 1. מתחת להרשאות, ב-**Account Resources**, בוחרים **Include** ואז את החשבון של העסק.
 2. **Zone Resources** מופיע רק אחרי שמוסיפים שורת Zone. עם דומיין: **Include**, אחר כך **Specific zone**, ואז הדומיין שהלדג'ר ישתמש בו. בלי דומיין לא הוספתם שורות Zone, אז החלק הזה לא מופיע. מדלגים.
-3. **Client IP Address Filtering** ו-**TTL**: משאירים ריק.
+3. **Client IP Address Filtering**: משאירים ריק. **TTL**: לא חובה. קובעים תאריך סיום, למשל שנה מהיום, והטוקן מפסיק לעבוד אחריו. מומלץ אם מסמנים **Remember the token on this computer** בתוכנת ההתקנה.
 
 ## יוצרים ומעתיקים
 

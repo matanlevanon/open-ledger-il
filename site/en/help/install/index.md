@@ -2,7 +2,7 @@
 
 Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
 
-Updated 2026-10-17
+Updated 2026-10-18
 
 ## The installer comes with your purchase
 
@@ -33,11 +33,9 @@ Setting up from the source code is free, and the [setup guide](https://github.co
 3. Double-click the file. Windows shows **Windows protected your PC**. Click **More info**, then **Run anyway**. The file is not signed with a paid certificate yet, so Windows warns about every new copy.
 4. The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.
 
-## 2. Licence key and business
+## 2. Licence key
 
-1. Paste the licence key and the business tax number.
-2. Fill in the business name, the owner email and the business type: עוסק פטור, עוסק מורשה or חברה בע"מ. The Ledger asks once more on its first screen, so a mistake here is easy to fix.
-3. Under **More people who may sign in**, add your accountant or a second email of your own, one per line. You also add people later, see [Give your accountant access](https://open-ledger.dev/en/help/users/).
+Paste the licence key and the business tax number. The key works for this number only.
 
 ## 3. Cloudflare account
 
@@ -47,6 +45,7 @@ The Ledger runs in your own Cloudflare account. The installer shows three steps,
 2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Do not create a bucket, the installer does that. Tick **I did it**.
 3. **Create the API token.** Follow [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/). This is the step where most people get stuck. Tick **I did it**.
 4. Paste the token and click **Check token**. Pick the account.
+5. Optional, on Windows: tick **Remember the token on this computer**. The next update fills it in. The token is stored encrypted for your Windows user, so anyone signed in as you on this PC could use it. Leave the box empty to paste the token each time.
 
 ## 4. Domain or workers.dev
 
@@ -55,11 +54,20 @@ After the token check, the installer asks for the Ledger's web address.
 - **With a domain in Cloudflare:** type an address on it, for example `ledger.acme.co.il`. The installer creates it.
 - **Without a domain:** tick **Use the free Cloudflare address instead of a domain** and choose a workers.dev name, for example the business name in English. Clients see this address in the links you send. Moving to your own domain later changes the address.
 
-## 5. Tax Authority
+When the account already runs your Ledger, the address is filled in and locked, with the note "This account already runs your Ledger".
+
+## 5. The business
+
+1. Fill in the business name, the owner email and the business type: עוסק פטור, עוסק מורשה or חברה בע"מ. The Ledger asks once more on its first screen, so a mistake here is easy to fix.
+2. Under **More people who may sign in**, add your accountant or a second email of your own, one per line. You also add people later, see [Give your accountant access](https://open-ledger.dev/en/help/users/).
+
+On an update, the installer reads these details from your Ledger and shows them as a summary. Click **Edit details** to change one. The business type is locked: change it in the Ledger, under **Settings > Tax**.
+
+## 6. Tax Authority
 
 Pick how the Ledger gets allocation numbers for tax invoices. The connected edition fills this in for you: the Ledger connects through MTN, with nothing to type. After the install you sign in once with your Tax Authority user, see [Connect to the Tax Authority](https://open-ledger.dev/en/help/tax-authority/).
 
-## 6. Extras
+## 7. Extras
 
 All optional. Each **?** button explains where to get the key.
 
@@ -67,14 +75,19 @@ All optional. Each **?** button explains where to get the key.
 - **Email sending:** the Resend API key and the sender, written as `Business Name <billing@your-domain.co.il>`. See [Send documents by email](https://open-ledger.dev/en/help/email/).
 - **Slack alerts:** the webhook address.
 
-Skip anything you do not have. You add it later, see [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/).
+Skip anything you do not have. You add it later, see [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/). On an update, keys already set say **Already set. Leave empty to keep it.**
 
-## 7. Install and finish
+## 8. Install and finish
 
-1. Check the summary and click **Install**. It takes about 3 minutes.
-2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. Cloudflare never shows it again. See [Connect Claude](https://open-ledger.dev/en/help/connect-claude/).
-3. The installer leaves a summary file on the Desktop, without secrets.
-4. Delete the Cloudflare API token: dash.cloudflare.com/profile/api-tokens, the three dots next to the token, **Delete**. The Ledger does not need it any more.
+1. Check the summary and click **Install**. On an update the button reads **Update**. It takes about 3 minutes.
+2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. See [Connect Claude](https://open-ledger.dev/en/help/connect-claude/). Lost it later? **Settings > MCP** in the Ledger makes a new one.
+3. It also shows your **email inbox** address, for forwarding receipts. See [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/).
+4. The installer leaves a summary file on the Desktop, without secrets.
+5. If you did not tick **Remember the token on this computer**, delete the Cloudflare API token: dash.cloudflare.com/profile/api-tokens, the three dots next to the token, **Delete**. The Ledger does not need it. If you ticked it, keep the token for the next update.
+
+## Update later
+
+Run the new installer on the same Cloudflare account. It finds your Ledger, fills in the address and the business details, keeps your data and keys, and the last button reads **Update**. On the same computer it also remembers your answers from the last run. See [Updates and backups](https://open-ledger.dev/en/help/updates-backups/).
 
 ## Next
 

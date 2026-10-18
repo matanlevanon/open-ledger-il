@@ -46,9 +46,9 @@ API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.
 
 הלקוח חותם בכל מסך. הזמנה חתומה הופכת לחשבון עסקה.
 
-### הוצאות ש-Claude קורא
+### הוצאות שה-AI קורא
 
-מצלמים קבלה או מייבאים חודש מ-Google Drive.
+מעבירים קבלה במייל, מצלמים, או מייבאים חודש מ-Google Drive.
 
 ### דוחות לרואה החשבון
 
@@ -112,6 +112,7 @@ Source: https://open-ledger.dev/
 - סדרה אחת בלי חורים לכל סוג מסמך, עם מספר התחלה משלך
 - מסמך סופי נעול בטריגרים במסד הנתונים ובשרשרת גיבוב
 - PDF עם הלוגו והחתימה שלך, חתום בחתימה דיגיטלית PAdES
+- מסמכים יוצאים במייל או בוואטסאפ רק עם החתימה המאובטחת, כפי שסעיף 18ב דורש
 - מספרי הקצאה מרשות המסים, ניסוי וייצור, עם תור ניסיונות חוזרים
 - מד תקרת עוסק פטור עם התראות ומעבר מודרך לעוסק מורשה
 - מתג הפקה, כדי להמשיך להפיק במערכת הנוכחית שלך
@@ -171,7 +172,8 @@ Source: https://open-ledger.dev/
 
 ### הוצאות וייבוא
 
-- העלאת קבלה או צילום, Claude קורא ספק, תאריך וסכום
+- מעבירים קבלות במייל לכתובת פרטית, או נותנים למסנן בג'ימייל לעשות את זה
+- העלאת קבלה או צילום, Claude או Gemini קוראים ספק, תאריך וסכום
 - ייבוא חודש שלם של הוצאות מ-Google Drive
 - ייבוא לקוחות ומסמכי עבר ממערכת אחרת
 - מסמכים מיובאים שומרים את השער המודפס עליהם, אף פעם לא שער מנוחש
@@ -185,6 +187,19 @@ Source: https://open-ledger.dev/
 - קובץ במבנה אחיד גרסה 1.31 לרשות המסים
 - ייצוא PCN874 (עמודת מספר ההקצאה)
 - גיבוי רבעוני ל-R2 ול-Google Drive
+
+### Claude ו-AI (MCP)
+
+- מחברים את Claude Desktop או Claude Code עם כתובת הלדג'ר וטוקן
+- שואלים על יתרות ומסמכים פתוחים, או נותנים ל-Claude לנסח מסמכים שאתם מאשרים
+- Settings > MCP: העתקת הכתובת, טוקן חדש כשהישן אבד, או כיבוי MCP
+- קריאת מסמכים עם מפתח Anthropic או Gemini משלכם
+
+### התקנה ועדכונים
+
+- תוכנת התקנה ל-Windows מקימה הכול בחשבון Cloudflare שלכם בערך ב-3 דקות
+- עדכון מוצא את הלדג'ר ושומר את הנתונים, המפתחות ופרטי העסק
+- זוכרת את התשובות שלכם במחשב, ואת טוקן ה-Cloudflare אם תבחרו
 
 ### בטלפון
 
@@ -678,9 +693,9 @@ Israel Invoices API v2, with a retry queue.
 
 The client signs on any screen. A signed work order becomes a pro forma.
 
-### Expenses read by Claude
+### Expenses read by AI
 
-Snap a receipt or import a month from Google Drive.
+Forward a receipt by email, snap a photo, or import a month from Google Drive.
 
 ### Reports for your accountant
 
@@ -744,6 +759,7 @@ What ships today, grouped by job.
 - One gapless series per document type, with your own starting numbers
 - Final documents locked by database triggers and a hash chain
 - PDF with your logo and signature, sealed with a PAdES digital signature
+- Documents go out by email or WhatsApp only with the secured signature, as instruction 18ב requires
 - ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue
 - פטור ceiling meter with alerts and a guided switch to מורשה
 - Issuing on/off switch, to keep issuing in your current system
@@ -803,7 +819,8 @@ What ships today, grouped by job.
 
 ### Expenses and import
 
-- Upload a receipt or snap a photo, Claude reads supplier, date and amount
+- Forward receipts by email to your private address, or let a Gmail filter do it
+- Upload a receipt or snap a photo, Claude or Gemini reads supplier, date and amount
 - Import a month of expenses from Google Drive
 - Import customers and past documents from another system
 - Imported documents keep the exchange rate printed on them, never a guessed one
@@ -817,6 +834,19 @@ What ships today, grouped by job.
 - Unified file (מבנה אחיד) v1.31 for the Tax Authority
 - PCN874 export (allocation-number column)
 - Quarterly backups to R2 and Google Drive
+
+### Claude and AI (MCP)
+
+- Connect Claude Desktop or Claude Code with your Ledger address and a token
+- Ask about balances and open documents, or have Claude draft documents you approve
+- Settings > MCP: copy the address, make a new token when one is lost, or switch MCP off
+- Document reading with your own Anthropic or Gemini key
+
+### Install and updates
+
+- A Windows installer sets up everything in your Cloudflare account in about 3 minutes
+- Updates find your Ledger and keep the data, the keys and the business details
+- Remembers your answers on your computer, and the Cloudflare token if you choose
 
 ### On your phone
 
@@ -1321,7 +1351,7 @@ Source: https://open-ledger.dev/help/before-you-start/
 
 שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
 
-עודכן 2026-10-17
+עודכן 2026-10-18
 
 הטוקן הוא סיסמה עם הרשאות מוגבלות. הוא מאפשר לתוכנת ההתקנה ליצור את הלדג'ר בחשבון Cloudflare שלכם. מוחקים אותו אחרי ההתקנה.
 
@@ -1357,7 +1387,7 @@ Source: https://open-ledger.dev/help/before-you-start/
 
 1. מתחת להרשאות, ב-**Account Resources**, בוחרים **Include** ואז את החשבון של העסק.
 2. **Zone Resources** מופיע רק אחרי שמוסיפים שורת Zone. עם דומיין: **Include**, אחר כך **Specific zone**, ואז הדומיין שהלדג'ר ישתמש בו. בלי דומיין לא הוספתם שורות Zone, אז החלק הזה לא מופיע. מדלגים.
-3. **Client IP Address Filtering** ו-**TTL**: משאירים ריק.
+3. **Client IP Address Filtering**: משאירים ריק. **TTL**: לא חובה. קובעים תאריך סיום, למשל שנה מהיום, והטוקן מפסיק לעבוד אחריו. מומלץ אם מסמנים **Remember the token on this computer** בתוכנת ההתקנה.
 
 ## יוצרים ומעתיקים
 
@@ -1634,7 +1664,7 @@ Source: https://open-ledger.dev/help/email/
 
 העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
 
-עודכן 2026-10-17
+עודכן 2026-10-18
 
 ## העברת קבלות במייל
 
@@ -1648,7 +1678,7 @@ Source: https://open-ledger.dev/help/email/
 
 1. בג'ימייל לוחצים על גלגל השיניים, אחר כך **See all settings** (הצגת כל ההגדרות), ואז הלשונית **Forwarding and POP/IMAP** (העברה ו-POP/IMAP).
 2. לוחצים **Add a forwarding address** (הוספת כתובת להעברה), מדביקים את הכתובת ומאשרים.
-3. ג'ימייל שולח קוד אישור לכתובת. הוא מופיע בלדג'ר תחת **Email inbox**: "Gmail sent a confirmation code". מקלידים את הקוד בג'ימייל ולוחצים **Verify**.
+3. ג'ימייל שולח לכתובת מייל אישור, עם קוד או קישור. הוא מופיע בלדג'ר תחת **Email inbox**. מקלידים את הקוד בג'ימייל ולוחצים **Verify**, או לוחצים **Open the confirmation link**.
 4. משאירים מסומן **Disable forwarding**. מעבירים רק קבלות, לא את כל המייל.
 5. בתיבת החיפוש של ג'ימייל מדביקים את החיפוש מעמוד הלדג'ר, למשל `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. אפשר להוסיף ספקים: `from:(billing@supplier.com)`.
 6. לוחצים על סמל אפשרויות החיפוש, ואז **Create filter** (יצירת מסנן). מסמנים **Forward it to** (העברה אל), בוחרים את הכתובת ולוחצים **Create filter**.
@@ -1665,7 +1695,18 @@ Source: https://open-ledger.dev/help/email/
 - מייל בלי קובץ מצורף הופך להוצאה אחת מהטקסט שלו, עם הסימון "From email text, check the amount".
 - אותו קובץ פעמיים הוא הוצאה אחת.
 - נספר רק מייל שהועבר מהכתובות שלכם. הרשימה נמצאת תחת **Allowed senders**, ומתחילה במיילים של הבעלים והעוזרים. כל השאר מתעלם ומופיע תחת **Last received**.
-- הכתובת עוברת דרך שער המייל של MTN, שלא שומר כלום. עם דומיין משלכם ב-Cloudflare, מנתבים כתובת כמו `receipts@your-domain.co.il` ישר ללדג'ר. הקובץ `docs/expense-inbox.md` במאגר מסביר איך.
+- הכתובת עוברת דרך שער המייל של MTN, שלא שומר כלום.
+- כל קובץ שמועבר נקרא עם מפתח ה-Gemini או ה-Anthropic שלכם. כשהקריאה נכשלת, ההוצאה מגיעה בכל זאת, עם הסיבה בהערה: "Not read automatically: ...". ממלאים את הפרטים ביד.
+
+### דומיין משלכם במקום
+
+עם דומיין משלכם ב-Cloudflare, כתובת עליו מגיעה ישר ללדג'ר, בלי שער באמצע.
+
+1. בלוח הבקרה של Cloudflare פותחים את הדומיין, ואז **Email > Email Routing**. מפעילים ונותנים ל-Cloudflare להוסיף את רשומות ה-DNS.
+2. **Routing rules > Create address**. כתובת מותאמת, למשל `receipts`. פעולה: **Send to a Worker**. יעד: ה-Worker של הלדג'ר, `mtn-open-ledger`. שומרים.
+3. משתמשים בכתובת הזו בג'ימייל כמו למעלה. אישור ג'ימייל מופיע תחת **Email inbox** באותה צורה.
+
+בהגדרות לא מופיעה כתובת לנתיב הזה, כי בחרתם אותה בעצמכם. רשימת השולחים המורשים ו-**Last received** עובדים אותו דבר.
 
 ### כתובת חדשה
 
@@ -1851,7 +1892,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 
 כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
 
-עודכן 2026-10-17
+עודכן 2026-10-18
 
 ## תוכנת ההתקנה מגיעה עם הרכישה
 
@@ -1882,11 +1923,9 @@ Source: https://open-ledger.dev/help/first-sign-in/
 3. לוחצים פעמיים על הקובץ. Windows מציג **Windows protected your PC**. לוחצים **More info** ואז **Run anyway**. הקובץ עדיין לא חתום בתעודה בתשלום, ולכן Windows מזהיר על כל עותק חדש.
 4. תוכנת ההתקנה נפתחת בדפדפן. משאירים פתוחים את הלשונית ואת החלון השחור הקטן עד הסוף. סגירה של אחד מהם עוצרת את ההתקנה.
 
-## 2. מפתח רישיון ופרטי העסק
+## 2. מפתח רישיון
 
-1. מדביקים את מפתח הרישיון ואת מספר העוסק.
-2. ממלאים שם עסק, מייל של הבעלים וסוג עסק: עוסק פטור, עוסק מורשה או חברה בע"מ. הלדג'ר שואל שוב במסך הראשון שלו, אז טעות כאן קלה לתיקון.
-3. תחת **More people who may sign in** מוסיפים את רואה החשבון או מייל נוסף שלכם, אחד בכל שורה. אפשר להוסיף אנשים גם אחר כך, ראו [גישה לרואה חשבון](https://open-ledger.dev/help/users/).
+מדביקים את מפתח הרישיון ואת מספר העוסק. המפתח עובד רק למספר הזה.
 
 ## 3. חשבון Cloudflare
 
@@ -1896,6 +1935,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 2. **מפעילים Zero Trust ו-R2.** לוחצים **Show me how** בשלב הזה. שניהם חינמיים ושניהם מבקשים כרטיס. לא יוצרים bucket, תוכנת ההתקנה עושה את זה. מסמנים **I did it**.
 3. **יוצרים API token.** לפי [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/). כאן רוב האנשים נתקעים. מסמנים **I did it**.
 4. מדביקים את הטוקן ולוחצים **Check token**. בוחרים את החשבון.
+5. לא חובה, ב-Windows: מסמנים **Remember the token on this computer**. בעדכון הבא הטוקן ממולא לבד. הוא שמור מוצפן למשתמש ה-Windows שלכם, כך שכל מי שנכנס למחשב כמוכם יכול להשתמש בו. בלי הסימון מדביקים את הטוקן בכל פעם.
 
 ## 4. דומיין או workers.dev
 
@@ -1904,11 +1944,20 @@ Source: https://open-ledger.dev/help/first-sign-in/
 - **עם דומיין ב-Cloudflare:** מקלידים כתובת עליו, למשל `ledger.acme.co.il`. תוכנת ההתקנה יוצרת אותה.
 - **בלי דומיין:** מסמנים **Use the free Cloudflare address instead of a domain** ובוחרים שם ל-workers.dev, למשל שם העסק באנגלית. הלקוחות רואים את הכתובת הזו בקישורים שאתם שולחים. מעבר לדומיין שלכם בהמשך משנה את הכתובת.
 
-## 5. רשות המסים
+כשהחשבון כבר מריץ את הלדג'ר שלכם, הכתובת ממולאת ונעולה, עם ההודעה "This account already runs your Ledger".
+
+## 5. פרטי העסק
+
+1. ממלאים שם עסק, מייל של הבעלים וסוג עסק: עוסק פטור, עוסק מורשה או חברה בע"מ. הלדג'ר שואל שוב במסך הראשון שלו, אז טעות כאן קלה לתיקון.
+2. תחת **More people who may sign in** מוסיפים את רואה החשבון או מייל נוסף שלכם, אחד בכל שורה. אפשר להוסיף אנשים גם אחר כך, ראו [גישה לרואה חשבון](https://open-ledger.dev/help/users/).
+
+בעדכון, תוכנת ההתקנה קוראת את הפרטים האלה מהלדג'ר ומציגה אותם כסיכום. לוחצים **Edit details** כדי לשנות פרט. סוג העסק נעול: משנים אותו בלדג'ר, ב-**Settings > Tax**.
+
+## 6. רשות המסים
 
 בוחרים איך הלדג'ר מקבל מספרי הקצאה לחשבוניות מס. במהדורה המחוברת זה כבר ממולא: הלדג'ר מתחבר דרך MTN, בלי שום הקלדה. אחרי ההתקנה נכנסים פעם אחת עם המשתמש שלכם ברשות המסים, ראו [חיבור לרשות המסים](https://open-ledger.dev/help/tax-authority/).
 
-## 6. תוספות
+## 7. תוספות
 
 הכול לא חובה. כל כפתור **?** מסביר מאיפה להביא את המפתח.
 
@@ -1916,14 +1965,19 @@ Source: https://open-ledger.dev/help/first-sign-in/
 - **שליחת מיילים:** מפתח ה-API של Resend והשולח, בצורה `Business Name <billing@your-domain.co.il>`. ראו [שליחת מסמכים במייל](https://open-ledger.dev/help/email/).
 - **התראות Slack:** כתובת ה-webhook.
 
-מדלגים על מה שאין לכם. אפשר להוסיף אחר כך, ראו [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/).
+מדלגים על מה שאין לכם. אפשר להוסיף אחר כך, ראו [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/). בעדכון, ליד מפתח שכבר הוגדר כתוב **Already set. Leave empty to keep it.**
 
-## 7. התקנה וסיום
+## 8. התקנה וסיום
 
-1. בודקים את הסיכום ולוחצים **Install**. זה לוקח בערך 3 דקות.
-2. המסך האחרון מציג את כתובת הלדג'ר ו-**MCP token**. מעתיקים את הטוקן עכשיו, או לוחצים על אחד מכפתורי ההורדה. Cloudflare לא מציג אותו שוב. ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/).
-3. תוכנת ההתקנה משאירה קובץ סיכום על שולחן העבודה, בלי סודות.
-4. מוחקים את ה-API token: ב-dash.cloudflare.com/profile/api-tokens, שלוש הנקודות ליד הטוקן, **Delete**. הלדג'ר כבר לא צריך אותו.
+1. בודקים את הסיכום ולוחצים **Install**. בעדכון הכפתור הוא **Update**. זה לוקח בערך 3 דקות.
+2. המסך האחרון מציג את כתובת הלדג'ר ו-**MCP token**. מעתיקים את הטוקן עכשיו, או לוחצים על אחד מכפתורי ההורדה. ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/). איבדתם אותו? **Settings > MCP** בלדג'ר יוצר חדש.
+3. הוא מציג גם את כתובת **תיבת המייל** להעברת קבלות. ראו [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/).
+4. תוכנת ההתקנה משאירה קובץ סיכום על שולחן העבודה, בלי סודות.
+5. אם לא סימנתם **Remember the token on this computer**, מוחקים את ה-API token: ב-dash.cloudflare.com/profile/api-tokens, שלוש הנקודות ליד הטוקן, **Delete**. הלדג'ר לא צריך אותו. אם סימנתם, שומרים את הטוקן לעדכון הבא.
+
+## עדכון בהמשך
+
+מריצים את תוכנת ההתקנה החדשה על אותו חשבון Cloudflare. היא מוצאת את הלדג'ר, ממלאת את הכתובת ואת פרטי העסק, שומרת את הנתונים והמפתחות, והכפתור האחרון הוא **Update**. באותו מחשב היא זוכרת גם את התשובות מההרצה הקודמת. ראו [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/).
 
 ## הצעד הבא
 
@@ -2207,7 +2261,7 @@ Source: https://open-ledger.dev/help/troubleshooting/
 
 איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
 
-עודכן 2026-10-17
+עודכן 2026-10-18
 
 ## בדיקת עדכונים
 
@@ -2383,7 +2437,7 @@ Source: https://open-ledger.dev/en/help/before-you-start/
 
 The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
 
-Updated 2026-10-17
+Updated 2026-10-18
 
 The token is a password with limited rights. It lets the installer create the Ledger in your Cloudflare account. You delete it after the install.
 
@@ -2419,7 +2473,7 @@ How to tell if you have a domain: on dash.cloudflare.com, the **Domains** list (
 
 1. Below the permissions, under **Account Resources**, choose **Include**, then the business's account.
 2. **Zone Resources** shows up only after you add a Zone row. With a domain: **Include**, then **Specific zone**, then the domain the Ledger will use. Without a domain you added no Zone rows, so this part does not show. Skip it.
-3. **Client IP Address Filtering** and **TTL**: leave empty.
+3. **Client IP Address Filtering**: leave empty. **TTL**: optional. Set an end date, for example one year from today, and the token stops working after it. A good idea if you tick **Remember the token on this computer** in the installer.
 
 ## Create and copy
 
@@ -2696,7 +2750,7 @@ Source: https://open-ledger.dev/en/help/email/
 
 Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
 
-Updated 2026-10-17
+Updated 2026-10-18
 
 ## Forward receipts by email
 
@@ -2710,7 +2764,7 @@ Open **Settings > Expenses > Email inbox**. The address looks like `expenses+r7k
 
 1. In Gmail, click the gear, then **See all settings**, then the tab **Forwarding and POP/IMAP**.
 2. Click **Add a forwarding address**, paste the address and confirm.
-3. Gmail sends a confirmation code to that address. It shows up in the Ledger under **Email inbox**: "Gmail sent a confirmation code". Type the code in Gmail and click **Verify**.
+3. Gmail sends a confirmation email to that address, with a code or a link. It shows up in the Ledger under **Email inbox**. Type the code in Gmail and click **Verify**, or click **Open the confirmation link**.
 4. Leave **Disable forwarding** selected. You forward only receipts, not all your mail.
 5. In the Gmail search box, paste the search from the Ledger page, for example `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. Add your suppliers if you like: `from:(billing@supplier.com)`.
 6. Click the search options icon, then **Create filter**. Tick **Forward it to**, pick the address, and click **Create filter**.
@@ -2727,7 +2781,18 @@ From now on, every matching email goes to the Ledger by itself. To send one by h
 - An email with no attachment becomes one expense from its text, marked "From email text, check the amount".
 - The same file twice is one expense.
 - Only email forwarded from your own addresses counts. The list is under **Allowed senders**, and starts with the owner and assistant emails. Anything else is ignored and listed under **Last received**.
-- The address passes through MTN's email gateway, which stores nothing. With your own domain on Cloudflare, you route an address such as `receipts@your-domain.co.il` straight to your Ledger instead. The repository's `docs/expense-inbox.md` explains how.
+- The address passes through MTN's email gateway, which stores nothing.
+- Each forwarded file is read with your Gemini or Anthropic key. When a read fails, the expense still arrives, with the reason in its note: "Not read automatically: ...". Fill in the details by hand.
+
+### Your own domain instead
+
+With your own domain on Cloudflare, an address on it goes straight to your Ledger, with no gateway in between.
+
+1. In the Cloudflare dashboard, open your domain, then **Email > Email Routing**. Turn it on and let Cloudflare add its DNS records.
+2. **Routing rules > Create address**. Custom address, for example `receipts`. Action: **Send to a Worker**. Destination: your Ledger's Worker, `mtn-open-ledger`. Save.
+3. Use that address in Gmail as above. The Gmail confirmation shows up under **Email inbox** the same way.
+
+Settings shows no address for this route, since you picked it. The allowed senders and **Last received** work the same.
 
 ### A new address
 
@@ -2913,7 +2978,7 @@ Source: https://open-ledger.dev/en/help/first-sign-in/
 
 Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
 
-Updated 2026-10-17
+Updated 2026-10-18
 
 ## The installer comes with your purchase
 
@@ -2944,11 +3009,9 @@ Setting up from the source code is free, and the [setup guide](https://github.co
 3. Double-click the file. Windows shows **Windows protected your PC**. Click **More info**, then **Run anyway**. The file is not signed with a paid certificate yet, so Windows warns about every new copy.
 4. The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.
 
-## 2. Licence key and business
+## 2. Licence key
 
-1. Paste the licence key and the business tax number.
-2. Fill in the business name, the owner email and the business type: עוסק פטור, עוסק מורשה or חברה בע"מ. The Ledger asks once more on its first screen, so a mistake here is easy to fix.
-3. Under **More people who may sign in**, add your accountant or a second email of your own, one per line. You also add people later, see [Give your accountant access](https://open-ledger.dev/en/help/users/).
+Paste the licence key and the business tax number. The key works for this number only.
 
 ## 3. Cloudflare account
 
@@ -2958,6 +3021,7 @@ The Ledger runs in your own Cloudflare account. The installer shows three steps,
 2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Do not create a bucket, the installer does that. Tick **I did it**.
 3. **Create the API token.** Follow [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/). This is the step where most people get stuck. Tick **I did it**.
 4. Paste the token and click **Check token**. Pick the account.
+5. Optional, on Windows: tick **Remember the token on this computer**. The next update fills it in. The token is stored encrypted for your Windows user, so anyone signed in as you on this PC could use it. Leave the box empty to paste the token each time.
 
 ## 4. Domain or workers.dev
 
@@ -2966,11 +3030,20 @@ After the token check, the installer asks for the Ledger's web address.
 - **With a domain in Cloudflare:** type an address on it, for example `ledger.acme.co.il`. The installer creates it.
 - **Without a domain:** tick **Use the free Cloudflare address instead of a domain** and choose a workers.dev name, for example the business name in English. Clients see this address in the links you send. Moving to your own domain later changes the address.
 
-## 5. Tax Authority
+When the account already runs your Ledger, the address is filled in and locked, with the note "This account already runs your Ledger".
+
+## 5. The business
+
+1. Fill in the business name, the owner email and the business type: עוסק פטור, עוסק מורשה or חברה בע"מ. The Ledger asks once more on its first screen, so a mistake here is easy to fix.
+2. Under **More people who may sign in**, add your accountant or a second email of your own, one per line. You also add people later, see [Give your accountant access](https://open-ledger.dev/en/help/users/).
+
+On an update, the installer reads these details from your Ledger and shows them as a summary. Click **Edit details** to change one. The business type is locked: change it in the Ledger, under **Settings > Tax**.
+
+## 6. Tax Authority
 
 Pick how the Ledger gets allocation numbers for tax invoices. The connected edition fills this in for you: the Ledger connects through MTN, with nothing to type. After the install you sign in once with your Tax Authority user, see [Connect to the Tax Authority](https://open-ledger.dev/en/help/tax-authority/).
 
-## 6. Extras
+## 7. Extras
 
 All optional. Each **?** button explains where to get the key.
 
@@ -2978,14 +3051,19 @@ All optional. Each **?** button explains where to get the key.
 - **Email sending:** the Resend API key and the sender, written as `Business Name <billing@your-domain.co.il>`. See [Send documents by email](https://open-ledger.dev/en/help/email/).
 - **Slack alerts:** the webhook address.
 
-Skip anything you do not have. You add it later, see [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/).
+Skip anything you do not have. You add it later, see [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/). On an update, keys already set say **Already set. Leave empty to keep it.**
 
-## 7. Install and finish
+## 8. Install and finish
 
-1. Check the summary and click **Install**. It takes about 3 minutes.
-2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. Cloudflare never shows it again. See [Connect Claude](https://open-ledger.dev/en/help/connect-claude/).
-3. The installer leaves a summary file on the Desktop, without secrets.
-4. Delete the Cloudflare API token: dash.cloudflare.com/profile/api-tokens, the three dots next to the token, **Delete**. The Ledger does not need it any more.
+1. Check the summary and click **Install**. On an update the button reads **Update**. It takes about 3 minutes.
+2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. See [Connect Claude](https://open-ledger.dev/en/help/connect-claude/). Lost it later? **Settings > MCP** in the Ledger makes a new one.
+3. It also shows your **email inbox** address, for forwarding receipts. See [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/).
+4. The installer leaves a summary file on the Desktop, without secrets.
+5. If you did not tick **Remember the token on this computer**, delete the Cloudflare API token: dash.cloudflare.com/profile/api-tokens, the three dots next to the token, **Delete**. The Ledger does not need it. If you ticked it, keep the token for the next update.
+
+## Update later
+
+Run the new installer on the same Cloudflare account. It finds your Ledger, fills in the address and the business details, keeps your data and keys, and the last button reads **Update**. On the same computer it also remembers your answers from the last run. See [Updates and backups](https://open-ledger.dev/en/help/updates-backups/).
 
 ## Next
 
@@ -3269,7 +3347,7 @@ Source: https://open-ledger.dev/en/help/troubleshooting/
 
 How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
 
-Updated 2026-10-17
+Updated 2026-10-18
 
 ## Check for updates
 

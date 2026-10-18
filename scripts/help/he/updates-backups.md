@@ -1,7 +1,7 @@
 ---
 title: עדכונים וגיבויים
 description: איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
-updated: 2026-10-17
+updated: 2026-10-18
 published: true
 nav: עדכונים וגיבויים
 order: 14

@@ -5,7 +5,7 @@
 ## Pages in English
 
 - [Open Ledger IL: invoices and books on your own Cloudflare](https://open-ledger.dev/en/): Source-available invoicing, receipts and bookkeeping for עוסק פטור and עוסק מורשה. Registered with the Israel Tax Authority. Runs on your Cloudflare.
-- [Open Ledger IL features: documents, reports, rules](https://open-ledger.dev/en/features/): Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.
+- [Open Ledger IL features: documents, reports, rules](https://open-ledger.dev/en/features/): Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses by email and AI, Claude via MCP.
 - [Open Ledger IL pricing: free, or set up for you](https://open-ledger.dev/en/pricing/): Run Open Ledger IL free from source, or have it set up for you for ₪699 once. What you need, how it works and the known limits.
 - [Open Ledger IL: Tax Authority certificate 281801](https://open-ledger.dev/en/registration/): Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.
 - [Open Ledger IL live demo: try it in your browser](https://open-ledger.dev/en/demo/): Open the Open Ledger IL demo: sample businesses, the real screens, private drafts and preview PDFs. No install. The sample data stays as it is.
@@ -35,7 +35,7 @@
 ## Pages in Hebrew
 
 - [Open Ledger IL: חשבוניות והנהלת חשבונות בענן שלך](https://open-ledger.dev/): מערכת בקוד מקור גלוי לחשבוניות, קבלות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.
-- [היכולות של Open Ledger IL: מסמכים, דוחות וכללים](https://open-ledger.dev/features/): כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.
+- [היכולות של Open Ledger IL: מסמכים, דוחות וכללים](https://open-ledger.dev/features/): כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות במייל ובקריאת AI, וחיבור Claude.
 - [מחירים: Open Ledger IL בחינם או בהקמה עבורך](https://open-ledger.dev/pricing/): הפעלת Open Ledger IL בחינם מקוד המקור, או הקמה עבורך ב-₪699 חד פעמי. מה צריך, איך זה עובד ומה המגבלות.
 - [Open Ledger IL רשומה ברשות המסים: תעודה 281801](https://open-ledger.dev/registration/): Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. אפשר לבדוק במאגר של רשות המסים.
 - [הדגמה חיה של Open Ledger IL: נסו בדפדפן](https://open-ledger.dev/demo/): פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.

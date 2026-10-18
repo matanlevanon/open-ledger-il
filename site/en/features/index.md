@@ -24,6 +24,7 @@ What ships today, grouped by job.
 - One gapless series per document type, with your own starting numbers
 - Final documents locked by database triggers and a hash chain
 - PDF with your logo and signature, sealed with a PAdES digital signature
+- Documents go out by email or WhatsApp only with the secured signature, as instruction 18ב requires
 - ITA allocation numbers (מספר הקצאה), sandbox and production, with a retry queue
 - פטור ceiling meter with alerts and a guided switch to מורשה
 - Issuing on/off switch, to keep issuing in your current system
@@ -83,7 +84,8 @@ What ships today, grouped by job.
 
 ### Expenses and import
 
-- Upload a receipt or snap a photo, Claude reads supplier, date and amount
+- Forward receipts by email to your private address, or let a Gmail filter do it
+- Upload a receipt or snap a photo, Claude or Gemini reads supplier, date and amount
 - Import a month of expenses from Google Drive
 - Import customers and past documents from another system
 - Imported documents keep the exchange rate printed on them, never a guessed one
@@ -97,6 +99,19 @@ What ships today, grouped by job.
 - Unified file (מבנה אחיד) v1.31 for the Tax Authority
 - PCN874 export (allocation-number column)
 - Quarterly backups to R2 and Google Drive
+
+### Claude and AI (MCP)
+
+- Connect Claude Desktop or Claude Code with your Ledger address and a token
+- Ask about balances and open documents, or have Claude draft documents you approve
+- Settings > MCP: copy the address, make a new token when one is lost, or switch MCP off
+- Document reading with your own Anthropic or Gemini key
+
+### Install and updates
+
+- A Windows installer sets up everything in your Cloudflare account in about 3 minutes
+- Updates find your Ledger and keep the data, the keys and the business details
+- Remembers your answers on your computer, and the Cloudflare token if you choose
 
 ### On your phone
 

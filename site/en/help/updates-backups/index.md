@@ -2,7 +2,7 @@
 
 How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
 
-Updated 2026-10-17
+Updated 2026-10-18
 
 ## Check for updates
 

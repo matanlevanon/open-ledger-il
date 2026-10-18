@@ -1,7 +1,7 @@
 ---
 title: Updates and backups
 description: How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
-updated: 2026-10-17
+updated: 2026-10-18
 published: true
 nav: Updates and backups
 order: 14

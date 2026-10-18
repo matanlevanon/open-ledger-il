@@ -12,7 +12,7 @@ PAGES = {
             crumb='Home'),
         'features': dict(
             title='Open Ledger IL features: documents, reports, rules',
-            desc='Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses read by Claude and reports.',
+            desc='Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses by email and AI, Claude via MCP.',
             h1='Every feature', crumb='Features'),
         'pricing': dict(
             title='Open Ledger IL pricing: free, or set up for you',
@@ -50,7 +50,7 @@ PAGES = {
             crumb='דף הבית'),
         'features': dict(
             title='היכולות של Open Ledger IL: מסמכים, דוחות וכללים',
-            desc='כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות ש-Claude קורא ודוחות לרואה החשבון.',
+            desc='כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות במייל ובקריאת AI, וחיבור Claude.',
             h1='כל היכולות', crumb='יכולות'),
         'pricing': dict(
             title='מחירים: Open Ledger IL בחינם או בהקמה עבורך',

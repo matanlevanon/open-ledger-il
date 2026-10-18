@@ -1,7 +1,7 @@
 ---
 title: Create the Cloudflare API token
 description: The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
-updated: 2026-10-17
+updated: 2026-10-18
 published: true
 nav: Cloudflare API token
 order: 3
@@ -41,7 +41,7 @@ How to tell if you have a domain: on dash.cloudflare.com, the **Domains** list (
 
 1. Below the permissions, under **Account Resources**, choose **Include**, then the business's account.
 2. **Zone Resources** shows up only after you add a Zone row. With a domain: **Include**, then **Specific zone**, then the domain the Ledger will use. Without a domain you added no Zone rows, so this part does not show. Skip it.
-3. **Client IP Address Filtering** and **TTL**: leave empty.
+3. **Client IP Address Filtering**: leave empty. **TTL**: optional. Set an end date, for example one year from today, and the token stops working after it. A good idea if you tick **Remember the token on this computer** in the installer.
 
 ## Create and copy
 

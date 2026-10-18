@@ -291,7 +291,7 @@ section[id] { scroll-margin-top: 64px; }
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"עזרה","item":"https://open-ledger.dev/help/"},{"@type":"ListItem","position":3,"name":"יצירת ה-API token ב-Cloudflare","item":"https://open-ledger.dev/help/cloudflare-token/"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"יצירת ה-API token ב-Cloudflare","description":"שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.","inLanguage":"he","dateModified":"2026-10-17","mainEntityOfPage":"https://open-ledger.dev/help/cloudflare-token/","url":"https://open-ledger.dev/help/cloudflare-token/","image":"https://open-ledger.dev/assets/og/default.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"יצירת ה-API token ב-Cloudflare","description":"שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.","inLanguage":"he","dateModified":"2026-10-18","mainEntityOfPage":"https://open-ledger.dev/help/cloudflare-token/","url":"https://open-ledger.dev/help/cloudflare-token/","image":"https://open-ledger.dev/assets/og/default.png","author":{"@id":"https://open-ledger.dev/#organization"},"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
 </head>
 <body>
 <header>
@@ -340,7 +340,7 @@ section[id] { scroll-margin-top: 64px; }
     <div class="wrap help-wrap">
     <nav class="help-nav" aria-label="נושאים"><p>נושאים</p><ol><li><a href="/help/before-you-start/">לפני ההתקנה</a></li><li><a href="/help/install/">התקנה</a></li><li><a href="/help/cloudflare-token/" aria-current="page">API token ב-Cloudflare</a></li><li><a href="/help/first-sign-in/">כניסה ראשונה</a></li><li><a href="/help/users/">גישה לרואה חשבון וצוות</a></li><li><a href="/help/tax-authority/">רשות המסים</a></li><li><a href="/help/first-invoice/">מהצעת מחיר לקבלה</a></li><li><a href="/help/digital-signature/">חתימה דיגיטלית</a></li><li><a href="/help/payment-providers/">סולקים</a></li><li><a href="/help/expenses/">הוצאות</a></li><li><a href="/help/email/">מייל וספאם</a></li><li><a href="/help/connect-claude/">חיבור Claude (MCP)</a></li><li><a href="/help/keys-later/">הוספת מפתח</a></li><li><a href="/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/help/troubleshooting/">בעיות נפוצות</a></li></ol></nav>
     <div class="prose">
-      <p class="shot-cap" style="text-align:start">עודכן 2026-10-17</p>
+      <p class="shot-cap" style="text-align:start">עודכן 2026-10-18</p>
       
       <p>הטוקן הוא סיסמה עם הרשאות מוגבלות. הוא מאפשר לתוכנת ההתקנה ליצור את הלדג'ר בחשבון Cloudflare שלכם. מוחקים אותו אחרי ההתקנה.</p>
 <h2 id="פותחים-את-עמוד-הטוקנים">פותחים את עמוד הטוקנים</h2>
@@ -353,7 +353,7 @@ section[id] { scroll-margin-top: 64px; }
 <ol><li>Zone | Zone | Read</li><li>Zone | Workers Routes | Edit</li><li>Zone | DNS | Edit</li></ol>
 <p>איך יודעים אם יש דומיין: ב-dash.cloudflare.com, ברשימה <b>Domains</b> (בתפריטים ישנים <b>Websites</b>). בחשבון חדש אין.</p>
 <h2 id="account-resources-ו-zone-resources">Account Resources ו-Zone Resources</h2>
-<ol><li>מתחת להרשאות, ב-<b>Account Resources</b>, בוחרים <b>Include</b> ואז את החשבון של העסק.</li><li><b>Zone Resources</b> מופיע רק אחרי שמוסיפים שורת Zone. עם דומיין: <b>Include</b>, אחר כך <b>Specific zone</b>, ואז הדומיין שהלדג'ר ישתמש בו. בלי דומיין לא הוספתם שורות Zone, אז החלק הזה לא מופיע. מדלגים.</li><li><b>Client IP Address Filtering</b> ו-<b>TTL</b>: משאירים ריק.</li></ol>
+<ol><li>מתחת להרשאות, ב-<b>Account Resources</b>, בוחרים <b>Include</b> ואז את החשבון של העסק.</li><li><b>Zone Resources</b> מופיע רק אחרי שמוסיפים שורת Zone. עם דומיין: <b>Include</b>, אחר כך <b>Specific zone</b>, ואז הדומיין שהלדג'ר ישתמש בו. בלי דומיין לא הוספתם שורות Zone, אז החלק הזה לא מופיע. מדלגים.</li><li><b>Client IP Address Filtering</b>: משאירים ריק. <b>TTL</b>: לא חובה. קובעים תאריך סיום, למשל שנה מהיום, והטוקן מפסיק לעבוד אחריו. מומלץ אם מסמנים <b>Remember the token on this computer</b> בתוכנת ההתקנה.</li></ol>
 <h2 id="יוצרים-ומעתיקים">יוצרים ומעתיקים</h2>
 <ol><li>לוחצים <b>Continue to summary</b> ואז <b>Create Token</b>.</li><li>לוחצים <b>Copy</b> ליד הטוקן. Cloudflare מציג אותו פעם אחת. אם הוא אבד, יוצרים חדש באותה דרך.</li><li>מדביקים בתוכנת ההתקנה ולוחצים <b>Check token</b>.</li></ol>
 <h2 id="אם-check-token-נכשל">אם Check token נכשל</h2>
