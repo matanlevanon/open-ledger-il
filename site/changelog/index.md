@@ -1,27 +1,8 @@
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
 
 יומן השינויים נכתב באנגלית.
-
-## 1.7.0 (2026-10-18)
-
-### Expenses
-
-- Forward receipts by email. Settings > Expenses shows the Ledger's private address and the Gmail filter to use. Each attachment becomes an expense waiting for review.
-- A file the reader cannot read still arrives, with the reason in its note.
-- Fix: uploaded files failed to read with Illegal invocation. Uploads, email and Drive reads work again.
-- Drive import: Check folder shows whether the Ledger reads the folder and which month folders it found, or what to fix. The index sheet is optional, with a sample sheet to download.
-
-### Claude (MCP)
-
-- Settings > MCP shows the address, makes a new token, and turns MCP off.
-- New tools: add_expense and list_expenses. Claude reads a supplier invoice and records it for review.
-
-### Documents
-
-- Email and WhatsApp sends are refused when the signature mode is none (instruction 18ב).
-- מסמך ממוחשב prints bold.
 
 ## 1.6.0 (2026-10-13)
 

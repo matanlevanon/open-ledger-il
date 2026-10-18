@@ -1,4 +1,4 @@
-**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.7.0
+**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.6.0
 
 # חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, על תשתית שבבעלותך.
 
@@ -338,7 +338,7 @@ Source: https://open-ledger.dev/pricing/
 
 # רשומה ברשות המסים
 
-חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
+חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.6.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
 
 רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
 
@@ -428,28 +428,9 @@ Source: https://open-ledger.dev/help/
 
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
 
 יומן השינויים נכתב באנגלית.
-
-## 1.7.0 (2026-10-18)
-
-### Expenses
-
-- Forward receipts by email. Settings > Expenses shows the Ledger's private address and the Gmail filter to use. Each attachment becomes an expense waiting for review.
-- A file the reader cannot read still arrives, with the reason in its note.
-- Fix: uploaded files failed to read with Illegal invocation. Uploads, email and Drive reads work again.
-- Drive import: Check folder shows whether the Ledger reads the folder and which month folders it found, or what to fix. The index sheet is optional, with a sample sheet to download.
-
-### Claude (MCP)
-
-- Settings > MCP shows the address, makes a new token, and turns MCP off.
-- New tools: add_expense and list_expenses. Claude reads a supplier invoice and records it for review.
-
-### Documents
-
-- Email and WhatsApp sends are refused when the signature mode is none (instruction 18ב).
-- מסמך ממוחשב prints bold.
 
 ## 1.6.0 (2026-10-13)
 
@@ -665,7 +646,7 @@ Source: https://open-ledger.dev/license/
 
 ---
 
-**Free** · Source available · Registered with the Israel Tax Authority · v1.7.0
+**Free** · Source available · Registered with the Israel Tax Authority · v1.6.0
 
 # Invoices, receipts and books for an Israeli business, on infrastructure you own.
 
@@ -1005,7 +986,7 @@ Source: https://open-ledger.dev/en/pricing/
 
 # Registered with the Israel Tax Authority
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. [2]
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.6.0, and new versions are added to the certificate as they are filed. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
 
@@ -1095,26 +1076,7 @@ Source: https://open-ledger.dev/en/help/
 
 # Changelog
 
-Every release, newest first. The current version is 1.7.0.
-
-## 1.7.0 (2026-10-18)
-
-### Expenses
-
-- Forward receipts by email. Settings > Expenses shows the Ledger's private address and the Gmail filter to use. Each attachment becomes an expense waiting for review.
-- A file the reader cannot read still arrives, with the reason in its note.
-- Fix: uploaded files failed to read with Illegal invocation. Uploads, email and Drive reads work again.
-- Drive import: Check folder shows whether the Ledger reads the folder and which month folders it found, or what to fix. The index sheet is optional, with a sample sheet to download.
-
-### Claude (MCP)
-
-- Settings > MCP shows the address, makes a new token, and turns MCP off.
-- New tools: add_expense and list_expenses. Claude reads a supplier invoice and records it for review.
-
-### Documents
-
-- Email and WhatsApp sends are refused when the signature mode is none (instruction 18ב).
-- מסמך ממוחשב prints bold.
+Every release, newest first. The current version is 1.6.0.
 
 ## 1.6.0 (2026-10-13)
 
@@ -2007,7 +1969,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 
 ## 1. מורידים ופותחים את תוכנת ההתקנה
 
-1. לוחצים על קישור ההורדה במייל הרכישה. הקובץ הוא `MTN-Open-Ledger-Setup-relay-1.7.0.exe`, בערך 100MB.
+1. לוחצים על קישור ההורדה במייל הרכישה. הקובץ הוא `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, בערך 100MB.
 2. הקישור עובד 72 שעות ו-5 הורדות. אם הוא כבר לא עובד, פותחים אותו בכל זאת ולוחצים **Email me a fresh link**.
 3. לוחצים פעמיים על הקובץ. Windows מציג **Windows protected your PC**. לוחצים **More info** ואז **Run anyway**. הקובץ עדיין לא חתום בתעודה בתשלום, ולכן Windows מזהיר על כל עותק חדש.
 4. תוכנת ההתקנה נפתחת בדפדפן. משאירים פתוחים את הלשונית ואת החלון השחור הקטן עד הסוף. סגירה של אחד מהם עוצרת את ההתקנה.
@@ -3142,7 +3104,7 @@ Setting up from the source code is free, and the [setup guide](https://github.co
 
 ## 1. Download and open the installer
 
-1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup-relay-1.7.0.exe`, about 100 MB.
+1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, about 100 MB.
 2. The link works for 72 hours and 5 downloads. If it no longer works, open it anyway and click **Email me a fresh link**.
 3. Double-click the file. Windows shows **Windows protected your PC**. Click **More info**, then **Run anyway**. The file is not signed with a paid certificate yet, so Windows warns about every new copy.
 4. The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.
