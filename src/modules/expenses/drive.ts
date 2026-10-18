@@ -18,6 +18,10 @@ export interface DriveSource {
   findIndexSheet(rootFolderId: string, yearMonth: string, title: string): Promise<string | null>;
   /** Every cell of the sheet's first tab as displayed, row by row. */
   readSheet(spreadsheetId: string): Promise<string[][]>;
+  /** Name and type of one folder or file, or null when Google can't see it (missing, or not shared). */
+  folderInfo(folderId: string): Promise<{ id: string; name: string; mimeType: string } | null>;
+  /** The address the folder has to be shared with. Null when no key is set. Throws when the key is not valid. */
+  accountEmail(): string | null;
 }
 
 export const FOLDER_MIME = 'application/vnd.google-apps.folder';
@@ -169,6 +173,32 @@ export class GoogleDriveSource implements DriveSource {
       pageToken = body.nextPageToken ?? '';
     } while (pageToken);
     return files;
+  }
+
+  accountEmail(): string | null {
+    const json = this.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+    if (!json) return null;
+    let email: unknown;
+    try {
+      email = (JSON.parse(json) as Partial<ServiceAccountKey>).client_email;
+    } catch {
+      throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON. Paste the whole key file again.');
+    }
+    if (typeof email !== 'string' || !email) throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON has no client_email. Use the JSON key of a service account.');
+    return email;
+  }
+
+  async folderInfo(folderId: string): Promise<{ id: string; name: string; mimeType: string } | null> {
+    const token = await this.token();
+    const res = await fetch(`${API_ROOT}/files/${encodeURIComponent(folderId)}?fields=id,name,mimeType&supportsAllDrives=true`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.status === 404) {
+      await res.body?.cancel();
+      return null;
+    }
+    if (!res.ok) throw new Error(`Google API error: ${res.status} ${await res.text()}`);
+    return res.json() as Promise<{ id: string; name: string; mimeType: string }>;
   }
 
   async downloadFile(fileId: string): Promise<ArrayBuffer> {

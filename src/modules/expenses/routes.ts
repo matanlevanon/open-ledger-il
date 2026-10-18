@@ -46,6 +46,7 @@ const driveRootFolderInput = z.object({ folderId: z.string().trim().min(1) });
 const importMonthInput = z.object({ yearMonth: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM').optional() });
 const dailySyncInput = z.object({ enabled: z.boolean() });
 const indexTitleInput = z.object({ pattern: z.string().trim().min(1).max(200) });
+const driveCheckInput = z.object({ folderId: z.string().trim().min(1).max(200).optional() });
 
 /** Builds the /expenses router. `resolveDeps` reads env at request time (Drive, extractor and FX need secrets/bindings). */
 export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => Deps): Hono<AppEnv> {
@@ -133,6 +134,13 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
       reader: readerStatus(c.env),
     }),
   );
+
+  // The Check folder button: is the id right, is it shared with the service account, what is inside.
+  app.post('/settings/drive/check', requireRole('owner'), async (c) => {
+    const body = driveCheckInput.parse(await c.req.json().catch(() => ({})));
+    const folderId = body.folderId ?? (await driveImport.effectiveDriveRoot(c.env.DB, businessIdOf(c)));
+    return c.json({ check: await driveImport.checkDriveFolder(resolveDeps(c.env).drive, folderId) });
+  });
 
   app.put('/settings/drive-daily-sync', requireRole('owner'), async (c) => {
     const { enabled } = dailySyncInput.parse(await c.req.json());

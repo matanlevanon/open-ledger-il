@@ -4,6 +4,7 @@ import { createExpensesModule } from '../../../src/modules/expenses';
 import { FOLDER_MIME, type DriveFile } from '../../../src/modules/expenses/drive';
 import {
   DRIVE_DAILY_CRON,
+  checkDriveFolder,
   dailyMonths,
   driveFileIdFromUrl,
   importMonth,
@@ -414,5 +415,68 @@ describe('R20: routes', () => {
     expect((await call(app, '/import/month', json({ yearMonth: '2026-13' }))).status).toBe(400);
     expect((await call(app, '/import/month', json({ yearMonth: '2026-01' }), ACCOUNTANT_ENV)).status).toBe(403);
     expect((await call(app, '/settings/drive', {}, ACCOUNTANT_ENV)).status).toBe(403);
+  });
+});
+
+describe('Drive folder check', () => {
+  const folder = (id: string, name: string): DriveFile => ({ id, name, mimeType: FOLDER_MIME, modifiedTime: '2026-10-01T00:00:00Z' });
+  const sheet = (id: string, name: string): DriveFile => ({ id, name, mimeType: 'application/vnd.google-apps.spreadsheet', modifiedTime: '2026-10-01T00:00:00Z' });
+
+  function sharedDrive(): FakeDriveSource {
+    const drive = new FakeDriveSource({}, { [`check-root/2026-09`]: 'f-09' });
+    drive.addFile('check-root', folder('f-09', '2026-09'), bytesFrom(''));
+    drive.addFile('check-root', folder('f-10', '2026-10'), bytesFrom(''));
+    drive.addFile('check-root', folder('f-old', 'Archive'), bytesFrom(''));
+    drive.addFile('check-root', sheet('s-10', 'Expense index 2026-10'), bytesFrom(''));
+    drive.addFile('check-root', pdf('loose', 'stray.pdf'), bytesFrom('x'));
+    return drive;
+  }
+
+  it('reports the month folders, the sheets and loose files of a shared folder', async () => {
+    const check = await checkDriveFolder(sharedDrive(), 'check-root');
+    expect(check).toMatchObject({
+      ok: true,
+      problem: null,
+      folderName: 'Folder check-root',
+      account: 'ledger-reader@example-project.iam.gserviceaccount.com',
+      monthFolders: ['2026-10', '2026-09'],
+      sheets: ['Expense index 2026-10'],
+      looseFiles: 1,
+    });
+  });
+
+  it('names the problem: no folder, no key, bad key, not shared, not a folder', async () => {
+    expect((await checkDriveFolder(sharedDrive(), null)).problem).toBe('no_folder');
+
+    const noKey = sharedDrive();
+    noKey.account = null;
+    expect((await checkDriveFolder(noKey, 'check-root')).problem).toBe('no_key');
+
+    const badKey = sharedDrive();
+    badKey.accountEmail = () => {
+      throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON.');
+    };
+    expect(await checkDriveFolder(badKey, 'check-root')).toMatchObject({ problem: 'bad_key', message: expect.stringContaining('not valid JSON') });
+
+    const unshared = sharedDrive();
+    unshared.unshared = true;
+    const notFound = await checkDriveFolder(unshared, 'check-root');
+    expect(notFound).toMatchObject({ ok: false, problem: 'not_found', account: 'ledger-reader@example-project.iam.gserviceaccount.com' });
+
+    const fileNotFolder = sharedDrive();
+    fileNotFolder.folderInfo = async (id: string) => ({ id, name: 'receipt.pdf', mimeType: 'application/pdf' });
+    expect((await checkDriveFolder(fileNotFolder, 'check-root')).problem).toBe('not_folder');
+  });
+
+  it('POST /settings/drive/check checks the id it is given, or the saved one, owner only', async () => {
+    const app = buildApp({ drive: sharedDrive() });
+    const given = await call(app, '/settings/drive/check', json({ folderId: 'check-root' }));
+    expect(given.status).toBe(200);
+    expect(((await given.json()) as any).check.monthFolders).toEqual(['2026-10', '2026-09']);
+
+    const missing = await call(app, '/settings/drive/check', json({ folderId: 'someone-elses-folder' }));
+    expect(((await missing.json()) as any).check.problem).toBe('not_found');
+
+    expect((await call(app, '/settings/drive/check', json({}), ACCOUNTANT_ENV)).status).toBe(403);
   });
 });

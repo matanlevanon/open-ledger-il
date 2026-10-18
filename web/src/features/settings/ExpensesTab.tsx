@@ -2,7 +2,16 @@ import { useEffect, useState } from 'react';
 import { useDemo } from '../../app/demo';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
-import { type DriveSettings, fetchDriveSettings, saveDailySync, saveDriveRootFolder, saveIndexTitlePattern } from '../expenses/api';
+import {
+  type DriveCheck,
+  type DriveSettings,
+  checkDriveFolder,
+  fetchDriveSettings,
+  sampleIndexSheetCsv,
+  saveDailySync,
+  saveDriveRootFolder,
+  saveIndexTitlePattern,
+} from '../expenses/api';
 import { ImportCounts } from '../expenses/ImportSummaryView';
 import { ApiError } from './api';
 import { InboxSection } from './InboxSection';
@@ -15,6 +24,8 @@ export function ExpensesTab() {
   const [forbidden, setForbidden] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [check, setCheck] = useState<DriveCheck | null>(null);
+  const [checking, setChecking] = useState(false);
   const toast = useToast();
   const t = useT();
   // R35: the email inbox is never shown in the demo.
@@ -41,11 +52,32 @@ export function ExpensesTab() {
   if (error) return <p className="text-sm text-danger">{error}</p>;
   if (!settings) return <p className="text-sm text-muted">{t('settings.loading')}</p>;
 
+  const runCheck = async (id?: string) => {
+    setChecking(true);
+    try {
+      setCheck(await checkDriveFolder(id));
+    } catch (err) {
+      toast.push(err instanceof Error ? err.message : t('settings.expenses.saveErrorFallback'), 'danger');
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  const downloadSample = () => {
+    const url = URL.createObjectURL(new Blob([sampleIndexSheetCsv()], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'expense-index-sample.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const saveFolder = async () => {
     setSaving(true);
     try {
       await saveDriveRootFolder(folderId.trim());
       toast.push(t('settings.expenses.folderSaved'), 'success');
+      void runCheck(folderId.trim());
       await load();
     } catch (err) {
       toast.push(err instanceof Error ? err.message : t('settings.expenses.saveErrorFallback'), 'danger');
@@ -118,7 +150,16 @@ export function ExpensesTab() {
           >
             {t('settings.expenses.saveFolder')}
           </button>
+          <button
+            type="button"
+            disabled={checking || !folderId.trim()}
+            onClick={() => runCheck(folderId.trim())}
+            className="rounded-full border border-line px-4 py-2 text-sm font-semibold text-ink hover:bg-surface disabled:opacity-60"
+          >
+            {checking ? t('settings.expenses.checking') : t('settings.expenses.checkFolder')}
+          </button>
         </div>
+        {check && <DriveCheckResult check={check} />}
       </section>
 
       <section className="flex flex-col gap-2">
@@ -143,6 +184,17 @@ export function ExpensesTab() {
           >
             {t('settings.expenses.saveTitle')}
           </button>
+        </div>
+        <p className="text-xs text-muted">{t('settings.expenses.sheetColumns')}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={downloadSample}
+            className="rounded-full border border-line px-4 py-2 text-sm font-semibold text-ink hover:bg-surface"
+          >
+            {t('settings.expenses.sampleSheet')}
+          </button>
+          <span className="text-xs text-muted">{t('settings.expenses.sampleHint')}</span>
         </div>
       </section>
 
@@ -188,6 +240,52 @@ export function ExpensesTab() {
           </table>
         )}
       </section>
+    </div>
+  );
+}
+
+/** What the Check folder button found: the folder and its month folders, or the one thing to fix. */
+function DriveCheckResult({ check }: { check: DriveCheck }) {
+  const t = useT();
+  if (!check.ok) {
+    let text: string;
+    switch (check.problem) {
+      case 'no_folder':
+        text = t('settings.expenses.checkNoFolder');
+        break;
+      case 'no_key':
+        text = t('settings.expenses.checkNoKey');
+        break;
+      case 'bad_key':
+        text = t('settings.expenses.checkBadKey', { message: check.message ?? '' });
+        break;
+      case 'not_found':
+        text = t('settings.expenses.checkNotFound', { account: check.account ?? '' });
+        break;
+      case 'not_folder':
+        text = t('settings.expenses.checkNotFolder', { name: check.folderName ?? '' });
+        break;
+      default:
+        text = t('settings.expenses.checkGoogleError', { message: check.message ?? '' });
+    }
+    return (
+      <p role="alert" data-testid="drive-check" className="rounded-md border border-danger px-3 py-2 text-sm text-danger" dir="auto">
+        {text}
+      </p>
+    );
+  }
+  return (
+    <div data-testid="drive-check" className="flex flex-col gap-1 rounded-md border border-line px-3 py-2 text-sm text-ink">
+      <p className="font-semibold" dir="auto">
+        {t('settings.expenses.checkOk', { name: check.folderName ?? '' })}
+      </p>
+      <p dir="auto">
+        {check.monthFolders.length > 0
+          ? t('settings.expenses.checkMonths', { list: check.monthFolders.slice(0, 12).join(', ') })
+          : t('settings.expenses.checkNoMonths')}
+      </p>
+      {check.sheets.length > 0 && <p dir="auto">{t('settings.expenses.checkSheets', { list: check.sheets.slice(0, 12).join(', ') })}</p>}
+      {check.looseFiles > 0 && <p className="text-xs text-muted">{t('settings.expenses.checkLoose', { count: String(check.looseFiles) })}</p>}
     </div>
   );
 }

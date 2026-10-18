@@ -4,7 +4,7 @@ import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
 import { ConfigError, ValidationError } from '../../core/errors';
 import { type Currency, HOME_CURRENCY, assertCurrency, isCurrency, parseMajor } from '../../core/money';
 import type { Env } from '../../env';
-import { DEFAULT_INDEX_TITLE_PATTERN, type DriveFile, FOLDER_MIME, indexSheetTitle, monthFolderName } from './drive';
+import { DEFAULT_INDEX_TITLE_PATTERN, type DriveFile, type DriveSource, FOLDER_MIME, SHEET_MIME, indexSheetTitle, monthFolderName } from './drive';
 import { r2KeyFor, sha256Hex, storeFile } from './files';
 import { convertToIls } from './fx';
 import * as service from './service';
@@ -736,6 +736,77 @@ interface RunRow {
   skipped_issued_by_self: number;
   errors: number;
   details_json: string;
+}
+
+// ---------------------------------------------------------------------------
+// Folder check: can the Ledger see the folder, and what is in it
+// ---------------------------------------------------------------------------
+
+export type DriveCheckProblem = 'no_folder' | 'no_key' | 'bad_key' | 'not_found' | 'not_folder' | 'google_error';
+
+export interface DriveCheck {
+  ok: boolean;
+  problem: DriveCheckProblem | null;
+  /** Google's own words, for bad_key and google_error. */
+  message: string | null;
+  folderId: string | null;
+  /** The service account address the folder must be shared with. */
+  account: string | null;
+  folderName: string | null;
+  /** `YYYY-MM` subfolders, newest first. */
+  monthFolders: string[];
+  /** Google Sheets directly in the folder, by title. */
+  sheets: string[];
+  /** Other files directly in the folder. The import never reads these. */
+  looseFiles: number;
+}
+
+/** Answers "is the folder id right, and can the Ledger read it" without importing anything. */
+export async function checkDriveFolder(drive: DriveSource, folderId: string | null): Promise<DriveCheck> {
+  const result: DriveCheck = {
+    ok: false,
+    problem: null,
+    message: null,
+    folderId,
+    account: null,
+    folderName: null,
+    monthFolders: [],
+    sheets: [],
+    looseFiles: 0,
+  };
+  const fail = (problem: DriveCheckProblem, message: string | null = null): DriveCheck => ({ ...result, problem, message });
+  if (!folderId) return fail('no_folder');
+  try {
+    result.account = drive.accountEmail();
+  } catch (err) {
+    return fail('bad_key', describe(err));
+  }
+  if (!result.account) return fail('no_key');
+  let info;
+  try {
+    info = await drive.folderInfo(folderId);
+  } catch (err) {
+    const message = describe(err);
+    return fail(/token exchange|invalid_grant|private key|PKCS|DER/i.test(message) ? 'bad_key' : 'google_error', message);
+  }
+  if (!info) return fail('not_found');
+  result.folderName = info.name;
+  if (info.mimeType !== FOLDER_MIME) return fail('not_folder');
+  let children: DriveFile[];
+  try {
+    children = await drive.listFiles(folderId);
+  } catch (err) {
+    return fail('google_error', describe(err));
+  }
+  result.monthFolders = children
+    .filter((f) => f.mimeType === FOLDER_MIME && /^\d{4}-(0[1-9]|1[0-2])$/.test(f.name))
+    .map((f) => f.name)
+    .sort()
+    .reverse();
+  result.sheets = children.filter((f) => f.mimeType === SHEET_MIME).map((f) => f.name);
+  result.looseFiles = children.filter((f) => f.mimeType !== FOLDER_MIME && f.mimeType !== SHEET_MIME).length;
+  result.ok = true;
+  return result;
 }
 
 export async function listImportRuns(db: D1Database, businessId: number, limit = 20): Promise<ImportSummary[]> {

@@ -184,6 +184,41 @@ export async function saveDriveRootFolder(folderId: string): Promise<void> {
   await send<{ folderId: string }>('/settings/drive-root-folder', 'PUT', { folderId });
 }
 
+/** The Check folder button. Mirrors DriveCheck in src/modules/expenses/drive-import.ts. */
+export interface DriveCheck {
+  ok: boolean;
+  problem: 'no_folder' | 'no_key' | 'bad_key' | 'not_found' | 'not_folder' | 'google_error' | null;
+  message: string | null;
+  folderId: string | null;
+  account: string | null;
+  folderName: string | null;
+  monthFolders: string[];
+  sheets: string[];
+  looseFiles: number;
+}
+
+export async function checkDriveFolder(folderId?: string): Promise<DriveCheck> {
+  return (await send<{ check: DriveCheck }>('/settings/drive/check', 'POST', folderId ? { folderId } : {})).check;
+}
+
+/** Column headers the index sheet import reads (drive-import.ts COLUMNS, English set). */
+export const INDEX_SHEET_HEADERS = [
+  'Status', 'Date', 'Supplier', 'Supplier tax ID', 'Document type', 'Before VAT', 'VAT', 'Total', 'Currency',
+  'Exchange rate', 'Rate date', 'Total ILS', 'Category', 'Fixed', 'Document number', 'File link', 'Notes',
+];
+
+const SAMPLE_ROWS = [
+  ['Expense', '2026-10-02', 'Acme Hosting Ltd', '515555555', 'Tax invoice', '100.00', '18.00', '118.00', 'ILS', '', '', '118.00', 'Software', 'Fixed', 'INV-1001', 'https://drive.google.com/file/d/FILE_ID/view', 'Monthly hosting'],
+  ['Expense', '2026-10-05', 'Example SaaS Inc.', '', 'Invoice', '20.00', '0', '20.00', 'USD', '3.75', '2026-10-05', '75.00', 'Software', 'Not fixed', 'ES-2210', 'https://drive.google.com/file/d/FILE_ID/view', ''],
+  ['Personal document', '2026-10-07', 'My bank', '', 'Statement', '', '', '0', 'ILS', '', '', '', '', '', '', '', 'Skipped by the import'],
+];
+
+/** The sample index sheet as CSV, with a BOM so Excel and Google Sheets read Hebrew text right. */
+export function sampleIndexSheetCsv(): string {
+  const cell = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
+  return '\ufeff' + [INDEX_SHEET_HEADERS, ...SAMPLE_ROWS].map((r) => r.map(cell).join(',')).join('\r\n') + '\r\n';
+}
+
 export async function saveIndexTitlePattern(pattern: string): Promise<void> {
   await send<{ indexTitlePattern: string }>('/settings/drive-index-title', 'PUT', { pattern });
 }

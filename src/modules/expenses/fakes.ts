@@ -39,6 +39,23 @@ export class FakeDriveSource implements DriveSource {
     return (this.files[folderId] ?? []).map((f) => f.file);
   }
 
+  /** A folder is known when it holds files, month folders or sheets. Tests set `unshared` to make every folder invisible. */
+  unshared = false;
+  account: string | null = 'ledger-reader@example-project.iam.gserviceaccount.com';
+
+  async folderInfo(folderId: string): Promise<{ id: string; name: string; mimeType: string } | null> {
+    if (this.unshared) return null;
+    const known =
+      folderId in this.files ||
+      Object.keys(this.monthFolders).some((k) => k.startsWith(`${folderId}/`)) ||
+      Object.keys(this.sheets).some((k) => k.startsWith(`${folderId}/`));
+    return known ? { id: folderId, name: `Folder ${folderId}`, mimeType: 'application/vnd.google-apps.folder' } : null;
+  }
+
+  accountEmail(): string | null {
+    return this.account;
+  }
+
   async downloadFile(fileId: string): Promise<ArrayBuffer> {
     for (const entries of Object.values(this.files)) {
       const hit = entries.find((f) => f.file.id === fileId);
