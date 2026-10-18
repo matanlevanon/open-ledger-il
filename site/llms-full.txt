@@ -1736,13 +1736,53 @@ Source: https://open-ledger.dev/help/email/
 
 ## חודש מגוגל דרייב
 
-למי שכבר שומר קבלות בדרייב, בתיקייה לכל חודש בשם `YYYY-MM`, למשל `2026-10`.
+לקבלות ששומרים ב-Google Drive. הלדג'ר קורא מהדרייב, הוא אף פעם לא כותב אליו.
 
-1. עוקבים אחרי הגדרת הדרייב במאגר הקוד: פרויקט ב-Google Cloud, הפעלת Drive API ו-Sheets API, Service Account, ושיתוף תיקיית ההוצאות איתו כעורך. המדריך הוא `docs/drive-expenses-setup.md` ב-GitHub.
-2. נותנים ללדג'ר את מפתח ה-JSON של ה-Service Account כסוד `GOOGLE_SERVICE_ACCOUNT_JSON`, ראו [הוספה או החלפה של מפתח](https://open-ledger.dev/help/keys-later/).
-3. ב-**Settings > Expenses** מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי `/folders/`, ולוחצים **Save folder**.
-4. ב-**Expenses** בוחרים חודש ולוחצים **Import month**. כל קובץ נקרא עם AI ומחכה לבדיקה שלכם. הרצה כפולה לא מכפילה כלום.
-5. לייבוא כל בוקר, מפעילים **Daily sync** ב-**Settings > Expenses**.
+### איך התיקייה בנויה
+
+תיקייה ראשית אחת להוצאות. בתוכה תיקייה לכל חודש בשם `YYYY-MM`, עם הקבלות של אותו חודש כקבצי PDF או תמונה.
+
+לדוגמה:
+
+- `Expenses`, התיקייה הראשית
+- `Expenses/2026-09`, עם `hosting-invoice.pdf` ו-`software-receipt.png`
+- `Expenses/2026-10`, עם הקבלות של אוקטובר
+
+קבצים שנמצאים ישירות בתיקייה הראשית לא נקראים. גם תיקיות משנה בתוך תיקיית חודש לא נקראות.
+
+### חיבור, פעם אחת
+
+1. יוצרים Service Account ב-Google עם מפתח JSON, ומפעילים את Drive API ו-Sheets API. השלבים ב-`docs/drive-expenses-setup.md` ב-GitHub.
+2. נותנים ללדג'ר את המפתח כסוד `GOOGLE_SERVICE_ACCOUNT_JSON`, ראו [הוספה או החלפה של מפתח](https://open-ledger.dev/help/keys-later/).
+3. בדרייב, משתפים את התיקייה הראשית עם הכתובת של ה-Service Account, ה-`client_email` שבמפתח, בהרשאת **צפייה**. תיקיות החודש מקבלות את השיתוף לבד.
+4. ב-**Settings > Expenses** מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי `/folders/`, ולוחצים **Save folder**.
+5. הלדג'ר בודק את התיקייה מיד אחרי השמירה. **Check folder** מריץ את הבדיקה שוב בכל זמן. היא מציגה את שם התיקייה ואת תיקיות החודש שנמצאו, או את הדבר האחד לתקן: אין מפתח, מפתח שלא עובד, או תיקייה ש-Google לא מוצא כי היא לא משותפת עם ה-Service Account.
+
+### ייבוא
+
+ב-**Expenses** בוחרים חודש ולוחצים **Import month**. כל קובץ נקרא עם AI ומחכה לבדיקה שלכם. הרצה כפולה לא מכפילה כלום. לייבוא כל בוקר, מפעילים **Daily sync** ב-**Settings > Expenses**.
+
+### גיליון אינדקס, למי שמנהל אחד
+
+לא חובה. יש מי שמנהל גיליון חודשי של ההוצאות. כשיש לחודש גיליון, הלדג'ר לוקח ממנו את השורות במקום לקרוא כל קובץ עם AI.
+
+- גיליון Google אחד לכל חודש, בתיקייה הראשית, בשם `Expense index YYYY-MM`, למשל `Expense index 2026-10`. את תבנית השם משנים ב-**Settings > Expenses**.
+- **Download a sample sheet** ב-**Settings > Expenses** מוריד קובץ CSV עם כל העמודות ושלוש שורות לדוגמה. פותחים אותו ב-Google Sheets ובוחרים **File > Save as Google Sheets**.
+- השורה הראשונה עם תא **סטטוס** היא שורת הכותרות. כותרות בעברית או באנגלית עובדות שתיהן.
+
+| עמודה | חובה | מה נכנס בה |
+| --- | --- | --- |
+| סטטוס | כן | הוצאה כדי לייבא את השורה. לא הוצאה, מסמך אישי, לא הושג, נפסל לא עסקי או נדחה הכנסה כדי לדלג עליה. |
+| תאריך | כן | `2026-10-02` או `2/10/2026` |
+| ספק | כן | שם הספק |
+| סה"כ | כן | הסכום כולל מע"מ, למשל `118.00` |
+| מטבע | כן | ILS, USD, EUR או GBP |
+| מע"מ | לא | חלק המע"מ מהסכום |
+| ח.פ ספק, סוג מסמך, מספר מסמך | לא | כמו שמופיע במסמך |
+| קטגוריה, קבוע, הערות | לא | תוויות שלכם. קבוע הוא קבוע או לא קבוע. |
+| קישור לקובץ | לא | הקישור לקבלה בדרייב. הלדג'ר מצרף את הקובץ להוצאה. |
+
+שורות עם כל סטטוס אחר, כמו שורת סיכום, לא נקראות.
 
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
@@ -2831,13 +2871,53 @@ To add a reading key after the install, see [Add or change a key](https://open-l
 
 ## A month from Google Drive
 
-For people who already keep receipts in Drive, one folder per month named `YYYY-MM`, for example `2026-10`.
+For receipts you keep in Google Drive. The Ledger reads them, it never writes to Drive.
 
-1. Follow the Drive setup in the repository: a Google Cloud project, the Drive and Sheets APIs, a service account, and the expenses folder shared with that account as Editor. The guide is `docs/drive-expenses-setup.md` on GitHub.
-2. Give the Ledger the service account's JSON key as the secret `GOOGLE_SERVICE_ACCOUNT_JSON`, see [Add or change a key](https://open-ledger.dev/en/help/keys-later/).
-3. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
-4. In **Expenses**, pick the month and click **Import month**. Each file goes through AI reading and waits for your check. Running it twice adds nothing twice.
-5. To import every morning, turn on **Daily sync** in **Settings > Expenses**.
+### How the folder looks
+
+One main folder for expenses. Inside it, one folder per month named `YYYY-MM`, with that month's receipts as PDF or image files.
+
+For example:
+
+- `Expenses`, the main folder
+- `Expenses/2026-09`, with `hosting-invoice.pdf` and `software-receipt.png`
+- `Expenses/2026-10`, with October's receipts
+
+Files that sit directly in the main folder are not read. Subfolders inside a month folder are not read either.
+
+### Connect it, once
+
+1. Create a Google service account and its JSON key, and turn on the Drive and Sheets APIs. The steps are in `docs/drive-expenses-setup.md` on GitHub.
+2. Give the Ledger the key as the secret `GOOGLE_SERVICE_ACCOUNT_JSON`, see [Add or change a key](https://open-ledger.dev/en/help/keys-later/).
+3. In Drive, share the main folder with the service account's address, the `client_email` in the key, as **Viewer**. The month folders inherit the share.
+4. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
+5. The Ledger checks the folder right after saving. Click **Check folder** any time to run it again. It shows the folder's name and the month folders it found, or the one thing to fix: no key, a key that does not work, or a folder Google does not find because it is not shared with the service account.
+
+### Import
+
+In **Expenses**, pick the month and click **Import month**. Each file is read with AI and waits for your check. Running it twice adds nothing twice. To import every morning, turn on **Daily sync** in **Settings > Expenses**.
+
+### An index sheet, if you keep one
+
+Optional. Some people keep a monthly spreadsheet of their expenses. When the month has one, the Ledger takes the rows from it instead of reading each file with AI.
+
+- One Google Sheet per month, in the main folder, titled `Expense index YYYY-MM`, for example `Expense index 2026-10`. Change the title pattern in **Settings > Expenses**.
+- **Download a sample sheet** in **Settings > Expenses** gives a CSV with every column and three sample rows. Open it in Google Sheets and choose **File > Save as Google Sheets**.
+- The first row with a **Status** cell is the header row. Headers in English or Hebrew both work.
+
+| Column | Required | What goes in it |
+| --- | --- | --- |
+| Status | Yes | Expense to import the row. Not an expense, Personal document, Not obtained, Rejected not business or Rejected income to skip it. |
+| Date | Yes | `2026-10-02` or `2/10/2026` |
+| Supplier | Yes | The supplier's name |
+| Total | Yes | Total including VAT, for example `118.00` |
+| Currency | Yes | ILS, USD, EUR or GBP |
+| VAT | No | The VAT part of the total |
+| Supplier tax ID, Document type, Document number | No | As printed on the document |
+| Category, Fixed, Notes | No | Your own labels. Fixed is Fixed or Not fixed. |
+| File link | No | The Drive link to the receipt. The Ledger attaches that file to the expense. |
+
+Rows with any other status, such as a totals row, are ignored.
 
 Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
 

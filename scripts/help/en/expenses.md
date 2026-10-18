@@ -66,10 +66,50 @@ To add a reading key after the install, see [Add or change a key](/en/help/keys-
 
 ## A month from Google Drive
 
-For people who already keep receipts in Drive, one folder per month named `YYYY-MM`, for example `2026-10`.
+For receipts you keep in Google Drive. The Ledger reads them, it never writes to Drive.
 
-1. Follow the Drive setup in the repository: a Google Cloud project, the Drive and Sheets APIs, a service account, and the expenses folder shared with that account as Editor. The guide is `docs/drive-expenses-setup.md` on GitHub.
-2. Give the Ledger the service account's JSON key as the secret `GOOGLE_SERVICE_ACCOUNT_JSON`, see [Add or change a key](/en/help/keys-later/).
-3. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
-4. In **Expenses**, pick the month and click **Import month**. Each file goes through AI reading and waits for your check. Running it twice adds nothing twice.
-5. To import every morning, turn on **Daily sync** in **Settings > Expenses**.
+### How the folder looks
+
+One main folder for expenses. Inside it, one folder per month named `YYYY-MM`, with that month's receipts as PDF or image files.
+
+For example:
+
+- `Expenses`, the main folder
+- `Expenses/2026-09`, with `hosting-invoice.pdf` and `software-receipt.png`
+- `Expenses/2026-10`, with October's receipts
+
+Files that sit directly in the main folder are not read. Subfolders inside a month folder are not read either.
+
+### Connect it, once
+
+1. Create a Google service account and its JSON key, and turn on the Drive and Sheets APIs. The steps are in `docs/drive-expenses-setup.md` on GitHub.
+2. Give the Ledger the key as the secret `GOOGLE_SERVICE_ACCOUNT_JSON`, see [Add or change a key](/en/help/keys-later/).
+3. In Drive, share the main folder with the service account's address, the `client_email` in the key, as **Viewer**. The month folders inherit the share.
+4. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
+5. The Ledger checks the folder right after saving. Click **Check folder** any time to run it again. It shows the folder's name and the month folders it found, or the one thing to fix: no key, a key that does not work, or a folder Google does not find because it is not shared with the service account.
+
+### Import
+
+In **Expenses**, pick the month and click **Import month**. Each file is read with AI and waits for your check. Running it twice adds nothing twice. To import every morning, turn on **Daily sync** in **Settings > Expenses**.
+
+### An index sheet, if you keep one
+
+Optional. Some people keep a monthly spreadsheet of their expenses. When the month has one, the Ledger takes the rows from it instead of reading each file with AI.
+
+- One Google Sheet per month, in the main folder, titled `Expense index YYYY-MM`, for example `Expense index 2026-10`. Change the title pattern in **Settings > Expenses**.
+- **Download a sample sheet** in **Settings > Expenses** gives a CSV with every column and three sample rows. Open it in Google Sheets and choose **File > Save as Google Sheets**.
+- The first row with a **Status** cell is the header row. Headers in English or Hebrew both work.
+
+| Column | Required | What goes in it |
+| --- | --- | --- |
+| Status | Yes | Expense to import the row. Not an expense, Personal document, Not obtained, Rejected not business or Rejected income to skip it. |
+| Date | Yes | `2026-10-02` or `2/10/2026` |
+| Supplier | Yes | The supplier's name |
+| Total | Yes | Total including VAT, for example `118.00` |
+| Currency | Yes | ILS, USD, EUR or GBP |
+| VAT | No | The VAT part of the total |
+| Supplier tax ID, Document type, Document number | No | As printed on the document |
+| Category, Fixed, Notes | No | Your own labels. Fixed is Fixed or Not fixed. |
+| File link | No | The Drive link to the receipt. The Ledger attaches that file to the expense. |
+
+Rows with any other status, such as a totals row, are ignored.

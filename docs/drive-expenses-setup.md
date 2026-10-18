@@ -58,13 +58,14 @@ When it asks for the value, paste the whole content of the JSON file, from the f
 ## 7. Check it works
 
 1. In the ledger, open **Settings**, then **Expenses**. Paste the root folder id (the part of the folder URL after `/folders/`) and click **Save folder**. The field starts empty. There is no default folder.
-2. Open **Expenses**, pick a month that has an index sheet, and click **Import month**.
-3. The result line shows how many rows it saw and created. Run it again. The second run creates nothing and lists every row as already in the ledger.
-4. To import every morning, turn on **Daily sync** in **Settings**, **Expenses**. It is off until you turn it on.
+2. The ledger checks the folder after saving, and **Check folder** runs the check again. It lists the month folders it sees, or says what to fix: no key, a key that does not work, or a folder not shared with the service account.
+3. Open **Expenses**, pick a month, and click **Import month**.
+4. The result line shows how many rows it saw and created. Run it again. The second run creates nothing and lists every row as already in the ledger.
+5. To import every morning, turn on **Daily sync** in **Settings**, **Expenses**. It is off until you turn it on.
 
 ## What the import does
 
-- With the month's index sheet (titled `Expense index YYYY-MM` in the root folder by default, change the pattern in **Settings** > **Expenses**), it creates an expense for each row marked Expense (or הוצאה) and attaches the PDF from the row's Drive link. Other statuses are counted, not created.
+- The index sheet is optional. Settings > Expenses has a **Download a sample sheet** button with every column. With the month's index sheet (titled `Expense index YYYY-MM` in the root folder by default, change the pattern in **Settings** > **Expenses**), it creates an expense for each row marked Expense (or הוצאה) and attaches the PDF from the row's Drive link. Other statuses are counted, not created.
 - Without an index sheet, it reads every file in the month folder with AI and adds each one as a new expense for review. It skips documents your own business issued, matched by the business name and tax id in Settings > Business.
 - The AI is Anthropic or Gemini, whichever you set up (`AI_PROVIDER` and its key, see `docs/deploy.md`). Settings > Expenses shows which one. With no key, a file is not read and the run lists it as an error to enter by hand.
 - It never reads the `_to_be_deleted` folder.
