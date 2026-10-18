@@ -17,6 +17,8 @@ order: 14
 2. Run the new installer on the same Cloudflare account, with the same licence key.
 3. It updates the Ledger and keeps everything: the database, the files, the sign-in and your keys.
 
+After you paste the Cloudflare token, the installer finds the Ledger in your account and fills in the business details from it. The web address and the business type are locked on an update. Keys already set stay as they are when you leave their fields empty. On the same computer, the installer also remembers your answers from the last run, and the token too if you tick **Remember the token on this computer** (Windows only, stored encrypted for your Windows user).
+
 ## Backups
 
 - Every quarter, the Ledger writes a full copy of its database and a list of every file to its own backup bucket, and tests that the copy restores.

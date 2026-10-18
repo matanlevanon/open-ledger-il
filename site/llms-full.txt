@@ -2219,6 +2219,8 @@ Source: https://open-ledger.dev/help/troubleshooting/
 2. מריצים את תוכנת ההתקנה החדשה על אותו חשבון Cloudflare, עם אותו מפתח רישיון.
 3. היא מעדכנת את הלדג'ר ושומרת הכול: מסד הנתונים, הקבצים, הכניסה והמפתחות.
 
+אחרי שמדביקים את טוקן ה-Cloudflare, תוכנת ההתקנה מוצאת את הלדג'ר בחשבון וממלאת ממנו את פרטי העסק. כתובת האתר וסוג העסק נעולים בעדכון. מפתחות שכבר הוגדרו נשארים כמו שהם כשמשאירים את השדה שלהם ריק. באותו מחשב התוכנה זוכרת גם את התשובות מההרצה הקודמת, ואת הטוקן אם מסמנים **Remember the token on this computer** (רק ב-Windows, שמור מוצפן למשתמש ה-Windows שלכם).
+
 ## גיבויים
 
 - כל רבעון הלדג'ר כותב עותק מלא של מסד הנתונים ורשימה של כל הקבצים ל-bucket הגיבויים שלו, ובודק שהעותק משתחזר.
@@ -3278,6 +3280,8 @@ Updated 2026-10-17
 1. Open the download link from your purchase email. If it no longer works, open it anyway and click **Email me a fresh link**.
 2. Run the new installer on the same Cloudflare account, with the same licence key.
 3. It updates the Ledger and keeps everything: the database, the files, the sign-in and your keys.
+
+After you paste the Cloudflare token, the installer finds the Ledger in your account and fills in the business details from it. The web address and the business type are locked on an update. Keys already set stay as they are when you leave their fields empty. On the same computer, the installer also remembers your answers from the last run, and the token too if you tick **Remember the token on this computer** (Windows only, stored encrypted for your Windows user).
 
 ## Backups
 

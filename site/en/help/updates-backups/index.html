@@ -346,6 +346,7 @@ section[id] { scroll-margin-top: 64px; }
 <p><b>Settings &gt; Updates &gt; Check for updates.</b> The Ledger also checks on the 1st of each month. Nothing installs by itself.</p>
 <h2 id="update">Update</h2>
 <ol><li>Open the download link from your purchase email. If it no longer works, open it anyway and click <b>Email me a fresh link</b>.</li><li>Run the new installer on the same Cloudflare account, with the same licence key.</li><li>It updates the Ledger and keeps everything: the database, the files, the sign-in and your keys.</li></ol>
+<p>After you paste the Cloudflare token, the installer finds the Ledger in your account and fills in the business details from it. The web address and the business type are locked on an update. Keys already set stay as they are when you leave their fields empty. On the same computer, the installer also remembers your answers from the last run, and the token too if you tick <b>Remember the token on this computer</b> (Windows only, stored encrypted for your Windows user).</p>
 <h2 id="backups">Backups</h2>
 <ul><li>Every quarter, the Ledger writes a full copy of its database and a list of every file to its own backup bucket, and tests that the copy restores.</li><li>With Google Drive connected, the same copy also goes to your Drive, outside Cloudflare.</li><li>Every night it checks the numbering for gaps and the documents for changes. <b>Settings &gt; Backups &gt; Run check now</b> runs the check on demand.</li></ul>
 <h2 id="keep-cloudflare-safe">Keep Cloudflare safe</h2>
