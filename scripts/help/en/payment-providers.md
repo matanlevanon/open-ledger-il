@@ -24,7 +24,7 @@ Two minutes per payment. Fits a business with a few payments a week.
 
 ## Way 2: automatic, for technical users
 
-The Ledger has an MCP endpoint, a door for other software, at its address followed by `/mcp`. It takes JSON-RPC calls (`tools/call`) with the header `Authorization: Bearer` and your MCP token. The tools include `list_clients`, `create_draft`, `finalize_document` and `record_payment`.
+The Ledger has an MCP endpoint, a door for other software, at its address followed by `/mcp`. It takes JSON-RPC calls (`tools/call`) with the header `Authorization: Bearer` and your MCP token. The tools include `list_clients`, `create_draft`, `finalize_document`, `record_payment` and `add_expense`.
 
 An automation tool such as Make, Zapier or n8n connects the provider to it:
 

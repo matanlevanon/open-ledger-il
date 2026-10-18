@@ -116,6 +116,7 @@ EN = dict(
         ('Claude and AI (MCP)', [
             'Connect Claude Desktop or Claude Code with your Ledger address and a token',
             'Ask about balances and open documents, or have Claude draft documents you approve',
+            'Hand Claude a supplier invoice and it records the expense for your review',
             'Settings > MCP: copy the address, make a new token when one is lost, or switch MCP off',
             'Document reading with your own Anthropic or Gemini key',
         ]),
@@ -328,6 +329,7 @@ HE = dict(
         ('Claude ו-AI (MCP)', [
             'מחברים את Claude Desktop או Claude Code עם כתובת הלדג\'ר וטוקן',
             'שואלים על יתרות ומסמכים פתוחים, או נותנים ל-Claude לנסח מסמכים שאתם מאשרים',
+            'נותנים ל-Claude חשבונית ספק והוא רושם את ההוצאה לבדיקה שלכם',
             'Settings > MCP: העתקת הכתובת, טוקן חדש כשהישן אבד, או כיבוי MCP',
             'קריאת מסמכים עם מפתח Anthropic או Gemini משלכם',
         ]),

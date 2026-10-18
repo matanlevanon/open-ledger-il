@@ -24,7 +24,7 @@ order: 9
 
 ## דרך 2: אוטומטית, למי שמכיר אוטומציות
 
-ללדג'ר יש נקודת חיבור MCP, דלת לתוכנות אחרות, בכתובת שלו עם `/mcp` בסוף. היא מקבלת קריאות JSON-RPC (`tools/call`) עם הכותרת `Authorization: Bearer` וטוקן ה-MCP שלכם. בין הכלים: `list_clients`, `create_draft`, `finalize_document` ו-`record_payment`.
+ללדג'ר יש נקודת חיבור MCP, דלת לתוכנות אחרות, בכתובת שלו עם `/mcp` בסוף. היא מקבלת קריאות JSON-RPC (`tools/call`) עם הכותרת `Authorization: Bearer` וטוקן ה-MCP שלכם. בין הכלים: `list_clients`, `create_draft`, `finalize_document`, `record_payment` ו-`add_expense`.
 
 כלי אוטומציה כמו Make, Zapier או n8n מחבר את הסולק אליה:
 

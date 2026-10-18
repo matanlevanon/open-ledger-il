@@ -192,6 +192,7 @@ Source: https://open-ledger.dev/
 
 - מחברים את Claude Desktop או Claude Code עם כתובת הלדג'ר וטוקן
 - שואלים על יתרות ומסמכים פתוחים, או נותנים ל-Claude לנסח מסמכים שאתם מאשרים
+- נותנים ל-Claude חשבונית ספק והוא רושם את ההוצאה לבדיקה שלכם
 - Settings > MCP: העתקת הכתובת, טוקן חדש כשהישן אבד, או כיבוי MCP
 - קריאת מסמכים עם מפתח Anthropic או Gemini משלכם
 
@@ -839,6 +840,7 @@ What ships today, grouped by job.
 
 - Connect Claude Desktop or Claude Code with your Ledger address and a token
 - Ask about balances and open documents, or have Claude draft documents you approve
+- Hand Claude a supplier invoice and it records the expense for your review
 - Settings > MCP: copy the address, make a new token when one is lost, or switch MCP off
 - Document reading with your own Anthropic or Gemini key
 
@@ -1433,6 +1435,15 @@ Source: https://open-ledger.dev/help/cloudflare-token/
 עודכן 2026-10-17
 
 עם MCP מחובר, שואלים את Claude דברים כמו "כמה Acme חייבים לי" או "תכין דרישת תשלום על 3 שעות ייעוץ", ו-Claude עובד בלדג'ר שלכם. Claude יוצר טיוטות, ומסיים מסמך רק אחרי שאתם מאשרים.
+
+## הוצאות דרך Claude
+
+נותנים ל-Claude חשבונית או קבלה של ספק ואומרים "תוסיף את זה כהוצאה". Claude קורא את הספק, התאריך, המספר, הסכום והמע"מ, ורושם את ההוצאה. היא מחכה במסך **Expenses** בסטטוס New, כמו הוצאה שהגיעה במייל או מ-Drive, עד שאתם בודקים ומתייקים.
+
+- כש-Claude יכול לשלוח את הקובץ עצמו, למשל Claude Code עם הקובץ בתיקייה שלכם, המקור מצורף להוצאה.
+- כשלא, ההוצאה נשמרת עם ההערה "no file attached yet". שמרו את המקור, או העבירו אותו לכתובת המייל של ההוצאות.
+- אותו ספק ואותו מספר מסמך פעמיים, או אותו קובץ פעמיים, מסומנים Duplicate.
+- שואלים "אילו הוצאות מחכות לבדיקה" ומקבלים את הרשימה.
 
 ## מה צריך
 
@@ -2086,7 +2097,7 @@ Source: https://open-ledger.dev/help/keys-later/
 
 ## דרך 2: אוטומטית, למי שמכיר אוטומציות
 
-ללדג'ר יש נקודת חיבור MCP, דלת לתוכנות אחרות, בכתובת שלו עם `/mcp` בסוף. היא מקבלת קריאות JSON-RPC (`tools/call`) עם הכותרת `Authorization: Bearer` וטוקן ה-MCP שלכם. בין הכלים: `list_clients`, `create_draft`, `finalize_document` ו-`record_payment`.
+ללדג'ר יש נקודת חיבור MCP, דלת לתוכנות אחרות, בכתובת שלו עם `/mcp` בסוף. היא מקבלת קריאות JSON-RPC (`tools/call`) עם הכותרת `Authorization: Bearer` וטוקן ה-MCP שלכם. בין הכלים: `list_clients`, `create_draft`, `finalize_document`, `record_payment` ו-`add_expense`.
 
 כלי אוטומציה כמו Make, Zapier או n8n מחבר את הסולק אליה:
 
@@ -2519,6 +2530,15 @@ Give Claude Desktop or Claude Code access to your Ledger with the MCP address an
 Updated 2026-10-17
 
 With MCP connected, you ask Claude things like "how much does Acme owe me" or "make a payment request for 3 hours of consulting", and Claude works in your Ledger. Claude creates drafts, and finalizes a document only after you confirm.
+
+## Expenses through Claude
+
+Give Claude a supplier invoice or receipt and say "add this as an expense". Claude reads the supplier, date, number, amount and VAT, and records the expense. It waits on the **Expenses** screen with status New, like an expense from email or Drive, until you check and file it.
+
+- When Claude can send the file itself, for example Claude Code with the file in your folder, the original is attached to the expense.
+- When it can't, the expense is saved with the note "no file attached yet". Keep the original, or forward it to the expenses email address.
+- The same supplier and document number twice, or the same file twice, is marked Duplicate.
+- Ask "which expenses are waiting for review" to get the list.
 
 ## What you need
 
@@ -3172,7 +3192,7 @@ Two minutes per payment. Fits a business with a few payments a week.
 
 ## Way 2: automatic, for technical users
 
-The Ledger has an MCP endpoint, a door for other software, at its address followed by `/mcp`. It takes JSON-RPC calls (`tools/call`) with the header `Authorization: Bearer` and your MCP token. The tools include `list_clients`, `create_draft`, `finalize_document` and `record_payment`.
+The Ledger has an MCP endpoint, a door for other software, at its address followed by `/mcp`. It takes JSON-RPC calls (`tools/call`) with the header `Authorization: Bearer` and your MCP token. The tools include `list_clients`, `create_draft`, `finalize_document`, `record_payment` and `add_expense`.
 
 An automation tool such as Make, Zapier or n8n connects the provider to it:
 

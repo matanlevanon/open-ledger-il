@@ -6,6 +6,15 @@ Updated 2026-10-17
 
 With MCP connected, you ask Claude things like "how much does Acme owe me" or "make a payment request for 3 hours of consulting", and Claude works in your Ledger. Claude creates drafts, and finalizes a document only after you confirm.
 
+## Expenses through Claude
+
+Give Claude a supplier invoice or receipt and say "add this as an expense". Claude reads the supplier, date, number, amount and VAT, and records the expense. It waits on the **Expenses** screen with status New, like an expense from email or Drive, until you check and file it.
+
+- When Claude can send the file itself, for example Claude Code with the file in your folder, the original is attached to the expense.
+- When it can't, the expense is saved with the note "no file attached yet". Keep the original, or forward it to the expenses email address.
+- The same supplier and document number twice, or the same file twice, is marked Duplicate.
+- Ask "which expenses are waiting for review" to get the list.
+
 ## What you need
 
 - **The address:** your Ledger's address followed by `/mcp`, for example `https://ledger.acme.co.il/mcp`.

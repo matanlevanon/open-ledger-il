@@ -104,6 +104,7 @@ What ships today, grouped by job.
 
 - Connect Claude Desktop or Claude Code with your Ledger address and a token
 - Ask about balances and open documents, or have Claude draft documents you approve
+- Hand Claude a supplier invoice and it records the expense for your review
 - Settings > MCP: copy the address, make a new token when one is lost, or switch MCP off
 - Document reading with your own Anthropic or Gemini key
 
