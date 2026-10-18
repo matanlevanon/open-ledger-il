@@ -21,7 +21,7 @@ Setting up from the source code is free, and the [setup guide]({{repo}}/blob/mai
 
 ## 1. Download and open the installer
 
-1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, about 100 MB.
+1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup-relay-1.7.0.exe`, about 100 MB.
 2. The link works for 72 hours and 5 downloads. If it no longer works, open it anyway and click **Email me a fresh link**.
 3. Double-click the file. Windows shows **Windows protected your PC**. Click **More info**, then **Run anyway**. The file is not signed with a paid certificate yet, so Windows warns about every new copy.
 4. The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.

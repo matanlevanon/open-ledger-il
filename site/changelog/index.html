@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>יומן שינויים של Open Ledger IL: מה חדש בכל גרסה</title>
-<meta name="description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.">
+<meta name="description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.">
 <link rel="canonical" href="https://open-ledger.dev/changelog/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/changelog/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/changelog/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/changelog/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="יומן שינויים של Open Ledger IL: מה חדש בכל גרסה">
-<meta property="og:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.">
+<meta property="og:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://open-ledger.dev/changelog/">
 <meta property="og:image" content="https://open-ledger.dev/assets/og/he-changelog.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="יומן שינויים של Open Ledger IL: מה חדש בכל גרסה">
-<meta name="twitter:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.">
+<meta name="twitter:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.">
 <meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-changelog.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
@@ -333,10 +333,17 @@ section[id] { scroll-margin-top: 64px; }
   <div class="wrap page">
     <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li aria-current="page">יומן שינויים</li></ol></nav>
     <h1>יומן שינויים</h1>
-    <p class="lead">כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.</p>
+    <p class="lead">כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.</p>
   </div>
   <section class="plain">
-    <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="1-6-0-2026-10-13">1.6.0 (2026-10-13)</h2>
+    <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="1-7-0-2026-10-18">1.7.0 (2026-10-18)</h2>
+<h3 id="expenses">Expenses</h3>
+<ul><li>Forward receipts by email. Settings &gt; Expenses shows the Ledger's private address and the Gmail filter to use. Each attachment becomes an expense waiting for review.</li><li>A file the reader cannot read still arrives, with the reason in its note.</li><li>Fix: uploaded files failed to read with Illegal invocation. Uploads, email and Drive reads work again.</li><li>Drive import: Check folder shows whether the Ledger reads the folder and which month folders it found, or what to fix. The index sheet is optional, with a sample sheet to download.</li></ul>
+<h3 id="claude-mcp">Claude (MCP)</h3>
+<ul><li>Settings &gt; MCP shows the address, makes a new token, and turns MCP off.</li><li>New tools: add_expense and list_expenses. Claude reads a supplier invoice and records it for review.</li></ul>
+<h3 id="documents">Documents</h3>
+<ul><li>Email and WhatsApp sends are refused when the signature mode is none (instruction 18ב).</li><li>מסמך ממוחשב prints bold.</li></ul>
+<h2 id="1-6-0-2026-10-13">1.6.0 (2026-10-13)</h2>
 <h3 id="documents">Documents</h3>
 <ul><li>A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel column and the two-column totals now show only on a USD, EUR or GBP document.</li></ul>
 <h3 id="tax-authority-connection">Tax Authority connection</h3>

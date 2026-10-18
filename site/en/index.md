@@ -1,4 +1,4 @@
-**Free** · Source available · Registered with the Israel Tax Authority · v1.6.0
+**Free** · Source available · Registered with the Israel Tax Authority · v1.7.0
 
 # Invoices, receipts and books for an Israeli business, on infrastructure you own.
 
