@@ -53,7 +53,13 @@ export class FakeDriveSource implements DriveSource {
   }
 
   accountEmail(): string | null {
-    return this.account;
+    return this.mode === 'api_key' ? null : this.account;
+  }
+
+  mode: 'service_account' | 'api_key' | null = 'service_account';
+
+  authMode(): 'service_account' | 'api_key' | null {
+    return this.mode;
   }
 
   async downloadFile(fileId: string): Promise<ArrayBuffer> {

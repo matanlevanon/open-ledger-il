@@ -22,7 +22,11 @@ export interface DriveSource {
   folderInfo(folderId: string): Promise<{ id: string; name: string; mimeType: string } | null>;
   /** The address the folder has to be shared with. Null when no key is set. Throws when the key is not valid. */
   accountEmail(): string | null;
+  /** Which key reads Drive: the service account (private folder) or an API key (folder shared by link). Null when neither is set. */
+  authMode(): DriveAuthMode | null;
 }
+
+export type DriveAuthMode = 'service_account' | 'api_key';
 
 export const FOLDER_MIME = 'application/vnd.google-apps.folder';
 export const SHEET_MIME = 'application/vnd.google-apps.spreadsheet';
@@ -100,12 +104,33 @@ export async function serviceAccountAccessToken(json: string, scope = GOOGLE_SCO
   return body.access_token;
 }
 
-/** Reads the configured root folder and its `YYYY-MM` subfolders with a service-account token (docs/secrets.md GOOGLE_SERVICE_ACCOUNT_JSON). */
+/**
+ * Reads the configured root folder and its `YYYY-MM` subfolders with a service-account token
+ * (docs/secrets.md GOOGLE_SERVICE_ACCOUNT_JSON). Without one, GOOGLE_API_KEY reads a folder shared
+ * as "anyone with the link". The service account wins when both are set.
+ */
 export class GoogleDriveSource implements DriveSource {
   /** One token per import run, not one per call. Google tokens last an hour. */
   private cached: { token: string; expiresAt: number } | null = null;
 
   constructor(private readonly env: Env) {}
+
+  authMode(): DriveAuthMode | null {
+    if (this.env.GOOGLE_SERVICE_ACCOUNT_JSON) return 'service_account';
+    if (this.env.GOOGLE_API_KEY?.trim()) return 'api_key';
+    return null;
+  }
+
+  /** One GET with whichever key is set: a bearer token, or `key=` on the URL. */
+  private async get(url: string): Promise<Response> {
+    const mode = this.authMode();
+    if (mode === 'api_key') {
+      const keyed = `${url}${url.includes('?') ? '&' : '?'}key=${encodeURIComponent(this.env.GOOGLE_API_KEY!.trim())}`;
+      return fetch(keyed);
+    }
+    if (!mode) throw new Error('No Google key is set. Add GOOGLE_SERVICE_ACCOUNT_JSON, or GOOGLE_API_KEY for a folder shared by link.');
+    return fetch(url, { headers: { Authorization: `Bearer ${await this.token()}` } });
+  }
 
   private async token(): Promise<string> {
     if (this.cached && this.cached.expiresAt > Date.now()) return this.cached.token;
@@ -121,10 +146,9 @@ export class GoogleDriveSource implements DriveSource {
    * caller's side and asks clients to retry with backoff, so a call gets three tries.
    */
   private async api<T>(path: string, root = API_ROOT): Promise<T> {
-    const token = await this.token();
     const url = `${root}${path}`;
     for (let attempt = 1; ; attempt += 1) {
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await this.get(url);
       if (res.ok) return res.json() as Promise<T>;
       const retryable = res.status === 429 || res.status >= 500;
       if (!retryable || attempt >= 3) throw new Error(`Google API error: ${res.status} ${await res.text()}`);
@@ -189,10 +213,7 @@ export class GoogleDriveSource implements DriveSource {
   }
 
   async folderInfo(folderId: string): Promise<{ id: string; name: string; mimeType: string } | null> {
-    const token = await this.token();
-    const res = await fetch(`${API_ROOT}/files/${encodeURIComponent(folderId)}?fields=id,name,mimeType&supportsAllDrives=true`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await this.get(`${API_ROOT}/files/${encodeURIComponent(folderId)}?fields=id,name,mimeType&supportsAllDrives=true`);
     if (res.status === 404) {
       await res.body?.cancel();
       return null;
@@ -202,8 +223,7 @@ export class GoogleDriveSource implements DriveSource {
   }
 
   async downloadFile(fileId: string): Promise<ArrayBuffer> {
-    const token = await this.token();
-    const res = await fetch(`${API_ROOT}/files/${fileId}?alt=media&supportsAllDrives=true`, { headers: { Authorization: `Bearer ${token}` } });
+    const res = await this.get(`${API_ROOT}/files/${fileId}?alt=media&supportsAllDrives=true`);
     if (!res.ok) throw new Error(`Google Drive download failed: ${res.status} ${await res.text()}`);
     return res.arrayBuffer();
   }

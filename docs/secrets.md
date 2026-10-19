@@ -26,6 +26,7 @@ Set a secret on your computer with `npx wrangler secret put <NAME>`, or in the C
 | `ANTHROPIC_API_KEY` | R07, R17, R24 | Expense extraction; also "Upload existing documents" (Import), reading fields from a previously-issued document. Unset: both screens fall back to manual entry. Used when `AI_PROVIDER` is `anthropic`, or empty with this key set |
 | `GEMINI_API_KEY` | R24 | The other document reader. Used when `AI_PROVIDER` is `gemini`, or empty with no Anthropic key. Unset with no Anthropic key: manual entry |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | R07, R14, R20 | Drive ingest and backup. R20 reads the monthly index sheets too, so the key needs Drive API and Sheets API on its project. Setup: `docs/drive-expenses-setup.md` |
+| `GOOGLE_API_KEY` | R37 | Drive ingest without a service account: reads a root folder shared as "anyone with the link", read only. Ignored when `GOOGLE_SERVICE_ACCOUNT_JSON` is set. The Drive backup copy still needs the service account |
 | `SLACK_WEBHOOK_URL` | R08, R09, R12, R14 | Alerts. R12 sends the 24-hour allocation alert and the day-75 ITA re-login reminder |
 | `DOWNLOAD_SIGN_KEY` | R09 | HMAC key for signed, time-limited R2 download links |
 | `MAIL_API_KEY` | R06, R08 | Outgoing email through Resend. R08 emails the monthly accountant pack |

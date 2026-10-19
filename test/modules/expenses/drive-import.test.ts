@@ -468,6 +468,19 @@ describe('Drive folder check', () => {
     expect((await checkDriveFolder(fileNotFolder, 'check-root')).problem).toBe('not_folder');
   });
 
+  it('with an API key: needs no service account, and a private folder reads as not shared by link', async () => {
+    const byLink = sharedDrive();
+    byLink.mode = 'api_key';
+    expect(await checkDriveFolder(byLink, 'check-root')).toMatchObject({ ok: true, mode: 'api_key', account: null, monthFolders: ['2026-10', '2026-09'] });
+
+    byLink.unshared = true;
+    expect(await checkDriveFolder(byLink, 'check-root')).toMatchObject({ ok: false, mode: 'api_key', problem: 'not_found' });
+
+    const none = sharedDrive();
+    none.mode = null;
+    expect((await checkDriveFolder(none, 'check-root')).problem).toBe('no_key');
+  });
+
   it('POST /settings/drive/check checks the id it is given, or the saved one, owner only', async () => {
     const app = buildApp({ drive: sharedDrive() });
     const given = await call(app, '/settings/drive/check', json({ folderId: 'check-root' }));

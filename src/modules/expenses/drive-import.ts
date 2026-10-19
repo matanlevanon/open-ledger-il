@@ -750,6 +750,8 @@ export interface DriveCheck {
   /** Google's own words, for bad_key and google_error. */
   message: string | null;
   folderId: string | null;
+  /** service_account: a private folder shared with `account`. api_key: a folder shared as anyone with the link. */
+  mode: 'service_account' | 'api_key' | null;
   /** The service account address the folder must be shared with. */
   account: string | null;
   folderName: string | null;
@@ -768,6 +770,7 @@ export async function checkDriveFolder(drive: DriveSource, folderId: string | nu
     problem: null,
     message: null,
     folderId,
+    mode: null,
     account: null,
     folderName: null,
     monthFolders: [],
@@ -776,18 +779,22 @@ export async function checkDriveFolder(drive: DriveSource, folderId: string | nu
   };
   const fail = (problem: DriveCheckProblem, message: string | null = null): DriveCheck => ({ ...result, problem, message });
   if (!folderId) return fail('no_folder');
-  try {
-    result.account = drive.accountEmail();
-  } catch (err) {
-    return fail('bad_key', describe(err));
+  result.mode = drive.authMode();
+  if (!result.mode) return fail('no_key');
+  if (result.mode === 'service_account') {
+    try {
+      result.account = drive.accountEmail();
+    } catch (err) {
+      return fail('bad_key', describe(err));
+    }
+    if (!result.account) return fail('no_key');
   }
-  if (!result.account) return fail('no_key');
   let info;
   try {
     info = await drive.folderInfo(folderId);
   } catch (err) {
     const message = describe(err);
-    return fail(/token exchange|invalid_grant|private key|PKCS|DER/i.test(message) ? 'bad_key' : 'google_error', message);
+    return fail(/token exchange|invalid_grant|private key|PKCS|DER|API key not valid|API_KEY_INVALID/i.test(message) ? 'bad_key' : 'google_error', message);
   }
   if (!info) return fail('not_found');
   result.folderName = info.name;

@@ -72,6 +72,10 @@ When it asks for the value, paste the whole content of the JSON file, from the f
 - It skips anything already in the ledger, uploads included: the same Drive file, the same file content, or the same supplier and document number. A row with the same supplier, date and total in shekels is flagged and not created.
 - It never changes or deletes an expense that is already there.
 
+## Without a service account
+
+A root folder shared as **Anyone with the link, Viewer** reads with a plain API key. In the same project, **APIs & Services > Credentials > Create credentials > API key**, restricted to the Drive API and the Sheets API. Set it as the secret `GOOGLE_API_KEY` and skip steps 3 to 6. Anyone with the folder link reads the receipts, so the service account stays the default. The quarterly backup's Drive copy writes files and needs the service account.
+
 ## If something fails
 
 - **"GOOGLE_SERVICE_ACCOUNT_JSON is not set"**: step 6 did not run, or ran in another folder.

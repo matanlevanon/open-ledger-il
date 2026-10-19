@@ -192,6 +192,7 @@ export interface DriveCheck {
   problem: 'no_folder' | 'no_key' | 'bad_key' | 'not_found' | 'not_folder' | 'google_error' | null;
   message: string | null;
   folderId: string | null;
+  mode?: 'service_account' | 'api_key' | null;
   account: string | null;
   folderName: string | null;
   monthFolders: string[];

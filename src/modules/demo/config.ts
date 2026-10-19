@@ -116,6 +116,7 @@ export function demoEnv(env: Env): Env {
     ANTHROPIC_API_KEY: undefined,
     GEMINI_API_KEY: undefined,
     GOOGLE_SERVICE_ACCOUNT_JSON: undefined,
+    GOOGLE_API_KEY: undefined,
     DEV_AUTH_EMAIL: undefined,
   } as Env;
 }

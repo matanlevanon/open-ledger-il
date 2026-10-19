@@ -29,6 +29,8 @@ export interface Env {
   /** R24: the installer's preselection for the first-run Business type step. Read only while setup is incomplete. */
   SETUP_BUSINESS_TYPE?: string;
   GOOGLE_SERVICE_ACCOUNT_JSON?: string;
+  /** Drive import without a service account: a Google API key that reads folders shared as "anyone with the link". Read only. */
+  GOOGLE_API_KEY?: string;
   /** Outgoing email (R06), Resend API key. */
   MAIL_API_KEY?: string;
   /** Sender for outgoing email, for example "Sample Business Ltd <billing@example.com>". A domain verified in Resend. */

@@ -260,7 +260,7 @@ function DriveCheckResult({ check }: { check: DriveCheck }) {
         text = t('settings.expenses.checkBadKey', { message: check.message ?? '' });
         break;
       case 'not_found':
-        text = t('settings.expenses.checkNotFound', { account: check.account ?? '' });
+        text = check.mode === 'api_key' ? t('settings.expenses.checkNotFoundByLink') : t('settings.expenses.checkNotFound', { account: check.account ?? '' });
         break;
       case 'not_folder':
         text = t('settings.expenses.checkNotFolder', { name: check.folderName ?? '' });
@@ -279,6 +279,7 @@ function DriveCheckResult({ check }: { check: DriveCheck }) {
       <p className="font-semibold" dir="auto">
         {t('settings.expenses.checkOk', { name: check.folderName ?? '' })}
       </p>
+      {check.mode === 'api_key' && <p className="text-xs text-muted">{t('settings.expenses.checkByLink')}</p>}
       <p dir="auto">
         {check.monthFolders.length > 0
           ? t('settings.expenses.checkMonths', { list: check.monthFolders.slice(0, 12).join(', ') })
