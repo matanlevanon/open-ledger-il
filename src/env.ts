@@ -26,6 +26,8 @@ export interface Env {
   /** R24: model names, so a model retirement needs no code change. Defaults in src/modules/ai. */
   ANTHROPIC_MODEL?: string;
   GEMINI_MODEL?: string;
+  /** Anthropic identity-linked keys belong to a user and must name a workspace (wrkspc_...) on every call. */
+  ANTHROPIC_WORKSPACE_ID?: string;
   /** R24: the installer's preselection for the first-run Business type step. Read only while setup is incomplete. */
   SETUP_BUSINESS_TYPE?: string;
   GOOGLE_SERVICE_ACCOUNT_JSON?: string;

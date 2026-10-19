@@ -7,6 +7,7 @@ import {
   DEFAULT_GEMINI_MODEL,
   chooseProvider,
   documentReaderFor,
+  geminiThinkingConfig,
   readerStatus,
 } from '../../../src/modules/ai';
 import { AiExtractor } from '../../../src/modules/expenses/extractor';
@@ -92,6 +93,70 @@ describe('request shapes', () => {
     const { fn, sent } = fakeFetch(geminiReply(expense));
     await new AiExtractor(withKeys({ GEMINI_API_KEY: 'AIzaX', GEMINI_MODEL: 'gemini-next' }), fn).extract({ bytes: pdf(), contentType: 'application/pdf', filename: 'a.pdf' });
     expect(sent[0]!.url).toContain('/models/gemini-next:generateContent');
+  });
+});
+
+describe('Anthropic workspaces, Gemini thinking, slow providers', () => {
+  it('sends anthropic-workspace-id when ANTHROPIC_WORKSPACE_ID is set, and not otherwise', async () => {
+    const reply = { content: [{ type: 'tool_use', name: 'record_expense', input: expense }] };
+    const a = fakeFetch(reply);
+    await new AiExtractor(withKeys({ ANTHROPIC_API_KEY: 'sk-ant-x', ANTHROPIC_WORKSPACE_ID: 'wrkspc_01Test' }), a.fn).extract({ bytes: pdf(), contentType: 'application/pdf', filename: 'a.pdf' });
+    expect(a.sent[0]!.headers['anthropic-workspace-id']).toBe('wrkspc_01Test');
+    const b = fakeFetch(reply);
+    await new AiExtractor(withKeys({ ANTHROPIC_API_KEY: 'sk-ant-x' }), b.fn).extract({ bytes: pdf(), contentType: 'application/pdf', filename: 'a.pdf' });
+    expect(b.sent[0]!.headers['anthropic-workspace-id']).toBeUndefined();
+  });
+
+  it('a key that needs a workspace gets a note that says what to do', async () => {
+    const { fn } = fakeFetch(
+      { type: 'error', error: { type: 'invalid_request_error', message: 'This API key is not scoped to a workspace, so this request must include the anthropic-workspace-id header.' } },
+      400,
+    );
+    await expect(
+      new AiExtractor(withKeys({ ANTHROPIC_API_KEY: 'sk-ant-x' }), fn).extract({ bytes: pdf(), contentType: 'application/pdf', filename: 'a.pdf' }),
+    ).rejects.toThrow(/ANTHROPIC_WORKSPACE_ID/);
+  });
+
+  it('Gemini 3 and later read with a low thinking level, older models keep their defaults', async () => {
+    expect(geminiThinkingConfig('gemini-3.8-flash')).toEqual({ thinkingLevel: 'low' });
+    expect(geminiThinkingConfig('gemini-2.5-flash')).toBeNull();
+    const { fn, sent } = fakeFetch(geminiReply(expense));
+    await new AiExtractor(withKeys({ GEMINI_API_KEY: 'AIzaX' }), fn).extract({ bytes: pdf(), contentType: 'application/pdf', filename: 'a.pdf' });
+    expect(sent[0]!.body.generationConfig.thinkingConfig).toEqual(geminiThinkingConfig(DEFAULT_GEMINI_MODEL));
+  });
+
+  it('a model that refuses the thinking setting is asked again without it', async () => {
+    const sent: Record<string, any>[] = [];
+    const fn = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      const body = JSON.parse(String(init?.body));
+      sent.push(body);
+      if (body.generationConfig.thinkingConfig) {
+        return new Response(JSON.stringify({ error: { message: 'Thinking level is not supported for this model.' } }), { status: 400 });
+      }
+      return new Response(JSON.stringify(geminiReply(expense)), { status: 200 });
+    }) as typeof fetch;
+    const got = await new AiExtractor(withKeys({ GEMINI_API_KEY: 'AIzaX', GEMINI_MODEL: 'gemini-3-flash' }), fn).extract({ bytes: pdf(), contentType: 'application/pdf', filename: 'a.pdf' });
+    expect(got.supplierName).toBe('Cloudflare');
+    expect(sent).toHaveLength(2);
+    expect(sent[1]!.generationConfig.thinkingConfig).toBeUndefined();
+  });
+
+  it('a busy provider is tried once more, and a timeout becomes a clear note', async () => {
+    let calls = 0;
+    const busyThenOk = (async () => {
+      calls += 1;
+      return calls === 1 ? new Response('busy', { status: 503 }) : new Response(JSON.stringify(geminiReply(expense)), { status: 200 });
+    }) as typeof fetch;
+    const got = await new AiExtractor(withKeys({ GEMINI_API_KEY: 'AIzaX' }), busyThenOk).extract({ bytes: pdf(), contentType: 'application/pdf', filename: 'a.pdf' });
+    expect(got.amount).toBe('20.00');
+    expect(calls).toBe(2);
+
+    const timesOut = (async () => {
+      throw Object.assign(new Error('The operation was aborted due to timeout'), { name: 'TimeoutError' });
+    }) as typeof fetch;
+    await expect(
+      new AiExtractor(withKeys({ GEMINI_API_KEY: 'AIzaX' }), timesOut).extract({ bytes: pdf(), contentType: 'application/pdf', filename: 'a.pdf' }),
+    ).rejects.toThrow(/did not answer within/);
   });
 });
 
