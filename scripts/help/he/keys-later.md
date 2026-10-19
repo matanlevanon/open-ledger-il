@@ -19,12 +19,15 @@ order: 13
 
 כדי לשנות ערך שכבר קיים, לוחצים על העיפרון בשורה שלו, מדביקים את הערך החדש ושומרים.
 
+אחר כך Cloudflare מציג הודעה: "Update your Wrangler configuration with these changes to keep deployments in sync". היא מיועדת למי שמעלה מקוד המקור. סוגרים אותה ב-X. תוכנת ההתקנה שומרת על הערכים שלכם בעדכון.
+
 השמות מדויקים, באותיות גדולות.
 
 ## אילו שמות
 
 - **קריאת קבלות עם Gemini:** Secret בשם `GEMINI_API_KEY` עם המפתח, ומשתנה רגיל בשם `AI_PROVIDER` עם הערך `gemini`.
-- **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ומשתנה רגיל בשם `AI_PROVIDER` עם הערך `anthropic`.
+- **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ומשתנה רגיל בשם `AI_PROVIDER` עם הערך `anthropic`. אם בהערה של הוצאה כתוב שהמפתח לא משויך ל-workspace, מוסיפים משתנה רגיל בשם `ANTHROPIC_WORKSPACE_ID` עם מזהה ה-workspace (`wrkspc_...`) מ-console.anthropic.com.
+- **מודל קריאה אחר:** משתנה רגיל בשם `GEMINI_MODEL` או `ANTHROPIC_MODEL` עם שם המודל. שימושי כשהקריאה איטית או כשמודל יוצא משימוש.
 - **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ומשתנה רגיל בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
 - **התראות Slack:** Secret בשם `SLACK_WEBHOOK_URL`.
 - **הוצאות מגוגל דרייב:** Secret בשם `GOOGLE_SERVICE_ACCOUNT_JSON` עם כל התוכן של קובץ ה-JSON, מה-`{` הראשון עד ה-`}` האחרון. לתיקייה משותפת בקישור, במקומו Secret בשם `GOOGLE_API_KEY` עם מפתח API של Google.

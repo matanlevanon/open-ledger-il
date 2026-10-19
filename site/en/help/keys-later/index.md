@@ -16,12 +16,15 @@ The Ledger reads its keys from its Worker in Cloudflare. A Worker is the program
 
 To change a value that is already there, click the pencil on its row, paste the new value and deploy.
 
+Cloudflare then shows a banner: "Update your Wrangler configuration with these changes to keep deployments in sync." It is meant for people who deploy from source code. Close it with the X. The installer keeps your values when you update.
+
 Names are exact, in capital letters.
 
 ## Which names
 
 - **Receipt reading with Gemini:** Secret `GEMINI_API_KEY` with the key, and the plain variable `AI_PROVIDER` with the value `gemini`.
-- **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and the plain variable `AI_PROVIDER` with the value `anthropic`.
+- **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and the plain variable `AI_PROVIDER` with the value `anthropic`. If the note on an expense says the key is not tied to a workspace, add the plain variable `ANTHROPIC_WORKSPACE_ID` with the workspace id (`wrkspc_...`) from console.anthropic.com.
+- **A different reading model:** the plain variable `GEMINI_MODEL` or `ANTHROPIC_MODEL` with the model name. Use it when reading is slow or a model is retired.
 - **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and the plain variable `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
 - **Slack alerts:** Secret `SLACK_WEBHOOK_URL`.
 - **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`. For a folder shared by link, the secret `GOOGLE_API_KEY` with a Google API key instead.
