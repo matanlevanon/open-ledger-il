@@ -8,6 +8,7 @@ import {
   type Expense,
   type ExpenseStatus,
   type Supplier,
+  deleteExpense,
   fileDownloadUrl,
   getExpense,
   listCategories,
@@ -51,6 +52,7 @@ export function ExpenseReviewPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [returnReason, setReturnReason] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
   // R29: on the demo the sample expenses are read-only. A visitor's own uploads review as usual.
   const readOnly = useDemoReadOnly(expense ? { demo_session_id: expense.demo_session_id ?? null } : null);
 
@@ -114,6 +116,19 @@ export function ExpenseReviewPage() {
     } catch {
       setError(t('expenses.review.statusUpdateError'));
     } finally {
+      setSaving(false);
+    }
+  }
+
+  async function remove() {
+    if (!expense) return;
+    setSaving(true);
+    setError(null);
+    try {
+      await deleteExpense(expense.id);
+      navigate('/expenses');
+    } catch (err) {
+      setError(err instanceof Error && err.message ? err.message : t('expenses.review.deleteError'));
       setSaving(false);
     }
   }
@@ -265,6 +280,36 @@ export function ExpenseReviewPage() {
               {t('expenses.review.returnButton')}
             </button>
           </div>
+
+          {(expense.status === 'new' || expense.status === 'duplicate') && (
+            <div className="mt-6 border-t border-line pt-4">
+              {!confirmDelete ? (
+                <button
+                  type="button"
+                  disabled={saving || readOnly}
+                  onClick={() => setConfirmDelete(true)}
+                  className="rounded-full border border-danger px-4 py-2 text-sm text-danger hover:bg-canvas disabled:opacity-50"
+                >
+                  {t('expenses.review.deleteButton')}
+                </button>
+              ) : (
+                <div className="flex flex-wrap items-center gap-2" role="alert">
+                  <span className="text-sm text-ink">{t('expenses.review.deleteConfirmText')}</span>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={remove}
+                    className="rounded-full bg-danger px-4 py-2 text-sm font-semibold text-brand-ink hover:opacity-90 disabled:opacity-50"
+                  >
+                    {t('expenses.review.deleteConfirmButton')}
+                  </button>
+                  <button type="button" disabled={saving} onClick={() => setConfirmDelete(false)} className="rounded-full border border-line px-4 py-2 text-sm text-ink">
+                    {t('expenses.review.deleteCancel')}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </section>

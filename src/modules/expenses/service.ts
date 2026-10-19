@@ -2,7 +2,7 @@ import type { AuditActor } from '../../core/audit';
 import { readBusinessSetting, settingKey } from '../../core/business';
 import { auditAs, auditStatement, actorBiz } from '../../core/audit';
 import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
-import { NotFoundError } from '../../core/errors';
+import { ConflictError, NotFoundError } from '../../core/errors';
 import { type Currency, assertCurrency, formatMinor, parseMajor } from '../../core/money';
 import type { Env } from '../../env';
 import type { DriveSource } from './drive';
@@ -439,6 +439,39 @@ export async function getExpenseFile(db: D1Database, id: number, businessId: num
   const row = await first<ExpenseFileRow>(db, 'SELECT * FROM expense_files WHERE id = ? AND business_id = ?', id, businessId);
   if (!row) throw new NotFoundError('File', id);
   return row;
+}
+
+/** Statuses an expense can be deleted in: not reviewed yet, or marked as a duplicate. */
+export const DELETABLE_STATUSES: readonly ExpenseStatus[] = ['new', 'duplicate'];
+
+/**
+ * Deletes an expense that was added by mistake, before anyone filed it. Expenses are not legal
+ * documents, but a filed one is part of the books, so only New and Duplicate can go. The file
+ * stays in R2: the files bucket is write-once, and an orphan object costs nothing. Its database
+ * row goes, so a Drive import or the same upload adds the file again as new.
+ */
+export async function deleteExpense(db: D1Database, id: number, actor: AuditActor): Promise<void> {
+  const expense = await getExpense(db, id, actorBiz(actor));
+  if (!DELETABLE_STATUSES.includes(expense.status)) {
+    throw new ConflictError('expense_not_deletable', 'Only an expense with status New or Duplicate can be deleted. Mark it Not an expense instead.');
+  }
+  const files = await all<{ id: number; filename: string }>(db, 'SELECT id, filename FROM expense_files WHERE expense_id = ? OR id = ?', id, expense.file_id ?? -1);
+  await transaction(db, [
+    stmt(db, 'UPDATE expenses SET duplicate_of_id = NULL WHERE duplicate_of_id = ?', id),
+    stmt(db, 'UPDATE inbox_events SET expense_id = NULL WHERE expense_id = ?', id),
+    stmt(db, 'UPDATE expense_files SET expense_id = NULL WHERE expense_id = ?', id),
+    stmt(db, 'DELETE FROM expenses WHERE id = ?', id),
+    ...files.map((f) => stmt(db, 'DELETE FROM expense_files WHERE id = ? AND NOT EXISTS (SELECT 1 FROM expenses WHERE file_id = ?)', f.id, f.id)),
+    auditStatement(db, actor, 'expense.delete', 'expense', id, {
+      status: expense.status,
+      supplierId: expense.supplier_id,
+      documentNumber: expense.document_number,
+      documentDate: expense.document_date,
+      currency: expense.currency,
+      amountMinor: expense.amount_minor,
+      files: files.map((f) => f.filename),
+    }),
+  ]);
 }
 
 export interface ListFilter {

@@ -80,6 +80,28 @@ describe('expenses: listing and review queue', () => {
     expect(body.expense.notes).toMatch(/^Not read automatically: FakeExtractor has no fixture/);
   });
 
+  it('deletes a New expense added by mistake, with its file row and an audit entry, and refuses a filed one', async () => {
+    const app = buildAppWithFixture('mistake.pdf', fixture({ documentNumber: 'MISTAKE-1' }));
+    const created = ((await (await call(app, '/upload', { method: 'POST', body: uploadForm(bytesFrom('wrong file'), 'mistake.pdf', 'application/pdf') })).json()) as {
+      expense: ExpenseRow;
+    }).expense;
+    const res = await call(app, `/${created.id}`, { method: 'DELETE' });
+    expect(res.status).toBe(200);
+    expect(await env.DB.prepare('SELECT id FROM expenses WHERE id = ?').bind(created.id).first()).toBeNull();
+    expect(await env.DB.prepare('SELECT id FROM expense_files WHERE id = ?').bind(created.file_id).first()).toBeNull();
+    const audit = await env.DB.prepare("SELECT details FROM audit_log WHERE action = 'expense.delete' AND entity_id = ?").bind(String(created.id)).first<{ details: string }>();
+    expect(audit?.details).toContain('MISTAKE-1');
+
+    // The same file uploads again as a new expense.
+    const again = await call(app, '/upload', { method: 'POST', body: uploadForm(bytesFrom('wrong file'), 'mistake.pdf', 'application/pdf') });
+    expect(again.status).toBe(201);
+    const filed = ((await again.json()) as { expense: ExpenseRow }).expense;
+    expect(filed.status).toBe('new');
+    await call(app, `/${filed.id}/status`, json({ status: 'filed' }));
+    expect((await call(app, `/${filed.id}`, { method: 'DELETE' })).status).toBe(409);
+    expect((await call(app, `/${filed.id}`, { method: 'DELETE' }, ACCOUNTANT_ENV)).status).toBe(403);
+  });
+
   it('downloads the ingested file for the preview pane', async () => {
     const app = buildAppWithFixture('a.txt', fixture());
     const created = ((await (await call(app, '/upload', { method: 'POST', body: uploadForm(bytesFrom('hello file'), 'a.txt', 'text/plain') })).json()) as {

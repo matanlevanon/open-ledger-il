@@ -193,6 +193,12 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
     return c.json({ expense });
   });
 
+  // A mistaken upload, before review. Owner and assistant only, New and Duplicate only.
+  app.delete('/:id', requireRole('owner', 'assistant'), async (c) => {
+    await service.deleteExpense(c.env.DB, idParam(c.req.param('id')), actorFrom(c));
+    return c.json({ deleted: true });
+  });
+
   app.patch('/:id/review', async (c) => {
     const input = ExpenseAccountantUpdateSchema.parse(await c.req.json());
     const expense = await service.updateExpenseCategoryAndNotes(c.env.DB, idParam(c.req.param('id')), input, actorFrom(c));

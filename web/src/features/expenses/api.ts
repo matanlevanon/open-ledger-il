@@ -105,6 +105,11 @@ export async function updateExpenseReview(id: number, edit: { categoryId?: numbe
   return (await send<{ expense: Expense }>(`/${id}/review`, 'PATCH', edit)).expense;
 }
 
+/** Only New and Duplicate expenses; the server refuses the rest with 409. */
+export async function deleteExpense(id: number): Promise<void> {
+  await send<{ deleted: boolean }>(`/${id}`, 'DELETE');
+}
+
 export async function setExpenseStatus(id: number, status: ExpenseStatus, reason?: string): Promise<Expense> {
   return (await send<{ expense: Expense }>(`/${id}/status`, 'POST', { status, reason })).expense;
 }
