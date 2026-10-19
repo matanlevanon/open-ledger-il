@@ -69,6 +69,17 @@ describe('expenses: listing and review queue', () => {
     expect(afterFiling.expense).toBeNull();
   });
 
+  it('saves an upload the reader cannot read, with the reason in its note', async () => {
+    const app = buildApp({ extractor: new FakeExtractor({}) });
+    const res = await call(app, '/upload', { method: 'POST', body: uploadForm(bytesFrom('heygen invoice'), 'Invoice-NTSV18TO-0006.pdf', 'application/pdf') });
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as { expense: ExpenseRow; read: boolean };
+    expect(body.read).toBe(false);
+    expect(body.expense.status).toBe('new');
+    expect(body.expense.file_id).toBeTruthy();
+    expect(body.expense.notes).toMatch(/^Not read automatically: FakeExtractor has no fixture/);
+  });
+
   it('downloads the ingested file for the preview pane', async () => {
     const app = buildAppWithFixture('a.txt', fixture());
     const created = ((await (await call(app, '/upload', { method: 'POST', body: uploadForm(bytesFrom('hello file'), 'a.txt', 'text/plain') })).json()) as {

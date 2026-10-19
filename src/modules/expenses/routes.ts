@@ -103,13 +103,14 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
     const file = form.get('file');
     if (!(file instanceof File)) throw new ValidationError('Attach a file under the "file" field.');
     const deps = resolveDeps(c.env);
-    const expense = await service.ingestFile(
+    const result = await service.ingestFile(
       c.env,
       deps,
       { bytes: await file.arrayBuffer(), filename: file.name, contentType: file.type || 'application/octet-stream', source: 'upload' },
       actorFrom(c),
     );
-    return c.json({ expense }, 201);
+    // `read: false`: the file is saved as an expense, the reader failed and the reason is in its note.
+    return c.json({ expense: result!.expense, read: result!.read }, 201);
   });
 
   app.get('/settings/drive-root-folder', requireRole('owner'), async (c) =>

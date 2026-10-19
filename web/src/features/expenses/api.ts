@@ -109,7 +109,8 @@ export async function setExpenseStatus(id: number, status: ExpenseStatus, reason
   return (await send<{ expense: Expense }>(`/${id}/status`, 'POST', { status, reason })).expense;
 }
 
-export async function uploadExpense(file: File): Promise<Expense> {
+/** `read: false` means the file was saved as an expense but the reader failed. The reason is in its note. */
+export async function uploadExpense(file: File): Promise<{ expense: Expense; read: boolean }> {
   const form = new FormData();
   form.append('file', file);
   const res = await fetch('/api/expenses/upload', { method: 'POST', body: form });
@@ -117,7 +118,8 @@ export async function uploadExpense(file: File): Promise<Expense> {
     const body = (await res.json().catch(() => null)) as { error: { code: string; message: string } } | null;
     throw new ApiError(res.status, body?.error.code ?? 'http_error', body?.error.message ?? 'Upload failed.');
   }
-  return ((await res.json()) as { expense: Expense }).expense;
+  const body = (await res.json()) as { expense: Expense; read?: boolean };
+  return { expense: body.expense, read: body.read !== false };
 }
 
 export function fileDownloadUrl(fileId: number): string {

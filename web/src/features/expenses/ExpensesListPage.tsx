@@ -29,6 +29,7 @@ export function ExpensesListPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const [month, setMonth] = useState(lastMonth());
   const [importing, setImporting] = useState(false);
@@ -54,11 +55,18 @@ export function ExpensesListPage() {
     if (!files || files.length === 0) return;
     setUploading(true);
     setError(null);
+    setNotice(null);
+    let unread = 0;
     try {
-      for (const file of Array.from(files)) await uploadExpense(file);
+      for (const file of Array.from(files)) {
+        if (!(await uploadExpense(file)).read) unread += 1;
+      }
       await load();
-    } catch {
-      setError(t('expenses.list.uploadError'));
+      if (unread > 0) setNotice(t('expenses.list.uploadUnread', { count: String(unread) }));
+    } catch (err) {
+      // The server's own reason, so the owner sees what went wrong instead of a guess.
+      const reason = err instanceof Error && err.message && err.message !== 'Upload failed.' ? err.message : null;
+      setError(reason ? t('expenses.list.uploadErrorReason', { reason }) : t('expenses.list.uploadError'));
     } finally {
       setUploading(false);
       if (fileInput.current) fileInput.current.value = '';
@@ -146,6 +154,11 @@ export function ExpensesListPage() {
       )}
 
       {error && <p className="mt-4 text-sm text-danger">{error}</p>}
+      {notice && (
+        <p className="mt-4 text-sm text-ink" data-testid="upload-notice">
+          {notice}
+        </p>
+      )}
 
       <div className="mt-4 overflow-hidden rounded-card border border-line bg-surface shadow-card">
         {loading ? (

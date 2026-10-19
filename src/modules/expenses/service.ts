@@ -301,11 +301,39 @@ async function downloadForExtraction(env: Env, file: ExpenseFileRow): Promise<Ar
   return obj.arrayBuffer();
 }
 
-/** Ingests one file end to end. Returns null when a Drive file was already ingested before. */
-export async function ingestFile(env: Env, deps: Deps, input: IngestInput, actor: AuditActor): Promise<ExpenseRow | null> {
+/**
+ * Ingests one file end to end. Returns null when a Drive file was already ingested before. A file
+ * the reader cannot read still becomes an expense waiting for review, with the reason in its note.
+ */
+export async function ingestFile(env: Env, deps: Deps, input: IngestInput, actor: AuditActor): Promise<{ expense: ExpenseRow; read: boolean } | null> {
   const file = await recordFile(env, input, actor);
   if (!file) return null;
-  return createExpenseFromExtraction(env, deps, file, actor);
+  try {
+    return { expense: await createExpenseFromExtraction(env, deps, file, actor), read: true };
+  } catch (err) {
+    return { expense: await unreadExpense(env, file, actor, null, input.source, err), read: false };
+  }
+}
+
+/** The expense for a file the reader could not read: no amount, the reason in the note and the log. */
+async function unreadExpense(env: Env, file: ExpenseFileRow, actor: AuditActor, notePrefix: string | null, source: string, err: unknown): Promise<ExpenseRow> {
+  // No reading key, a format the reader refuses, a provider error, or an answer that does not fit.
+  const reason = (err instanceof Error ? err.message : String(err)).replace(/\s+/g, ' ').slice(0, 200);
+  console.error('expense read failed', { filename: file.filename, source, reason });
+  const note = `${notePrefix ? `${notePrefix} | ` : ''}Not read automatically: ${reason}`.slice(0, 700);
+  const { lastRowId } = await run(
+    env.DB,
+    `INSERT INTO expenses (file_id, status, document_date, notes, business_id) VALUES (?, 'new', ?, ?, ?)`,
+    file.id,
+    nowIso().slice(0, 10),
+    note,
+    actorBiz(actor),
+  );
+  await transaction(env.DB, [
+    stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id),
+    auditStatement(env.DB, actor, 'expense.create', 'expense', lastRowId, { status: 'new', source, read: false, reason }),
+  ]);
+  return (await first<ExpenseRow>(env.DB, 'SELECT * FROM expenses WHERE id = ?', lastRowId))!;
 }
 
 /** R35: one file from a forwarded email. `readAs` is what the reader gets when it differs from the file. */
@@ -340,24 +368,8 @@ export async function ingestInboxFile(env: Env, deps: Deps, input: InboxIngestIn
     await run(env.DB, 'UPDATE expenses SET notes = ?, updated_at = ? WHERE id = ?', input.note, nowIso(), expense.id);
     return { kind: 'created', expense: { ...expense, notes: input.note }, read: true };
   } catch (err) {
-    // No reading key, a format the reader refuses, or an answer that does not fit: the owner types it.
     // The reason goes into the log and onto the expense, so a failed read is never silent.
-    const reason = (err instanceof Error ? err.message : String(err)).replace(/\s+/g, ' ').slice(0, 200);
-    console.error('expense read failed', { filename: input.filename, reason });
-    const note = `${input.note} | Not read automatically: ${reason}`.slice(0, 700);
-    const { lastRowId } = await run(
-      env.DB,
-      `INSERT INTO expenses (file_id, status, document_date, notes, business_id) VALUES (?, 'new', ?, ?, ?)`,
-      file.id,
-      nowIso().slice(0, 10),
-      note,
-      actorBiz(actor),
-    );
-    await transaction(env.DB, [
-      stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id),
-      auditStatement(env.DB, actor, 'expense.create', 'expense', lastRowId, { status: 'new', source: 'inbox', read: false, reason }),
-    ]);
-    return { kind: 'created', expense: (await first<ExpenseRow>(env.DB, 'SELECT * FROM expenses WHERE id = ?', lastRowId))!, read: false };
+    return { kind: 'created', expense: await unreadExpense(env, file, actor, input.note, 'inbox', err), read: false };
   }
 }
 

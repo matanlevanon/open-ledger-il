@@ -28,6 +28,8 @@ export const expenses = {
   'expenses.list.tabAll': 'All',
   'expenses.list.loadError': 'Could not load expenses.',
   'expenses.list.uploadError': 'Upload failed. Try a smaller file or a supported format (PDF, JPG, PNG).',
+  'expenses.list.uploadUnread': 'Saved, but not read automatically ({count}). Open the expense to see why in its note, and type the details.',
+  'expenses.list.uploadErrorReason': 'Upload failed: {reason}',
   'expenses.list.empty': 'No expenses here yet.',
   'expenses.list.colDate': 'Date',
   'expenses.list.colSupplier': 'Supplier',

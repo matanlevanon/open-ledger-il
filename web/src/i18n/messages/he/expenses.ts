@@ -23,6 +23,8 @@ export const expenses: Record<keyof typeof en, string> = {
   'expenses.list.tabAll': 'הכל',
   'expenses.list.loadError': 'טעינת ההוצאות נכשלה.',
   'expenses.list.uploadError': 'ההעלאה נכשלה. נסה קובץ קטן יותר או פורמט נתמך (PDF, JPG, PNG).',
+  'expenses.list.uploadUnread': 'נשמר, אבל לא נקרא אוטומטית ({count}). פתח את ההוצאה כדי לראות בהערה למה, והקלד את הפרטים.',
+  'expenses.list.uploadErrorReason': 'ההעלאה נכשלה: {reason}',
   'expenses.list.empty': 'אין עדיין הוצאות כאן.',
   'expenses.list.colDate': 'תאריך',
   'expenses.list.colSupplier': 'ספק',
