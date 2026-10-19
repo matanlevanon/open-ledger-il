@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ApiError, apiGet } from '../../api/client';
 import { Dialog } from '../../components/Dialog';
+import { GuideTip } from '../../components/GuideTip';
 import { useToast } from '../../components/Toast';
 import type { MessageKey } from '../../i18n';
 import { useT } from '../../i18n';
@@ -111,7 +112,10 @@ export function InboxSection() {
   return (
     <section className="flex flex-col gap-4" data-testid="inbox-section">
       <div>
-        <h2 className="font-heading text-lg text-ink">{t('settings.inbox.title')}</h2>
+        <h2 className="font-heading text-lg text-ink">
+          {t('settings.inbox.title')}
+          <GuideTip id="inbox" />
+        </h2>
         <p className="text-xs text-muted">{t('settings.inbox.hint')}</p>
       </div>
 

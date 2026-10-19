@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { type GuideId, GuideTip } from '../../components/GuideTip';
 import { fetchMe } from '../../api/client';
 import { useDemo, useDemoLocked } from '../../app/demo';
 import type { MessageKey } from '../../i18n';
@@ -23,6 +24,21 @@ import { TaxTab } from './TaxTab';
 import { UpdatesTab } from './UpdatesTab';
 
 type Tab = 'business' | 'documents' | 'businesses' | 'brands' | 'issuing' | 'email' | 'mcp' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'contracts' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
+
+/** The help section on the site for each tab that has one, behind the "?" on the panel's corner. */
+const TAB_GUIDE: Partial<Record<Tab, GuideId>> = {
+  business: 'business',
+  brands: 'brands',
+  issuing: 'issuing',
+  email: 'email',
+  mcp: 'mcp',
+  numbering: 'numbering',
+  paymentMethods: 'paymentMethods',
+  signature: 'signature',
+  expenses: 'expenses',
+  backups: 'backups',
+  updates: 'updates',
+};
 
 const TABS: [Tab, MessageKey][] = [
   ['business', 'settings.tabs.business'],
@@ -99,26 +115,29 @@ export function SettingsPage() {
           {t('demo.settingsLocked')}
         </p>
       )}
-      <fieldset disabled={locked} className="mt-6 min-w-0 rounded-card border border-line bg-canvas p-4 shadow-card disabled:opacity-90">
-        {tab === 'business' && <BusinessTab />}
-        {tab === 'documents' && <BusinessDocumentsPanel onUseDetails={() => setTab('business')} />}
-        {tab === 'businesses' && <BusinessesTab startAdding={new URLSearchParams(window.location.search).get('add') === '1'} />}
-        {tab === 'brands' && <BrandsTab />}
-        {tab === 'issuing' && <IssuingTab />}
-        {tab === 'email' && <EmailTab />}
-        {tab === 'mcp' && showMcp && <McpTab />}
-        {tab === 'numbering' && <NumberingTab />}
-        {tab === 'tax' && <TaxTab />}
-        {tab === 'rates' && <RatesTab />}
-        {tab === 'paymentMethods' && <PaymentMethodsTab />}
-        {tab === 'services' && <ServicesTab />}
-        {tab === 'contracts' && <ContractTemplatesTab />}
-        {tab === 'signature' && <SignatureTab />}
-        {tab === 'expenses' && <ExpensesTab />}
-        {tab === 'dashboard' && <DashboardTab />}
-        {tab === 'backups' && <BackupsTab />}
-        {tab === 'updates' && <UpdatesTab />}
-      </fieldset>
+      <div className="relative mt-6">
+        {TAB_GUIDE[tab] && <GuideTip id={TAB_GUIDE[tab]!} inline={false} />}
+        <fieldset disabled={locked} className="min-w-0 rounded-card border border-line bg-canvas p-4 shadow-card disabled:opacity-90">
+          {tab === 'business' && <BusinessTab />}
+          {tab === 'documents' && <BusinessDocumentsPanel onUseDetails={() => setTab('business')} />}
+          {tab === 'businesses' && <BusinessesTab startAdding={new URLSearchParams(window.location.search).get('add') === '1'} />}
+          {tab === 'brands' && <BrandsTab />}
+          {tab === 'issuing' && <IssuingTab />}
+          {tab === 'email' && <EmailTab />}
+          {tab === 'mcp' && showMcp && <McpTab />}
+          {tab === 'numbering' && <NumberingTab />}
+          {tab === 'tax' && <TaxTab />}
+          {tab === 'rates' && <RatesTab />}
+          {tab === 'paymentMethods' && <PaymentMethodsTab />}
+          {tab === 'services' && <ServicesTab />}
+          {tab === 'contracts' && <ContractTemplatesTab />}
+          {tab === 'signature' && <SignatureTab />}
+          {tab === 'expenses' && <ExpensesTab />}
+          {tab === 'dashboard' && <DashboardTab />}
+          {tab === 'backups' && <BackupsTab />}
+          {tab === 'updates' && <UpdatesTab />}
+        </fieldset>
+      </div>
     </section>
   );
 }

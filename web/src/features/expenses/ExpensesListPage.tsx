@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { GuideTip } from '../../components/GuideTip';
 import { type MessageKey, useT } from '../../i18n';
 import { type Expense, type ExpenseStatus, type ImportSummary, importMonth, lastMonth, listExpenses, uploadExpense } from './api';
 import { ImportSummaryView } from './ImportSummaryView';
@@ -91,6 +92,7 @@ export function ExpensesListPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 id="page-title" className="font-heading text-3xl text-ink">
           {t('expenses.list.title')}
+          <GuideTip id="upload" />
         </h1>
         <div className="flex flex-wrap items-center gap-2">
           <Link to="/expenses/suppliers" className="text-sm text-brand hover:underline">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDemo } from '../../app/demo';
+import { GuideTip } from '../../components/GuideTip';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import {
@@ -128,7 +129,10 @@ export function ExpensesTab() {
       )}
 
       <section className="flex flex-col gap-2">
-        <h2 className="font-heading text-lg text-ink">{t('settings.expenses.folderTitle')}</h2>
+        <h2 className="font-heading text-lg text-ink">
+          {t('settings.expenses.folderTitle')}
+          <GuideTip id="driveFolder" />
+        </h2>
         <p className="text-xs text-muted">{t('settings.expenses.folderHint')}</p>
         <div className="flex flex-wrap items-center gap-2">
           <label className="sr-only" htmlFor="drive-root-folder">
@@ -163,7 +167,10 @@ export function ExpensesTab() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="font-heading text-lg text-ink">{t('settings.expenses.titleTitle')}</h2>
+        <h2 className="font-heading text-lg text-ink">
+          {t('settings.expenses.titleTitle')}
+          <GuideTip id="indexSheet" />
+        </h2>
         <p className="text-xs text-muted">{t('settings.expenses.titleHint')}</p>
         <div className="flex flex-wrap items-center gap-2">
           <label className="sr-only" htmlFor="drive-index-title">
