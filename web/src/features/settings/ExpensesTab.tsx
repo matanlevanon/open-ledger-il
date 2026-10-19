@@ -15,6 +15,7 @@ import {
 } from '../expenses/api';
 import { ImportCounts } from '../expenses/ImportSummaryView';
 import { ApiError } from './api';
+import { FinancyCard } from './FinancyCard';
 import { InboxSection } from './InboxSection';
 
 /** R20: the Drive root folder, the daily sync switch, and the log of every import run. Owner only. */
@@ -247,6 +248,8 @@ export function ExpensesTab() {
           </table>
         )}
       </section>
+
+      <FinancyCard />
     </div>
   );
 }
