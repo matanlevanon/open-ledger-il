@@ -144,8 +144,8 @@ value in the env file stops it with the variable's name. Errors go to
 
 ### 8. The Ledger
 
-Cloudflare dashboard, Workers & Pages, your Ledger Worker, Settings, Variables
-and Secrets. Add three, type Secret:
+Cloudflare dashboard, Compute > Workers & Pages, your Ledger Worker, Settings,
+Runtime variables and secrets. Add variable three times, with Secret ticked:
 
 - `ITA_RELAY_URL`: `https://ita-relay.<your domain>`
 - `ITA_RELAY_CLIENT_ID`: the Client ID from step 4

@@ -39,10 +39,10 @@ refusals use the key `broker_error`.
    push deploys it: Settings > Build > Connect, root directory
    `/tools/ita-auth`, no build command, deploy command `npx wrangler deploy`,
    include path `tools/ita-auth/*`.
-3. Attach your hostname: Workers & Pages > ita-auth > Settings > Domains &
-   Routes > Add > Custom domain.
-4. Add the secrets under Settings > Variables and Secrets, each as type
-   Secret:
+3. Attach your hostname: Compute > Workers & Pages > ita-auth > the Domains
+   tab > Add Domain.
+4. Add the secrets under Settings > Runtime variables and secrets: Add
+   variable, tick Secret:
 
 | Name | Value |
 |---|---|
@@ -125,8 +125,8 @@ address, date added and last use. Pause blocks the install at once and keeps
 its row. Resume brings it back with the same key. Every change is kept in the
 `client_events` table. The page never deletes a row.
 
-Put the page behind Cloudflare Access: Zero Trust > Access > Applications >
-Add > Self-hosted, domain `<broker host>/admin`, a policy that allows your
+Put the page behind Cloudflare Access: Zero Trust > Access controls >
+Applications > Create new application > Self-hosted, domain `<broker host>/admin`, a policy that allows your
 email only. Copy the application's audience tag to `ACCESS_AUD`, your team
 address (`https://<team>.cloudflareaccess.com`) to `ACCESS_TEAM_DOMAIN`, and
 your email to `ADMIN_EMAILS`. The broker checks the Access token itself too,

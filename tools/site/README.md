@@ -29,7 +29,7 @@ The official Worker is named `open-ledger-il` in the dashboard. A manual deploy 
 
 ## Connect Workers Builds
 
-In the Cloudflare dashboard: Workers & Pages > Create > Import a repository > your fork of
+In the Cloudflare dashboard: Compute > Workers & Pages > Create application > connect a repository > your fork of
 `open-ledger-il`. Then:
 
 | Setting | Value |
@@ -44,7 +44,7 @@ Every push to `main` that touches those paths builds and deploys the site.
 ## Add the custom domain
 
 A deploy adds the custom domains listed in `wrangler.toml`. To check, or to add one by hand:
-Workers & Pages > your Worker > Settings > Domains & Routes > Add > Custom domain, for example
+Compute > Workers & Pages > your Worker > the Domains tab > Add Domain, for example
 `open-ledger.example.com`. Put the same address in `siteUrl` in `site.config.json`.
 
 ## Check it

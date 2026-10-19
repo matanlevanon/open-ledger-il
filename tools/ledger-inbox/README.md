@@ -47,8 +47,9 @@ The installer calls `/register`. The Ledger calls `/rotate` from Settings > Expe
 2. Set `INBOX_DOMAIN` in `wrangler.toml`. Optional: set `INBOX_PREFIX`, for example `expenses`. Addresses then read `expenses+<id>@<domain>`, and Email Routing needs one rule for `expenses@<domain>` sent to this Worker, with subaddressing turned on (Email Routing > Settings), instead of a catch-all. A catch-all works only on an apex domain, a single rule also works on a subdomain. Addresses made without the prefix keep working.
 3. Secrets: `LICENCE_URL` and `LICENCE_SECRET`, the licence service the login broker uses.
 4. `npx wrangler deploy`.
-5. Cloudflare dashboard > your domain > Email > Email Routing: add the inbox subdomain, add its
-   DNS records, and set its catch-all to "Send to a Worker", `ledger-inbox`.
+5. Cloudflare dashboard > Compute > Email Service > Email Routing: onboard the domain if it is
+   not listed, add the inbox subdomain and its DNS records, and set its catch-all to "Send to a
+   Worker", `ledger-inbox`.
 
 ## Tests
 

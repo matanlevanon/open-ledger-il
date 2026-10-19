@@ -82,7 +82,7 @@ Files that sit directly in the main folder are not read. Subfolders inside a mon
 
 ### Connect it, once
 
-1. Create a Google service account and its JSON key, and turn on the Drive and Sheets APIs. The steps are in `docs/drive-expenses-setup.md` on GitHub.
+1. Create a Google service account and its JSON key, and turn on the Drive and Sheets APIs. The steps are in the [Drive setup guide]({{repo}}/blob/main/docs/drive-expenses-setup.md) on GitHub.
 2. Give the Ledger the key as the secret `GOOGLE_SERVICE_ACCOUNT_JSON`, see [Add or change a key](/en/help/keys-later/).
 3. In Drive, share the main folder with the service account's address, the `client_email` in the key, as **Viewer**. The month folders inherit the share.
 4. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.

@@ -145,16 +145,16 @@ deploy cannot silently revert it.
 ## 7. Add the Custom Domain
 
 No domain? Skip this step. The Worker answers on its workers.dev address once `workers_dev = true`
-is pushed in step 5. Check it in **Settings** > **Domains & Routes**: the **workers.dev** row is
-enabled, and **Preview URLs** is disabled.
+is pushed in step 5. Check it in the Worker's **Domains** tab, under **Worker URL**: **Production** is on and
+**Preview** is off.
 
 **Cloudflare dashboard**, once your domain (`example.com` here) itself is an active zone on this
 Cloudflare account. Add it first under **Domains** if it is not already there. DNS for the rest
 of the domain keeps working as before. This only adds one new subdomain's routing.
 
 1. Open the `open-ledger-il` Worker (**Compute** > **Workers & Pages** > the Worker).
-2. Go to the **Domains** tab (or **Settings** > **Domains & Routes**).
-3. Select **Add** > **Custom Domain**.
+2. Go to the **Domains** tab.
+3. Under **Custom Domains and Routes**, select **Add Domain**.
 4. Enter `ledger.example.com`. Select **Add Custom Domain**.
 
 Cloudflare creates the DNS record and certificate for you. There must be no existing CNAME record
@@ -258,7 +258,7 @@ or remove the `.gitattributes` rule to work around it.
 
 ## 10. Confirm the cron triggers
 
-**Cloudflare dashboard.** Open the Worker > **Settings** > **Trigger Events** > **Cron Triggers**.
+**Cloudflare dashboard.** Open the Worker (**Compute** > **Workers & Pages**) > **Settings** > **Trigger events**, under **Cron Triggers**.
 The five schedules from `wrangler.toml`'s `[triggers]` block should already be listed. Workers
 Builds reads them from the file on every deploy, so there is nothing to add here. Just check the
 count (5) and a couple of the times match `wrangler.toml`, in case a future edit to that file
@@ -338,7 +338,7 @@ milliseconds a month and allows 30 seconds of CPU per request by default.
 Settings > Updates shows the running version and has a Check for updates button. The same check
 runs on the 1st of each month (on the 07:00 daily cron) and posts to Slack once per new version.
 
-1. In Workers > your Worker > Settings > Variables, set `UPDATE_REPO` to `owner/name` of the
+1. In Compute > Workers & Pages > your Worker > Settings > Runtime variables and secrets, set `UPDATE_REPO` to `owner/name` of the
    GitHub repo you deploy from. Empty turns the check off.
 2. Publish a GitHub release for each version, tagged `v<version>` to match `package.json`, for
    example `v1.4.0`. The check reads the latest release, not tags alone. Pre-release tags such as

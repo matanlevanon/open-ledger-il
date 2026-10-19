@@ -56,7 +56,7 @@ carries a signed token that the Worker verifies inside the route.
 
 ## 4. Wire the Worker to this application
 
-In the Cloudflare dashboard, Workers > `open-ledger-il` > Settings > Variables:
+In the Cloudflare dashboard, Compute > Workers & Pages > `open-ledger-il` > Settings > Runtime variables and secrets:
 
 - `ACCESS_TEAM_DOMAIN` = `https://<team-name>.cloudflareaccess.com`
 - `ACCESS_AUD` = the Application Audience tag from step 1

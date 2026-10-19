@@ -82,7 +82,7 @@ order: 10
 
 ### חיבור, פעם אחת
 
-1. יוצרים Service Account ב-Google עם מפתח JSON, ומפעילים את Drive API ו-Sheets API. השלבים ב-`docs/drive-expenses-setup.md` ב-GitHub.
+1. יוצרים Service Account ב-Google עם מפתח JSON, ומפעילים את Drive API ו-Sheets API. השלבים ב[מדריך הגדרת הדרייב]({{repo}}/blob/main/docs/drive-expenses-setup.md) ב-GitHub.
 2. נותנים ללדג'ר את המפתח כסוד `GOOGLE_SERVICE_ACCOUNT_JSON`, ראו [הוספה או החלפה של מפתח](/help/keys-later/).
 3. בדרייב, משתפים את התיקייה הראשית עם הכתובת של ה-Service Account, ה-`client_email` שבמפתח, בהרשאת **צפייה**. תיקיות החודש מקבלות את השיתוף לבד.
 4. ב-**Settings > Expenses** מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי `/folders/`, ולוחצים **Save folder**.
