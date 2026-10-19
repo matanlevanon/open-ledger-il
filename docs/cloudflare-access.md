@@ -8,7 +8,7 @@ you manage who has an account from the Accountant screen in the app itself.
 
 ## 1. Create the Access application
 
-1. Cloudflare dashboard > your account > Zero Trust > Access > Applications > Add an application.
+1. Cloudflare dashboard > your account > Zero Trust (left menu, under Protect & connect) > Access controls > Applications > Add an application.
 2. Choose **Self-hosted**.
 3. Application name: `Open Ledger IL`.
 4. Session duration: 24 hours. A session cookie expiring daily is enough. The app's own end-date
@@ -19,7 +19,7 @@ you manage who has an account from the Accountant screen in the app itself.
 
 ## 2. Note the team domain
 
-Zero Trust > Settings > Custom pages, or the URL bar while in Zero Trust, shows your team domain:
+Zero Trust > Settings > Team domain (also on Zero Trust > Overview, under Account details) shows your team domain:
 `https://<team-name>.cloudflareaccess.com`. You need both this and the AUD tag for step 4.
 
 ## 3. Add the policy
@@ -37,7 +37,7 @@ On the application, tab **Policies** > Add a policy.
     addresses pass, not every Google account.
 - Authentication method for the accountant: either **One-time PIN** (Access emails them a code
   each sign-in, no separate account needed) or their own **Google** account, if you added Google
-  as a login method under Zero Trust > Settings > Authentication.
+  as a login method under Zero Trust > Integrations > Identity providers.
 
 Save the policy.
 

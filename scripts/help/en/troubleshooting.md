@@ -19,7 +19,7 @@ order: 15
 - **Zone Resources is missing.** It shows up only after a Zone permission row. Without a domain, skip it and use the free workers.dev address. See [Create the Cloudflare API token](/en/help/cloudflare-token/).
 - **Check token fails.** The message names the missing permission. Edit the token, add the row, save, and check again.
 - **Zero Trust or R2 asks for a card.** Both free plans ask for a payment method and charge nothing.
-- **Purchase R2 Plan.** Click it and confirm the free tier. The first 10 GB a month are free.
+- **Purchase R2 Plan.** In the left menu, **Storage & databases > R2 Object Storage**. Click it and confirm the free tier. The first 10 GB a month are free.
 
 ## Keys
 

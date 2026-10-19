@@ -9,18 +9,20 @@ The Ledger reads its keys from its Worker in Cloudflare. A Worker is the program
 ## Where
 
 1. Sign in at dash.cloudflare.com.
-2. Open **Workers & Pages** and click **mtn-open-ledger**.
-3. Open **Settings**, then **Variables and Secrets**.
-4. Click **+ Add**. Pick **Secret** for keys and **Text** for plain settings. Type the name, paste the value.
-5. Click **Deploy**. The Ledger uses the new value within a minute.
+2. In the left menu, under **Build**, open **Compute > Workers & Pages** and click **mtn-open-ledger**.
+3. Open the **Settings** tab. The first section is **Runtime variables and secrets**.
+4. Click **Add variable**. Type the name under **Key** and paste the value under **Value**. For a key, tick **Secret**. For a plain setting, leave it clear.
+5. Click **Add variable and deploy**. The Ledger uses the new value within a minute.
+
+To change a value that is already there, click the pencil on its row, paste the new value and deploy.
 
 Names are exact, in capital letters.
 
 ## Which names
 
-- **Receipt reading with Gemini:** Secret `GEMINI_API_KEY` with the key, and Text `AI_PROVIDER` with the value `gemini`.
-- **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and Text `AI_PROVIDER` with the value `anthropic`.
-- **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and Text `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
+- **Receipt reading with Gemini:** Secret `GEMINI_API_KEY` with the key, and the plain variable `AI_PROVIDER` with the value `gemini`.
+- **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and the plain variable `AI_PROVIDER` with the value `anthropic`.
+- **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and the plain variable `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
 - **Slack alerts:** Secret `SLACK_WEBHOOK_URL`.
 - **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`. For a folder shared by link, the secret `GOOGLE_API_KEY` with a Google API key instead.
 - **MCP token:** Secret `MCP_TOKEN`, see [Connect Claude](https://open-ledger.dev/en/help/connect-claude/).

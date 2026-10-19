@@ -2,7 +2,7 @@
 
 Secrets live only in Worker secrets (CLAUDE.md rule 5). Never in the repo, never in logs, never in `audit_log`. `redact()` in `src/core/audit.ts` drops secret-looking keys from audit details.
 
-Set a secret on your computer with `npx wrangler secret put <NAME>`, or in the Cloudflare dashboard under Workers, open-ledger-il, Settings, Variables and Secrets. Local development reads `.dev.vars`, which git ignores. Start from `.dev.vars.example`.
+Set a secret on your computer with `npx wrangler secret put <NAME>`, or in the Cloudflare dashboard under Compute > Workers & Pages, open-ledger-il, Settings, Runtime variables and secrets (Add variable, tick Secret). Local development reads `.dev.vars`, which git ignores. Start from `.dev.vars.example`.
 
 ## Secrets
 

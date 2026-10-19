@@ -8,7 +8,7 @@
 
 ## פותחים את עמוד הטוקנים
 
-1. פותחים את dash.cloudflare.com/profile/api-tokens בלשונית חדשה. משאירים את תוכנת ההתקנה פתוחה.
+1. פותחים את dash.cloudflare.com/profile/api-tokens בלשונית חדשה. משאירים את תוכנת ההתקנה פתוחה. בלוח הבקרה זה סמל האדם בפינה הימנית העליונה, **Profile**, ואז **API Tokens**.
 2. לוחצים **Create Token**.
 3. גוללים לתחתית רשימת התבניות. מוצאים **Custom token** ולוחצים **Get started**.
 4. Token name: כל שם, למשל `Ledger install`.
@@ -32,7 +32,7 @@
 2. Zone | Workers Routes | Edit
 3. Zone | DNS | Edit
 
-איך יודעים אם יש דומיין: ב-dash.cloudflare.com, ברשימה **Domains** (בתפריטים ישנים **Websites**). בחשבון חדש אין.
+איך יודעים אם יש דומיין: ב-dash.cloudflare.com, **Domains** בתפריט השמאלי מציג אותו. בחשבון חדש אין.
 
 ## Account Resources ו-Zone Resources
 

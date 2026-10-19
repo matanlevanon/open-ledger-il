@@ -40,8 +40,8 @@
 
 עם דומיין משלכם ב-Cloudflare, כתובת עליו מגיעה ישר ללדג'ר, בלי שער באמצע.
 
-1. בלוח הבקרה של Cloudflare פותחים את הדומיין, ואז **Email > Email Routing**. מפעילים ונותנים ל-Cloudflare להוסיף את רשומות ה-DNS.
-2. **Routing rules > Create address**. כתובת מותאמת, למשל `receipts`. פעולה: **Send to a Worker**. יעד: ה-Worker של הלדג'ר, `mtn-open-ledger`. שומרים.
+1. בלוח הבקרה של Cloudflare, בתפריט השמאלי: **Compute > Email Service > Email Routing**. אם הדומיין לא ברשימה, לוחצים **Onboard Domain**, בוחרים אותו ונותנים ל-Cloudflare להוסיף את רשומות ה-DNS.
+2. לוחצים על הדומיין, פותחים את הלשונית **Routing rules** ולוחצים **Create routing rule**. כתובת מותאמת, למשל `receipts`. פעולה: **Send to a Worker**. יעד: ה-Worker של הלדג'ר, `mtn-open-ledger`. שומרים.
 3. משתמשים בכתובת הזו בג'ימייל כמו למעלה. אישור ג'ימייל מופיע תחת **Email inbox** באותה צורה.
 
 בהגדרות לא מופיעה כתובת לנתיב הזה, כי בחרתם אותה בעצמכם. רשימת השולחים המורשים ו-**Last received** עובדים אותו דבר.

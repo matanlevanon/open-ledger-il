@@ -1359,7 +1359,7 @@ Source: https://open-ledger.dev/help/before-you-start/
 
 ## פותחים את עמוד הטוקנים
 
-1. פותחים את dash.cloudflare.com/profile/api-tokens בלשונית חדשה. משאירים את תוכנת ההתקנה פתוחה.
+1. פותחים את dash.cloudflare.com/profile/api-tokens בלשונית חדשה. משאירים את תוכנת ההתקנה פתוחה. בלוח הבקרה זה סמל האדם בפינה הימנית העליונה, **Profile**, ואז **API Tokens**.
 2. לוחצים **Create Token**.
 3. גוללים לתחתית רשימת התבניות. מוצאים **Custom token** ולוחצים **Get started**.
 4. Token name: כל שם, למשל `Ledger install`.
@@ -1383,7 +1383,7 @@ Source: https://open-ledger.dev/help/before-you-start/
 2. Zone | Workers Routes | Edit
 3. Zone | DNS | Edit
 
-איך יודעים אם יש דומיין: ב-dash.cloudflare.com, ברשימה **Domains** (בתפריטים ישנים **Websites**). בחשבון חדש אין.
+איך יודעים אם יש דומיין: ב-dash.cloudflare.com, **Domains** בתפריט השמאלי מציג אותו. בחשבון חדש אין.
 
 ## Account Resources ו-Zone Resources
 
@@ -1483,7 +1483,7 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 
 `$b = New-Object byte 32; Security.Cryptography.RandomNumberGenerator::Create().GetBytes($b); Convert::ToBase64String($b)`
 
-1. ב-dash.cloudflare.com: **Workers & Pages**, לוחצים **mtn-open-ledger**, ואז **Settings > Variables and Secrets**. עורכים את **MCP_TOKEN**, מדביקים את השורה שהודפסה ולוחצים **Deploy**.
+1. ב-dash.cloudflare.com, בתפריט השמאלי: **Compute > Workers & Pages**, לוחצים **mtn-open-ledger**, ואז הלשונית **Settings**. תחת **Runtime variables and secrets** לוחצים על העיפרון ליד **MCP_TOKEN**, מדביקים את השורה שהודפסה ושומרים.
 
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
@@ -1713,8 +1713,8 @@ Source: https://open-ledger.dev/help/email/
 
 עם דומיין משלכם ב-Cloudflare, כתובת עליו מגיעה ישר ללדג'ר, בלי שער באמצע.
 
-1. בלוח הבקרה של Cloudflare פותחים את הדומיין, ואז **Email > Email Routing**. מפעילים ונותנים ל-Cloudflare להוסיף את רשומות ה-DNS.
-2. **Routing rules > Create address**. כתובת מותאמת, למשל `receipts`. פעולה: **Send to a Worker**. יעד: ה-Worker של הלדג'ר, `mtn-open-ledger`. שומרים.
+1. בלוח הבקרה של Cloudflare, בתפריט השמאלי: **Compute > Email Service > Email Routing**. אם הדומיין לא ברשימה, לוחצים **Onboard Domain**, בוחרים אותו ונותנים ל-Cloudflare להוסיף את רשומות ה-DNS.
+2. לוחצים על הדומיין, פותחים את הלשונית **Routing rules** ולוחצים **Create routing rule**. כתובת מותאמת, למשל `receipts`. פעולה: **Send to a Worker**. יעד: ה-Worker של הלדג'ר, `mtn-open-ledger`. שומרים.
 3. משתמשים בכתובת הזו בג'ימייל כמו למעלה. אישור ג'ימייל מופיע תחת **Email inbox** באותה צורה.
 
 בהגדרות לא מופיעה כתובת לנתיב הזה, כי בחרתם אותה בעצמכם. רשימת השולחים המורשים ו-**Last received** עובדים אותו דבר.
@@ -2081,18 +2081,20 @@ Source: https://open-ledger.dev/help/install/
 ## איפה
 
 1. נכנסים ל-dash.cloudflare.com.
-2. פותחים **Workers & Pages** ולוחצים **mtn-open-ledger**.
-3. פותחים **Settings** ואז **Variables and Secrets**.
-4. לוחצים **+ Add**. בוחרים **Secret** למפתחות ו-**Text** להגדרות רגילות. מקלידים את השם ומדביקים את הערך.
-5. לוחצים **Deploy**. הלדג'ר משתמש בערך החדש תוך דקה.
+2. בתפריט השמאלי, תחת **Build**, פותחים **Compute > Workers & Pages** ולוחצים **mtn-open-ledger**.
+3. פותחים את הלשונית **Settings**. החלק הראשון הוא **Runtime variables and secrets**.
+4. לוחצים **Add variable**. מקלידים את השם ב-**Key** ומדביקים את הערך ב-**Value**. למפתח מסמנים **Secret**. להגדרה רגילה משאירים לא מסומן.
+5. לוחצים **Add variable and deploy**. הלדג'ר משתמש בערך החדש תוך דקה.
+
+כדי לשנות ערך שכבר קיים, לוחצים על העיפרון בשורה שלו, מדביקים את הערך החדש ושומרים.
 
 השמות מדויקים, באותיות גדולות.
 
 ## אילו שמות
 
-- **קריאת קבלות עם Gemini:** Secret בשם `GEMINI_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `gemini`.
-- **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `anthropic`.
-- **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ו-Text בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
+- **קריאת קבלות עם Gemini:** Secret בשם `GEMINI_API_KEY` עם המפתח, ומשתנה רגיל בשם `AI_PROVIDER` עם הערך `gemini`.
+- **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ומשתנה רגיל בשם `AI_PROVIDER` עם הערך `anthropic`.
+- **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ומשתנה רגיל בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
 - **התראות Slack:** Secret בשם `SLACK_WEBHOOK_URL`.
 - **הוצאות מגוגל דרייב:** Secret בשם `GOOGLE_SERVICE_ACCOUNT_JSON` עם כל התוכן של קובץ ה-JSON, מה-`{` הראשון עד ה-`}` האחרון. לתיקייה משותפת בקישור, במקומו Secret בשם `GOOGLE_API_KEY` עם מפתח API של Google.
 - **טוקן MCP:** Secret בשם `MCP_TOKEN`, ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/).
@@ -2272,7 +2274,7 @@ Source: https://open-ledger.dev/help/tax-authority/
 - **אין Zone Resources.** הוא מופיע רק אחרי שורת הרשאה מסוג Zone. בלי דומיין, מדלגים ומשתמשים בכתובת החינמית של workers.dev. ראו [יצירת ה-API token](https://open-ledger.dev/help/cloudflare-token/).
 - **Check token נכשל.** ההודעה אומרת איזו הרשאה חסרה. עורכים את הטוקן, מוסיפים את השורה, שומרים ובודקים שוב.
 - **Zero Trust או R2 מבקשים כרטיס.** שתי התוכניות החינמיות מבקשות אמצעי תשלום ולא מחייבות.
-- **Purchase R2 Plan.** לוחצים ומאשרים את התוכנית החינמית. 10GB הראשונים בחודש בחינם.
+- **Purchase R2 Plan.** בתפריט השמאלי, **Storage & databases > R2 Object Storage**. לוחצים ומאשרים את התוכנית החינמית. 10GB הראשונים בחודש בחינם.
 
 ## מפתחות
 
@@ -2346,7 +2348,7 @@ Source: https://open-ledger.dev/help/troubleshooting/
 
 ## שומרים על חשבון Cloudflare
 
-חשבון Cloudflare מחזיק את הספרים שלכם. מפעילים אימות דו-שלבי: dash.cloudflare.com, הפרופיל, **Authentication**, **Two-Factor Authentication**.
+חשבון Cloudflare מחזיק את הספרים שלכם. מפעילים אימות דו-שלבי: dash.cloudflare.com, סמל האדם בפינה הימנית העליונה, **Profile**, ואז **Access Management > Authentication**, **Two-Factor Authentication**.
 
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
@@ -2402,8 +2404,8 @@ Source: https://open-ledger.dev/help/updates-backups/
 
 מיילים שהכנסתם בתוכנת ההתקנה כבר שם. לכל אחד חדש:
 
-1. נכנסים ל-dash.cloudflare.com ופותחים **Zero Trust**.
-2. נכנסים ל-**Access > Applications** ופותחים את **MTN Open Ledger**.
+1. נכנסים ל-dash.cloudflare.com. בתפריט השמאלי, תחת **Protect & connect**, פותחים **Zero Trust**.
+2. נכנסים ל-**Access controls > Applications** ופותחים את **MTN Open Ledger**.
 3. פותחים את הלשונית **Policies** ועורכים את מדיניות הכניסה.
 4. תחת **Include > Emails** מוסיפים את המייל.
 5. לוחצים **Save**.
@@ -2506,7 +2508,7 @@ The token is a password with limited rights. It lets the installer create the Le
 
 ## Open the token page
 
-1. Open dash.cloudflare.com/profile/api-tokens in a new tab. Keep the installer open.
+1. Open dash.cloudflare.com/profile/api-tokens in a new tab. Keep the installer open. In the dashboard it is the person icon on the top right, **Profile**, then **API Tokens**.
 2. Click **Create Token**.
 3. Scroll to the bottom of the list of templates. Find **Custom token** and click **Get started**.
 4. Token name: anything, for example `Ledger install`.
@@ -2530,7 +2532,7 @@ Only if your account has a domain, add three more:
 2. Zone | Workers Routes | Edit
 3. Zone | DNS | Edit
 
-How to tell if you have a domain: on dash.cloudflare.com, the **Domains** list (on older menus, **Websites**) shows it. A new account has none.
+How to tell if you have a domain: on dash.cloudflare.com, **Domains** in the left menu lists it. A new account has none.
 
 ## Account and zone resources
 
@@ -2630,7 +2632,7 @@ The tab is in Ledgers updated after 17 October 2026. On an older Ledger, update 
 
 `$b = New-Object byte 32; Security.Cryptography.RandomNumberGenerator::Create().GetBytes($b); Convert::ToBase64String($b)`
 
-1. In dash.cloudflare.com: **Workers & Pages**, click **mtn-open-ledger**, then **Settings > Variables and Secrets**. Edit **MCP_TOKEN**, paste the line it printed, and click **Deploy**.
+1. In dash.cloudflare.com, left menu: **Compute > Workers & Pages**, click **mtn-open-ledger**, then the **Settings** tab. Under **Runtime variables and secrets**, click the pencil on **MCP_TOKEN**, paste the line it printed, and deploy.
 
 Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
 
@@ -2860,8 +2862,8 @@ From now on, every matching email goes to the Ledger by itself. To send one by h
 
 With your own domain on Cloudflare, an address on it goes straight to your Ledger, with no gateway in between.
 
-1. In the Cloudflare dashboard, open your domain, then **Email > Email Routing**. Turn it on and let Cloudflare add its DNS records.
-2. **Routing rules > Create address**. Custom address, for example `receipts`. Action: **Send to a Worker**. Destination: your Ledger's Worker, `mtn-open-ledger`. Save.
+1. In the Cloudflare dashboard, left menu: **Compute > Email Service > Email Routing**. If your domain is not in the list, click **Onboard Domain**, pick it, and let Cloudflare add its DNS records.
+2. Click the domain, open the **Routing rules** tab and click **Create routing rule**. Custom address, for example `receipts`. Action: **Send to a Worker**. Destination: your Ledger's Worker, `mtn-open-ledger`. Save.
 3. Use that address in Gmail as above. The Gmail confirmation shows up under **Email inbox** the same way.
 
 Settings shows no address for this route, since you picked it. The allowed senders and **Last received** work the same.
@@ -3228,18 +3230,20 @@ The Ledger reads its keys from its Worker in Cloudflare. A Worker is the program
 ## Where
 
 1. Sign in at dash.cloudflare.com.
-2. Open **Workers & Pages** and click **mtn-open-ledger**.
-3. Open **Settings**, then **Variables and Secrets**.
-4. Click **+ Add**. Pick **Secret** for keys and **Text** for plain settings. Type the name, paste the value.
-5. Click **Deploy**. The Ledger uses the new value within a minute.
+2. In the left menu, under **Build**, open **Compute > Workers & Pages** and click **mtn-open-ledger**.
+3. Open the **Settings** tab. The first section is **Runtime variables and secrets**.
+4. Click **Add variable**. Type the name under **Key** and paste the value under **Value**. For a key, tick **Secret**. For a plain setting, leave it clear.
+5. Click **Add variable and deploy**. The Ledger uses the new value within a minute.
+
+To change a value that is already there, click the pencil on its row, paste the new value and deploy.
 
 Names are exact, in capital letters.
 
 ## Which names
 
-- **Receipt reading with Gemini:** Secret `GEMINI_API_KEY` with the key, and Text `AI_PROVIDER` with the value `gemini`.
-- **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and Text `AI_PROVIDER` with the value `anthropic`.
-- **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and Text `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
+- **Receipt reading with Gemini:** Secret `GEMINI_API_KEY` with the key, and the plain variable `AI_PROVIDER` with the value `gemini`.
+- **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and the plain variable `AI_PROVIDER` with the value `anthropic`.
+- **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and the plain variable `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
 - **Slack alerts:** Secret `SLACK_WEBHOOK_URL`.
 - **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`. For a folder shared by link, the secret `GOOGLE_API_KEY` with a Google API key instead.
 - **MCP token:** Secret `MCP_TOKEN`, see [Connect Claude](https://open-ledger.dev/en/help/connect-claude/).
@@ -3419,7 +3423,7 @@ Updated 2026-10-17
 - **Zone Resources is missing.** It shows up only after a Zone permission row. Without a domain, skip it and use the free workers.dev address. See [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/).
 - **Check token fails.** The message names the missing permission. Edit the token, add the row, save, and check again.
 - **Zero Trust or R2 asks for a card.** Both free plans ask for a payment method and charge nothing.
-- **Purchase R2 Plan.** Click it and confirm the free tier. The first 10 GB a month are free.
+- **Purchase R2 Plan.** In the left menu, **Storage & databases > R2 Object Storage**. Click it and confirm the free tier. The first 10 GB a month are free.
 
 ## Keys
 
@@ -3493,7 +3497,7 @@ After you paste the Cloudflare token, the installer finds the Ledger in your acc
 
 ## Keep Cloudflare safe
 
-The Cloudflare account holds your books. Turn on two-factor sign-in: dash.cloudflare.com, your profile, **Authentication**, **Two-Factor Authentication**.
+The Cloudflare account holds your books. Turn on two-factor sign-in: dash.cloudflare.com, the person icon on the top right, **Profile**, then **Access Management > Authentication**, **Two-Factor Authentication**.
 
 Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
 
@@ -3549,8 +3553,8 @@ For your own second email, pick **Owner**.
 
 Emails you listed in the installer are there already. For anyone new:
 
-1. Sign in at dash.cloudflare.com and open **Zero Trust**.
-2. Go to **Access > Applications** and open **MTN Open Ledger**.
+1. Sign in at dash.cloudflare.com. In the left menu, under **Protect & connect**, open **Zero Trust**.
+2. Go to **Access controls > Applications** and open **MTN Open Ledger**.
 3. Open the **Policies** tab and edit the sign-in policy.
 4. Under **Include > Emails**, add the email.
 5. Click **Save**.

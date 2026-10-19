@@ -344,14 +344,14 @@ section[id] { scroll-margin-top: 64px; }
       
       <p>The token is a password with limited rights. It lets the installer create the Ledger in your Cloudflare account. You delete it after the install.</p>
 <h2 id="open-the-token-page">Open the token page</h2>
-<ol><li>Open dash.cloudflare.com/profile/api-tokens in a new tab. Keep the installer open.</li><li>Click <b>Create Token</b>.</li><li>Scroll to the bottom of the list of templates. Find <b>Custom token</b> and click <b>Get started</b>.</li><li>Token name: anything, for example <code>Ledger install</code>.</li></ol>
+<ol><li>Open dash.cloudflare.com/profile/api-tokens in a new tab. Keep the installer open. In the dashboard it is the person icon on the top right, <b>Profile</b>, then <b>API Tokens</b>.</li><li>Click <b>Create Token</b>.</li><li>Scroll to the bottom of the list of templates. Find <b>Custom token</b> and click <b>Get started</b>.</li><li>Token name: anything, for example <code>Ledger install</code>.</li></ol>
 <h2 id="add-the-permission-rows">Add the permission rows</h2>
 <p>Each row has three boxes: the type (<b>Account</b> or <b>Zone</b>), the permission, and the level (<b>Read</b> or <b>Edit</b>). The first row is there already. Click <b>+ Add more</b> for each next row.</p>
 <p>Add these six rows:</p>
 <ol><li>Account | Workers Scripts | Edit</li><li>Account | D1 | Edit</li><li>Account | Workers R2 Storage | Edit</li><li>Account | Access: Apps and Policies | Edit</li><li>Account | Access: Organizations, Identity Providers, and Groups | Read</li><li>Account | Account Settings | Read</li></ol>
 <p>Only if your account has a domain, add three more:</p>
 <ol><li>Zone | Zone | Read</li><li>Zone | Workers Routes | Edit</li><li>Zone | DNS | Edit</li></ol>
-<p>How to tell if you have a domain: on dash.cloudflare.com, the <b>Domains</b> list (on older menus, <b>Websites</b>) shows it. A new account has none.</p>
+<p>How to tell if you have a domain: on dash.cloudflare.com, <b>Domains</b> in the left menu lists it. A new account has none.</p>
 <h2 id="account-and-zone-resources">Account and zone resources</h2>
 <ol><li>Below the permissions, under <b>Account Resources</b>, choose <b>Include</b>, then the business's account.</li><li><b>Zone Resources</b> shows up only after you add a Zone row. With a domain: <b>Include</b>, then <b>Specific zone</b>, then the domain the Ledger will use. Without a domain you added no Zone rows, so this part does not show. Skip it.</li><li><b>Client IP Address Filtering</b>: leave empty. <b>TTL</b>: optional. Set an end date, for example one year from today, and the token stops working after it. A good idea if you tick <b>Remember the token on this computer</b> in the installer.</li></ol>
 <h2 id="create-and-copy">Create and copy</h2>

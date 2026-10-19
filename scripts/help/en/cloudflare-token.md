@@ -11,7 +11,7 @@ The token is a password with limited rights. It lets the installer create the Le
 
 ## Open the token page
 
-1. Open dash.cloudflare.com/profile/api-tokens in a new tab. Keep the installer open.
+1. Open dash.cloudflare.com/profile/api-tokens in a new tab. Keep the installer open. In the dashboard it is the person icon on the top right, **Profile**, then **API Tokens**.
 2. Click **Create Token**.
 3. Scroll to the bottom of the list of templates. Find **Custom token** and click **Get started**.
 4. Token name: anything, for example `Ledger install`.
@@ -35,7 +35,7 @@ Only if your account has a domain, add three more:
 2. Zone | Workers Routes | Edit
 3. Zone | DNS | Edit
 
-How to tell if you have a domain: on dash.cloudflare.com, the **Domains** list (on older menus, **Websites**) shows it. A new account has none.
+How to tell if you have a domain: on dash.cloudflare.com, **Domains** in the left menu lists it. A new account has none.
 
 ## Account and zone resources
 

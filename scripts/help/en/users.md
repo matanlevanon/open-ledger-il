@@ -31,8 +31,8 @@ For your own second email, pick **Owner**.
 
 Emails you listed in the installer are there already. For anyone new:
 
-1. Sign in at dash.cloudflare.com and open **Zero Trust**.
-2. Go to **Access > Applications** and open **MTN Open Ledger**.
+1. Sign in at dash.cloudflare.com. In the left menu, under **Protect & connect**, open **Zero Trust**.
+2. Go to **Access controls > Applications** and open **MTN Open Ledger**.
 3. Open the **Policies** tab and edit the sign-in policy.
 4. Under **Include > Emails**, add the email.
 5. Click **Save**.

@@ -24,7 +24,7 @@
 
 ## שומרים על חשבון Cloudflare
 
-חשבון Cloudflare מחזיק את הספרים שלכם. מפעילים אימות דו-שלבי: dash.cloudflare.com, הפרופיל, **Authentication**, **Two-Factor Authentication**.
+חשבון Cloudflare מחזיק את הספרים שלכם. מפעילים אימות דו-שלבי: dash.cloudflare.com, סמל האדם בפינה הימנית העליונה, **Profile**, ואז **Access Management > Authentication**, **Two-Factor Authentication**.
 
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 

@@ -31,8 +31,8 @@ order: 5
 
 מיילים שהכנסתם בתוכנת ההתקנה כבר שם. לכל אחד חדש:
 
-1. נכנסים ל-dash.cloudflare.com ופותחים **Zero Trust**.
-2. נכנסים ל-**Access > Applications** ופותחים את **MTN Open Ledger**.
+1. נכנסים ל-dash.cloudflare.com. בתפריט השמאלי, תחת **Protect & connect**, פותחים **Zero Trust**.
+2. נכנסים ל-**Access controls > Applications** ופותחים את **MTN Open Ledger**.
 3. פותחים את הלשונית **Policies** ועורכים את מדיניות הכניסה.
 4. תחת **Include > Emails** מוסיפים את המייל.
 5. לוחצים **Save**.

@@ -46,7 +46,7 @@ number, the Ledger's answer code and the size, never an address, a subject or an
 
 No gateway. The Ledger Worker has an `email()` handler.
 
-1. Cloudflare dashboard > your domain > Email > Email Routing. Turn it on and add its DNS records.
+1. Cloudflare dashboard > Compute > Email Service > Email Routing. If the domain is not listed, click Onboard Domain and let Cloudflare add its DNS records.
 2. Add a routing rule: an address such as `receipts@your-domain.co.il`, action "Send to a
    Worker", your Ledger's Worker.
 3. Forward receipts to that address.

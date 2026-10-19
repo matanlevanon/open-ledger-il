@@ -58,4 +58,4 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 $b = New-Object byte[] 32; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)
 ```
 
-3. ב-dash.cloudflare.com: **Workers & Pages**, לוחצים **mtn-open-ledger**, ואז **Settings > Variables and Secrets**. עורכים את **MCP_TOKEN**, מדביקים את השורה שהודפסה ולוחצים **Deploy**.
+3. ב-dash.cloudflare.com, בתפריט השמאלי: **Compute > Workers & Pages**, לוחצים **mtn-open-ledger**, ואז הלשונית **Settings**. תחת **Runtime variables and secrets** לוחצים על העיפרון ליד **MCP_TOKEN**, מדביקים את השורה שהודפסה ושומרים.

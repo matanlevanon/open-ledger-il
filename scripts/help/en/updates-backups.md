@@ -27,4 +27,4 @@ After you paste the Cloudflare token, the installer finds the Ledger in your acc
 
 ## Keep Cloudflare safe
 
-The Cloudflare account holds your books. Turn on two-factor sign-in: dash.cloudflare.com, your profile, **Authentication**, **Two-Factor Authentication**.
+The Cloudflare account holds your books. Turn on two-factor sign-in: dash.cloudflare.com, the person icon on the top right, **Profile**, then **Access Management > Authentication**, **Two-Factor Authentication**.

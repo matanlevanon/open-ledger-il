@@ -27,8 +27,8 @@ For your own second email, pick **Owner**. Repeat in each business it should ope
 ### 2. In Cloudflare Access
 
 1. Sign in at dash.cloudflare.com.
-2. Open **Zero Trust**.
-3. Go to **Access > Applications**.
+2. In the left menu, under **Protect & connect**, open **Zero Trust**.
+3. Go to **Access controls > Applications**.
 4. Open the ledger app.
 5. Open the **Policies** tab. Edit the sign-in policy.
 6. Under **Include > Emails**, add the email.

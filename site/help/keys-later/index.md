@@ -9,18 +9,20 @@
 ## איפה
 
 1. נכנסים ל-dash.cloudflare.com.
-2. פותחים **Workers & Pages** ולוחצים **mtn-open-ledger**.
-3. פותחים **Settings** ואז **Variables and Secrets**.
-4. לוחצים **+ Add**. בוחרים **Secret** למפתחות ו-**Text** להגדרות רגילות. מקלידים את השם ומדביקים את הערך.
-5. לוחצים **Deploy**. הלדג'ר משתמש בערך החדש תוך דקה.
+2. בתפריט השמאלי, תחת **Build**, פותחים **Compute > Workers & Pages** ולוחצים **mtn-open-ledger**.
+3. פותחים את הלשונית **Settings**. החלק הראשון הוא **Runtime variables and secrets**.
+4. לוחצים **Add variable**. מקלידים את השם ב-**Key** ומדביקים את הערך ב-**Value**. למפתח מסמנים **Secret**. להגדרה רגילה משאירים לא מסומן.
+5. לוחצים **Add variable and deploy**. הלדג'ר משתמש בערך החדש תוך דקה.
+
+כדי לשנות ערך שכבר קיים, לוחצים על העיפרון בשורה שלו, מדביקים את הערך החדש ושומרים.
 
 השמות מדויקים, באותיות גדולות.
 
 ## אילו שמות
 
-- **קריאת קבלות עם Gemini:** Secret בשם `GEMINI_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `gemini`.
-- **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `anthropic`.
-- **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ו-Text בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
+- **קריאת קבלות עם Gemini:** Secret בשם `GEMINI_API_KEY` עם המפתח, ומשתנה רגיל בשם `AI_PROVIDER` עם הערך `gemini`.
+- **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ומשתנה רגיל בשם `AI_PROVIDER` עם הערך `anthropic`.
+- **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ומשתנה רגיל בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
 - **התראות Slack:** Secret בשם `SLACK_WEBHOOK_URL`.
 - **הוצאות מגוגל דרייב:** Secret בשם `GOOGLE_SERVICE_ACCOUNT_JSON` עם כל התוכן של קובץ ה-JSON, מה-`{` הראשון עד ה-`}` האחרון. לתיקייה משותפת בקישור, במקומו Secret בשם `GOOGLE_API_KEY` עם מפתח API של Google.
 - **טוקן MCP:** Secret בשם `MCP_TOKEN`, ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/).

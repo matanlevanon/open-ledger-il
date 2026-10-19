@@ -11,7 +11,7 @@ secret and variable named below. This file is the sequence to set them all up.
 
 **Cloudflare dashboard.**
 
-1. Go to **Workers & Pages** > **D1 SQL database** ([direct link](https://dash.cloudflare.com/?to=/:account/workers/d1)).
+1. In the left menu, go to **Storage & databases** > **D1 SQLite Database** ([direct link](https://dash.cloudflare.com/?to=/:account/workers/d1)).
 2. Select **Create Database**. Name it `open-ledger-il`. Leave the location hint on automatic unless
    you know most reads happen from a specific region. Select **Create**.
 3. Copy the new database's ID (shown on its overview page).
@@ -24,7 +24,7 @@ from the R2 export, entirely in memory, so it never needs a second database to r
 
 **Cloudflare dashboard.**
 
-1. Go to **R2 object storage** ([direct link](https://dash.cloudflare.com/?to=/:account/r2/overview)).
+1. In the left menu, go to **Storage & databases** > **R2 Object Storage** ([direct link](https://dash.cloudflare.com/?to=/:account/r2/overview)).
 2. Select **Create bucket**. Name it `open-ledger-il-files`. Leave location on automatic. Select
    **Create bucket**.
 3. Repeat for a second bucket named `open-ledger-il-backups`. This is R14's quarterly backup exports
@@ -33,7 +33,7 @@ from the R2 export, entirely in memory, so it never needs a second database to r
 
 ### Lock `open-ledger-il-files` against deletion (docs/legal-requirements.md, instruction 25: 7-year retention)
 
-**Cloudflare dashboard.** R2 Object Storage > the files bucket > **Settings** > **Bucket Lock Rules** >
+**Cloudflare dashboard.** Storage & databases > R2 Object Storage > the files bucket > **Settings** > **Bucket Lock Rules** >
 **Add**. Name `seven-year-retention`, prefix empty, retention 2557 days. Or use Wrangler:
 
 **Your computer**, once authenticated (`npx wrangler login`):
@@ -62,8 +62,7 @@ next UTC day. The fix is upgrading to Workers Paid (10 hours a month included).
 
 ## 4. Set up Cloudflare Access
 
-**Cloudflare dashboard**, in **Zero Trust** (a separate area from Workers & Pages. The sidebar has
-its own switcher, or go to [dash.cloudflare.com/?to=/:account/access/apps](https://dash.cloudflare.com/?to=/:account/access/apps)).
+**Cloudflare dashboard**, in **Zero Trust**, under **Protect & connect** in the left menu (or go to [dash.cloudflare.com/?to=/:account/access/apps](https://dash.cloudflare.com/?to=/:account/access/apps)).
 
 1. Go to **Access controls** > **Applications**.
 2. Select **Add an application** > **Self-hosted**.
@@ -84,7 +83,7 @@ The domain `ledger.example.com` does not need to exist yet. You are about to cre
 Custom Domain on the Worker in step 7.
 
 No domain? Use the free Cloudflare address instead, `open-ledger-il.<your-subdomain>.workers.dev`.
-Your workers.dev subdomain is shown in **Workers & Pages** > **Account details** (right column).
+Your workers.dev subdomain is shown in **Compute** > **Workers & Pages** > **Account details** (right column).
 Enter that address wherever this guide says `ledger.example.com`, here and in steps 5 and 7.
 
 ### Second application: public client links (Bypass)
@@ -131,7 +130,7 @@ deploy cannot silently revert it.
 
 **Cloudflare dashboard.**
 
-1. Go to **Workers & Pages** ([direct link](https://dash.cloudflare.com/?to=/:account/workers-and-pages)).
+1. In the left menu, go to **Compute** > **Workers & Pages** ([direct link](https://dash.cloudflare.com/?to=/:account/workers-and-pages)).
 2. Select **Create application** (or **Create**) > **Import a repository**, and connect your
    GitHub account if this is the first time.
 3. Select your fork of this repository and the `main` branch.
@@ -150,10 +149,10 @@ is pushed in step 5. Check it in **Settings** > **Domains & Routes**: the **work
 enabled, and **Preview URLs** is disabled.
 
 **Cloudflare dashboard**, once your domain (`example.com` here) itself is an active zone on this
-Cloudflare account. Add it first under **Websites** if it is not already there. DNS for the rest
+Cloudflare account. Add it first under **Domains** if it is not already there. DNS for the rest
 of the domain keeps working as before. This only adds one new subdomain's routing.
 
-1. Open the `open-ledger-il` Worker (**Workers & Pages** > the Worker).
+1. Open the `open-ledger-il` Worker (**Compute** > **Workers & Pages** > the Worker).
 2. Go to the **Domains** tab (or **Settings** > **Domains & Routes**).
 3. Select **Add** > **Custom Domain**.
 4. Enter `ledger.example.com`. Select **Add Custom Domain**.
@@ -165,11 +164,11 @@ for `ledger` on this zone first, or the add is refused.
 
 **Cloudflare dashboard.**
 
-1. Open the `open-ledger-il` Worker > **Settings** > **Variables and Secrets**.
-2. Select **Add** for each row below. Set **Type** to **Secret**, the **Variable name** exactly as
-   shown, and paste the value. Select **Add variable** to add the next one without leaving the
-   screen. Select **Deploy** once all of them are entered, to roll out a Worker version that can
-   read them.
+1. Open the `open-ledger-il` Worker > **Settings** > **Runtime variables and secrets**.
+2. Select **Add variable**. For each row below, type the **Key** exactly as shown, paste the
+   **Value** and tick **Secret**. Select **+ Add** in the same window for the next one. Select
+   **Add variable and deploy** once all of them are entered, to roll out a Worker version that
+   can read them.
 
 | Name | Where the value comes from |
 |---|---|
@@ -208,12 +207,12 @@ node scripts/make-signing-cert.mjs "Your Business Name"
 
 3. Wait up to a minute. The script prints two blocks, under `=== SIGNING_KEY_PEM ===` and
    `=== SIGNING_CERT_PEM ===`. Nothing is written to disk.
-4. In the Worker's **Variables and Secrets** screen (above), add a **Secret** named
+4. In the Worker's **Runtime variables and secrets** section (above), click **Add variable**, tick **Secret**, and name it
    `SIGNING_KEY_PEM`. Paste the first block, from `-----BEGIN RSA PRIVATE KEY-----` to
    `-----END RSA PRIVATE KEY-----`, both lines included.
-5. Add a second **Secret** named `SIGNING_CERT_PEM`. Paste the second block, from
+5. Select **+ Add** in the same window for a second **Secret** named `SIGNING_CERT_PEM`. Paste the second block, from
    `-----BEGIN CERTIFICATE-----` to `-----END CERTIFICATE-----`.
-6. Select **Deploy**, then close the terminal. The private key exists only in the Worker now.
+6. Select **Add variable and deploy**, then close the terminal. The private key exists only in the Worker now.
 
 Without these two secrets, PDFs still print but carry no digital signature. To rotate the key
 before it expires, run the script again and replace both secrets. PDFs signed earlier keep their
@@ -331,7 +330,7 @@ most likely to hit the cron CPU limit:
   day. Paid includes 10 hours a month.
 - **D1 time travel**: 7 days of point-in-time recovery on Free, 30 days on Paid.
 
-Upgrade in the Cloudflare dashboard: **Workers & Pages** > **Plans**. Paid includes 30 million CPU
+Upgrade in the Cloudflare dashboard: **Compute** > **Workers plans**. Paid includes 30 million CPU
 milliseconds a month and allows 30 seconds of CPU per request by default.
 
 ## Update check

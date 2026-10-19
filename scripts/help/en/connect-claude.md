@@ -58,4 +58,4 @@ The tab is in Ledgers updated after 17 October 2026. On an older Ledger, update 
 $b = New-Object byte[] 32; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)
 ```
 
-3. In dash.cloudflare.com: **Workers & Pages**, click **mtn-open-ledger**, then **Settings > Variables and Secrets**. Edit **MCP_TOKEN**, paste the line it printed, and click **Deploy**.
+3. In dash.cloudflare.com, left menu: **Compute > Workers & Pages**, click **mtn-open-ledger**, then the **Settings** tab. Under **Runtime variables and secrets**, click the pencil on **MCP_TOKEN**, paste the line it printed, and deploy.

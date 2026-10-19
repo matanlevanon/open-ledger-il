@@ -43,8 +43,8 @@ From now on, every matching email goes to the Ledger by itself. To send one by h
 
 With your own domain on Cloudflare, an address on it goes straight to your Ledger, with no gateway in between.
 
-1. In the Cloudflare dashboard, open your domain, then **Email > Email Routing**. Turn it on and let Cloudflare add its DNS records.
-2. **Routing rules > Create address**. Custom address, for example `receipts`. Action: **Send to a Worker**. Destination: your Ledger's Worker, `mtn-open-ledger`. Save.
+1. In the Cloudflare dashboard, left menu: **Compute > Email Service > Email Routing**. If your domain is not in the list, click **Onboard Domain**, pick it, and let Cloudflare add its DNS records.
+2. Click the domain, open the **Routing rules** tab and click **Create routing rule**. Custom address, for example `receipts`. Action: **Send to a Worker**. Destination: your Ledger's Worker, `mtn-open-ledger`. Save.
 3. Use that address in Gmail as above. The Gmail confirmation shows up under **Email inbox** the same way.
 
 Settings shows no address for this route, since you picked it. The allowed senders and **Last received** work the same.

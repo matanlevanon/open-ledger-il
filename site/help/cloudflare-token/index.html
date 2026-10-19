@@ -344,14 +344,14 @@ section[id] { scroll-margin-top: 64px; }
       
       <p>הטוקן הוא סיסמה עם הרשאות מוגבלות. הוא מאפשר לתוכנת ההתקנה ליצור את הלדג'ר בחשבון Cloudflare שלכם. מוחקים אותו אחרי ההתקנה.</p>
 <h2 id="פותחים-את-עמוד-הטוקנים">פותחים את עמוד הטוקנים</h2>
-<ol><li>פותחים את dash.cloudflare.com/profile/api-tokens בלשונית חדשה. משאירים את תוכנת ההתקנה פתוחה.</li><li>לוחצים <b>Create Token</b>.</li><li>גוללים לתחתית רשימת התבניות. מוצאים <b>Custom token</b> ולוחצים <b>Get started</b>.</li><li>Token name: כל שם, למשל <code>Ledger install</code>.</li></ol>
+<ol><li>פותחים את dash.cloudflare.com/profile/api-tokens בלשונית חדשה. משאירים את תוכנת ההתקנה פתוחה. בלוח הבקרה זה סמל האדם בפינה הימנית העליונה, <b>Profile</b>, ואז <b>API Tokens</b>.</li><li>לוחצים <b>Create Token</b>.</li><li>גוללים לתחתית רשימת התבניות. מוצאים <b>Custom token</b> ולוחצים <b>Get started</b>.</li><li>Token name: כל שם, למשל <code>Ledger install</code>.</li></ol>
 <h2 id="מוסיפים-את-שורות-ההרשאה">מוסיפים את שורות ההרשאה</h2>
 <p>לכל שורה שלוש תיבות: הסוג (<b>Account</b> או <b>Zone</b>), ההרשאה, והרמה (<b>Read</b> או <b>Edit</b>). השורה הראשונה כבר קיימת. לכל שורה נוספת לוחצים <b>+ Add more</b>.</p>
 <p>מוסיפים את שש השורות האלה:</p>
 <ol><li>Account | Workers Scripts | Edit</li><li>Account | D1 | Edit</li><li>Account | Workers R2 Storage | Edit</li><li>Account | Access: Apps and Policies | Edit</li><li>Account | Access: Organizations, Identity Providers, and Groups | Read</li><li>Account | Account Settings | Read</li></ol>
 <p>רק אם יש בחשבון דומיין, מוסיפים עוד שלוש:</p>
 <ol><li>Zone | Zone | Read</li><li>Zone | Workers Routes | Edit</li><li>Zone | DNS | Edit</li></ol>
-<p>איך יודעים אם יש דומיין: ב-dash.cloudflare.com, ברשימה <b>Domains</b> (בתפריטים ישנים <b>Websites</b>). בחשבון חדש אין.</p>
+<p>איך יודעים אם יש דומיין: ב-dash.cloudflare.com, <b>Domains</b> בתפריט השמאלי מציג אותו. בחשבון חדש אין.</p>
 <h2 id="account-resources-ו-zone-resources">Account Resources ו-Zone Resources</h2>
 <ol><li>מתחת להרשאות, ב-<b>Account Resources</b>, בוחרים <b>Include</b> ואז את החשבון של העסק.</li><li><b>Zone Resources</b> מופיע רק אחרי שמוסיפים שורת Zone. עם דומיין: <b>Include</b>, אחר כך <b>Specific zone</b>, ואז הדומיין שהלדג'ר ישתמש בו. בלי דומיין לא הוספתם שורות Zone, אז החלק הזה לא מופיע. מדלגים.</li><li><b>Client IP Address Filtering</b>: משאירים ריק. <b>TTL</b>: לא חובה. קובעים תאריך סיום, למשל שנה מהיום, והטוקן מפסיק לעבוד אחריו. מומלץ אם מסמנים <b>Remember the token on this computer</b> בתוכנת ההתקנה.</li></ol>
 <h2 id="יוצרים-ומעתיקים">יוצרים ומעתיקים</h2>
