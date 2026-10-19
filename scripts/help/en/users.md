@@ -32,14 +32,14 @@ For your own second email, pick **Owner**.
 Emails you listed in the installer are there already. For anyone new:
 
 1. Sign in at dash.cloudflare.com. In the left menu, under **Protect & connect**, open **Zero Trust**.
-2. Go to **Access controls > Applications** and open **MTN Open Ledger**.
-3. Open the **Policies** tab and edit the sign-in policy.
+2. Go to **Access controls > Applications** and find **MTN Open Ledger** in the list.
+3. In its row, click the policy name in the **Policies** column. The policy opens for editing.
 4. Under **Include > Emails**, add the email.
-5. Click **Save**.
+5. Click **Save policy**.
 
 Until step 5, Cloudflare stops the person at its own sign-in page.
 
 ## Remove a person
 
 1. In the Ledger: **Accountant > Users**, click **Revoke** on the row.
-2. In Cloudflare Access: remove the email from **Include > Emails** and save.
+2. In Cloudflare Access: open the same policy, remove the email from **Include > Emails** and click **Save policy**.

@@ -32,14 +32,14 @@ order: 5
 מיילים שהכנסתם בתוכנת ההתקנה כבר שם. לכל אחד חדש:
 
 1. נכנסים ל-dash.cloudflare.com. בתפריט השמאלי, תחת **Protect & connect**, פותחים **Zero Trust**.
-2. נכנסים ל-**Access controls > Applications** ופותחים את **MTN Open Ledger**.
-3. פותחים את הלשונית **Policies** ועורכים את מדיניות הכניסה.
+2. נכנסים ל-**Access controls > Applications** ומוצאים את **MTN Open Ledger** ברשימה.
+3. בשורה שלו לוחצים על שם המדיניות בעמודה **Policies**. המדיניות נפתחת לעריכה.
 4. תחת **Include > Emails** מוסיפים את המייל.
-5. לוחצים **Save**.
+5. לוחצים **Save policy**.
 
 עד שלב 5, Cloudflare עוצר את האדם בעמוד הכניסה שלו.
 
 ## הסרת אדם
 
 1. בלדג'ר: **Accountant > Users**, לוחצים **Revoke** בשורה שלו.
-2. ב-Cloudflare Access: מוחקים את המייל מ-**Include > Emails** ושומרים.
+2. ב-Cloudflare Access: פותחים את אותה מדיניות, מוחקים את המייל מ-**Include > Emails** ולוחצים **Save policy**.

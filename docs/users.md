@@ -29,10 +29,10 @@ For your own second email, pick **Owner**. Repeat in each business it should ope
 1. Sign in at dash.cloudflare.com.
 2. In the left menu, under **Protect & connect**, open **Zero Trust**.
 3. Go to **Access controls > Applications**.
-4. Open the ledger app.
-5. Open the **Policies** tab. Edit the sign-in policy.
+4. Find the ledger app in the list. In its row, click the policy name in the **Policies** column.
+5. The policy opens for editing.
 6. Under **Include > Emails**, add the email.
-7. Save.
+7. Click **Save policy**.
 
 Until step 7, Access stops the person at its own sign-in page. The Ledger never sees them.
 
