@@ -88,6 +88,18 @@ Files that sit directly in the main folder are not read. Subfolders inside a mon
 4. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
 5. The Ledger checks the folder right after saving. Click **Check folder** any time to run it again. It shows the folder's name and the month folders it found, or the one thing to fix: no key, a key that does not work, or a folder Google does not find because it is not shared with the service account.
 
+### Or: a folder shared by link, with an API key
+
+Shorter, with no service account. The catch: anyone who gets the folder's link reads every receipt in it, with names, addresses and amounts.
+
+1. In console.cloud.google.com, pick or create a project. Open **APIs & Services > Library** and turn on **Google Drive API**, and **Google Sheets API** if you keep an index sheet.
+2. **APIs & Services > Credentials > Create credentials > API key.** Under **API restrictions**, allow only those two APIs.
+3. In Drive, open the main folder's **Share** dialog. Under **General access**, pick **Anyone with the link**, as **Viewer**.
+4. Give the Ledger the key as the secret `GOOGLE_API_KEY`, see [Add or change a key](/en/help/keys-later/).
+5. Save the folder id in **Settings > Expenses**. **Check folder** confirms it reads the folder by link.
+
+When both keys are set, the service account is used. The quarterly backup copy to Drive writes files, so it needs the service account.
+
 ### Import
 
 In **Expenses**, pick the month and click **Import month**. Each file is read with AI and waits for your check. Running it twice adds nothing twice. To import every morning, turn on **Daily sync** in **Settings > Expenses**.

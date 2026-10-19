@@ -22,7 +22,7 @@ Names are exact, in capital letters.
 - **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and Text `AI_PROVIDER` with the value `anthropic`.
 - **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and Text `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
 - **Slack alerts:** Secret `SLACK_WEBHOOK_URL`.
-- **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`.
+- **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`. For a folder shared by link, the secret `GOOGLE_API_KEY` with a Google API key instead.
 - **MCP token:** Secret `MCP_TOKEN`, see [Connect Claude](https://open-ledger.dev/en/help/connect-claude/).
 
 ## Rules

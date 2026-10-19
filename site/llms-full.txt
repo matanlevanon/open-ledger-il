@@ -1758,6 +1758,18 @@ Source: https://open-ledger.dev/help/email/
 4. ב-**Settings > Expenses** מדביקים את מזהה התיקייה, החלק בכתובת שלה אחרי `/folders/`, ולוחצים **Save folder**.
 5. הלדג'ר בודק את התיקייה מיד אחרי השמירה. **Check folder** מריץ את הבדיקה שוב בכל זמן. היא מציגה את שם התיקייה ואת תיקיות החודש שנמצאו, או את הדבר האחד לתקן: אין מפתח, מפתח שלא עובד, או תיקייה ש-Google לא מוצא כי היא לא משותפת עם ה-Service Account.
 
+### או: תיקייה משותפת בקישור, עם מפתח API
+
+קצר יותר, בלי Service Account. החיסרון: כל מי שמקבל את הקישור לתיקייה קורא את כל הקבלות בה, עם שמות, כתובות וסכומים.
+
+1. ב-console.cloud.google.com בוחרים או יוצרים פרויקט. פותחים **APIs & Services > Library** ומפעילים את **Google Drive API**, ואת **Google Sheets API** למי שמנהל גיליון אינדקס.
+2. **APIs & Services > Credentials > Create credentials > API key.** תחת **API restrictions** מאשרים רק את שני ה-API האלה.
+3. בדרייב, פותחים את חלון **שיתוף** של התיקייה הראשית. תחת **גישה כללית** בוחרים **כל מי שיש לו את הקישור**, בהרשאת **צפייה**.
+4. נותנים ללדג'ר את המפתח כסוד `GOOGLE_API_KEY`, ראו [הוספה או החלפה של מפתח](https://open-ledger.dev/help/keys-later/).
+5. שומרים את מזהה התיקייה ב-**Settings > Expenses**. **Check folder** מאשר שהיא נקראת דרך הקישור.
+
+כששני המפתחות מוגדרים, הלדג'ר משתמש ב-Service Account. העתק הגיבוי הרבעוני לדרייב כותב קבצים, ולכן צריך Service Account.
+
 ### ייבוא
 
 ב-**Expenses** בוחרים חודש ולוחצים **Import month**. כל קובץ נקרא עם AI ומחכה לבדיקה שלכם. הרצה כפולה לא מכפילה כלום. לייבוא כל בוקר, מפעילים **Daily sync** ב-**Settings > Expenses**.
@@ -2082,7 +2094,7 @@ Source: https://open-ledger.dev/help/install/
 - **קריאת קבלות עם Anthropic:** Secret בשם `ANTHROPIC_API_KEY` עם המפתח, ו-Text בשם `AI_PROVIDER` עם הערך `anthropic`.
 - **שליחת מיילים:** Secret בשם `MAIL_API_KEY` עם מפתח Resend, ו-Text בשם `MAIL_FROM` עם השולח, למשל `Acme Ltd <billing@acme.co.il>`.
 - **התראות Slack:** Secret בשם `SLACK_WEBHOOK_URL`.
-- **הוצאות מגוגל דרייב:** Secret בשם `GOOGLE_SERVICE_ACCOUNT_JSON` עם כל התוכן של קובץ ה-JSON, מה-`{` הראשון עד ה-`}` האחרון.
+- **הוצאות מגוגל דרייב:** Secret בשם `GOOGLE_SERVICE_ACCOUNT_JSON` עם כל התוכן של קובץ ה-JSON, מה-`{` הראשון עד ה-`}` האחרון. לתיקייה משותפת בקישור, במקומו Secret בשם `GOOGLE_API_KEY` עם מפתח API של Google.
 - **טוקן MCP:** Secret בשם `MCP_TOKEN`, ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/).
 
 ## כללים
@@ -2893,6 +2905,18 @@ Files that sit directly in the main folder are not read. Subfolders inside a mon
 4. In **Settings > Expenses**, paste the folder id, the part of the folder's address after `/folders/`, and click **Save folder**.
 5. The Ledger checks the folder right after saving. Click **Check folder** any time to run it again. It shows the folder's name and the month folders it found, or the one thing to fix: no key, a key that does not work, or a folder Google does not find because it is not shared with the service account.
 
+### Or: a folder shared by link, with an API key
+
+Shorter, with no service account. The catch: anyone who gets the folder's link reads every receipt in it, with names, addresses and amounts.
+
+1. In console.cloud.google.com, pick or create a project. Open **APIs & Services > Library** and turn on **Google Drive API**, and **Google Sheets API** if you keep an index sheet.
+2. **APIs & Services > Credentials > Create credentials > API key.** Under **API restrictions**, allow only those two APIs.
+3. In Drive, open the main folder's **Share** dialog. Under **General access**, pick **Anyone with the link**, as **Viewer**.
+4. Give the Ledger the key as the secret `GOOGLE_API_KEY`, see [Add or change a key](https://open-ledger.dev/en/help/keys-later/).
+5. Save the folder id in **Settings > Expenses**. **Check folder** confirms it reads the folder by link.
+
+When both keys are set, the service account is used. The quarterly backup copy to Drive writes files, so it needs the service account.
+
 ### Import
 
 In **Expenses**, pick the month and click **Import month**. Each file is read with AI and waits for your check. Running it twice adds nothing twice. To import every morning, turn on **Daily sync** in **Settings > Expenses**.
@@ -3217,7 +3241,7 @@ Names are exact, in capital letters.
 - **Receipt reading with Anthropic:** Secret `ANTHROPIC_API_KEY` with the key, and Text `AI_PROVIDER` with the value `anthropic`.
 - **Email sending:** Secret `MAIL_API_KEY` with the Resend key, and Text `MAIL_FROM` with the sender, for example `Acme Ltd <billing@acme.co.il>`.
 - **Slack alerts:** Secret `SLACK_WEBHOOK_URL`.
-- **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`.
+- **Google Drive expenses:** Secret `GOOGLE_SERVICE_ACCOUNT_JSON` with the whole content of the JSON key file, from the first `{` to the last `}`. For a folder shared by link, the secret `GOOGLE_API_KEY` with a Google API key instead.
 - **MCP token:** Secret `MCP_TOKEN`, see [Connect Claude](https://open-ledger.dev/en/help/connect-claude/).
 
 ## Rules
