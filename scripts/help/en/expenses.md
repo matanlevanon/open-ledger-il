@@ -125,3 +125,11 @@ Optional. Some people keep a monthly spreadsheet of their expenses. When the mon
 | File link | No | The Drive link to the receipt. The Ledger attaches that file to the expense. |
 
 Rows with any other status, such as a totals row, are ignored.
+
+## Bank and card transactions
+
+The Ledger collects receipts and invoices. It does not connect to your bank. For bank, credit card and Bit transactions, [Financy]({{financy}}) connects to Israeli banks and card companies through Open Banking, read only. It sorts the transactions and answers questions like how much you spent on software this month. It has a free plan.
+
+- Financy has its own MCP. Add it to Claude next to the Ledger's, and Claude sees receipts and bank activity together, for example to find a card charge with no receipt.
+- Financy does not import expenses into the Ledger. A receipt still arrives by email, upload, Drive or Claude.
+- The link is a partner link. If you join a paid plan, the Ledger's developer earns a commission.

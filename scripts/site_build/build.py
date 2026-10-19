@@ -10,7 +10,9 @@ import hashlib, html, json, os, re, shutil, sys
 
 from . import md, to_md
 from .config import (CERTIFICATE, CLONE, CONFIG, DEMO_URL, DEPLOY, ITA_REG, ITA_REGISTRY, OUT, REPO, ROOT,
-                     SETUP, SHOP_LIVE, SHOP_URL, SITE_URL, CONTACT_ENDPOINT, LICENSE, VERSION)
+                     SETUP, SHOP_LIVE, SHOP_URL, SITE_URL, CONTACT_ENDPOINT, FINANCY_URL, LICENSE, VERSION)
+
+md.SPONSORED.append(FINANCY_URL)
 from .pages_text import NAV, PAGES, UI
 from .style import CSS, FAVICON, LOGO
 from .text import EN, HE, OPTIONS_EN, OPTIONS_HE
@@ -798,7 +800,7 @@ def token_values(lang, rates):
         return f'{d}.{m}.{y}' if lang == 'he' else f'{d} {MONTHS_EN[m - 1]} {y}'
 
     return {
-        'repo': REPO, 'site': SITE_URL,
+        'repo': REPO, 'site': SITE_URL, 'financy': FINANCY_URL,
         'patur_ceiling': money(r['patur_ceiling']), 'patur_ceiling_year': str(r['patur_ceiling']['year']),
         'vat_rate': f'{r["vat_rate"]["value"]}%', 'vat_rate_from': day(r['vat_rate']['from']),
         'allocation_threshold': money(r['allocation_threshold']), 'allocation_threshold_from': day(r['allocation_threshold']['from']),

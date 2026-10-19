@@ -35,6 +35,8 @@ SHOP_URL = CONFIG['shopUrl']
 # and uncomment the ₪99 paragraph in README.md.
 SHOP_LIVE = CONFIG['shopLive']
 CONTACT_ENDPOINT = CONFIG['contactEndpoint']
+# The Financy partner link. Help pages use it as {{financy}}, and md.py marks it rel="sponsored".
+FINANCY_URL = CONFIG.get('financyUrl', '')
 ANALYTICS = CONFIG['analytics']
 
 REPO = REPO_URL

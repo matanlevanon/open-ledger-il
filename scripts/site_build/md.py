@@ -9,6 +9,8 @@ INLINE_CODE = re.compile(r'`([^`]+)`')
 BOLD = re.compile(r'\*\*(.+?)\*\*')
 LINK = re.compile(r'\[([^\]]+)\]\(([^)\s]+)\)')
 REF = re.compile(r'\[(\d+)\](?!\()')
+# Partner (affiliate) link prefixes. build.py fills this from site.config.json.
+SPONSORED = []
 
 
 def inline(text, refs=True):
@@ -23,7 +25,10 @@ def inline(text, refs=True):
     text = html.escape(text, quote=False)
     def link(m):
         href = m.group(2)
-        rel = ' rel="noopener"' if href.startswith('http') else ''
+        if any(p and href.startswith(p) for p in SPONSORED):
+            rel = ' rel="sponsored noopener" target="_blank"'
+        else:
+            rel = ' rel="noopener"' if href.startswith('http') else ''
         return '<a href="' + html.escape(href) + '"' + rel + '>' + m.group(1) + '</a>'
 
     text = LINK.sub(link, text)

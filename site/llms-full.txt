@@ -1444,6 +1444,7 @@ Source: https://open-ledger.dev/help/cloudflare-token/
 - כשלא, ההוצאה נשמרת עם ההערה "no file attached yet". שמרו את המקור, או העבירו אותו לכתובת המייל של ההוצאות.
 - אותו ספק ואותו מספר מסמך פעמיים, או אותו קובץ פעמיים, מסומנים Duplicate.
 - שואלים "אילו הוצאות מחכות לבדיקה" ומקבלים את הרשימה.
+- מוסיפים גם את ה-MCP של [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d), ו-Claude משווה חיובים בבנק ובאשראי לקבלות. קישור שותפים, ראו [הוצאות](https://open-ledger.dev/help/expenses/).
 
 ## מה צריך
 
@@ -1795,6 +1796,14 @@ Source: https://open-ledger.dev/help/email/
 | קישור לקובץ | לא | הקישור לקבלה בדרייב. הלדג'ר מצרף את הקובץ להוצאה. |
 
 שורות עם כל סטטוס אחר, כמו שורת סיכום, לא נקראות.
+
+## תנועות בבנק ובכרטיסי אשראי
+
+הלדג'ר אוסף קבלות וחשבוניות. הוא לא מתחבר לבנק. לתנועות בבנק, בכרטיסי האשראי ובביט, [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) מתחבר לבנקים ולחברות האשראי בישראל דרך בנקאות פתוחה, בהרשאת קריאה בלבד. הוא ממיין את התנועות ועונה על שאלות כמו כמה הוצאתם החודש על תוכנה. יש לו תוכנית חינמית.
+
+- ל-Financy יש MCP משלו. מוסיפים אותו ל-Claude לצד ה-MCP של הלדג'ר, ו-Claude רואה את הקבלות ואת תנועות הבנק יחד, למשל כדי למצוא חיוב באשראי שאין לו קבלה.
+- Financy לא מייבא הוצאות ללדג'ר. קבלה עדיין מגיעה במייל, בהעלאה, מהדרייב או דרך Claude.
+- הקישור הוא קישור שותפים. אם תצטרפו לתוכנית בתשלום, המפתח של הלדג'ר מקבל עמלה.
 
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
@@ -2596,6 +2605,7 @@ Give Claude a supplier invoice or receipt and say "add this as an expense". Clau
 - When it can't, the expense is saved with the note "no file attached yet". Keep the original, or forward it to the expenses email address.
 - The same supplier and document number twice, or the same file twice, is marked Duplicate.
 - Ask "which expenses are waiting for review" to get the list.
+- Add the [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) MCP too, and Claude matches bank and card charges against receipts. Partner link, see [Expenses](https://open-ledger.dev/en/help/expenses/).
 
 ## What you need
 
@@ -2947,6 +2957,14 @@ Optional. Some people keep a monthly spreadsheet of their expenses. When the mon
 | File link | No | The Drive link to the receipt. The Ledger attaches that file to the expense. |
 
 Rows with any other status, such as a totals row, are ignored.
+
+## Bank and card transactions
+
+The Ledger collects receipts and invoices. It does not connect to your bank. For bank, credit card and Bit transactions, [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) connects to Israeli banks and card companies through Open Banking, read only. It sorts the transactions and answers questions like how much you spent on software this month. It has a free plan.
+
+- Financy has its own MCP. Add it to Claude next to the Ledger's, and Claude sees receipts and bank activity together, for example to find a card charge with no receipt.
+- Financy does not import expenses into the Ledger. A receipt still arrives by email, upload, Drive or Claude.
+- The link is a partner link. If you join a paid plan, the Ledger's developer earns a commission.
 
 Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
 

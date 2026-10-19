@@ -14,6 +14,7 @@ Give Claude a supplier invoice or receipt and say "add this as an expense". Clau
 - When it can't, the expense is saved with the note "no file attached yet". Keep the original, or forward it to the expenses email address.
 - The same supplier and document number twice, or the same file twice, is marked Duplicate.
 - Ask "which expenses are waiting for review" to get the list.
+- Add the [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) MCP too, and Claude matches bank and card charges against receipts. Partner link, see [Expenses](https://open-ledger.dev/en/help/expenses/).
 
 ## What you need
 
