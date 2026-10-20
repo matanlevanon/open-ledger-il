@@ -133,11 +133,35 @@ Sometimes the AI reader can't read a file, most often because the AI provider is
 
 ## Bank and card transactions
 
-The Ledger collects receipts and invoices. It does not connect to your bank. For bank, credit card and Bit transactions, [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) connects to Israeli banks and card companies through Open Banking, read only. It sorts the transactions and answers questions like how much you spent on software this month. It has a free plan.
+The Ledger collects receipts and invoices. With [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) it also reads your bank and credit card transactions, read only, so it can find card charges with no receipt and deposits with no receipt.
 
-- Financy has its own MCP. Add it to Claude next to the Ledger's, and Claude sees receipts and bank activity together, for example to find a card charge with no receipt.
-- Financy does not import expenses into the Ledger. A receipt still arrives by email, upload, Drive or Claude.
-- The link is a partner link. If you join a paid plan, the Ledger's developer earns a commission.
+### What you need
+
+- A Financy plan with API access: Starter or higher. The free plan has no API.
+- Your bank and card companies connected inside Financy. Financy adds them, the Ledger can't.
+
+### Connect, once
+
+1. In Financy: **Settings > API**. Copy the **Client ID**, **Client Secret** and **User ID**.
+2. In the Ledger: **Settings > Expenses > Financy connection**. Paste the three values and click **Connect**. The Ledger tests them before it saves anything.
+3. Tick the accounts and cards the business uses. Financy holds personal and business accounts together, and the Ledger reads only the ones you tick. Savings, loans and investments are never read.
+
+### What you get
+
+- **Dashboard:** a Bank card with the balance of each account, one line per currency, and the card charge so far with its charge day.
+- **Expenses > Bank activity:** each charge matched to an expense where one exists. An unmatched charge gets **Add as expense** (it waits for its receipt) or **Not a business expense**. A deposit that matches an open payment request gets **Record payment**, filled in for you to confirm.
+- **Reports > Bank vs books:** money in and out from the bank next to what the Ledger recorded, with the gaps.
+- **Claude:** the MCP tools `bank_activity` and `bank_balances`.
+
+Every night the Ledger pulls the last 35 days. **Sync now** pulls on demand.
+
+### What the Ledger stores, and what it doesn't
+
+It keeps the picked accounts' balances and transactions: date, amount, currency, description, merchant and Financy's category. It never stores your ID number, the account owner's name or a full account number. The Client Secret is encrypted and shows only its last 4 characters.
+
+**Choose accounts** changes the picks. Unticking an account deletes its stored transactions. **Disconnect** stops the sync. **Delete bank data** removes everything pulled.
+
+The Financy link is a partner link. If you join a paid plan, the Ledger's developer earns a commission.
 
 Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
 

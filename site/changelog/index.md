@@ -6,6 +6,15 @@
 
 ## 1.6.0 (2026-10-13)
 
+### Bank and card data (Financy)
+
+- Settings > Expenses > Financy connection: paste the Client ID, Client Secret and User ID from Financy > Settings > API. The Ledger tests them and saves them with the secret encrypted. Then tick the business accounts. Only those are pulled, 90 days at first. Migrations `4000_financy.sql` and `4001_financy_accounts.sql`.
+- Sync now, Choose accounts, Replace details, Disconnect and Delete bank data. Unticking an account deletes its stored transactions after a confirm.
+- The daily cron pulls the last 35 days. Money out is matched to expenses by amount and date, deposits get a suggested payment request, and transfers between own accounts are set aside.
+- Expenses > Bank activity: Add as expense, Not a business expense, and Record payment on the suggested document, filled in for the person to confirm.
+- The dashboard shows a Bank card, one line per currency. New report Bank vs books. MCP tools `bank_activity` and `bank_balances`.
+- Savings, loans and securities are never read. No owner name, national id or full account number is stored.
+
 ### Expenses
 
 - An expense the reader could not read shows "Not read automatically" with the reason and a **Read again** button, and a **Not read** badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration `3900_expense_read.sql`.
