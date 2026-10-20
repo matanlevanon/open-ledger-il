@@ -27,6 +27,7 @@ export const GUIDES = {
   inbox: { page: 'expenses', anchor: { en: 'forward-receipts-by-email', he: 'העברת-קבלות-במייל' }, text: 'help.guide.inbox' },
   driveFolder: { page: 'expenses', anchor: { en: 'connect-it-once', he: 'חיבור-פעם-אחת' }, text: 'help.guide.driveFolder' },
   indexSheet: { page: 'expenses', anchor: { en: 'an-index-sheet-if-you-keep-one', he: 'גיליון-אינדקס-למי-שמנהל-אחד' }, text: 'help.guide.indexSheet' },
+  financy: { page: 'expenses', anchor: { en: 'bank-and-card-transactions', he: 'תנועות-בבנק-ובכרטיסי-אשראי' }, text: 'help.guide.financy' },
   upload: { page: 'expenses', anchor: { en: 'upload', he: 'העלאה' }, text: 'help.guide.upload' },
   backups: { page: 'updates-backups', anchor: { en: 'backups', he: 'גיבויים' }, text: 'help.guide.backups' },
   updates: { page: 'updates-backups', anchor: { en: 'check-for-updates', he: 'בדיקת-עדכונים' }, text: 'help.guide.updates' },

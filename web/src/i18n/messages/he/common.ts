@@ -112,6 +112,7 @@ export const common: Record<keyof typeof en, string> = {
   'help.guide.inbox': 'מעבירים קבלות לכתובת הזו, או מגדירים פעם אחת פילטר בג׳ימייל, וכל אחת נכנסת כהוצאה לבדיקה.',
   'help.guide.driveFolder': 'תיקייה ראשית אחת עם תיקייה לכל חודש בשם YYYY-MM. משתפים אותה עם ה-Service Account, או בקישור עם מפתח API.',
   'help.guide.indexSheet': 'לא חובה. גיליון חודשי עם שורה לכל קבלה מחליף את קריאת ה-AI. המדריך מפרט את העמודות.',
+  'help.guide.financy': 'מחברים את Financy עם שלושת הערכים מ-Financy > Settings > API. הלדג\'ר קורא תנועות בבנק ובכרטיסים, ולא כותב בהן.',
   'help.guide.upload': 'מעלים PDF או צילום. הלדג\'ר קורא אותו עם מפתח Gemini או Anthropic, ואתם בודקים.',
   'help.guide.backups': 'גיבוי מלא רץ כל רבעון, ל-R2 ולגוגל דרייב, עם בדיקת שחזור.',
   'help.guide.updates': 'עדכון הוא הרצה של תוכנת ההתקנה החדשה. הנתונים והמפתחות נשארים.',

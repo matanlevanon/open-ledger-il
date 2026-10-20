@@ -1,4 +1,5 @@
 import { apiGet } from './client';
+import type { BankSummary } from '../features/financy/api';
 
 export type EntityType = 'osek_patur' | 'osek_murshe' | 'company';
 
@@ -148,6 +149,8 @@ export interface DashboardData {
   contracts?: { unsigned: ContractAlert[]; expiring: ContractAlert[] };
   /** R28: reminders due on WhatsApp today. Absent on an older Worker. */
   whatsappDue?: WhatsAppDueItem[];
+  /** R40: the Bank card. Null when Financy is not connected. Absent on an older Worker. */
+  bank?: BankSummary | null;
   ita: { connected: boolean; message: string; state?: 'connected' | 'not_connected' | 'after_switch' };
   cards: DashboardCards;
   /** Present when the call named no cards: the stored layout that picked them. */

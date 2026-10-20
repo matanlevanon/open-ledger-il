@@ -44,6 +44,7 @@ export const REPORT_ENTRIES: ReportEntry[] = [
   { id: 'purchases-by-supplier', label: 'rep.purchasesBySupplier', group: 'expenses', catalog: true, period: 'thisYear', compare: 'ils' },
   { id: 'expenses-by-category', label: 'rep.expensesByCategory', group: 'expenses', catalog: true, period: 'thisYear', compare: 'ils' },
   { id: 'fixed-vs-one-off', label: 'rep.fixedVsOneOff', group: 'expenses', catalog: true, period: 'thisYear' },
+  { id: 'bank-vs-books', label: 'rep.bankVsBooks', group: 'expenses', catalog: true, period: 'thisYear' },
 
   { id: 'profit-loss', label: 'rep.profitLoss', group: 'tax', catalog: false, period: 'thisYear' },
   { id: 'cash-flow', label: 'rep.cashFlow', group: 'tax', catalog: true, period: 'last12' },

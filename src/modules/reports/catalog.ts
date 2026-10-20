@@ -20,6 +20,7 @@ import {
   monthsBetween,
   openItems,
 } from './aggregates';
+import { bankVsBooks } from '../financy/activity';
 import { toCsv } from './csv';
 import { decimalMinor, numberMinor } from './format';
 import { type XlsxSheet, buildXlsx } from './xlsx';
@@ -646,6 +647,24 @@ export const REPORTS: Record<string, ReportDef> = {
           ils: r.ils_minor,
         },
         link: { kind: 'expense', id: r.id },
+      }));
+    },
+  },
+
+  // R40: what the bank shows next to what the books hold, per month. Empty until Financy is connected.
+  'bank-vs-books': {
+    title: 'Bank vs books',
+    columns: [
+      { key: 'month', header: 'Month', kind: 'month' },
+      { key: 'line', header: 'Line', kind: 'text' },
+      { key: 'count', header: 'Count', kind: 'int' },
+      { key: 'ils', header: 'ILS', kind: 'ils' },
+    ],
+    async rows(db, p) {
+      return (await bankVsBooks(db, p.from, p.to, p.businessId)).map((l, i) => ({
+        key: `${l.month}:${i}`,
+        cells: { month: l.month, line: l.line, count: l.count, ils: l.ils },
+        ...(l.line === 'Money out recorded as expenses' ? { link: report('expense-items', { from: `${l.month}-01`, to: monthEnd(l.month) }) } : {}),
       }));
     },
   },

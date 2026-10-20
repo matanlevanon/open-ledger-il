@@ -672,6 +672,8 @@ export async function deleteExpense(db: D1Database, id: number, actor: AuditActo
   await transaction(db, [
     stmt(db, 'UPDATE expenses SET duplicate_of_id = NULL WHERE duplicate_of_id = ?', id),
     stmt(db, 'UPDATE inbox_events SET expense_id = NULL WHERE expense_id = ?', id),
+    // R40: a bank row matched to this expense waits again.
+    stmt(db, "UPDATE bank_transactions SET matched_expense_id = NULL, match_status = 'unmatched' WHERE matched_expense_id = ?", id),
     stmt(db, 'UPDATE expense_files SET expense_id = NULL WHERE expense_id = ?', id),
     stmt(db, 'DELETE FROM expenses WHERE id = ?', id),
     ...files.map((f) => stmt(db, 'DELETE FROM expense_files WHERE id = ? AND NOT EXISTS (SELECT 1 FROM expenses WHERE file_id = ?)', f.id, f.id)),

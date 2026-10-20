@@ -15,7 +15,7 @@ import {
 } from '../expenses/api';
 import { ImportCounts } from '../expenses/ImportSummaryView';
 import { ApiError } from './api';
-import { FinancyCard } from './FinancyCard';
+import { FinancySection } from './FinancySection';
 import { InboxSection } from './InboxSection';
 
 /** R20: the Drive root folder, the daily sync switch, and the log of every import run. Owner only. */
@@ -114,7 +114,7 @@ export function ExpensesTab() {
 
   return (
     <div className="flex flex-col gap-6">
-      <FinancyCard />
+      <FinancySection demo={Boolean(demo)} />
       {!demo && <InboxSection />}
       {settings.reader && (
         <section className="flex flex-col gap-2">

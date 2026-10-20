@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { BankActivityPage } from './BankActivityPage';
 import { CategoriesPage } from './CategoriesPage';
 import { ExpenseReviewPage } from './ExpenseReviewPage';
 import { ExpensesListPage } from './ExpensesListPage';
@@ -10,6 +11,7 @@ export function ExpensesRoutes() {
       <Route index element={<ExpensesListPage />} />
       <Route path="suppliers" element={<SuppliersPage />} />
       <Route path="categories" element={<CategoriesPage />} />
+      <Route path="bank" element={<BankActivityPage />} />
       <Route path=":id" element={<ExpenseReviewPage />} />
     </Routes>
   );

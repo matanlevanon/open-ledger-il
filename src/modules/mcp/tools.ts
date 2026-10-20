@@ -17,6 +17,7 @@ import { boiRateSource } from '../fx';
 import type { Env } from '../../env';
 import { recordGivenExpense, listExpenses } from '../expenses/service';
 import { EXPENSE_STATUSES, ExtractedExpenseSchema } from '../expenses/types';
+import { assertConnected, listBankAccounts, listBankTransactions } from '../financy/activity';
 
 /** MCP acts as the owner of one business. It has no per-request signed-in user, only the bearer token. */
 export function mcpUser(businessId: number): AuthUser {
@@ -158,6 +159,12 @@ const addExpenseInput = ExtractedExpenseSchema.extend({
   note: z.string().trim().max(500).nullish(),
   fileBase64: z.string().max(Math.ceil((MCP_EXPENSE_FILE_MAX_BYTES * 4) / 3) + 8).nullish(),
   filename: z.string().trim().min(1).max(200).nullish(),
+});
+
+// R40: pulled bank data, read only.
+const bankActivityInput = z.object({
+  month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM').optional(),
+  onlyUnmatched: z.boolean().optional(),
 });
 
 const listExpensesInput = z.object({
@@ -424,6 +431,60 @@ export const MCP_TOOLS: McpTool[] = [
         fileAttached: r.file_id !== null,
         // R39: read, failed, manual, or null on older expenses.
         readStatus: r.read_status ?? null,
+      }));
+    },
+  },
+  {
+    name: 'bank_activity',
+    description:
+      'Bank and card transactions pulled from Financy, read only, newest first, with their match status: matched to an expense, ' +
+      'unmatched, ignored as not a business expense, or added as an expense. Money out is negative. Amounts are in minor units.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        month: { type: 'string', description: 'YYYY-MM. Leave out for every month pulled.' },
+        onlyUnmatched: { type: 'boolean', description: 'Only rows with no expense or document yet.' },
+      },
+    },
+    async handler(env, args) {
+      const input = bankActivityInput.parse(args ?? {});
+      await assertConnected(env.db, env.businessId);
+      const rows = await listBankTransactions(env.db, env.businessId, { month: input.month, status: input.onlyUnmatched ? 'unmatched' : undefined });
+      return rows.map((r) => ({
+        id: r.id,
+        date: r.date,
+        kind: r.kind,
+        account: r.accountName,
+        amountMinor: r.amountMinor,
+        currency: r.currency,
+        description: r.description,
+        merchant: r.merchant,
+        category: r.category,
+        matchStatus: r.matchStatus,
+        expenseId: r.expenseId,
+        suggestedDocument: r.suggestion?.displayNumber ?? null,
+      }));
+    },
+  },
+  {
+    name: 'bank_balances',
+    description: 'Current balances of the bank and card accounts pulled from Financy, read only. Card balances are the charge so far. Amounts are in minor units.',
+    inputSchema: { type: 'object', properties: {} },
+    async handler(env) {
+      await assertConnected(env.db, env.businessId);
+      return (await listBankAccounts(env.db, env.businessId)).map((a) => ({
+        type: a.type,
+        name: a.name,
+        last4: a.last4,
+        currency: a.currency,
+        balanceMinor: a.balanceMinor,
+        balanceType: a.balanceType,
+        availableMinor: a.availableMinor,
+        creditLimitMinor: a.creditLimitMinor,
+        cardDueDate: a.cardDueDate,
+        balances: a.balances,
+        blocked: a.blocked,
+        updatedAt: a.updatedAt,
       }));
     },
   },

@@ -15,7 +15,7 @@ Set a secret on your computer with `npx wrangler secret put <NAME>`, or in the C
 | `ITA_CLIENT_SECRET_SANDBOX` | R12 | ITA sandbox client secret |
 | `ITA_CLIENT_ID_PRODUCTION` | R12 | ITA production client id |
 | `ITA_CLIENT_SECRET_PRODUCTION` | R12 | ITA production client secret |
-| `ITA_TOKEN_KEY` | R12 | AES-GCM key for stored ITA tokens. 32 random bytes, base64. Make one on your computer with `openssl rand -base64 32` |
+| `ITA_TOKEN_KEY` | R12 | AES-GCM key for stored ITA tokens, and since R40 for the Financy client secret (additional data `financy:<business_id>`). 32 random bytes, base64. Make one on your computer with `openssl rand -base64 32` |
 | `ITA_RELAY_URL` | R24 | Optional. A relay with an Israeli address for the Tax Authority calls, for a Worker served outside Israel (the Tax Authority answered Frankfurt with 403). Unset means direct calls |
 | `ITA_RELAY_CLIENT_ID` | R24 | Cloudflare Access service token Client ID for the relay. Required with `ITA_RELAY_URL` |
 | `ITA_RELAY_CLIENT_SECRET` | R24 | Cloudflare Access service token Client Secret for the relay. Required with `ITA_RELAY_URL` |

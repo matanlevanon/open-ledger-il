@@ -88,6 +88,7 @@ export const analytics: Record<keyof typeof en, string> = {
   'rep.purchasesBySupplier': "רכישות לפי ספק",
   'rep.expensesByCategory': "הוצאות לפי קטגוריה",
   'rep.fixedVsOneOff': "הוצאות קבועות וחד פעמיות",
+  'rep.bankVsBooks': "בנק מול ספרים",
   'rep.profitLoss': "רווח והפסד",
   'rep.cashFlow': "תזרים מזומנים",
   'rep.annualSummary': "סיכום שנתי לדוח המס",

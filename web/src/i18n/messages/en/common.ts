@@ -114,6 +114,7 @@ export const common = {
   'help.guide.inbox': 'Forward receipts to this address, or set a Gmail filter once, and each one becomes an expense for review.',
   'help.guide.driveFolder': 'One main folder with a folder per month named YYYY-MM. Share it with the service account, or by link with an API key.',
   'help.guide.indexSheet': 'Optional. A monthly sheet with one row per receipt replaces the AI reading. The guide lists the columns.',
+  'help.guide.financy': 'Connect Financy with the three values from Financy > Settings > API. The Ledger reads bank and card transactions, never writes.',
   'help.guide.upload': 'Upload a PDF or a photo. The Ledger reads it with your Gemini or Anthropic key, and you check it.',
   'help.guide.backups': 'A full backup runs every quarter, to R2 and to Google Drive, with a restore test.',
   'help.guide.updates': 'Updating means running the new installer. It keeps your data and keys.',

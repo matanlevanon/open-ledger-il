@@ -101,6 +101,9 @@ export function ExpensesListPage() {
           <Link to="/expenses/categories" className="text-sm text-brand hover:underline">
             {t('expenses.list.categoriesLink')}
           </Link>
+          <Link to="/expenses/bank" className="text-sm text-brand hover:underline">
+            {t('expenses.list.bankLink')}
+          </Link>
           <label className="sr-only" htmlFor="import-month">
             {t('expenses.import.monthLabel')}
           </label>

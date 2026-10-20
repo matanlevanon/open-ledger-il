@@ -2,7 +2,7 @@ import { announceDemoSend, DemoReadOnlyNote, openDemoPdf, previewDemoSend, useDe
 import { BackLink, documentParent } from '../../components/BackLink';
 import { type ReactNode, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ApiError } from '../../api/client';
 import { usePreferences } from '../../app/preferences';
 import { type MessageKey, useT } from '../../i18n';
@@ -70,6 +70,11 @@ export function DocumentPage() {
   const { locale } = usePreferences();
   const id = Number(useParams().id);
   const navigate = useNavigate();
+  // R40: Bank activity opens Record payment with the deposit's amount and date. The person confirms.
+  const [search] = useSearchParams();
+  const payAmount = Number(search.get('payAmount'));
+  const payOn = search.get('payOn');
+  const prefill = Number.isSafeInteger(payAmount) && payAmount > 0 ? { amountMinor: payAmount, paidOn: payOn && /^\d{4}-\d{2}-\d{2}$/.test(payOn) ? payOn : null } : null;
   const { data, error, setData } = useLoad(() => docsApi.get(id), [id]);
   const paymentMethods = useLoad(() => paymentMethodsApi.list(true), []);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -482,6 +487,7 @@ export function DocumentPage() {
             {live && isFinal && (d.remaining_minor ?? 0) > 0 && (
               <RecordPayment
                 remaining={d.remaining_minor!}
+                prefill={prefill}
                 currency={d.currency}
                 busy={busy}
                 methods={paymentMethods.data?.paymentMethods ?? []}
@@ -643,12 +649,15 @@ function PaymentsTable({ view }: { view: DocView }) {
 
 function RecordPayment({
   remaining,
+  prefill,
   currency,
   busy,
   methods,
   onSubmit,
 }: {
   remaining: number;
+  /** R40: from Bank activity, the deposit's amount and day. Method stays Bank transfer. */
+  prefill?: { amountMinor: number; paidOn: string | null } | null;
   currency: string;
   busy: boolean;
   methods: PaymentMethod[];
@@ -669,8 +678,8 @@ function RecordPayment({
   const t = useT();
   const [method, setMethod] = useState('bank_transfer');
   const [methodId, setMethodId] = useState<number | null>(null);
-  const [paidOn, setPaidOn] = useState(todayLocal());
-  const [amount, setAmount] = useState(formatMinor(remaining).replace(/,/g, ''));
+  const [paidOn, setPaidOn] = useState(prefill?.paidOn ?? todayLocal());
+  const [amount, setAmount] = useState(formatMinor(prefill?.amountMinor ?? remaining).replace(/,/g, ''));
   const [reference, setReference] = useState('');
   const [crossed, setCrossed] = useState(false);
   const [bank, setBank] = useState({ bankNumber: '', branchNumber: '', accountNumber: '' });

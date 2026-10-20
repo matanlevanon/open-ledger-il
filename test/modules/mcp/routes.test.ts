@@ -56,6 +56,8 @@ describe('POST /mcp: protocol', () => {
     expect(names).toEqual(
       [
         'add_expense',
+        'bank_activity',
+        'bank_balances',
         'ceiling_status',
         'client_balance',
         'create_draft',

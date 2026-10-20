@@ -90,6 +90,7 @@ export const analytics = {
   'rep.purchasesBySupplier': "Purchases by supplier",
   'rep.expensesByCategory': "Expenses by category",
   'rep.fixedVsOneOff': "Fixed and one-off expenses",
+  'rep.bankVsBooks': "Bank vs books",
   'rep.profitLoss': "Profit and loss",
   'rep.cashFlow': "Cash flow",
   'rep.annualSummary': "Annual summary for the tax return",

@@ -16,6 +16,7 @@ import {
 } from '../../api/dashboard';
 import { usePreferences } from '../../app/preferences';
 import { WhatsAppDue } from './WhatsAppDue';
+import { BankCard } from './BankCard';
 import { receiptForImported } from '../documents/ImportedDocuments';
 import { CeilingMeter } from '../../components/CeilingMeter';
 import { EmptyState } from '../../components/EmptyState';
@@ -705,6 +706,8 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
       ))}
 
       {data?.whatsappDue && data.whatsappDue.length > 0 && <WhatsAppDue items={data.whatsappDue} />}
+
+      {data?.bank && <BankCard bank={data.bank} />}
 
       {(data?.contracts?.unsigned ?? []).map((c) => (
         <p key={`u${c.id}`} data-testid="contract-unsigned" className="mt-4 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink">
