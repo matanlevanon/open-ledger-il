@@ -44,4 +44,10 @@ describe('open-ledger-sample-reset', () => {
     expect(await resetDue(env.DB, new Date('2026-10-14T00:15:00Z'))).toBe(false);
     expect((await onCron(env, new Date('2026-10-14T00:15:00Z'), fakeFetch)).reset).toBeNull();
   }, 120_000);
+
+  it('R43: a cron run builds a missing sample set, so a visitor request never has to', async () => {
+    await env.DB.prepare('DELETE FROM demo_master_businesses').run();
+    await onCron(env, new Date('2026-10-13T10:00:00Z'), fakeFetch);
+    expect((await first<{ n: number }>(env.DB, 'SELECT COUNT(*) AS n FROM demo_master_businesses'))!.n).toBe(2);
+  }, 180_000);
 });

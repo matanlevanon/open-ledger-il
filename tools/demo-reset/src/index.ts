@@ -1,7 +1,7 @@
 import type { Env } from '../../../src/env';
 import { demoEnv } from '../../../src/modules/demo/config';
 import { type ResetResult, runReset, runSweep, type SweepResult } from '../../../src/modules/demo/reset';
-import { ensureMasters } from '../../../src/modules/demo/sample';
+import { ensureMasters, mastersCurrent } from '../../../src/modules/demo/sample';
 import { slackNotifier } from '../../../src/modules/ita/notify';
 
 /**
@@ -53,6 +53,9 @@ export async function resetDue(db: D1Database, now: Date): Promise<boolean> {
 export async function onCron(env: ResetEnv, now: Date, fetchFn?: typeof fetch): Promise<{ sweep: SweepResult; reset: (ResetResult & { mastersLoaded: boolean }) | null }> {
   const sweep = await runSweep({ db: env.DB, files: env.FILES, notifier: slackNotifier(env.SLACK_WEBHOOK_URL, fetchFn ?? ((i, init) => fetch(i, init))), now });
   const reset = (await resetDue(env.DB, now)) ? await resetNow(env, 'cron', fetchFn) : null;
+  // R43: a sample set that is missing or older than the code is built here, within 15 minutes of a
+  // deploy. A cron run may take minutes, a visitor's request may not.
+  if (!reset && !(await mastersCurrent(env.DB))) await ensureMasters({ env: { ...demoEnv({ ...env, DEMO_MODE: '1' }), DEMO_MODE: '1' } as Env });
   return { sweep, reset };
 }
 

@@ -75,6 +75,9 @@ export async function visitorReady(env: Env, userId: number): Promise<boolean> {
   );
   if (linked && linked.n > 0 && (await mastersCurrent(env.DB))) return true;
   await run(env.DB, 'DELETE FROM user_businesses WHERE user_id = ? AND business_id NOT IN (SELECT business_id FROM demo_master_businesses)', userId);
+  // R43: the waiting page never builds. Its request ends when the page reloads, which killed the
+  // build halfway and held the lock. The reset Worker's cron builds the sample set instead.
+  if (!(await mastersCurrent(env.DB))) return false;
   return linkVisitor(env, userId);
 }
 
