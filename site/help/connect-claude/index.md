@@ -25,7 +25,7 @@
 
 ## Claude Desktop
 
-1. במסך האחרון של תוכנת ההתקנה לחצתם **Download for Claude Desktop**. הקובץ `claude-desktop-<הכתובת שלכם>.json` נמצא בתיקיית ההורדות.
+1. במסך האחרון של תוכנת ההתקנה לחצתם **Download for Claude Desktop**. הקובץ `claude-desktop-<your-address>.json`, עם הכתובת שלכם בשם, נמצא בתיקיית ההורדות.
 2. ב-Claude Desktop: **Settings > Developer > Edit Config**. נפתח הקובץ `claude_desktop_config.json`.
 3. מעתיקים את הרשומה `open-ledger` מהקובץ שהורדתם לתוך `mcpServers` בקובץ הזה. שומרים.
 4. מפעילים מחדש את Claude Desktop. צריך Node.js במחשב, מ-nodejs.org.

@@ -35,7 +35,7 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
 img { max-width: 100%; height: auto; display: block; }
-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+code { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
 header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 64px; }
@@ -285,7 +285,7 @@ section[id] { scroll-margin-top: 64px; }
 .prose table.compare { table-layout: fixed; min-width: 560px; }
 .prose table.compare th:first-child { width: 24%; }
 .prose th { background: var(--surface-2); }
-.prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
+.prose .cmd code { direction: ltr; unicode-bidi: isolate; display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
@@ -349,7 +349,7 @@ section[id] { scroll-margin-top: 64px; }
 <p>המפתח אבד? מבטלים אותו ויוצרים חדש.</p>
 <h2 id="מה-נותנים-לאפליקציה">מה נותנים לאפליקציה</h2>
 <p>שלושה ערכים, כולם באותו עמוד:</p>
-<ul><li><b>כתובת ה-API</b>: <code>https://&lt;הלדג&#x27;ר שלכם&gt;/v1</code></li><li><b>מזהה העסק</b>: המספר שלידה. גם מספר העוסק של העסק עובד.</li><li><b>המפתח</b>: מתחיל ב-<code>ol_live_</code></li></ul>
+<ul><li><b>כתובת ה-API</b>: <code>https://&lt;your-ledger&gt;/v1</code>, כשבמקום your-ledger באה הכתובת של הלדג'ר שלכם</li><li><b>מזהה העסק</b>: המספר שלידה. גם מספר העוסק של העסק עובד.</li><li><b>המפתח</b>: מתחיל ב-<code>ol_live_</code></li></ul>
 <h2 id="מפתח-קריאה-ומפתח-כתיבה">מפתח קריאה ומפתח כתיבה</h2>
 <ul><li>מפתח <b>קריאה</b> קורא את פרטי העסק, לקוחות, מסמכים, קובצי PDF, תשלומים, הוצאות וספקים.</li><li>מפתח <b>כתיבה</b> יכול גם ליצור לקוחות וטיוטות מסמכים: הצעות מחיר, דרישות תשלום, חשבונות עסקה וקבלות.</li><li>אף מפתח לא יכול להפיק, לשלוח, לזכות, לבטל או למחוק מסמך. טיוטה מה-API מחכה בלדג'ר עד שאתם בודקים ומפיקים אותה בעצמכם.</li></ul>
 <h2 id="ביטול-מפתח">ביטול מפתח</h2>
@@ -369,7 +369,7 @@ X-Business-Id: 1</code></p>
 <h3 id="מגבלת-קצב">מגבלת קצב</h3>
 <p>120 בקשות לדקה לכל מפתח. מעבר לזה, 429 עם כותרת <code>Retry-After</code> בשניות.</p>
 <h3 id="idempotency">Idempotency</h3>
-<p>שולחים <code>Idempotency-Key: &lt;מחרוזת ייחודית&gt;</code> ב-POST. אותו מפתח ואותו גוף בתוך 24 שעות מחזירים את התשובה הראשונה ולעולם לא יוצרים טיוטה שנייה. אותו מפתח עם גוף אחר מקבל 409.</p>
+<p>שולחים <code>Idempotency-Key: &lt;unique-string&gt;</code> עם מחרוזת ייחודית ב-POST. אותו מפתח ואותו גוף בתוך 24 שעות מחזירים את התשובה הראשונה ולעולם לא יוצרים טיוטה שנייה. אותו מפתח עם גוף אחר מקבל 409.</p>
 <h3 id="נקודות-קצה">נקודות קצה</h3>
 <p>מחליפים את המפתח ואת הכתובת בשלכם.</p>
 <div class="table-wrap"><table><thead><tr><th>קריאה</th><th>מה היא מחזירה</th></tr></thead><tbody><tr><td><code>GET /v1/business</code></td><td>שם, מספר עוסק, מצב משפטי, מטבע, כתובת</td></tr><tr><td><code>GET /v1/clients</code></td><td>לקוחות עם היתרה הפתוחה. סינון <code>q</code>, <code>active</code></td></tr><tr><td><code>GET /v1/clients/{id}</code></td><td>לקוח אחד</td></tr><tr><td><code>GET /v1/documents</code></td><td>מסמכים עם סכומים. סינון <code>type</code>, <code>status</code>, <code>from</code>, <code>to</code>, <code>clientId</code></td></tr><tr><td><code>GET /v1/documents/{id}</code></td><td>מסמך אחד עם שורות ותשלומים</td></tr><tr><td><code>GET /v1/documents/{id}/pdf</code></td><td>עותק הלקוח ב-PDF, למסמך סופי בלבד</td></tr><tr><td><code>GET /v1/payments</code></td><td>תשלומים שנרשמו. סינון <code>from</code>, <code>to</code></td></tr><tr><td><code>GET /v1/expenses</code></td><td>הוצאות. סינון <code>from</code>, <code>to</code>, <code>status</code></td></tr><tr><td><code>GET /v1/suppliers</code></td><td>ספקים</td></tr><tr><td><code>POST /v1/clients</code></td><td>יוצר לקוח (מפתח כתיבה)</td></tr><tr><td><code>POST /v1/documents</code></td><td>יוצר טיוטה (מפתח כתיבה)</td></tr></tbody></table></div>
@@ -388,7 +388,7 @@ curl https://ledger.example.com/v1/documents -X POST -H &quot;Authorization: Bea
 <p class="cmd" dir="ltr"><code>Invoke-RestMethod https://ledger.example.com/v1/business -Headers @{ Authorization = &quot;Bearer ol_live_YOUR_KEY&quot;; &quot;X-Business-Id&quot; = &quot;1&quot; }</code></p>
 <p>התשובה של טיוטה כוללת <code>editUrl</code>, העמוד בלדג'ר שבו בודקים ומפיקים אותה.</p>
 <h3 id="התיאור-המלא">התיאור המלא</h3>
-<p>הלדג'ר שלכם מפרסם אותו, עם כל שדה ודוגמה, בכתובת <code>https://&lt;הלדג&#x27;ר שלכם&gt;/v1/openapi.json</code>. לא צריך מפתח. מייבאים אותו ל-Postman, ל-Make או לכל כלי OpenAPI.</p>
+<p>הלדג'ר שלכם מפרסם אותו, עם כל שדה ודוגמה, בכתובת <code>https://&lt;your-ledger&gt;/v1/openapi.json</code>. לא צריך מפתח. מייבאים אותו ל-Postman, ל-Make או לכל כלי OpenAPI.</p>
       
       <p>עדיין תקועים? <a href="/pricing/#setup">כתבו לנו מעמוד המחירים.</a></p>
       <div class="help-more"><h2 id="more">עוד עזרה</h2><ul><li><a href="/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a></li><li><a href="/help/install/">התקנת Open Ledger IL צעד אחר צעד</a></li><li><a href="/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a></li><li><a href="/help/first-sign-in/">כניסה ראשונה והגדרות</a></li><li><a href="/help/users/">גישה לרואה חשבון או לעוזר</a></li><li><a href="/help/tax-authority/">חיבור לרשות המסים למספרי הקצאה</a></li><li><a href="/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a></li><li><a href="/help/digital-signature/">חתימה דיגיטלית: מה רשות המסים דורשת ואיך הלדג&#x27;ר עומד בכל כלל</a></li><li><a href="/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a></li><li><a href="/help/expenses/">הכנסת הוצאות ללדג&#x27;ר</a></li><li><a href="/help/email/">שליחת מסמכים במייל, בלי ספאם</a></li><li><a href="/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a></li><li><a href="/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a></li><li><a href="/help/updates-backups/">עדכונים וגיבויים</a></li><li><a href="/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a></li></ul></div>

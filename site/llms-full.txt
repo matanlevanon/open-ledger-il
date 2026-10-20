@@ -1386,7 +1386,7 @@ Source: https://open-ledger.dev/en/license/
 
 שלושה ערכים, כולם באותו עמוד:
 
-- **כתובת ה-API**: `https://<הלדג'ר שלכם>/v1`
+- **כתובת ה-API**: `https://<your-ledger>/v1`, כשבמקום your-ledger באה הכתובת של הלדג'ר שלכם
 - **מזהה העסק**: המספר שלידה. גם מספר העוסק של העסק עובד.
 - **המפתח**: מתחיל ב-`ol_live_`
 
@@ -1428,7 +1428,7 @@ Source: https://open-ledger.dev/en/license/
 
 ### Idempotency
 
-שולחים `Idempotency-Key: <מחרוזת ייחודית>` ב-POST. אותו מפתח ואותו גוף בתוך 24 שעות מחזירים את התשובה הראשונה ולעולם לא יוצרים טיוטה שנייה. אותו מפתח עם גוף אחר מקבל 409.
+שולחים `Idempotency-Key: <unique-string>` עם מחרוזת ייחודית ב-POST. אותו מפתח ואותו גוף בתוך 24 שעות מחזירים את התשובה הראשונה ולעולם לא יוצרים טיוטה שנייה. אותו מפתח עם גוף אחר מקבל 409.
 
 ### נקודות קצה
 
@@ -1458,7 +1458,7 @@ Source: https://open-ledger.dev/en/license/
 
 ### התיאור המלא
 
-הלדג'ר שלכם מפרסם אותו, עם כל שדה ודוגמה, בכתובת `https://<הלדג'ר שלכם>/v1/openapi.json`. לא צריך מפתח. מייבאים אותו ל-Postman, ל-Make או לכל כלי OpenAPI.
+הלדג'ר שלכם מפרסם אותו, עם כל שדה ודוגמה, בכתובת `https://<your-ledger>/v1/openapi.json`. לא צריך מפתח. מייבאים אותו ל-Postman, ל-Make או לכל כלי OpenAPI.
 
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
@@ -1650,7 +1650,7 @@ Source: https://open-ledger.dev/help/cloudflare-token/
 
 ## Claude Desktop
 
-1. במסך האחרון של תוכנת ההתקנה לחצתם **Download for Claude Desktop**. הקובץ `claude-desktop-<הכתובת שלכם>.json` נמצא בתיקיית ההורדות.
+1. במסך האחרון של תוכנת ההתקנה לחצתם **Download for Claude Desktop**. הקובץ `claude-desktop-<your-address>.json`, עם הכתובת שלכם בשם, נמצא בתיקיית ההורדות.
 2. ב-Claude Desktop: **Settings > Developer > Edit Config**. נפתח הקובץ `claude_desktop_config.json`.
 3. מעתיקים את הרשומה `open-ledger` מהקובץ שהורדתם לתוך `mcpServers` בקובץ הזה. שומרים.
 4. מפעילים מחדש את Claude Desktop. צריך Node.js במחשב, מ-nodejs.org.
@@ -1892,7 +1892,7 @@ Source: https://open-ledger.dev/help/email/
 2. לוחצים **Add a forwarding address** (הוספת כתובת להעברה), מדביקים את הכתובת ומאשרים.
 3. ג'ימייל שולח לכתובת מייל אישור, עם קוד או קישור. הוא מופיע בלדג'ר תחת **Email inbox**. מקלידים את הקוד בג'ימייל ולוחצים **Verify**, או לוחצים **Open the confirmation link**.
 4. משאירים מסומן **Disable forwarding**. מעבירים רק קבלות, לא את כל המייל.
-5. בתיבת החיפוש של ג'ימייל מדביקים את החיפוש מעמוד הלדג'ר, למשל `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. אפשר להוסיף ספקים: `from:(billing@supplier.com)`.
+5. בתיבת החיפוש של ג'ימייל מדביקים את החיפוש מעמוד הלדג'ר, למשל `has:attachment (invoice OR receipt)`. החיפוש בעמוד הלדג'ר כולל גם את המילים חשבונית וקבלה. אפשר להוסיף ספקים: `from:(billing@supplier.com)`.
 6. לוחצים על סמל אפשרויות החיפוש, ואז **Create filter** (יצירת מסנן). מסמנים **Forward it to** (העברה אל), בוחרים את הכתובת ולוחצים **Create filter**.
 
 מעכשיו כל מייל מתאים מגיע ללדג'ר לבד. לשליחה ידנית, מעבירים לאותה כתובת.
@@ -3244,7 +3244,7 @@ Open **Settings > Expenses > Email inbox**. The address looks like `expenses+r7k
 2. Click **Add a forwarding address**, paste the address and confirm.
 3. Gmail sends a confirmation email to that address, with a code or a link. It shows up in the Ledger under **Email inbox**. Type the code in Gmail and click **Verify**, or click **Open the confirmation link**.
 4. Leave **Disable forwarding** selected. You forward only receipts, not all your mail.
-5. In the Gmail search box, paste the search from the Ledger page, for example `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. Add your suppliers if you like: `from:(billing@supplier.com)`.
+5. In the Gmail search box, paste the search from the Ledger page, for example `has:attachment (invoice OR receipt)`. The search on the Ledger page also holds the Hebrew words for invoice and receipt. Add your suppliers if you like: `from:(billing@supplier.com)`.
 6. Click the search options icon, then **Create filter**. Tick **Forward it to**, pick the address, and click **Create filter**.
 
 From now on, every matching email goes to the Ledger by itself. To send one by hand, forward it to the same address.

@@ -94,7 +94,7 @@ PAGE_CSS = '''
 .prose table.compare { table-layout: fixed; min-width: 560px; }
 .prose table.compare th:first-child { width: 24%; }
 .prose th { background: var(--surface-2); }
-.prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
+.prose .cmd code { direction: ltr; unicode-bidi: isolate; display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 '''
 

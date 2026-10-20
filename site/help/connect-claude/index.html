@@ -35,7 +35,7 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
 img { max-width: 100%; height: auto; display: block; }
-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+code { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
 header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 64px; }
@@ -285,7 +285,7 @@ section[id] { scroll-margin-top: 64px; }
 .prose table.compare { table-layout: fixed; min-width: 560px; }
 .prose table.compare th:first-child { width: 24%; }
 .prose th { background: var(--surface-2); }
-.prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
+.prose .cmd code { direction: ltr; unicode-bidi: isolate; display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
@@ -350,7 +350,7 @@ section[id] { scroll-margin-top: 64px; }
 <h2 id="מה-צריך">מה צריך</h2>
 <ul><li><b>הכתובת:</b> כתובת הלדג'ר עם <code>/mcp</code> בסוף, למשל <code>https://ledger.acme.co.il/mcp</code>.</li><li><b>הטוקן:</b> מוצג פעם אחת במסך האחרון של תוכנת ההתקנה.</li></ul>
 <h2 id="claude-desktop">Claude Desktop</h2>
-<ol><li>במסך האחרון של תוכנת ההתקנה לחצתם <b>Download for Claude Desktop</b>. הקובץ <code>claude-desktop-&lt;הכתובת שלכם&gt;.json</code> נמצא בתיקיית ההורדות.</li><li>ב-Claude Desktop: <b>Settings &gt; Developer &gt; Edit Config</b>. נפתח הקובץ <code>claude_desktop_config.json</code>.</li><li>מעתיקים את הרשומה <code>open-ledger</code> מהקובץ שהורדתם לתוך <code>mcpServers</code> בקובץ הזה. שומרים.</li><li>מפעילים מחדש את Claude Desktop. צריך Node.js במחשב, מ-nodejs.org.</li></ol>
+<ol><li>במסך האחרון של תוכנת ההתקנה לחצתם <b>Download for Claude Desktop</b>. הקובץ <code>claude-desktop-&lt;your-address&gt;.json</code>, עם הכתובת שלכם בשם, נמצא בתיקיית ההורדות.</li><li>ב-Claude Desktop: <b>Settings &gt; Developer &gt; Edit Config</b>. נפתח הקובץ <code>claude_desktop_config.json</code>.</li><li>מעתיקים את הרשומה <code>open-ledger</code> מהקובץ שהורדתם לתוך <code>mcpServers</code> בקובץ הזה. שומרים.</li><li>מפעילים מחדש את Claude Desktop. צריך Node.js במחשב, מ-nodejs.org.</li></ol>
 <h2 id="claude-code">Claude Code</h2>
 <p>לוחצים <b>Download for Claude Code</b> במסך האחרון של תוכנת ההתקנה ושומרים את הקובץ בשם <code>.mcp.json</code> בתיקייה שבה עובדים. או מוסיפים שרת עם הכתובת והכותרת <code>Authorization: Bearer &lt;token&gt;</code>.</p>
 <h2 id="הטוקן-אבד">הטוקן אבד</h2>

@@ -21,7 +21,7 @@ Open **Settings > Expenses > Email inbox**. The address looks like `expenses+r7k
 2. Click **Add a forwarding address**, paste the address and confirm.
 3. Gmail sends a confirmation email to that address, with a code or a link. It shows up in the Ledger under **Email inbox**. Type the code in Gmail and click **Verify**, or click **Open the confirmation link**.
 4. Leave **Disable forwarding** selected. You forward only receipts, not all your mail.
-5. In the Gmail search box, paste the search from the Ledger page, for example `has:attachment (invoice OR receipt OR חשבונית OR קבלה)`. Add your suppliers if you like: `from:(billing@supplier.com)`.
+5. In the Gmail search box, paste the search from the Ledger page, for example `has:attachment (invoice OR receipt)`. The search on the Ledger page also holds the Hebrew words for invoice and receipt. Add your suppliers if you like: `from:(billing@supplier.com)`.
 6. Click the search options icon, then **Create filter**. Tick **Forward it to**, pick the address, and click **Create filter**.
 
 From now on, every matching email goes to the Ledger by itself. To send one by hand, forward it to the same address.

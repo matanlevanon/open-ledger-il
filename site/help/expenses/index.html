@@ -35,7 +35,7 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: Heebo, "Segoe UI", Assistant, system-ui, sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
 img { max-width: 100%; height: auto; display: block; }
-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+code { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
 header { position: sticky; top: 0; z-index: 40; background: rgba(246,248,251,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-soft); }
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 64px; }
@@ -285,7 +285,7 @@ section[id] { scroll-margin-top: 64px; }
 .prose table.compare { table-layout: fixed; min-width: 560px; }
 .prose table.compare th:first-child { width: 24%; }
 .prose th { background: var(--surface-2); }
-.prose .cmd code { display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
+.prose .cmd code { direction: ltr; unicode-bidi: isolate; display: block; white-space: pre-wrap; word-break: break-all; text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--tint, #f1f4f9); font-size: 13px; }
 .guide-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://open-ledger.dev/#organization","name":"Open Ledger IL","url":"https://open-ledger.dev/","logo":"https://open-ledger.dev/assets/logo.png","sameAs":["https://github.com/matanlevanon/open-ledger-il"]}</script>
@@ -347,7 +347,7 @@ section[id] { scroll-margin-top: 64px; }
 <h3 id="מוצאים-את-הכתובת">מוצאים את הכתובת</h3>
 <p>פותחים <b>Settings &gt; Expenses &gt; Email inbox</b>. הכתובת נראית כך: <code>expenses+r7k2m9x4qp@open-ledger.dev</code>. לוחצים <b>Copy</b>. תוכנת ההתקנה מגדירה אותה. אם העמוד אומר שהתיבה לא מוגדרת, מריצים שוב את תוכנת ההתקנה.</p>
 <h3 id="הגדרה-בג-ימייל-פעם-אחת">הגדרה בג'ימייל, פעם אחת</h3>
-<ol><li>בג'ימייל לוחצים על גלגל השיניים, אחר כך <b>See all settings</b> (הצגת כל ההגדרות), ואז הלשונית <b>Forwarding and POP/IMAP</b> (העברה ו-POP/IMAP).</li><li>לוחצים <b>Add a forwarding address</b> (הוספת כתובת להעברה), מדביקים את הכתובת ומאשרים.</li><li>ג'ימייל שולח לכתובת מייל אישור, עם קוד או קישור. הוא מופיע בלדג'ר תחת <b>Email inbox</b>. מקלידים את הקוד בג'ימייל ולוחצים <b>Verify</b>, או לוחצים <b>Open the confirmation link</b>.</li><li>משאירים מסומן <b>Disable forwarding</b>. מעבירים רק קבלות, לא את כל המייל.</li><li>בתיבת החיפוש של ג'ימייל מדביקים את החיפוש מעמוד הלדג'ר, למשל <code>has:attachment (invoice OR receipt OR חשבונית OR קבלה)</code>. אפשר להוסיף ספקים: <code>from:(billing@supplier.com)</code>.</li><li>לוחצים על סמל אפשרויות החיפוש, ואז <b>Create filter</b> (יצירת מסנן). מסמנים <b>Forward it to</b> (העברה אל), בוחרים את הכתובת ולוחצים <b>Create filter</b>.</li></ol>
+<ol><li>בג'ימייל לוחצים על גלגל השיניים, אחר כך <b>See all settings</b> (הצגת כל ההגדרות), ואז הלשונית <b>Forwarding and POP/IMAP</b> (העברה ו-POP/IMAP).</li><li>לוחצים <b>Add a forwarding address</b> (הוספת כתובת להעברה), מדביקים את הכתובת ומאשרים.</li><li>ג'ימייל שולח לכתובת מייל אישור, עם קוד או קישור. הוא מופיע בלדג'ר תחת <b>Email inbox</b>. מקלידים את הקוד בג'ימייל ולוחצים <b>Verify</b>, או לוחצים <b>Open the confirmation link</b>.</li><li>משאירים מסומן <b>Disable forwarding</b>. מעבירים רק קבלות, לא את כל המייל.</li><li>בתיבת החיפוש של ג'ימייל מדביקים את החיפוש מעמוד הלדג'ר, למשל <code>has:attachment (invoice OR receipt)</code>. החיפוש בעמוד הלדג'ר כולל גם את המילים חשבונית וקבלה. אפשר להוסיף ספקים: <code>from:(billing@supplier.com)</code>.</li><li>לוחצים על סמל אפשרויות החיפוש, ואז <b>Create filter</b> (יצירת מסנן). מסמנים <b>Forward it to</b> (העברה אל), בוחרים את הכתובת ולוחצים <b>Create filter</b>.</li></ol>
 <p>מעכשיו כל מייל מתאים מגיע ללדג'ר לבד. לשליחה ידנית, מעבירים לאותה כתובת.</p>
 <h3 id="אאוטלוק">אאוטלוק</h3>
 <p><b>Settings &gt; Mail &gt; Rules &gt; Add new rule.</b> תנאי: <b>Has attachment</b>, ומילים בנושא כמו invoice או קבלה. פעולה: <b>Forward to</b> לכתובת.</p>
