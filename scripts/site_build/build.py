@@ -489,6 +489,64 @@ def section_gallery(lang):
   </section>'''
 
 
+def _feat_grid(items):
+    return '\n'.join(
+        f'''        <div class="feat">
+          <div class="ico" aria-hidden="true">{ico}</div>
+          <h3>{E(h)}</h3>
+          <p>{E(p)}</p>
+        </div>''' for ico, h, p in items)
+
+
+def section_own(lang):
+    """The data lives in the owner's own Cloudflare account. Close to the top of the home page."""
+    c = TEXT[lang]
+    return f'''  <section id="your-data">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">{E(c['own_eyebrow'])}</div>
+        <h2>{E(c['own_h'])}</h2>
+        <p>{E(c['own_p'])}</p>
+      </div>
+      <div class="features">
+{_feat_grid(c['own'])}
+      </div>
+    </div>
+  </section>'''
+
+
+def section_financy(lang):
+    """Bank and card data through Financy, the buttons, and the API. On the features page."""
+    c = TEXT[lang]
+    shots = '\n'.join(
+        f'''        <figure class="gcard">
+          {img(shot(lang, i), alt, 1440, 900)}
+          <figcaption><b>{E(h)}.</b> {E(p)}</figcaption>
+        </figure>''' for i, alt, h, p in c['fin_shots'])
+    api = f"{path_of(lang, 'help')}api/"
+    return f'''  <section id="financy">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">{E(c['fin_eyebrow'])}</div>
+        <h2>{E(c['fin_h'])}</h2>
+        <p>{E(c['fin_p'])}</p>
+      </div>
+      <div class="features">
+{_feat_grid(c['fin'])}
+      </div>
+      <div class="gallery">
+{shots}
+      </div>
+      <div class="sec-head" style="margin-top:64px">
+        <h2>{E(c['api_h'])}</h2>
+        <p>{E(c['api_p'])}</p>
+      </div>
+      <div class="actions" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn-ghost" href="{api}">{E(c['api_link'])}</a> <a class="btn btn-ghost" href="{FINANCY_URL}" rel="sponsored noopener" target="_blank">{E(c['fin_cta'])}</a></div>
+      <p class="shot-cap">{E(c['fin_note'])}</p>
+    </div>
+  </section>'''
+
+
 def section_rules(lang):
     c = TEXT[lang]
     rules = '\n'.join(f'''        <li>
@@ -663,13 +721,13 @@ def base_page(lang, key, slug=None, **extra):
 
 def build_home(lang):
     page = base_page(lang, 'home')
-    main = '\n'.join([hero(lang), section_phones(lang), section_highlights(lang), key_facts(lang), section_strip(lang), section_demo_band(lang)])
+    main = '\n'.join([hero(lang), section_own(lang), section_phones(lang), section_highlights(lang), key_facts(lang), section_strip(lang), section_demo_band(lang)])
     return page, main, ''
 
 
 def build_features(lang):
     page = base_page(lang, 'features')
-    main = '\n'.join([page_intro(page, E(TEXT[lang]['feat_p'])), section_feature_list(lang), section_gallery(lang), section_rules(lang)])
+    main = '\n'.join([page_intro(page, E(TEXT[lang]['feat_p'])), section_feature_list(lang), section_financy(lang), section_gallery(lang), section_rules(lang)])
     return page, main, ''
 
 

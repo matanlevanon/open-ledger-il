@@ -12,6 +12,24 @@
 
 כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.
 
+המידע שלך
+
+## הספרים שלך נשמרים אצלך, בחשבון Cloudflare שלך
+
+חשבונאות פתוחה היא תוכנה שבבעלותך, לא שירות בשכירות. כל מסמך, לקוח והוצאה יושבים בחשבון שלך.
+
+### במסד הנתונים שלך
+
+המידע יושב במסד נתונים מסוג D1 בחשבון ה-Cloudflare שלך. נכנסים ל-Cloudflare, פותחים את D1 ורואים כל טבלה. גיבוי מורידים מתי שרוצים.
+
+### בכתובת שלך
+
+הלדג'ר רץ כ-Worker שלך, בכתובת שלך. אף אחד אחר לא מפעיל אותו ולא יכול לכבות אותו.
+
+### מוגן מטעויות
+
+מסמך שהופק לא משתנה. אחסון ה-PDF נעול למחיקה ל-7 שנים, התקופה שהחוק קובע לשמירת ספרים.
+
 ## הנהלת החשבונות בכיס
 
 מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.
@@ -208,6 +226,40 @@ Source: https://open-ledger.dev/
 - מסך "מהיר": צילום, גלריה, מסמך חדש ופעילות אחרונה
 - סרגל ניווט תחתון וטבלאות שהופכות לכרטיסים
 - תמונות שצולמו בלי קליטה עולות כשחוזרים לרשת
+
+בנק וכרטיסי אשראי
+
+## התמונה המלאה עם Financy
+
+מחברים את Financy, והתנועות בבנק ובכרטיסי האשראי נכנסות ללדג'ר ליד החשבוניות וההוצאות. קריאה בלבד. אתה בוחר אילו חשבונות שייכים לעסק.
+
+### דשבורד Financy
+
+לשונית ליד הדשבורד: נזילות, הכנסות, הוצאות ונטו מול החודש הקודם, תזרים, קטגוריות וכל החשבונות. חיוב כרטיס מהעו"ש לא נספר פעמיים.
+
+### התאמה בלחיצה
+
+כל תנועה מסומנת מותאם, מוצע, להתאמה או לא נספר, עם הצעד הבא: הוספה כהוצאה, התאמה להוצאה, רישום תשלום, לא הוצאה עסקית, ביטול התאמה או לספור את זה.
+
+### הגדרה בהגדרות
+
+מדביקים את ה-Client ID, ה-Client Secret וה-User ID מ-Financy. אחר כך סנכרון, בחירת חשבונות, החלפת פרטים, ניתוק או מחיקת נתוני הבנק.
+
+**דשבורד Financy.** החודש מול החודש הקודם, תזרים וכל חשבון של העסק, במטבע שלו או בשקלים.
+
+**התאמה בלחיצה.** כל שורה מציגה סטטוס ואת הצעד הבא: הוספה כהוצאה, התאמה, רישום תשלום או השארה בחוץ.
+
+**החיבור.** הגדרות > הוצאות. הסוד נשמר מוצפן. רק החשבונות שבחרת נקראים.
+
+**MCP ו-API.** מחברים את Claude דרך MCP, ואפליקציות אחרות דרך ה-API, כל אחת עם מפתח משלה.
+
+## API לכלים האחרים שלך
+
+בהגדרות > MCP ו-API כל אפליקציה מקבלת מפתח משלה. Financy, Make, Zapier, n8n או התוכנה של רואה החשבון קוראים לקוחות, מסמכים, תשלומים והוצאות. מפתח כתיבה גם יוצר לקוחות וטיוטות. דרך ה-API שום דבר לא מופק, לא נשלח ולא נמחק.
+
+[למדריך ה-API](https://open-ledger.dev/help/api/) [לאתר Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
+
+קישור שותפים. הצטרפות למסלול בתשלום ב-Financy דרכו מזכה את המפתח של חשבונאות פתוחה בעמלה.
 
 צילומי מסך
 
@@ -695,6 +747,24 @@ No install. Sample data, opens in seconds.
 
 All screenshots on this page use an invented demo business.
 
+Your data
+
+## Your books live in your own Cloudflare account
+
+Open Ledger IL is software you own, not a service you rent. Every document, client and expense sits in your account.
+
+### In your own database
+
+The data sits in a D1 database in your Cloudflare account. Open Cloudflare, then D1, and you see every table. Download a backup at any time.
+
+### At your own address
+
+The Ledger runs as your own Worker at your own address. Nobody else runs it or can switch it off.
+
+### Safe from mistakes
+
+An issued document never changes. The PDF store is locked against deletion for 7 years, the period the law sets for keeping books.
+
 ## Your books in your pocket
 
 Install it on your home screen. It opens ready for the next receipt.
@@ -891,6 +961,40 @@ What ships today, grouped by job.
 - Quick page: photo, gallery, new document and recent activity
 - Bottom tab bar and tables that turn into cards
 - Photos taken offline upload when you are back online
+
+Bank and card data
+
+## See the whole picture with Financy
+
+Connect Financy and your bank and credit card transactions arrive in the Ledger next to your invoices and expenses. Read only. You pick the accounts that belong to the business.
+
+### Financy Dashboard
+
+A tab next to the Dashboard: liquidity, income, expenses and net against last month, cash flow, categories and every account. A card bill paid from checking is never counted twice.
+
+### Match with one click
+
+Each transaction shows Matched, Suggested, To match or Not counted, with the next step: Add as expense, Match to expense, Record payment, Not a business expense, Unmatch or Count this.
+
+### Set up in Settings
+
+Paste the Client ID, Client Secret and User ID from Financy. Then Sync now, Choose accounts, Replace details, Disconnect or Delete bank data.
+
+**Financy Dashboard.** This month against last month, cash flow and every business account, in its own currency or in shekels.
+
+**Match with one click.** Each row shows its status and the next step: add as expense, match, record payment, or leave it out.
+
+**The connection.** Settings > Expenses. The secret is stored encrypted. Only the accounts you pick are read.
+
+**MCP and API.** Connect Claude through MCP, and other apps through the API, each with its own key.
+
+## An API for your other tools
+
+Settings > MCP and API gives each app its own key. Financy, Make, Zapier, n8n or your accountant's software read clients, documents, payments and expenses. A write key also creates clients and drafts. Nothing finalizes, sends or deletes through the API.
+
+[Read the API guide](https://open-ledger.dev/en/help/api/) [Open Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
+
+Partner link. If you join a paid Financy plan, the developer of Open Ledger IL earns a commission.
 
 Screenshots
 

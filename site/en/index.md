@@ -12,6 +12,24 @@ No install. Sample data, opens in seconds.
 
 All screenshots on this page use an invented demo business.
 
+Your data
+
+## Your books live in your own Cloudflare account
+
+Open Ledger IL is software you own, not a service you rent. Every document, client and expense sits in your account.
+
+### In your own database
+
+The data sits in a D1 database in your Cloudflare account. Open Cloudflare, then D1, and you see every table. Download a backup at any time.
+
+### At your own address
+
+The Ledger runs as your own Worker at your own address. Nobody else runs it or can switch it off.
+
+### Safe from mistakes
+
+An issued document never changes. The PDF store is locked against deletion for 7 years, the period the law sets for keeping books.
+
 ## Your books in your pocket
 
 Install it on your home screen. It opens ready for the next receipt.

@@ -121,6 +121,40 @@ What ships today, grouped by job.
 - Bottom tab bar and tables that turn into cards
 - Photos taken offline upload when you are back online
 
+Bank and card data
+
+## See the whole picture with Financy
+
+Connect Financy and your bank and credit card transactions arrive in the Ledger next to your invoices and expenses. Read only. You pick the accounts that belong to the business.
+
+### Financy Dashboard
+
+A tab next to the Dashboard: liquidity, income, expenses and net against last month, cash flow, categories and every account. A card bill paid from checking is never counted twice.
+
+### Match with one click
+
+Each transaction shows Matched, Suggested, To match or Not counted, with the next step: Add as expense, Match to expense, Record payment, Not a business expense, Unmatch or Count this.
+
+### Set up in Settings
+
+Paste the Client ID, Client Secret and User ID from Financy. Then Sync now, Choose accounts, Replace details, Disconnect or Delete bank data.
+
+**Financy Dashboard.** This month against last month, cash flow and every business account, in its own currency or in shekels.
+
+**Match with one click.** Each row shows its status and the next step: add as expense, match, record payment, or leave it out.
+
+**The connection.** Settings > Expenses. The secret is stored encrypted. Only the accounts you pick are read.
+
+**MCP and API.** Connect Claude through MCP, and other apps through the API, each with its own key.
+
+## An API for your other tools
+
+Settings > MCP and API gives each app its own key. Financy, Make, Zapier, n8n or your accountant's software read clients, documents, payments and expenses. A write key also creates clients and drafts. Nothing finalizes, sends or deletes through the API.
+
+[Read the API guide](https://open-ledger.dev/en/help/api/) [Open Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
+
+Partner link. If you join a paid Financy plan, the developer of Open Ledger IL earns a commission.
+
 Screenshots
 
 ## What you get
