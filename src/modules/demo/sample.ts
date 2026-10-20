@@ -22,6 +22,7 @@ import { DEMO_SIGNING_CERT_PEM, DEMO_SIGNING_KEY_PEM } from './demo-cert';
 import { MASTER_OWNER_EMAIL } from './config';
 import { samplePng } from './png';
 import { TextPdfEngine } from './text-pdf';
+import { addMasterBank } from './sample-bank';
 
 /**
  * R26, R29: the master sample set (demo/seed/sample-set.json). Every visitor opens these same
@@ -556,6 +557,8 @@ export async function ensureMasters(deps: SampleDeps): Promise<MastersResult> {
       const { businessId, clients } = await buildBusiness(deps, owner, spec, now);
       await addMasterExpenses(deps.env, businessId, spec, now);
       await addMasterContracts(deps.env, owner, businessId, spec, clients, now);
+      // R43: invented bank and card data for the Financy Dashboard.
+      if ((spec as { bank?: boolean }).bank) await addMasterBank(deps.env.DB, businessId, now);
       const fingerprint = await fingerprintOf(db, businessId);
       await transaction(db, [
         stmt(db, 'DELETE FROM demo_master_businesses WHERE sample_key = ?', spec.key),

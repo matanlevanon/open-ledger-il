@@ -5,6 +5,7 @@ import { type FinancyAccount, FinancyError, type FinancyTransaction } from './cl
 import { type FinancyDeps, type SyncCounts, clientFor, credentialsFor, loadConnection, pickedIds, toMinor } from './connection';
 import { classifyFlows } from './flows';
 import { matchBankTransactions } from './matching';
+import { isDemo } from '../demo/config';
 
 /**
  * R40 task 2: pull the picked accounts and their transactions from Financy into `bank_accounts`
@@ -200,6 +201,27 @@ export function syncErrorMessage(err: unknown): string {
 export const NOTHING_SYNCED: SyncCounts = { accounts: 0, transactions: 0, new: 0, matched: 0 };
 
 /**
+ * Stores accounts and their transactions, then marks own transfers and card bills and matches. The
+ * sync calls it with what Financy answered. The demo's sample set calls it with invented data.
+ */
+export async function storeBankData(db: D1Database, businessId: number, accounts: FinancyAccount[], pulled: FinancyTransaction[]): Promise<SyncCounts> {
+  const cards = new Set(accounts.filter((a) => accountType(a) === 'CARD').map((a) => a.id!));
+  const ids = new Set(accounts.map((a) => a.id!));
+  // Financy filters by account. A row from any other account is still never stored.
+  const values = pulled
+    .filter((t) => !t.isDuplicate && t.accountId && ids.has(t.accountId))
+    .map((t) => transactionValues(t, cards))
+    .filter((v): v is NonNullable<typeof v> => v !== null);
+  const known = new Set((await all<{ financy_id: string }>(db, 'SELECT financy_id FROM bank_transactions WHERE business_id = ?', businessId)).map((r) => r.financy_id));
+  const fresh = new Set(values.filter((v) => !known.has(v.financyId)).map((v) => v.financyId)).size;
+  await inChunks(db, [...accounts.map((a) => accountStatement(db, businessId, a)), ...values.map((v) => transactionStatement(db, businessId, v))]);
+  // R42: transfers between own accounts and card bills first, so matching sees normal money only.
+  await classifyFlows(db, businessId);
+  const matched = await matchBankTransactions(db, businessId);
+  return { accounts: accounts.length, transactions: values.length, new: fresh, matched };
+}
+
+/**
  * Pulls `days` back from today, for the picked accounts only. No account picked: nothing is asked
  * of Financy and nothing changes. On failure the connection goes to status error with the
  * message, and the error is thrown on to the caller.
@@ -219,27 +241,10 @@ export async function syncFinancy(
   try {
     const client = clientFor(await credentialsFor(env, row), deps);
     const accounts = (await client.accounts()).filter((a) => a.id && picked.includes(a.id) && isBusinessType(a));
-    const cards = new Set(accounts.filter((a) => accountType(a) === 'CARD').map((a) => a.id!));
     const from = addDays(today, -(options.days ?? DEFAULT_SYNC_DAYS));
     const pulled: FinancyTransaction[] = [];
     for (const a of accounts) pulled.push(...(await client.transactions(from, today, a.id!)));
-    const ids = new Set(accounts.map((a) => a.id!));
-    // Financy filters by account. A row from any other account is still never stored.
-    const values = pulled
-      .filter((t) => !t.isDuplicate && t.accountId && ids.has(t.accountId))
-      .map((t) => transactionValues(t, cards))
-      .filter((v): v is NonNullable<typeof v> => v !== null);
-
-    const known = new Set(
-      (await all<{ financy_id: string }>(env.DB, 'SELECT financy_id FROM bank_transactions WHERE business_id = ?', businessId)).map((r) => r.financy_id),
-    );
-    const fresh = new Set(values.filter((v) => !known.has(v.financyId)).map((v) => v.financyId)).size;
-    await inChunks(env.DB, [...accounts.map((a) => accountStatement(env.DB, businessId, a)), ...values.map((v) => transactionStatement(env.DB, businessId, v))]);
-    // R42: transfers between own accounts and card bills first, so matching sees normal money only.
-    await classifyFlows(env.DB, businessId);
-    const matched = await matchBankTransactions(env.DB, businessId);
-
-    const counts: SyncCounts = { accounts: accounts.length, transactions: values.length, new: fresh, matched };
+    const counts = await storeBankData(env.DB, businessId, accounts, pulled);
     await transaction(env.DB, [
       stmt(
         env.DB,
@@ -262,6 +267,8 @@ export async function syncFinancy(
 
 /** R40: the daily sync of every connected business. Never throws: a failure stays on its connection. */
 export async function syncAllDaily(env: Env, deps: FinancyDeps): Promise<{ synced: number; failed: number }> {
+  // The demo's bank data is invented and never synced.
+  if (isDemo(env)) return { synced: 0, failed: 0 };
   const result = { synced: 0, failed: 0 };
   const rows = await all<{ business_id: number }>(env.DB, "SELECT business_id FROM financy_connection WHERE status = 'connected'");
   for (const { business_id } of rows) {

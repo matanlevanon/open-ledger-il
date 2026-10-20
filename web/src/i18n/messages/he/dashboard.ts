@@ -70,6 +70,7 @@ export const dashboard: Record<keyof typeof en, string> = {
   'financy.dash.lastSync': 'סנכרון אחרון {time}',
   'financy.dash.notSynced': 'עוד לא סונכרן',
   'financy.dash.syncNow': 'סנכרון עכשיו',
+  'financy.dash.demoNote': 'נתוני בנק לדוגמה, מומצאים להדגמה. בלדג\'ר שלך הם מגיעים מחשבון ה-Financy שלך, והכפתורים פועלים.',
   'financy.dash.syncing': 'מסנכרן…',
   'financy.dash.syncError': 'הסנכרון האחרון נכשל. ראו הגדרות > הוצאות.',
   'financy.dash.liquidity': 'מצב נזיל',

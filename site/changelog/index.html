@@ -337,7 +337,10 @@ section[id] { scroll-margin-top: 64px; }
     <p class="lead">כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.</p>
   </div>
   <section class="plain">
-    <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="1-7-0-2026-10-20">1.7.0 (2026-10-20)</h2>
+    <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="unreleased">Unreleased</h2>
+<h3 id="demo-mode">Demo mode</h3>
+<ul><li>The sample company has invented bank and card data, so visitors see Dashboard &gt; Financy Dashboard and Expenses &gt; Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.</li></ul>
+<h2 id="1-7-0-2026-10-20">1.7.0 (2026-10-20)</h2>
 <h3 id="api">API</h3>
 <ul><li>A public REST API at <code>/v1</code> for Financy, Make, Zapier, n8n and an accountant's software. Each call carries an API key and the Business ID. Read keys read the business, clients, documents with lines and payments, the client copy PDF, payments, expenses and suppliers. Write keys can also create clients and draft documents. Nothing finalizes, sends, credits or deletes.</li><li>Cursor paging, <code>updatedSince</code>, 120 requests a minute per key, <code>Idempotency-Key</code> on writes, and <code>/v1/openapi.json</code>. Migration <code>4100_api_keys.sql</code>.</li><li>Settings &gt; MCP is now "MCP and API": the MCP section as before, then the API address, the Business ID and the keys. A key shows once.</li><li>A Ledger set up by hand adds a Bypass Access application for the path <code>v1</code>, see <code>docs/cloudflare-access.md</code>.</li></ul>
 <h3 id="bank-and-card-data-financy">Bank and card data (Financy)</h3>

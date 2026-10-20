@@ -100,3 +100,28 @@ describe('the master sample set', () => {
     expect(turnover / ceiling).toBeLessThan(0.7);
   });
 });
+
+describe('R43: the sample company has bank data', () => {
+  it('builds a connection, four accounts and transactions with every status, and the daily sync skips it', async () => {
+    const company = (await first<{ id: number }>(env.DB, "SELECT id FROM businesses WHERE name_en = 'Demo Studio Ltd'"))!.id;
+    const studio = (await first<{ id: number }>(env.DB, "SELECT id FROM businesses WHERE name_en = 'Noa Levi Studio'"))!.id;
+    const conn = await first<{ status: string; client_secret_enc: string | null; account_ids: string }>(env.DB, 'SELECT * FROM financy_connection WHERE business_id = ?', company);
+    expect(conn).toMatchObject({ status: 'connected', client_secret_enc: null });
+    expect(JSON.parse(conn!.account_ids)).toHaveLength(4);
+    expect(await first(env.DB, 'SELECT 1 FROM financy_connection WHERE business_id = ?', studio)).toBeNull();
+    const accounts = await all(env.DB, 'SELECT 1 FROM bank_accounts WHERE business_id = ?', company);
+    expect(accounts).toHaveLength(4);
+    const rows = await all<{ match_status: string; flow: string; matched_document_id: number | null }>(
+      env.DB,
+      'SELECT match_status, flow, matched_document_id FROM bank_transactions WHERE business_id = ?',
+      company,
+    );
+    expect(rows.length).toBeGreaterThan(20);
+    expect(rows.some((r) => r.match_status === 'matched')).toBe(true);
+    expect(rows.some((r) => r.matched_document_id !== null)).toBe(true);
+    expect(rows.some((r) => r.flow === 'card_payment')).toBe(true);
+    expect(rows.some((r) => r.match_status === 'unmatched' && r.flow === 'normal')).toBe(true);
+    const { syncAllDaily } = await import('../../../src/modules/financy/sync');
+    expect(await syncAllDaily(env, { fetch: () => Promise.reject(new Error('no network')) })).toEqual({ synced: 0, failed: 0 });
+  });
+});

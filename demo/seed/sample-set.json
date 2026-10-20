@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "note": "The master sample set for demo mode. Fake people and companies only: emails on example.com, phones in the 050-0000000 range, ID numbers that pass the checksum and are not issued. daysAgo counts back from yesterday when the set loads or a sandbox copies it. Contracts use the neutral Service Agreement and Work Order templates from src/modules/contracts/seed.ts.",
   "businesses": [
     {
@@ -408,6 +408,7 @@
     },
     {
       "key": "company",
+      "bank": true,
       "entityType": "company",
       "nameEn": "Demo Studio Ltd",
       "nameHe": "דמו סטודיו בע\"מ",

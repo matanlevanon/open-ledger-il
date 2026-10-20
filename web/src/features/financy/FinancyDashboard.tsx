@@ -1,6 +1,7 @@
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { DemoReadOnlyNote, useDemoLocked } from '../../app/demo';
 import { usePreferences } from '../../app/preferences';
 import { useT } from '../../i18n';
 import { formatMoney } from '../../lib/money';
@@ -117,6 +118,7 @@ export function FinancyDashboard() {
   const [data, setData] = useState<FinancyDashboardData | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const locked = useDemoLocked();
   const [catMode, setCatMode] = useState<'expenses' | 'income'>('expenses');
   const [showIls, setShowIls] = useState(false);
   const [rowError, setRowError] = useState<string | null>(null);
@@ -186,6 +188,7 @@ export function FinancyDashboard() {
 
   return (
     <div data-testid="financy-dashboard" className="mt-4 flex flex-col gap-4">
+      {locked && <DemoReadOnlyNote text={t('financy.dash.demoNote')} />}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted">
           {t('financy.dash.scope', { count: String(d.accountCount) })}{' '}
@@ -195,9 +198,11 @@ export function FinancyDashboard() {
         </p>
         <div className="flex items-center gap-3 text-sm">
           <span className="ltr-nums text-muted">{d.lastSyncAt ? t('financy.dash.lastSync', { time: shortTime(d.lastSyncAt) }) : t('financy.dash.notSynced')}</span>
-          <button type="button" disabled={syncing} onClick={() => void sync()} className="rounded-full border border-line px-3 py-1 text-xs font-semibold text-ink hover:bg-canvas disabled:opacity-50">
-            {syncing ? t('financy.dash.syncing') : t('financy.dash.syncNow')}
-          </button>
+          {!locked && (
+            <button type="button" disabled={syncing} onClick={() => void sync()} className="rounded-full border border-line px-3 py-1 text-xs font-semibold text-ink hover:bg-canvas disabled:opacity-50">
+              {syncing ? t('financy.dash.syncing') : t('financy.dash.syncNow')}
+            </button>
+          )}
         </div>
       </div>
       {error && (

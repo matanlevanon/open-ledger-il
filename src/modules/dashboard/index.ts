@@ -414,7 +414,8 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
     const role = c.get('user').role;
     const due = role === 'owner' || role === 'assistant' ? await whatsappDue(c.env.DB, businessId, today()) : [];
     // R42: the Financy Dashboard tab, for the owner and the assistant, when Financy is connected and an account is picked.
-    const financyTab = (role === 'owner' || role === 'assistant') && !isDemo(c.env) ? await financyTabAvailable(c.env.DB, businessId) : false;
+    // R43: the demo shows the tab too, on the sample company's invented bank data.
+    const financyTab = role === 'owner' || role === 'assistant' ? await financyTabAvailable(c.env.DB, businessId) : false;
     // R29: in the demo the Tax Authority always shows as connected, as on its own page.
     const demoIta = (d: DashboardData): DashboardData =>
       isDemo(c.env) ? { ...d, ita: { connected: true, state: 'connected', message: 'Connected. Allocation numbers are requested on their own.' } } : d;

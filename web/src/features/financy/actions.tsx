@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDemoLocked } from '../../app/demo';
 import { Dialog } from '../../components/Dialog';
 import { type MessageKey, useT } from '../../i18n';
 import { btnSecondary, input } from '../documents/ui';
@@ -50,6 +51,8 @@ const quiet = `${link} border-line text-ink hover:bg-canvas`;
  */
 export function RowActions({ tx, onChange, onError }: { tx: BankTransaction; onChange: (next: BankTransaction) => void; onError: (message: string) => void }) {
   const t = useT();
+  // R43: the demo shows the buttons, read-only.
+  const locked = useDemoLocked();
   const [busy, setBusy] = useState(false);
   const [picking, setPicking] = useState(false);
   const run = async (action: () => Promise<{ transaction: BankTransaction }>) => {
@@ -68,24 +71,24 @@ export function RowActions({ tx, onChange, onError }: { tx: BankTransaction; onC
     <div className="flex flex-wrap gap-1.5">
       {tx.status === 'to_match' && out && (
         <>
-          <button type="button" className={primary} disabled={busy} onClick={() => void run(() => financyApi.addExpense(tx.id))}>
+          <button type="button" className={primary} disabled={busy || locked} title={locked ? t('demo.readOnly') : undefined} onClick={() => void run(() => financyApi.addExpense(tx.id))}>
             {t('financy.action.addExpense')}
           </button>
-          <button type="button" className={quiet} disabled={busy} onClick={() => setPicking(true)}>
+          <button type="button" className={quiet} disabled={busy || locked} title={locked ? t('demo.readOnly') : undefined} onClick={() => setPicking(true)}>
             {t('financy.action.matchExpense')}
           </button>
-          <button type="button" className={quiet} disabled={busy} onClick={() => void run(() => financyApi.ignore(tx.id))}>
+          <button type="button" className={quiet} disabled={busy || locked} title={locked ? t('demo.readOnly') : undefined} onClick={() => void run(() => financyApi.ignore(tx.id))}>
             {t('financy.action.notBusiness')}
           </button>
         </>
       )}
       {tx.status === 'to_match' && !out && (
-        <button type="button" className={quiet} disabled={busy} onClick={() => setPicking(true)}>
+        <button type="button" className={quiet} disabled={busy || locked} title={locked ? t('demo.readOnly') : undefined} onClick={() => setPicking(true)}>
           {t('financy.action.matchDocument')}
         </button>
       )}
       {tx.status === 'not_business' && (
-        <button type="button" className={quiet} disabled={busy} onClick={() => setPicking(true)}>
+        <button type="button" className={quiet} disabled={busy || locked} title={locked ? t('demo.readOnly') : undefined} onClick={() => setPicking(true)}>
           {t('financy.action.matchExpense')}
         </button>
       )}
@@ -95,12 +98,12 @@ export function RowActions({ tx, onChange, onError }: { tx: BankTransaction; onC
         </Link>
       )}
       {(tx.status === 'suggested' || (tx.status === 'matched' && tx.matchStatus === 'matched')) && (
-        <button type="button" className={quiet} disabled={busy} onClick={() => void run(() => financyApi.unmatch(tx.id))}>
+        <button type="button" className={quiet} disabled={busy || locked} title={locked ? t('demo.readOnly') : undefined} onClick={() => void run(() => financyApi.unmatch(tx.id))}>
           {t('financy.action.unmatch')}
         </button>
       )}
       {tx.status === 'not_counted' && (
-        <button type="button" className={primary} disabled={busy} onClick={() => void run(() => financyApi.count(tx.id))}>
+        <button type="button" className={primary} disabled={busy || locked} title={locked ? t('demo.readOnly') : undefined} onClick={() => void run(() => financyApi.count(tx.id))}>
           {t('financy.action.count')}
         </button>
       )}

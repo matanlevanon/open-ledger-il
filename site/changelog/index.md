@@ -4,6 +4,12 @@
 
 יומן השינויים נכתב באנגלית.
 
+## Unreleased
+
+### Demo mode
+
+- The sample company has invented bank and card data, so visitors see Dashboard > Financy Dashboard and Expenses > Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.
+
 ## 1.7.0 (2026-10-20)
 
 ### API

@@ -68,6 +68,7 @@ export const dashboard = {
   'financy.dash.lastSync': 'Last sync {time}',
   'financy.dash.notSynced': 'Not synced yet',
   'financy.dash.syncNow': 'Sync now',
+  'financy.dash.demoNote': 'Sample bank data, invented for the demo. In your own Ledger it comes from your Financy account, and the buttons work.',
   'financy.dash.syncing': 'Syncing…',
   'financy.dash.syncError': 'The last sync failed. See Settings > Expenses.',
   'financy.dash.liquidity': 'Liquidity',
