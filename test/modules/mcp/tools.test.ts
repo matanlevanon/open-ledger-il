@@ -127,8 +127,13 @@ describe('MCP tools (runs/R14-ops.md)', () => {
     expect(data.vatAmountMinor).toBe(1700);
     expect(data.amountIlsMinor).toBe(11700);
     expect(data.fileAttached).toBe(false);
-    const row = await env.DB.prepare('SELECT notes FROM expenses WHERE id = ?').bind(data.expenseId).first<{ notes: string }>();
+    const row = await env.DB.prepare('SELECT notes, read_status, read_attempts FROM expenses WHERE id = ?')
+      .bind(data.expenseId)
+      .first<{ notes: string; read_status: string; read_attempts: number }>();
     expect(row?.notes).toMatch(/no file/i);
+    // R39: fields sent through MCP were read elsewhere, so the expense counts as typed by hand.
+    expect(row?.read_status).toBe('manual');
+    expect(row?.read_attempts).toBe(0);
     const audit = await env.DB.prepare("SELECT details FROM audit_log WHERE entity = 'expense' AND entity_id = ? AND action = 'expense.create'")
       .bind(String(data.expenseId))
       .first<{ details: string }>();
@@ -170,6 +175,7 @@ describe('MCP tools (runs/R14-ops.md)', () => {
     expect(data.length).toBeGreaterThan(0);
     expect(data.every((e: any) => e.status === 'new')).toBe(true);
     expect(data.some((e: any) => e.supplier === 'List Supplier')).toBe(true);
+    expect(data.find((e: any) => e.supplier === 'List Supplier').readStatus).toBe('manual');
   });
 
   it('ceiling_status reports the legal mode', async () => {

@@ -193,6 +193,12 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
     return c.json({ expense });
   });
 
+  // R39: read the file of an unread expense again. A failed read answers 200 with the reason.
+  app.post('/:id/read', requireRole('owner', 'assistant'), async (c) => {
+    const result = await service.rereadExpense(c.env, resolveDeps(c.env), idParam(c.req.param('id')), actorFrom(c));
+    return c.json({ expense: result.expense, read: result.read, message: result.message });
+  });
+
   // A mistaken upload, before review. Owner and assistant only, New and Duplicate only.
   app.delete('/:id', requireRole('owner', 'assistant'), async (c) => {
     await service.deleteExpense(c.env.DB, idParam(c.req.param('id')), actorFrom(c));

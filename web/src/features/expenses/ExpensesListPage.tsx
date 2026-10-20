@@ -205,6 +205,9 @@ export function ExpensesListPage() {
                     <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${statusChipClass[e.status] ?? ''}`}>
                       {t(STATUS_LABEL_KEYS[e.status] ?? 'expenses.status.new')}
                     </span>
+                    {e.read_status === 'failed' && e.status === 'new' && (
+                      <span className="ms-1 rounded-full border border-danger px-2 py-0.5 text-xs font-semibold text-danger">{t('expenses.list.notReadBadge')}</span>
+                    )}
                   </td>
                 </tr>
               ))}

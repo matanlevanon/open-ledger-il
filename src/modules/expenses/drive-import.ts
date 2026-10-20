@@ -386,6 +386,8 @@ interface NewExpense {
   isFixed: boolean | null;
   notes: string | null;
   sourceJson: unknown;
+  /** R39: 'read' when the reader filled it from a folder file, 'manual' when a person typed it in the index sheet. */
+  readStatus: 'read' | 'manual';
 }
 
 async function insertExpense(db: D1Database, e: NewExpense, actor: AuditActor): Promise<number> {
@@ -393,8 +395,9 @@ async function insertExpense(db: D1Database, e: NewExpense, actor: AuditActor): 
     db,
     `INSERT INTO expenses (
        file_id, supplier_id, category_id, status, document_number, document_date, document_type, currency,
-       amount_minor, vat_amount_minor, amount_ils_minor, fx_rate, fx_rate_date, fx_source, is_fixed, notes, extracted_json, business_id
-     ) VALUES (?, ?, COALESCE(?, (SELECT default_category_id FROM suppliers WHERE id = ?)), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       amount_minor, vat_amount_minor, amount_ils_minor, fx_rate, fx_rate_date, fx_source, is_fixed, notes, extracted_json, business_id,
+       read_status, read_attempts, read_at
+     ) VALUES (?, ?, COALESCE(?, (SELECT default_category_id FROM suppliers WHERE id = ?)), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     e.fileId,
     e.supplierId,
     e.categoryId,
@@ -414,6 +417,9 @@ async function insertExpense(db: D1Database, e: NewExpense, actor: AuditActor): 
     e.notes,
     JSON.stringify(e.sourceJson),
     actorBiz(actor),
+    e.readStatus,
+    e.readStatus === 'read' ? 1 : 0,
+    e.readStatus === 'read' ? nowIso() : null,
   );
   const statements = [auditStatement(db, actor, 'expense.create', 'expense', lastRowId, { status: e.status, supplierId: e.supplierId, source: 'drive_import' })];
   if (e.fileId !== null) statements.unshift(stmt(db, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, e.fileId));
@@ -540,6 +546,7 @@ async function importSheetRow(
       isFixed: /^(קבוע|fixed|yes)$/i.test(c.fixed) ? true : /^(לא קבוע|not fixed|no)$/i.test(c.fixed) ? false : null,
       notes: sheetNotes(row, currency),
       sourceJson: { source: 'index_sheet', row: row.rowNumber, ...c },
+      readStatus: 'manual',
     },
     actor,
   );
@@ -602,6 +609,7 @@ async function importFolderFile(
       isFixed: null,
       notes: null,
       sourceJson: extracted,
+      readStatus: 'read',
     },
     actor,
   );

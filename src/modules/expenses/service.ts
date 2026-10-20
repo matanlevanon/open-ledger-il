@@ -5,8 +5,9 @@ import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
 import { ConflictError, NotFoundError } from '../../core/errors';
 import { type Currency, assertCurrency, formatMinor, parseMajor } from '../../core/money';
 import type { Env } from '../../env';
+import { ProviderBusyError } from '../ai';
 import type { DriveSource } from './drive';
-import { r2KeyFor, readFile, sha256Hex, storeFile } from './files';
+import { htmlToText, r2KeyFor, readFile, sha256Hex, storeFile } from './files';
 import { type RateSource, convertToIls, convertWithRate } from './fx';
 import type { Extractor } from './extractor';
 import {
@@ -156,7 +157,7 @@ export interface DuplicateCheck {
 
 async function checkDuplicate(
   db: D1Database,
-  args: { fileSha256: string | null; fileId: number | null; supplierId: number; documentNumber: string | null; businessId: number },
+  args: { fileSha256: string | null; fileId: number | null; supplierId: number; documentNumber: string | null; businessId: number; excludeId?: number },
 ): Promise<DuplicateCheck> {
   if (args.fileSha256 && args.fileId) {
     const byHash = await first<{ expense_id: number | null }>(
@@ -172,9 +173,10 @@ async function checkDuplicate(
   if (args.documentNumber) {
     const byNumber = await first<{ id: number }>(
       db,
-      `SELECT id FROM expenses WHERE supplier_id = ? AND document_number = ? AND status != 'not_expense' ORDER BY id LIMIT 1`,
+      `SELECT id FROM expenses WHERE supplier_id = ? AND document_number = ? AND status != 'not_expense' AND id != ? ORDER BY id LIMIT 1`,
       args.supplierId,
       args.documentNumber,
+      args.excludeId ?? 0,
     );
     if (byNumber) return { duplicateOfId: byNumber.id, reason: `Same supplier and document number as expense ${byNumber.id}` };
   }
@@ -233,7 +235,7 @@ async function createExpenseFromExtraction(
   const extracted = await deps.extractor.extract(
     readAs ? { ...readAs, filename: file.filename } : { bytes: await downloadForExtraction(env, file), contentType: file.content_type, filename: file.filename },
   );
-  return insertExpense(env, deps.fx, extracted, file, actor);
+  return insertExpense(env, deps.fx, extracted, file, actor, 'read');
 }
 
 /** Resolves the supplier, checks duplicates, converts to ILS and inserts the expense. `file` is null when none came with it. */
@@ -243,6 +245,7 @@ async function insertExpense(
   extracted: ExtractedExpense,
   file: ExpenseFileRow | null,
   actor: AuditActor,
+  readStatus: 'read' | 'manual',
   auditExtra: Record<string, unknown> = {},
 ): Promise<ExpenseRow> {
   const currency = assertCurrency(extracted.currency);
@@ -267,8 +270,9 @@ async function insertExpense(
     `INSERT INTO expenses (
        file_id, supplier_id, category_id, status, status_reason, duplicate_of_id,
        document_number, document_date, document_type, currency, amount_minor, vat_amount_minor,
-       amount_ils_minor, fx_rate, fx_rate_date, fx_source, extracted_json, business_id
-     ) VALUES (?, ?, (SELECT default_category_id FROM suppliers WHERE id = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       amount_ils_minor, fx_rate, fx_rate_date, fx_source, extracted_json, business_id,
+       read_status, read_attempts, read_at
+     ) VALUES (?, ?, (SELECT default_category_id FROM suppliers WHERE id = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     file?.id ?? null,
     supplierId,
     supplierId,
@@ -287,6 +291,9 @@ async function insertExpense(
     ils.fxSource,
     JSON.stringify(extracted),
     actorBiz(actor),
+    readStatus,
+    readStatus === 'read' ? 1 : 0,
+    readStatus === 'read' ? nowIso() : null,
   );
   await transaction(env.DB, [
     ...(file ? [stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id)] : []),
@@ -315,25 +322,231 @@ export async function ingestFile(env: Env, deps: Deps, input: IngestInput, actor
   }
 }
 
+/** The reader's reason, on one line. The note keeps 200 characters, `read_error` 500 (R39). */
+function readFailure(err: unknown): string {
+  return (err instanceof Error ? err.message : String(err)).replace(/\s+/g, ' ').trim().slice(0, 500);
+}
+
+const NOT_READ = 'Not read automatically:';
+
 /** The expense for a file the reader could not read: no amount, the reason in the note and the log. */
 async function unreadExpense(env: Env, file: ExpenseFileRow, actor: AuditActor, notePrefix: string | null, source: string, err: unknown): Promise<ExpenseRow> {
   // No reading key, a format the reader refuses, a provider error, or an answer that does not fit.
-  const reason = (err instanceof Error ? err.message : String(err)).replace(/\s+/g, ' ').slice(0, 200);
+  const error = readFailure(err);
+  const reason = error.slice(0, 200);
   console.error('expense read failed', { filename: file.filename, source, reason });
-  const note = `${notePrefix ? `${notePrefix} | ` : ''}Not read automatically: ${reason}`.slice(0, 700);
+  const note = `${notePrefix ? `${notePrefix} | ` : ''}${NOT_READ} ${reason}`.slice(0, 700);
   const { lastRowId } = await run(
     env.DB,
-    `INSERT INTO expenses (file_id, status, document_date, notes, business_id) VALUES (?, 'new', ?, ?, ?)`,
+    `INSERT INTO expenses (file_id, status, document_date, notes, business_id, read_status, read_attempts, read_error)
+     VALUES (?, 'new', ?, ?, ?, 'failed', 1, ?)`,
     file.id,
     nowIso().slice(0, 10),
     note,
     actorBiz(actor),
+    error,
   );
   await transaction(env.DB, [
     stmt(env.DB, 'UPDATE expense_files SET expense_id = ? WHERE id = ?', lastRowId, file.id),
     auditStatement(env.DB, actor, 'expense.create', 'expense', lastRowId, { status: 'new', source, read: false, reason }),
   ]);
   return (await first<ExpenseRow>(env.DB, 'SELECT * FROM expenses WHERE id = ?', lastRowId))!;
+}
+
+// ---------------------------------------------------------------------------
+// R39: read an unread expense again
+// ---------------------------------------------------------------------------
+
+/** The "Not read automatically: ..." part of a note, up to the end of its line or the next "|". */
+const NOT_READ_PART = /Not read automatically:[^\n|]*?(?=\s*(?:\||\n|$))/;
+
+/** The note without the "Not read automatically" part. Anything else in it stays. */
+export function noteWithoutNotRead(notes: string | null): string | null {
+  if (!notes) return notes;
+  const out = notes
+    .replace(NOT_READ_PART, '')
+    .replace(/\s*\|\s*$/, '')
+    .replace(/^\s*\|\s*/, '')
+    .replace(/\s*\|\s*\|\s*/, ' | ')
+    .trim();
+  return out || null;
+}
+
+/** The note with the "Not read automatically" part holding `reason`, added when it is missing. */
+export function noteWithNotRead(notes: string | null, reason: string): string {
+  const part = `${NOT_READ} ${reason.replace(/[|\n]/g, '/')}`;
+  if (notes && NOT_READ_PART.test(notes)) return notes.replace(NOT_READ_PART, part).slice(0, 700);
+  return (notes?.trim() ? `${notes.trim()} | ${part}` : part).slice(0, 700);
+}
+
+export interface RereadResult {
+  expense: ExpenseRow;
+  read: boolean;
+  /** The reader's reason when it failed again. */
+  message: string | null;
+  /** The provider was busy (429, 503, 529). The daily retry stops on this. */
+  busy: boolean;
+}
+
+/** What the reader gets for a stored file. A stored email body is read as its text, as the inbox does. */
+async function readableFile(env: Env, file: ExpenseFileRow): Promise<{ bytes: ArrayBuffer; contentType: string; filename: string }> {
+  const bytes = await downloadForExtraction(env, file);
+  if (file.content_type !== 'text/html') return { bytes, contentType: file.content_type, filename: file.filename };
+  const text = htmlToText(new TextDecoder().decode(bytes));
+  return { bytes: new TextEncoder().encode(text).buffer as ArrayBuffer, contentType: 'text/plain', filename: file.filename };
+}
+
+/**
+ * Reads an expense's file again when the first read failed. Allowed on status New, read status
+ * failed, with a file. A good answer fills the fields a person has not typed, runs the duplicate
+ * check as upload does, and removes the "Not read automatically" part of the note. A failed read
+ * counts the attempt and updates the reason, and the expense stays New.
+ */
+export async function rereadExpense(env: Env, deps: Pick<Deps, 'extractor' | 'fx'>, id: number, actor: AuditActor): Promise<RereadResult> {
+  const expense = await getExpense(env.DB, id, actorBiz(actor));
+  if (expense.status !== 'new' || expense.read_status !== 'failed' || expense.file_id === null) {
+    throw new ConflictError('expense_not_rereadable', 'Only an expense waiting for review that was not read automatically, and has its file, can be read again.');
+  }
+  if (deps.extractor.available && !deps.extractor.available()) {
+    throw new ConflictError('no_reader', 'No AI key is set. Add one in Settings, or type the fields.');
+  }
+  const file = await getExpenseFile(env.DB, expense.file_id, actorBiz(actor));
+  const attempts = expense.read_attempts + 1;
+
+  let extracted: ExtractedExpense;
+  try {
+    extracted = await deps.extractor.extract(await readableFile(env, file));
+  } catch (err) {
+    const error = readFailure(err);
+    console.error('expense read again failed', { expenseId: id, reason: error.slice(0, 200) });
+    await transaction(env.DB, [
+      stmt(
+        env.DB,
+        'UPDATE expenses SET read_attempts = ?, read_error = ?, notes = ?, updated_at = ? WHERE id = ?',
+        attempts,
+        error,
+        noteWithNotRead(expense.notes, error.slice(0, 200)),
+        nowIso(),
+        id,
+      ),
+      auditStatement(env.DB, actor, 'expense.reread', 'expense', id, { read: false, attempts, reason: error.slice(0, 200) }),
+    ]);
+    return { expense: await getExpense(env.DB, id, actorBiz(actor)), read: false, message: error, busy: err instanceof ProviderBusyError };
+  }
+
+  // A field the person already typed stays. An unread expense starts with amount 0 and the upload date.
+  const typed = (value: string | null) => Boolean(value?.trim());
+  const amountTyped = expense.amount_minor !== 0;
+  const currency = assertCurrency(amountTyped ? expense.currency : extracted.currency);
+  const amountMinor = amountTyped ? expense.amount_minor : parseMajor(extracted.amount, currency);
+  const vatAmountMinor = expense.vat_amount_minor !== 0 ? expense.vat_amount_minor : extracted.vatAmount ? parseMajor(extracted.vatAmount, currency) : 0;
+  const dateTyped = typed(expense.document_date) && expense.document_date !== expense.created_at.slice(0, 10);
+  const documentDate = dateTyped ? expense.document_date! : (extracted.date ?? expense.document_date ?? nowIso().slice(0, 10));
+  const documentNumber = typed(expense.document_number) ? expense.document_number : (extracted.documentNumber ?? null);
+  const documentType = typed(expense.document_type) ? expense.document_type : (extracted.documentType ?? null);
+  const supplierId = expense.supplier_id ?? (await resolveSupplier(env.DB, extracted, actor));
+
+  const duplicate = await checkDuplicate(env.DB, {
+    fileSha256: file.sha256,
+    fileId: file.id,
+    supplierId,
+    documentNumber,
+    businessId: actorBiz(actor),
+    excludeId: id,
+  });
+  const status: ExpenseStatus = duplicate.duplicateOfId ? 'duplicate' : 'new';
+  const ils = await convertToIls(deps.fx, currency, documentDate, amountMinor);
+
+  await transaction(env.DB, [
+    stmt(
+      env.DB,
+      `UPDATE expenses SET
+         supplier_id = ?, category_id = COALESCE(category_id, (SELECT default_category_id FROM suppliers WHERE id = ?)),
+         status = ?, status_reason = ?, duplicate_of_id = ?,
+         document_number = ?, document_date = ?, document_type = ?, currency = ?, amount_minor = ?, vat_amount_minor = ?,
+         amount_ils_minor = ?, fx_rate = ?, fx_rate_date = ?, fx_source = ?, extracted_json = ?, notes = ?,
+         read_status = 'read', read_attempts = ?, read_error = NULL, read_at = ?, updated_at = ?
+       WHERE id = ?`,
+      supplierId,
+      supplierId,
+      status,
+      duplicate.reason,
+      duplicate.duplicateOfId,
+      documentNumber,
+      documentDate,
+      documentType,
+      currency,
+      amountMinor,
+      vatAmountMinor,
+      ils.amountIlsMinor,
+      ils.fxRate,
+      ils.fxRateDate,
+      ils.fxSource,
+      JSON.stringify(extracted),
+      noteWithoutNotRead(expense.notes),
+      attempts,
+      nowIso(),
+      nowIso(),
+      id,
+    ),
+    auditStatement(env.DB, actor, 'expense.reread', 'expense', id, { read: true, attempts, status, supplierId, amountMinor }),
+  ]);
+  return { expense: await getExpense(env.DB, id, actorBiz(actor)), read: true, message: null, busy: false };
+}
+
+/** R39: the daily retry reads an unread expense at most this many times in all, uploads included. */
+export const REREAD_MAX_ATTEMPTS = 4;
+/** R39: expenses read again per business per run. */
+export const REREAD_BATCH = 10;
+/** R39: only expenses created this many days back or less. */
+export const REREAD_WINDOW_DAYS = 30;
+
+export interface RereadBatch {
+  tried: number;
+  read: number;
+  failed: number;
+  /** The batch stopped at a busy provider, so one bad day does not spend every attempt. */
+  stoppedBusy: boolean;
+}
+
+/**
+ * R39: reads one business's unread expenses again, oldest first: New, read status failed, fewer
+ * than 4 attempts, a file, created in the last 30 days, at most 10. Stops at the first busy
+ * provider. No reader configured: tries nothing.
+ */
+export async function retryUnreadExpenses(env: Env, deps: Pick<Deps, 'extractor' | 'fx'>, actor: AuditActor, now: Date = new Date()): Promise<RereadBatch> {
+  const batch: RereadBatch = { tried: 0, read: 0, failed: 0, stoppedBusy: false };
+  if (deps.extractor.available && !deps.extractor.available()) return batch;
+  const since = new Date(now.getTime() - REREAD_WINDOW_DAYS * 86_400_000).toISOString();
+  const due = await all<{ id: number }>(
+    env.DB,
+    `SELECT id FROM expenses
+      WHERE business_id = ? AND status = 'new' AND read_status = 'failed' AND read_attempts < ? AND file_id IS NOT NULL AND created_at >= ?
+      ORDER BY created_at, id LIMIT ?`,
+    actorBiz(actor),
+    REREAD_MAX_ATTEMPTS,
+    since,
+    REREAD_BATCH,
+  );
+  for (const { id } of due) {
+    batch.tried += 1;
+    let result: RereadResult;
+    try {
+      result = await rereadExpense(env, deps, id, actor);
+    } catch (err) {
+      // A missing file or a row changed since the query. The next expense still gets its turn.
+      batch.failed += 1;
+      console.error('expense read again skipped', { expenseId: id, reason: readFailure(err).slice(0, 200) });
+      continue;
+    }
+    if (result.read) batch.read += 1;
+    else batch.failed += 1;
+    if (result.busy) {
+      batch.stoppedBusy = true;
+      break;
+    }
+  }
+  return batch;
 }
 
 /** R35: one file from a forwarded email. `readAs` is what the reader gets when it differs from the file. */
@@ -398,7 +611,7 @@ export async function recordGivenExpense(env: Env, fx: RateSource, input: GivenE
     if (seen) return { kind: 'duplicate', expenseId: seen.expense_id };
     file = await recordFile(env, { ...input.file, source: 'upload' }, actor);
   }
-  const expense = await insertExpense(env, fx, input.fields, file, actor, { source: input.source, file: file !== null });
+  const expense = await insertExpense(env, fx, input.fields, file, actor, 'manual', { source: input.source, file: file !== null });
   const note = input.note?.trim() || null;
   if (note) await run(env.DB, 'UPDATE expenses SET notes = ?, updated_at = ? WHERE id = ?', note.slice(0, 700), nowIso(), expense.id);
   return { kind: 'created', expense: { ...expense, notes: note ?? expense.notes }, read: true };

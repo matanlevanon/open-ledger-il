@@ -93,3 +93,65 @@ describe('AccessPage', () => {
     expect(screen.getByText('request')).toBeInTheDocument();
   });
 });
+
+describe('R39: a business always keeps one owner', () => {
+  const owner = (id: number, email: string, extra: Record<string, unknown> = {}) => ({ id, email, name: null, role: 'owner', active: true, accessEndsOn: null, features: null, ...extra });
+  const ok = (body: unknown) => () => new Response(JSON.stringify(body), { status: 200 });
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('the only owner has no Remove and a locked role, with a line that says why', async () => {
+    mockFetch({ 'GET /api/access/users': ok({ users: [owner(1, 'owner@example.com', { lastOwner: true })] }), 'GET /api/me': ok({ user: { email: 'owner@example.com' } }) });
+    render(<AccessPage />);
+    expect(await screen.findByText('owner@example.com')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Revoke' })).not.toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: /owner@example.com/ })).toBeDisabled();
+    expect(screen.getByText('The only owner. Add another owner to change this.')).toBeInTheDocument();
+  });
+
+  it('with two owners both can be removed, and removing yourself says you lose access', async () => {
+    mockFetch({
+      'GET /api/access/users': ok({ users: [owner(1, 'owner@example.com'), owner(2, 'partner@example.com')] }),
+      'GET /api/me': ok({ user: { email: 'Owner@example.com' } }),
+    });
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    render(<AccessPage />);
+    expect(await screen.findByText('partner@example.com')).toBeInTheDocument();
+    const removes = screen.getAllByRole('button', { name: 'Revoke' });
+    expect(removes).toHaveLength(2);
+    expect(screen.getByRole('combobox', { name: /owner@example.com/ })).toBeEnabled();
+    await waitFor(() => {
+      fireEvent.click(removes[0]!);
+      expect(confirm).toHaveBeenLastCalledWith('Remove yourself from this business? You lose access to it.');
+    });
+    fireEvent.click(removes[1]!);
+    expect(confirm).toHaveBeenLastCalledWith('Remove partner@example.com from this business? Someone left with no business loses the account.');
+  });
+
+  it('a refused Remove shows the reason in its row and keeps the table', async () => {
+    mockFetch({
+      'GET /api/access/users': ok({ users: [owner(1, 'owner@example.com'), owner(2, 'partner@example.com', { active: false })] }),
+      'GET /api/me': ok({ user: { email: 'owner@example.com' } }),
+      'DELETE /api/access/users/1': () =>
+        new Response(JSON.stringify({ error: { code: 'last_owner', message: 'A business must keep at least one owner. Add another owner first.' } }), { status: 409 }),
+    });
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    render(<AccessPage />);
+    expect(await screen.findByText('partner@example.com')).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole('button', { name: 'Revoke' })[0]!);
+    expect(await screen.findByRole('alert')).toHaveTextContent('A business must keep at least one owner. Add another owner first.');
+    expect(screen.getByText('owner@example.com')).toBeInTheDocument();
+    expect(screen.getByText('partner@example.com')).toBeInTheDocument();
+  });
+
+  it('a refused role change shows the reason in its row', async () => {
+    mockFetch({
+      'GET /api/access/users': ok({ users: [owner(1, 'owner@example.com'), owner(2, 'partner@example.com')] }),
+      'PATCH /api/access/users/2': () => new Response(JSON.stringify({ error: { code: 'last_owner', message: 'A business must keep at least one owner. Add another owner first.' } }), { status: 409 }),
+    });
+    render(<AccessPage />);
+    fireEvent.change(await screen.findByRole('combobox', { name: /partner@example.com/ }), { target: { value: 'assistant' } });
+    expect(await screen.findByRole('alert')).toHaveTextContent('A business must keep at least one owner.');
+    expect(screen.getByRole('table')).toBeInTheDocument();
+  });
+});

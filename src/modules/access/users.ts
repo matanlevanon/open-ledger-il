@@ -46,6 +46,8 @@ export interface UserSummary {
   features: Record<AccountantFeature, boolean> | null;
   /** Every business this person may open, with the role there. */
   businesses: { id: number; role: Role }[];
+  /** R39: the business's only active owner. The screen offers no Remove and no role change. */
+  lastOwner?: true;
 }
 
 /** Task 7: the step the owner takes in Cloudflare, since the app cannot add people to Access. */
@@ -70,6 +72,9 @@ async function summarize(db: D1Database, businessId: number): Promise<UserSummar
   );
   const features = await all<FeatureRow>(db, 'SELECT user_id, feature, enabled FROM user_features');
   const grants = await all<{ user_id: number; business_id: number; role: Role }>(db, 'SELECT user_id, business_id, role FROM user_businesses ORDER BY business_id');
+  const today = todayIsrael();
+  const activeOwners = members.filter((u) => u.role === 'owner' && u.active === 1 && (!u.access_ends_on || u.access_ends_on >= today));
+  const lastOwnerId = activeOwners.length === 1 ? activeOwners[0]!.id : null;
   return members.map((u) => ({
     id: u.id,
     email: u.email,
@@ -79,6 +84,7 @@ async function summarize(db: D1Database, businessId: number): Promise<UserSummar
     accessEndsOn: u.access_ends_on,
     features: u.role === 'accountant' ? featureMapFor(features, u.id) : null,
     businesses: grants.filter((g) => g.user_id === u.id).map((g) => ({ id: g.business_id, role: g.role })),
+    ...(u.id === lastOwnerId ? { lastOwner: true as const } : {}),
   }));
 }
 
@@ -100,11 +106,23 @@ async function loadMember(db: D1Database, id: number, businessId: number): Promi
   return row;
 }
 
-/** The last owner of a business is never removed or downgraded. */
+/**
+ * The last owner of a business is never removed or downgraded. R39: only an owner who can still
+ * sign in counts, an active user whose access has not ended, so a turned-off second owner does
+ * not let the only working one go.
+ */
 async function assertNotLastOwner(db: D1Database, member: MemberRow, businessId: number): Promise<void> {
   if (member.role !== 'owner') return;
-  const owners = await first<{ n: number }>(db, "SELECT COUNT(*) AS n FROM user_businesses WHERE business_id = ? AND role = 'owner'", businessId);
-  if ((owners?.n ?? 0) <= 1) throw new ValidationError('The last owner of a business stays. Add another owner first.');
+  const others = await first<{ n: number }>(
+    db,
+    `SELECT COUNT(*) AS n FROM user_businesses ub JOIN users u ON u.id = ub.user_id
+      WHERE ub.business_id = ? AND ub.role = 'owner' AND ub.user_id != ? AND u.active = 1
+        AND (COALESCE(ub.ends_at, u.access_ends_on) IS NULL OR COALESCE(ub.ends_at, u.access_ends_on) >= ?)`,
+    businessId,
+    member.id,
+    todayIsrael(),
+  );
+  if ((others?.n ?? 0) === 0) throw new ConflictError('last_owner', 'A business must keep at least one owner. Add another owner first.');
 }
 
 export const usersRoutes = new Hono<AppEnv>();

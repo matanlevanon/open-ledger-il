@@ -88,6 +88,9 @@ export const StatusUpdateSchema = z
   });
 export type StatusUpdate = z.infer<typeof StatusUpdateSchema>;
 
+export const READ_STATUSES = ['read', 'failed', 'manual'] as const;
+export type ReadStatus = (typeof READ_STATUSES)[number];
+
 export interface ExpenseRow {
   id: number;
   /** Joined from suppliers in the list query only. */
@@ -116,6 +119,12 @@ export interface ExpenseRow {
   /** R20: fixed (1) or one-off (0) from the index sheet. Null when unknown. */
   is_fixed: number | null;
   notes: string | null;
+  /** R39: 'read' by the reader, 'failed' when it could not, 'manual' when typed or sent through MCP. Null on older rows. */
+  read_status: ReadStatus | null;
+  read_attempts: number;
+  /** R39: the reader's reason on the last failure. */
+  read_error: string | null;
+  read_at: string | null;
   reviewed_at: string | null;
   reviewed_by: number | null;
   created_at: string;

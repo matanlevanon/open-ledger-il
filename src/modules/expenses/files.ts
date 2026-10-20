@@ -21,3 +21,18 @@ export async function storeFile(env: Env, key: string, bytes: ArrayBuffer, conte
 export async function readFile(env: Env, key: string): Promise<R2ObjectBody | null> {
   return env.FILES.get(key);
 }
+
+/** R35: the text of an email body, for the reader. R39: Read again uses it on a stored body too. */
+export function htmlToText(html: string): string {
+  return html
+    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<br\s*\/?>|<\/(p|div|tr|li|h\d)>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n\s*\n+/g, '\n')
+    .trim();
+}

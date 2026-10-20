@@ -39,9 +39,59 @@ export interface DocumentReader {
 
 type FetchFn = typeof fetch;
 
+/** R39: the longest wait before the retry, whatever Retry-After asks for. */
+export const MAX_RETRY_WAIT_MS = 8_000;
+/** R39: the wait before the retry when the provider names none. */
+export const DEFAULT_RETRY_WAIT_MS = 3_000;
+/** The room the retry needs before the deadline. */
+const RETRY_ROOM_MS = 15_000;
+
+/** HTTP statuses that mean the provider is overloaded, not that the request is wrong. */
+export const BUSY_STATUSES: readonly number[] = [429, 503, 529];
+
+/** R39: the provider stayed busy after the retry. The daily retry of unread expenses stops on this. */
+export class ProviderBusyError extends Error {
+  constructor(
+    readonly provider: string,
+    readonly status: number,
+    detail: string,
+  ) {
+    super(`${provider} is busy right now (HTTP ${status}). ${detail}`.trim());
+    this.name = 'ProviderBusyError';
+  }
+}
+
+/** The provider's own message from a JSON error body, else the text as it came. */
+function providerDetail(text: string): string {
+  try {
+    const message = (JSON.parse(text) as { error?: { message?: unknown } } | null)?.error?.message;
+    if (typeof message === 'string' && message.trim()) return message.trim();
+  } catch {
+    // Not JSON. The text is the detail.
+  }
+  return text.trim();
+}
+
+/**
+ * R39: how long to wait before the retry. Retry-After in seconds or as an HTTP date, capped at
+ * 8 seconds. Without it, or when it does not parse, 3 seconds.
+ */
+export function retryWaitMs(retryAfter: string | null, now: number): number {
+  const value = retryAfter?.trim();
+  if (value) {
+    const seconds = /^\d+(\.\d+)?$/.test(value) ? Number(value) * 1000 : Number.NaN;
+    const ms = Number.isFinite(seconds) ? seconds : Date.parse(value) - now;
+    if (Number.isFinite(ms)) return Math.min(Math.max(ms, 0), MAX_RETRY_WAIT_MS);
+  }
+  return DEFAULT_RETRY_WAIT_MS;
+}
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 /**
  * One provider call with a time limit, and one retry when the provider is busy (429, 5xx, 524)
- * or did not answer in time and there is room left before the deadline.
+ * or did not answer in time and there is room left before the deadline. A busy provider gets a
+ * pause first (R39), so the retry does not land in the same overload.
  */
 async function callProvider(fetchFn: FetchFn, url: string, init: RequestInit, label: string, timeoutMs = READ_TIMEOUT_MS): Promise<Response> {
   const started = Date.now();
@@ -54,15 +104,24 @@ async function callProvider(fetchFn: FetchFn, url: string, init: RequestInit, la
     } catch (err) {
       const timedOut = err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError');
       if (!timedOut) throw err;
-      if (attempt >= 2 || READ_DEADLINE_MS - (Date.now() - started) < 15_000) {
+      if (attempt >= 2 || READ_DEADLINE_MS - (Date.now() - started) < RETRY_ROOM_MS) {
         throw new Error(`${label} did not answer within ${Math.round(limit / 1000)} seconds. Try again, or pick a faster model.`);
       }
       continue;
     }
     const busy = res.status === 429 || res.status >= 500;
-    if (!busy || attempt >= 2 || READ_DEADLINE_MS - (Date.now() - started) < 15_000) return res;
+    if (!busy || attempt >= 2) return res;
+    const wait = retryWaitMs(res.headers.get('retry-after'), Date.now());
+    if (READ_DEADLINE_MS - (Date.now() - started) < wait + RETRY_ROOM_MS) return res;
     await res.body?.cancel();
+    await sleep(wait);
   }
+}
+
+/** The error for a failed provider answer. A busy status says so in plain words first. */
+function providerError(provider: string, status: number, text: string): Error {
+  if (BUSY_STATUSES.includes(status)) return new ProviderBusyError(provider, status, providerDetail(text));
+  return new Error(`${provider} extraction failed: ${status} ${text}`);
 }
 
 /**
@@ -139,7 +198,7 @@ export class AnthropicReader implements DocumentReader {
           'This Anthropic key is not tied to a workspace. Add the variable ANTHROPIC_WORKSPACE_ID with the workspace id (wrkspc_...) from console.anthropic.com, or create the key inside a named workspace.',
         );
       }
-      throw new Error(`Anthropic extraction failed: ${res.status} ${text}`);
+      throw providerError('Anthropic', res.status, text);
     }
 
     const body = (await res.json()) as { content?: { type: string; name?: string; input?: unknown }[] };
@@ -189,7 +248,7 @@ export class GeminiReader implements DocumentReader {
       if (!/thinking/i.test(text)) throw new Error(`Gemini extraction failed: 400 ${text}`);
       res = await send(false);
     }
-    if (!res.ok) throw new Error(`Gemini extraction failed: ${res.status} ${await res.text()}`);
+    if (!res.ok) throw providerError('Gemini', res.status, await res.text());
 
     const body = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
     const text = body.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('') ?? '';

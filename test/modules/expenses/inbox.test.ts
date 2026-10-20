@@ -102,6 +102,7 @@ describe('POST /api/inbox: the signature', () => {
     expect(rows).toHaveLength(2);
     expect(rows[0]!.status).toBe('new');
     expect(rows[0]!.amount_minor).toBe(11800);
+    expect(rows[0]).toMatchObject({ read_status: 'read', read_attempts: 1 });
     expect(String(rows[0]!.notes)).toBe(`Email from Billing Team <billing@supplier.test>: Invoice ${tag}`);
     expect(extractor.calls.map((c) => c.contentType).sort()).toEqual(['application/pdf', 'image/png']);
   });
@@ -223,7 +224,7 @@ describe('what becomes an expense', () => {
     await post(await signed(mime({ subject: `Unread ${tag}`, parts: [{ filename: 'u.heic', type: 'image/heic', bytes: pdfBytes(tag) }] })));
     const rows = (await expensesWithNote(`Unread ${tag}`)).results;
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ status: 'new', amount_minor: 0, supplier_id: null });
+    expect(rows[0]).toMatchObject({ status: 'new', amount_minor: 0, supplier_id: null, read_status: 'failed', read_attempts: 1 });
     expect(String(rows[0]!.notes)).toMatch(/ \| Not read automatically: \S/);
   });
 

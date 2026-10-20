@@ -89,8 +89,13 @@ describe('owners', () => {
 
   it('the last owner of a business is never removed or downgraded', async () => {
     const me = (await okIn(app, OWNER, b2, 'GET', '/access/users')).users[0] as { id: number };
-    expect((await callIn(app, OWNER, b2, 'DELETE', `/access/users/${me.id}`)).status).toBe(400);
-    expect((await callIn(app, OWNER, b2, 'PATCH', `/access/users/${me.id}`, { role: 'assistant' })).status).toBe(400);
+    // R39: 409 last_owner with a plain message.
+    const removed = await callIn(app, OWNER, b2, 'DELETE', `/access/users/${me.id}`);
+    expect(removed.status).toBe(409);
+    expect(removed.body.error).toEqual({ code: 'last_owner', message: 'A business must keep at least one owner. Add another owner first.' });
+    const changed = await callIn(app, OWNER, b2, 'PATCH', `/access/users/${me.id}`, { role: 'assistant' });
+    expect(changed.status).toBe(409);
+    expect(changed.body.error.code).toBe('last_owner');
   });
 
   it('a second owner can be added, and then the first one can step down', async () => {
@@ -108,6 +113,52 @@ describe('owners', () => {
   it('cannot add people to a business they do not own', async () => {
     const res = await callIn(app, ONLY_B1, 1, 'POST', '/access/users', { email: 'noauto-sneak@example.com', role: 'owner', businessIds: [b2] });
     expect(res.status).toBe(403);
+  });
+});
+
+describe('R39: a business always keeps one owner', () => {
+  let b3 = 0;
+  type Listed = { id: number; email: string; lastOwner?: boolean };
+  const list = async () => (await okIn(app, OWNER, b3, 'GET', '/access/users')).users as Listed[];
+  const owner = async () => (await list()).find((u) => u.email === OWNER)!;
+
+  beforeAll(async () => {
+    b3 = (
+      await okIn(app, OWNER, 1, 'POST', '/businesses', { entityType: 'company', nameEn: 'One Owner Ltd', nameHe: 'בעלים אחד בע"מ', taxId: '516666666', addressEn: 'Eilat' })
+    ).businessId;
+  });
+
+  it('the list marks the only active owner, and nobody once there are two', async () => {
+    expect((await list()).map((u) => [u.email, u.lastOwner ?? false])).toEqual([[OWNER, true]]);
+    await okIn(app, OWNER, b3, 'POST', '/access/users', { email: 'noauto-r39-second@example.com', role: 'owner' });
+    expect((await list()).every((u) => u.lastOwner === undefined)).toBe(true);
+  });
+
+  it('with two owners, one can be removed', async () => {
+    const second = (await list()).find((u) => u.email === 'noauto-r39-second@example.com')!;
+    expect((await callIn(app, OWNER, b3, 'DELETE', `/access/users/${second.id}`)).status).toBe(204);
+    expect((await owner()).lastOwner).toBe(true);
+  });
+
+  it('a second owner who is turned off or whose access ended does not count', async () => {
+    await okIn(app, OWNER, b3, 'POST', '/access/users', { email: 'noauto-r39-off@example.com', role: 'owner' });
+    await okIn(app, OWNER, b3, 'POST', '/access/users', { email: 'noauto-r39-ended@example.com', role: 'owner' });
+    await run(env.DB, "UPDATE users SET active = 0 WHERE email = 'noauto-r39-off@example.com'");
+    await run(env.DB, "UPDATE user_businesses SET ends_at = '2000-01-01' WHERE business_id = ? AND user_id = (SELECT id FROM users WHERE email = 'noauto-r39-ended@example.com')", b3);
+
+    const me = await owner();
+    expect(me.lastOwner).toBe(true);
+    const removed = await callIn(app, OWNER, b3, 'DELETE', `/access/users/${me.id}`);
+    expect(removed.status).toBe(409);
+    expect(removed.body.error.code).toBe('last_owner');
+    const changed = await callIn(app, OWNER, b3, 'PATCH', `/access/users/${me.id}`, { role: 'assistant' });
+    expect(changed.status).toBe(409);
+    expect(changed.body.error.message).toBe('A business must keep at least one owner. Add another owner first.');
+
+    // The turned-off owner is not the last one, so it can go.
+    const off = (await list()).find((u) => u.email === 'noauto-r39-off@example.com')!;
+    expect(off.lastOwner).toBeUndefined();
+    expect((await callIn(app, OWNER, b3, 'DELETE', `/access/users/${off.id}`)).status).toBe(204);
   });
 });
 

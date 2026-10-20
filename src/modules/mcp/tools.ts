@@ -422,6 +422,8 @@ export const MCP_TOOLS: McpTool[] = [
         amountIlsMinor: r.amount_ils_minor,
         category: r.category_name ?? null,
         fileAttached: r.file_id !== null,
+        // R39: read, failed, manual, or null on older expenses.
+        readStatus: r.read_status ?? null,
       }));
     },
   },

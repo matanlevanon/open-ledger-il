@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BackLink } from '../../components/BackLink';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useT } from '../../i18n';
+import { useToast } from '../../components/Toast';
 import { DemoReadOnlyNote, useDemoReadOnly } from '../../app/demo';
 import {
   type Category,
@@ -14,6 +15,7 @@ import {
   listCategories,
   listSuppliers,
   nextExpense,
+  readExpenseAgain,
   setExpenseStatus,
   updateExpense,
 } from './api';
@@ -27,6 +29,12 @@ interface FormState {
   amount: string;
   vatAmount: string;
   notes: string;
+}
+
+/** R39: the reader's reason for an unread expense, from the column or, on older rows, from the note. */
+function notReadReason(e: Expense): string {
+  if (e.read_error) return e.read_error;
+  return /Not read automatically:\s*([^\n|]*)/.exec(e.notes ?? '')?.[1]?.trim() ?? '';
 }
 
 function toForm(e: Expense): FormState {
@@ -53,6 +61,8 @@ export function ExpenseReviewPage() {
   const [error, setError] = useState<string | null>(null);
   const [returnReason, setReturnReason] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [reading, setReading] = useState(false);
+  const toast = useToast();
   // R29: on the demo the sample expenses are read-only. A visitor's own uploads review as usual.
   const readOnly = useDemoReadOnly(expense ? { demo_session_id: expense.demo_session_id ?? null } : null);
 
@@ -120,6 +130,24 @@ export function ExpenseReviewPage() {
     }
   }
 
+  // R39: read the file again. Unsaved typing is saved first, so the server keeps it.
+  async function readAgain() {
+    if (!expense || !form) return;
+    setReading(true);
+    setError(null);
+    try {
+      if (JSON.stringify(form) !== JSON.stringify(toForm(expense))) await save();
+      const res = await readExpenseAgain(expense.id);
+      setExpense(res.expense);
+      setForm(res.read ? toForm(res.expense) : { ...form, notes: res.expense.notes ?? '' });
+      if (res.read) toast.push(t('expenses.review.readDone'), 'success');
+    } catch (err) {
+      setError(err instanceof Error && err.message ? err.message : t('expenses.review.readError'));
+    } finally {
+      setReading(false);
+    }
+  }
+
   async function remove() {
     if (!expense) return;
     setSaving(true);
@@ -166,6 +194,23 @@ export function ExpenseReviewPage() {
         </div>
 
         <div className="rounded-card border border-line bg-surface p-6 shadow-card">
+          {expense.read_status === 'failed' && expense.status === 'new' && (
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-3 rounded-md border border-line bg-band p-3" data-testid="not-read-notice">
+              <p className="min-w-0 flex-1 text-sm text-ink" role="status">
+                {t('expenses.review.notReadNotice', { reason: notReadReason(expense) })}
+              </p>
+              {expense.file_id !== null && (
+                <button
+                  type="button"
+                  disabled={reading || saving || readOnly}
+                  onClick={readAgain}
+                  className="rounded-full border border-brand px-4 py-1.5 text-sm font-semibold text-brand hover:bg-canvas disabled:opacity-50"
+                >
+                  {reading ? t('expenses.review.reading') : t('expenses.review.readAgain')}
+                </button>
+              )}
+            </div>
+          )}
           <dl className="grid grid-cols-2 gap-3 text-sm">
             <dt className="text-muted">{t('expenses.review.supplierLabel')}</dt>
             <dd className="text-ink">

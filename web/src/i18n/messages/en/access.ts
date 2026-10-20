@@ -37,6 +37,9 @@ export const access = {
   'access.users.noneFallback': 'None',
   'access.users.revoke': 'Revoke',
   'access.users.revokeConfirm': 'Remove {email} from this business? Someone left with no business loses the account.',
+  'access.users.revokeSelfConfirm': 'Remove yourself from this business? You lose access to it.',
+  'access.users.onlyOwner': 'The only owner. Add another owner to change this.',
+  'access.users.actionError': 'The change did not go through.',
   'access.users.inviteAccountant': 'Invite someone',
 
   // Status labels (statusLabel())

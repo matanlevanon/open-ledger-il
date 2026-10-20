@@ -101,4 +101,15 @@ describe('ExpensesListPage', () => {
     const importCall = fetchMock.mock.calls.find(([url]) => String(url).includes('/import/month')) as unknown as [string, RequestInit];
     expect(JSON.parse(String(importCall[1].body))).toEqual({ yearMonth: '2026-08' });
   });
+
+  it('marks an expense not read automatically', async () => {
+    vi.stubGlobal('fetch', mockFetch({ '/api/expenses?status=new': { expenses: [{ ...EXPENSES[0], id: 2, document_number: 'UNREAD-1', read_status: 'failed' }, EXPENSES[0]] } }));
+    render(
+      <MemoryRouter>
+        <ExpensesListPage />
+      </MemoryRouter>,
+    );
+    expect(await screen.findByText('UNREAD-1')).toBeInTheDocument();
+    expect(screen.getAllByText('Not read')).toHaveLength(1);
+  });
 });

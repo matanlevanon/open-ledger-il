@@ -35,6 +35,9 @@ export const access: Record<keyof typeof en, string> = {
   'access.users.noneFallback': 'ללא',
   'access.users.revoke': 'ביטול גישה',
   'access.users.revokeConfirm': 'להסיר את {email} מהעסק הזה? מי שלא נשאר לו אף עסק מאבד את החשבון.',
+  'access.users.revokeSelfConfirm': 'להסיר את עצמך מהעסק הזה? תאבד את הגישה אליו.',
+  'access.users.onlyOwner': 'הבעלים היחיד. הוסף בעלים נוסף כדי לשנות את זה.',
+  'access.users.actionError': 'השינוי לא נשמר.',
   'access.users.inviteAccountant': 'הזמנת אדם',
 
   // Status labels (statusLabel())

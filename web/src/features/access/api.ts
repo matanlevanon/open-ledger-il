@@ -24,6 +24,8 @@ export interface AccessUser {
   features: AccessFeatures | null;
   /** R24: every business this person may open. Absent on an older Worker. */
   businesses?: { id: number; role: 'owner' | 'assistant' | 'accountant' }[];
+  /** R39: the business's only active owner. No Remove, no role change. */
+  lastOwner?: boolean;
 }
 
 export interface AccessLogEntry {

@@ -24,6 +24,8 @@ export interface ExtractInput {
 /** Reads supplier, document and amount fields from one expense file. */
 export interface Extractor {
   extract(input: ExtractInput): Promise<ExtractedExpense>;
+  /** R39: false when no reader is configured, so Read again can say so. Absent means available. */
+  available?(): boolean;
 }
 
 const TOOL_NAME = 'record_expense';
@@ -49,6 +51,10 @@ export class AiExtractor implements Extractor {
     private readonly env: Env,
     private readonly fetchFn: typeof fetch = (input, init) => fetch(input, init),
   ) {}
+
+  available(): boolean {
+    return isDemo(this.env) || documentReaderFor(this.env, this.fetchFn) !== null;
+  }
 
   async extract(input: ExtractInput): Promise<ExtractedExpense> {
     // R26: document reading is off in demo mode. Every upload gets the same sample result, labelled demo.

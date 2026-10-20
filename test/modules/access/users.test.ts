@@ -173,7 +173,9 @@ describe('DELETE /access/users/:id (revoke)', () => {
   it('never revokes the owner', async () => {
     const owner = await first<{ id: number }>(env.DB, `SELECT id FROM users WHERE email = 'owner-u@example.com'`);
     const res = await req(`/access/users/${owner!.id}`, 'owner-u@example.com', { method: 'DELETE' });
-    expect(res.status).toBe(400);
+    // R39: 409 last_owner, no longer a generic validation error.
+    expect(res.status).toBe(409);
+    expect(((await res.json()) as { error: { code: string } }).error.code).toBe('last_owner');
     expect(await first(env.DB, 'SELECT 1 FROM users WHERE id = ?', owner!.id)).not.toBeNull();
   });
 });

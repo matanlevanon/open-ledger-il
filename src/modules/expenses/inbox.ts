@@ -3,6 +3,7 @@ import { type AuditActor, auditStatement } from '../../core/audit';
 import { all, first, stmt, transaction } from '../../core/db';
 import type { Env } from '../../env';
 import { isDemo } from '../demo/config';
+import { htmlToText } from './files';
 import { ingestInboxFile, type Deps } from './service';
 
 /**
@@ -197,20 +198,6 @@ function senderLine(name: string | undefined, address: string | undefined): stri
 
 function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]!);
-}
-
-function htmlToText(html: string): string {
-  return html
-    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ')
-    .replace(/<br\s*\/?>|<\/(p|div|tr|li|h\d)>/gi, '\n')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/[ \t]+/g, ' ')
-    .replace(/\n\s*\n+/g, '\n')
-    .trim();
 }
 
 function contentTypeOf(mimeType: string | undefined, filename: string | null | undefined): string | null {

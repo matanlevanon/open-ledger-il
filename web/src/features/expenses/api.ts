@@ -25,6 +25,10 @@ export interface Expense {
   fx_rate: string | null;
   fx_source: string | null;
   notes: string | null;
+  /** R39: 'failed' when the reader could not read the file. Null on older expenses. */
+  read_status?: 'read' | 'failed' | 'manual' | null;
+  read_attempts?: number;
+  read_error?: string | null;
   created_at: string;
 }
 
@@ -125,6 +129,11 @@ export async function uploadExpense(file: File): Promise<{ expense: Expense; rea
   }
   const body = (await res.json()) as { expense: Expense; read?: boolean };
   return { expense: body.expense, read: body.read !== false };
+}
+
+/** R39: reads an unread expense's file again. `read: false` comes with the new reason in `message`. */
+export async function readExpenseAgain(id: number): Promise<{ expense: Expense; read: boolean; message: string | null }> {
+  return send<{ expense: Expense; read: boolean; message: string | null }>(`/${id}/read`, 'POST');
 }
 
 export function fileDownloadUrl(fileId: number): string {

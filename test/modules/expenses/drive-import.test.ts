@@ -197,6 +197,8 @@ describe('R20: import from the index sheet', () => {
       amount_ils_minor: 3750, // the ledger's BOI rate 3.75, not the sheet's ECB 3.0012
       fx_rate: '3.750000',
       is_fixed: 1,
+      read_status: 'manual', // R39: the sheet row was typed by a person
+      read_attempts: 0,
     });
     expect(tunewave.notes).toBe('Tunewave Pro\nSheet rate: 3.0012 (ECB, 2026-07-02)');
     const file = await env.DB.prepare('SELECT * FROM expense_files WHERE id = ?').bind(tunewave.file_id).first<{ drive_file_id: string; filename: string }>();
@@ -330,7 +332,7 @@ describe('R20: fallback to the month folder when there is no index sheet', () =>
       { ref: '2026-05-05_19b_invoice.pdf', reason: 'issued_by_self', expenseId: null },
     ]);
     const aws = await expense(summary.createdIds[0]!);
-    expect(aws).toMatchObject({ status: 'new', document_number: 'AWS-MAY', amount_ils_minor: 7000 });
+    expect(aws).toMatchObject({ status: 'new', document_number: 'AWS-MAY', amount_ils_minor: 7000, read_status: 'read', read_attempts: 1 });
     const trashed = await env.DB.prepare("SELECT id FROM expense_files WHERE drive_file_id = 'may-trashed'").first();
     expect(trashed).toBeNull();
 
