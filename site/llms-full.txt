@@ -450,6 +450,9 @@ Source: https://open-ledger.dev/help/
 - Expenses > Bank activity: Add as expense, Not a business expense, and Record payment on the suggested document, filled in for the person to confirm.
 - The dashboard shows a Bank card, one line per currency. New report Bank vs books. MCP tools `bank_activity` and `bank_balances`.
 - Savings, loans and securities are never read. No owner name, national id or full account number is stored.
+- Dashboard > Financy Dashboard, a tab built like Financy's own dashboard: liquidity, income, expenses and net against last month, cash flow, categories, the accounts, recent transactions with their status and actions, and what waits to be matched. The Bank card leaves the main Dashboard.
+- Money is not counted twice: a card bill paid from checking and a transfer between your own accounts stay out of income, expenses, matching and Bank vs books. "Count this" puts a wrong mark back. Migration `4200_bank_flags.sql`.
+- Match a bank row to an expense or a document by hand, and Unmatch. MCP `bank_summary`, and `bank_activity` returns each row's flow.
 
 ### Expenses
 
@@ -1123,6 +1126,9 @@ Every release, newest first. The current version is 1.6.0.
 - Expenses > Bank activity: Add as expense, Not a business expense, and Record payment on the suggested document, filled in for the person to confirm.
 - The dashboard shows a Bank card, one line per currency. New report Bank vs books. MCP tools `bank_activity` and `bank_balances`.
 - Savings, loans and securities are never read. No owner name, national id or full account number is stored.
+- Dashboard > Financy Dashboard, a tab built like Financy's own dashboard: liquidity, income, expenses and net against last month, cash flow, categories, the accounts, recent transactions with their status and actions, and what waits to be matched. The Bank card leaves the main Dashboard.
+- Money is not counted twice: a card bill paid from checking and a transfer between your own accounts stay out of income, expenses, matching and Bank vs books. "Count this" puts a wrong mark back. Migration `4200_bank_flags.sql`.
+- Match a bank row to an expense or a document by hand, and Unmatch. MCP `bank_summary`, and `bank_activity` returns each row's flow.
 
 ### Expenses
 
@@ -2006,12 +2012,27 @@ Source: https://open-ledger.dev/help/email/
 
 ### מה מקבלים
 
-- **לוח הבקרה:** כרטיס Bank עם היתרה בכל חשבון, שורה לכל מטבע, והחיוב בכרטיס עד עכשיו עם יום החיוב.
+- **Dashboard > דשבורד Financy:** לשונית שבנויה כמו הדשבורד של Financy עצמו. הפירוט למטה.
 - **Expenses > Bank activity:** כל חיוב מותאם להוצאה כשיש כזו. לחיוב בלי התאמה יש **Add as expense** (ההוצאה מחכה לקבלה) או **Not a business expense**. להפקדה שמתאימה לדרישת תשלום פתוחה יש **Record payment**, ממולא ומחכה לאישור שלכם.
 - **Reports > Bank vs books:** הכסף שנכנס ויצא בבנק לצד מה שנרשם בלדג'ר, עם הפערים.
-- **Claude:** כלי ה-MCP `bank_activity` ו-`bank_balances`.
+- **Claude:** כלי ה-MCP `bank_activity`, `bank_balances` ו-`bank_summary`.
 
 בכל לילה הלדג'ר מושך את 35 הימים האחרונים. **Sync now** מושך מיד.
+
+### לשונית דשבורד Financy
+
+פותחים **Dashboard** ולוחצים **דשבורד Financy**. מוצגים בה רק החשבונות שסימנתם.
+
+- **הפס העליון:** מצב נזיל (הכסף בעו"ש פחות חיובי האשראי הנוכחיים, בלי הלוואות), ואחריו הכנסות, הוצאות ונטו החודש, כל אחד מול החודש הקודם.
+- **לא נספר:** חיוב כרטיס אשראי שיורד מהעו"ש הוא אותו כסף כמו החיובים בכרטיס, והעברה בין החשבונות שלכם היא לא כסף בכלל. הלדג'ר משאיר את שניהם מחוץ להכנסות ולהוצאות ומציג את הסכום שלהם מתחת לפס.
+- **תזרים מזומנים:** הכנסות והוצאות ל-3 או ל-6 חודשים, עם המספרים מתחת לגרף.
+- **פילוח לפי קטגוריה:** לאן הלך הכסף, או מאיפה הגיע, לפי הקטגוריות של Financy.
+- **חשבונות:** כל עו"ש וכל כרטיס, עם **מקורי** או **₪** ליתרות.
+- **תנועות אחרונות:** לכל שורה יש סטטוס: מותאם, להתאמה, מוצע, לא עסקי או לא נספר.
+
+שורה שסומנה לא נספר בטעות: לוחצים **לספור את זה**. מאז היא נספרת, גם אחרי הסנכרון הבא.
+
+חיוב שהלדג'ר לא התאים: לוחצים **התאמה להוצאה** ובוחרים את ההוצאה. הפקדה: **התאמה למסמך** פותח רישום תשלום ממולא, ומאשרים שם. **ביטול התאמה** מבטל.
 
 ### מה נשמר ומה לא
 
@@ -3343,12 +3364,27 @@ The Ledger collects receipts and invoices. With [Financy](https://financy.open-f
 
 ### What you get
 
-- **Dashboard:** a Bank card with the balance of each account, one line per currency, and the card charge so far with its charge day.
+- **Dashboard > Financy Dashboard:** a tab built like Financy's own dashboard. See below.
 - **Expenses > Bank activity:** each charge matched to an expense where one exists. An unmatched charge gets **Add as expense** (it waits for its receipt) or **Not a business expense**. A deposit that matches an open payment request gets **Record payment**, filled in for you to confirm.
 - **Reports > Bank vs books:** money in and out from the bank next to what the Ledger recorded, with the gaps.
-- **Claude:** the MCP tools `bank_activity` and `bank_balances`.
+- **Claude:** the MCP tools `bank_activity`, `bank_balances` and `bank_summary`.
 
 Every night the Ledger pulls the last 35 days. **Sync now** pulls on demand.
+
+### The Financy Dashboard tab
+
+Open **Dashboard** and click **Financy Dashboard**. It shows only the accounts you picked.
+
+- **The top strip:** liquidity (cash in checking minus the current card charges, loans not counted), then income, expenses and net this month, each against last month.
+- **Not counted:** a card bill paid from checking is the same money as the card charges, and a transfer between your own accounts is no money at all. The Ledger leaves both out of income and expenses and shows their sum under the strip.
+- **Cash flow:** income and expenses for 3 or 6 months, with the numbers under the chart.
+- **By category:** where the money went, or came from, by Financy's categories.
+- **Accounts:** each checking account and card, with **Original** or **₪** for the balances.
+- **Recent transactions:** each row has a status: Matched, To match, Suggested, Not business or Not counted.
+
+A row marked Not counted by mistake: click **Count this**. It counts from then on, also after the next sync.
+
+A charge the Ledger did not match: click **Match to expense** and pick the expense. A deposit: **Match to document** opens Record payment filled in, and you confirm there. **Unmatch** undoes a match.
 
 ### What the Ledger stores, and what it doesn't
 

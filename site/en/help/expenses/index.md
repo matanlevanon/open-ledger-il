@@ -148,12 +148,27 @@ The Ledger collects receipts and invoices. With [Financy](https://financy.open-f
 
 ### What you get
 
-- **Dashboard:** a Bank card with the balance of each account, one line per currency, and the card charge so far with its charge day.
+- **Dashboard > Financy Dashboard:** a tab built like Financy's own dashboard. See below.
 - **Expenses > Bank activity:** each charge matched to an expense where one exists. An unmatched charge gets **Add as expense** (it waits for its receipt) or **Not a business expense**. A deposit that matches an open payment request gets **Record payment**, filled in for you to confirm.
 - **Reports > Bank vs books:** money in and out from the bank next to what the Ledger recorded, with the gaps.
-- **Claude:** the MCP tools `bank_activity` and `bank_balances`.
+- **Claude:** the MCP tools `bank_activity`, `bank_balances` and `bank_summary`.
 
 Every night the Ledger pulls the last 35 days. **Sync now** pulls on demand.
+
+### The Financy Dashboard tab
+
+Open **Dashboard** and click **Financy Dashboard**. It shows only the accounts you picked.
+
+- **The top strip:** liquidity (cash in checking minus the current card charges, loans not counted), then income, expenses and net this month, each against last month.
+- **Not counted:** a card bill paid from checking is the same money as the card charges, and a transfer between your own accounts is no money at all. The Ledger leaves both out of income and expenses and shows their sum under the strip.
+- **Cash flow:** income and expenses for 3 or 6 months, with the numbers under the chart.
+- **By category:** where the money went, or came from, by Financy's categories.
+- **Accounts:** each checking account and card, with **Original** or **₪** for the balances.
+- **Recent transactions:** each row has a status: Matched, To match, Suggested, Not business or Not counted.
+
+A row marked Not counted by mistake: click **Count this**. It counts from then on, also after the next sync.
+
+A charge the Ledger did not match: click **Match to expense** and pick the expense. A deposit: **Match to document** opens Record payment filled in, and you confirm there. **Unmatch** undoes a match.
 
 ### What the Ledger stores, and what it doesn't
 
