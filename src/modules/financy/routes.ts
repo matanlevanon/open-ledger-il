@@ -6,7 +6,23 @@ import { businessIdOf } from '../../core/business';
 import { ForbiddenError, ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import { isDemo } from '../demo/config';
-import { MATCH_STATUSES, addAsExpense, assertConnected, ignoreTransaction, listBankAccounts, listBankTransactions } from './activity';
+import {
+  MATCH_STATUSES,
+  addAsExpense,
+  assertConnected,
+  countTransaction,
+  ignoreTransaction,
+  listBankAccounts,
+  listBankTransactions,
+  matchCandidates,
+  matchToExpense,
+  suggestDocument,
+  unmatchTransaction,
+} from './activity';
+import { financyDashboard } from './dashboard';
+import { FLOWS } from './flows';
+import { boiRateSource } from '../fx';
+import { todayIsrael } from '../../core/db';
 import { availableAccounts, pickAccounts } from './accounts';
 import { type FinancyDeps, connectionView, deleteBankData, disconnect, loadConnection, saveConnection } from './connection';
 import { DEFAULT_SYNC_DAYS, syncFinancy } from './sync';
@@ -27,11 +43,16 @@ const PickBody = z.object({
   confirm: z.boolean().optional(),
 });
 
+const MatchBody = z
+  .object({ expenseId: z.number().int().positive().optional(), documentId: z.number().int().positive().optional() })
+  .refine((b) => Boolean(b.expenseId) !== Boolean(b.documentId), 'Send expenseId or documentId.');
+
 const ActivityQuery = z.object({
   month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM').optional(),
   account: z.string().max(200).optional(),
   direction: z.enum(['in', 'out']).optional(),
   status: z.enum(MATCH_STATUSES).optional(),
+  flow: z.enum(FLOWS).optional(),
 });
 
 function idParam(value: string): number {
@@ -96,7 +117,7 @@ export function createFinancyRoutes(resolveDeps: (env: AppEnv['Bindings']) => Fi
     await assertConnected(c.env.DB, businessId);
     const role = c.get('user').role;
     return c.json({
-      transactions: await listBankTransactions(c.env.DB, businessId, { month: q.month, accountId: q.account, direction: q.direction, status: q.status }),
+      transactions: await listBankTransactions(c.env.DB, businessId, { month: q.month, accountId: q.account, direction: q.direction, status: q.status, flow: q.flow }),
       accounts: await listBankAccounts(c.env.DB, businessId),
       canEdit: role === 'owner' || role === 'assistant',
     });
@@ -105,6 +126,36 @@ export function createFinancyRoutes(resolveDeps: (env: AppEnv['Bindings']) => Fi
   r.post('/transactions/:id/add-expense', requireRole('owner', 'assistant'), async (c) =>
     c.json(await addAsExpense(c.env, idParam(c.req.param('id')), actorFrom(c)), 201),
   );
+
+  // R42: "Count this". A row marked as a transfer or a card bill counts again, and stays counted.
+  r.post('/transactions/:id/count', requireRole('owner', 'assistant'), async (c) =>
+    c.json({ transaction: await countTransaction(c.env.DB, idParam(c.req.param('id')), actorFrom(c)) }),
+  );
+
+  // R42 task 5: match by hand. Money out to an expense, money in to an open document (a suggestion only).
+  r.get('/transactions/:id/candidates', requireRole('owner', 'assistant'), async (c) =>
+    c.json({ candidates: await matchCandidates(c.env.DB, idParam(c.req.param('id')), businessIdOf(c), c.req.query('q')) }),
+  );
+
+  r.put('/transactions/:id/match', requireRole('owner', 'assistant'), async (c) => {
+    const body = MatchBody.parse(await c.req.json().catch(() => ({})));
+    const id = idParam(c.req.param('id'));
+    const transaction = body.expenseId
+      ? await matchToExpense(c.env.DB, id, body.expenseId, actorFrom(c))
+      : await suggestDocument(c.env.DB, id, body.documentId!, actorFrom(c));
+    return c.json({ transaction });
+  });
+
+  r.delete('/transactions/:id/match', requireRole('owner', 'assistant'), async (c) =>
+    c.json({ transaction: await unmatchTransaction(c.env.DB, idParam(c.req.param('id')), actorFrom(c)) }),
+  );
+
+  // R42 task 2: the Financy Dashboard tab, in one call. Null when nothing is connected or picked.
+  r.get('/dashboard', requireRole('owner', 'assistant'), async (c) => {
+    const months = c.req.query('months') === '6' ? 6 : 3;
+    const deps = resolveDeps(c.env);
+    return c.json({ dashboard: await financyDashboard(c.env.DB, deps.fx ?? boiRateSource(c.env.DB), businessIdOf(c), todayIsrael(), months) });
+  });
 
   r.post('/transactions/:id/ignore', requireRole('owner', 'assistant'), async (c) =>
     c.json({ transaction: await ignoreTransaction(c.env.DB, idParam(c.req.param('id')), actorFrom(c)) }),

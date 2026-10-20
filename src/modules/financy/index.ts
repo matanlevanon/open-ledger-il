@@ -7,12 +7,13 @@ import { syncAllDaily } from './sync';
 
 /**
  * R40: the Financy connection, bank and card data, read only. Settings > Expenses > Financy
- * connection, Expenses > Bank activity, the dashboard's Bank card, the Bank vs books report, and
- * two MCP tools. The daily sync rides on the existing daily cron, since the account is near its
+ * connection, Expenses > Bank activity, the Financy Dashboard tab (R42), the Bank vs books report,
+ * and three MCP tools. The daily sync rides on the existing daily cron, since the account is near its
  * cron limit.
  */
 
-export { bankSummary, bankVsBooks, assertConnected, listBankAccounts, listBankTransactions } from './activity';
+export { bankVsBooks, assertConnected, listBankAccounts, listBankTransactions } from './activity';
+export { financyDashboard } from './dashboard';
 export type { FinancyDeps } from './connection';
 
 export function defaultFinancyDeps(): FinancyDeps {

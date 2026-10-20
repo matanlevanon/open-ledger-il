@@ -4,8 +4,8 @@ import { openDemands } from '../documents/balances';
 /**
  * R40 task 5: match pulled bank rows to the books. Runs after every sync, on unmatched rows only.
  *
- * 1. A transfer between two of the owner's own accounts (same amount, opposite signs, same day,
- *    different accounts, both pulled) is ignored on both sides.
+ * 1. R42: rows that are not normal money (a transfer between the owner's own accounts, a card bill
+ *    paid from checking, see flows.ts) are left out entirely.
  * 2. Money out matches an expense not matched yet: the same total in the same currency (or the
  *    original amount for a foreign charge), dates 5 days apart at most. The closer date wins, then
  *    a supplier name that shares a word with the merchant. One bank row per expense.
@@ -63,30 +63,12 @@ export async function matchBankTransactions(db: D1Database, businessId: number):
   const rows = await all<TxRow>(
     db,
     `SELECT id, account_financy_id, kind, booked_on, amount_minor, currency, original_amount_minor, original_currency, merchant, description, matched_document_id
-       FROM bank_transactions WHERE business_id = ? AND match_status = 'unmatched' ORDER BY booked_on, id`,
+       FROM bank_transactions WHERE business_id = ? AND match_status = 'unmatched' AND flow = 'normal' ORDER BY booked_on, id`,
     businessId,
   );
   const updates: D1PreparedStatement[] = [];
 
-  // 1. Transfers between own accounts.
-  const ignored = new Set<number>();
-  for (const out of rows) {
-    if (out.amount_minor >= 0 || ignored.has(out.id)) continue;
-    const back = rows.find(
-      (r) =>
-        !ignored.has(r.id) &&
-        r.amount_minor === -out.amount_minor &&
-        r.currency === out.currency &&
-        r.booked_on === out.booked_on &&
-        r.account_financy_id !== null &&
-        r.account_financy_id !== out.account_financy_id,
-    );
-    if (!back) continue;
-    ignored.add(out.id);
-    ignored.add(back.id);
-  }
-  for (const id of ignored) updates.push(stmt(db, "UPDATE bank_transactions SET match_status = 'ignored', updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?", id));
-  const open = rows.filter((r) => !ignored.has(r.id));
+  const open = rows;
 
   // 2. Money out to expenses.
   let matched = 0;

@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode, useEffect, useRef, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Bar, BarChart, CartesianGrid, ComposedChart, LabelList, Legend, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import {
   type AgingBucket,
@@ -16,7 +16,7 @@ import {
 } from '../../api/dashboard';
 import { usePreferences } from '../../app/preferences';
 import { WhatsAppDue } from './WhatsAppDue';
-import { BankCard } from './BankCard';
+import { FinancyDashboard } from '../financy/FinancyDashboard';
 import { receiptForImported } from '../documents/ImportedDocuments';
 import { CeilingMeter } from '../../components/CeilingMeter';
 import { EmptyState } from '../../components/EmptyState';
@@ -497,6 +497,8 @@ function usePeriodCard(card: PeriodCard, today: string) {
 
 export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsrael() }: DashboardPageProps) {
   const t = useT();
+  // R42: ?view=financy opens the Financy Dashboard tab, so it can be linked and reloaded.
+  const [search, setSearch] = useSearchParams();
   const { locale } = usePreferences();
   const issuing = useIssuing();
   const [data, setData] = useState<DashboardData | null>(null);
@@ -667,6 +669,8 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
   }
 
   const visible = layout.filter((e) => e.visible).map((e) => e.id);
+  const financyView = search.get('view') === 'financy' && Boolean(data?.financyTab);
+  const openTab = (view: 'main' | 'financy') => setSearch(view === 'financy' ? { view: 'financy' } : {}, { replace: false });
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-6xl">
@@ -681,10 +685,38 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
             </span>
           )}
         </div>
-        <Link to="/settings?tab=dashboard" className="text-sm font-semibold text-accent-2 hover:underline">
-          {t('dash.customize')}
-        </Link>
+        {!financyView && (
+          <Link to="/settings?tab=dashboard" className="text-sm font-semibold text-accent-2 hover:underline">
+            {t('dash.customize')}
+          </Link>
+        )}
       </div>
+
+      {data?.financyTab && (
+        <div role="tablist" aria-label={t('dashboard.tabs')} className="mt-4 flex gap-1 border-b border-line">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={!financyView}
+            onClick={() => openTab('main')}
+            className={`rounded-t-md px-3 py-2 text-sm ${!financyView ? 'border-b-2 border-brand font-semibold text-brand' : 'text-muted hover:text-ink'}`}
+          >
+            {t('dashboard.tabMain')}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={financyView}
+            onClick={() => openTab('financy')}
+            className={`inline-flex items-center gap-1.5 rounded-t-md px-3 py-2 text-sm ${financyView ? 'border-b-2 border-brand font-semibold text-brand' : 'text-muted hover:text-ink'}`}
+          >
+            <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.4">
+              <path d="M2 6.5 8 3l6 3.5M3 7v5.5M6.3 7v5.5M9.7 7v5.5M13 7v5.5M2 13.5h12" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {t('dashboard.tabFinancy')}
+          </button>
+        </div>
+      )}
 
       {error && (
         <p role="alert" className="mt-6 text-sm text-danger">
@@ -692,6 +724,9 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
         </p>
       )}
       {!data && !error && <p className="mt-6 text-sm text-muted">{t('dashboard.loading')}</p>}
+      {financyView && <FinancyDashboard />}
+      {!financyView && (
+        <>
       {(data?.expiringDocuments ?? []).map((d) => (
         <p key={d.id} data-testid="expiring-document" className="mt-4 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink">
           {t(d.daysLeft < 0 ? 'dashboard.documentEnded' : 'dashboard.documentEnds', {
@@ -707,7 +742,6 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
 
       {data?.whatsappDue && data.whatsappDue.length > 0 && <WhatsAppDue items={data.whatsappDue} />}
 
-      {data?.bank && <BankCard bank={data.bank} />}
 
       {(data?.contracts?.unsigned ?? []).map((c) => (
         <p key={`u${c.id}`} data-testid="contract-unsigned" className="mt-4 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink">
@@ -731,6 +765,8 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
           <Fragment key={card}>{renderCard(card)}</Fragment>
         ))}
       </div>
+        </>
+      )}
     </section>
   );
 }

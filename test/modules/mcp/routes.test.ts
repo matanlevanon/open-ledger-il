@@ -58,6 +58,7 @@ describe('POST /mcp: protocol', () => {
         'add_expense',
         'bank_activity',
         'bank_balances',
+        'bank_summary',
         'ceiling_status',
         'client_balance',
         'create_draft',

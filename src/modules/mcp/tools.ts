@@ -18,6 +18,7 @@ import type { Env } from '../../env';
 import { recordGivenExpense, listExpenses } from '../expenses/service';
 import { EXPENSE_STATUSES, ExtractedExpenseSchema } from '../expenses/types';
 import { assertConnected, listBankAccounts, listBankTransactions } from '../financy/activity';
+import { financyDashboard } from '../financy/dashboard';
 
 /** MCP acts as the owner of one business. It has no per-request signed-in user, only the bearer token. */
 export function mcpUser(businessId: number): AuthUser {
@@ -166,6 +167,13 @@ const bankActivityInput = z.object({
   month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM').optional(),
   onlyUnmatched: z.boolean().optional(),
 });
+
+const bankSummaryInput = z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM').optional() });
+
+function lastDayOf(month: string): string {
+  const [y, m] = month.split('-').map(Number) as [number, number];
+  return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+}
 
 const listExpensesInput = z.object({
   status: z.enum(EXPENSE_STATUSES).optional(),
@@ -461,9 +469,39 @@ export const MCP_TOOLS: McpTool[] = [
         merchant: r.merchant,
         category: r.category,
         matchStatus: r.matchStatus,
+        // R42: normal, own_transfer or card_payment. Only normal money counts as income or an expense.
+        flow: r.flow,
+        status: r.status,
         expenseId: r.expenseId,
         suggestedDocument: r.suggestion?.displayNumber ?? null,
       }));
+    },
+  },
+  {
+    name: 'bank_summary',
+    description:
+      'The Financy Dashboard numbers for one month, read only, in shekel minor units: liquidity (checking cash minus current card charges), ' +
+      'income, expenses and net against the month before, expenses by category, what waits to be matched, and what was not counted ' +
+      '(transfers between own accounts and card bills paid from checking).',
+    inputSchema: { type: 'object', properties: { month: { type: 'string', description: 'YYYY-MM. Defaults to this month.' } } },
+    async handler(env, args) {
+      const input = bankSummaryInput.parse(args ?? {});
+      await assertConnected(env.db, env.businessId);
+      const today = (env.today ?? (() => todayIsrael()))();
+      const day = input.month && input.month < today.slice(0, 7) ? lastDayOf(input.month) : today;
+      const d = await financyDashboard(env.db, boiRateSource(env.db), env.businessId, day, 3);
+      if (!d) throw new ValidationError('Pick the business accounts in Settings > Expenses > Financy connection first.');
+      return {
+        month: d.month.month,
+        liquidity: d.liquidity,
+        current: d.month.current,
+        previous: d.month.previous,
+        changePct: d.month.changePct,
+        expensesByCategory: d.categories.expenses.rows.map((r) => ({ category: r.label, amount: r.amount, shareBp: r.shareBp })),
+        toMatch: d.toMatch,
+        notCounted: d.excluded,
+        unconverted: d.unconverted,
+      };
     },
   },
   {

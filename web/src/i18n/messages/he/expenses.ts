@@ -130,4 +130,8 @@ export const expenses: Record<keyof typeof en, string> = {
   'expenses.bank.addExpense': 'הוספה כהוצאה',
   'expenses.bank.ignore': 'לא הוצאה עסקית',
   'expenses.bank.recordPayment': 'רישום תשלום על {number}',
+  'expenses.bank.flowLabel': 'נספר',
+  'expenses.bank.flow.normal': 'נספר',
+  'expenses.bank.flow.ownTransfer': 'בין החשבונות שלכם',
+  'expenses.bank.flow.cardPayment': 'חיוב כרטיס אשראי',
 };

@@ -14,7 +14,7 @@ import type { AppEnv } from '../../env';
 import { type OpenDemand, openDemands } from '../documents/balances';
 import { ACTIVITY_DEFAULT_LIMIT, recentActivity } from './activity';
 import { shareDue, whatsappDue } from './whatsapp-due';
-import { bankSummary } from '../financy/activity';
+import { financyTabAvailable } from '../financy/connection';
 import {
   type EntityType,
   getEntityType,
@@ -413,15 +413,15 @@ export function createDashboardModule(options: DashboardModuleOptions = {}): Mod
     // R28: reminders due on WhatsApp today, for the owner and the assistant who share them.
     const role = c.get('user').role;
     const due = role === 'owner' || role === 'assistant' ? await whatsappDue(c.env.DB, businessId, today()) : [];
-    // R40: the Bank card, for the owner and the assistant, when Financy is connected.
-    const bank = role === 'owner' || role === 'assistant' ? await bankSummary(c.env.DB, businessId) : null;
+    // R42: the Financy Dashboard tab, for the owner and the assistant, when Financy is connected and an account is picked.
+    const financyTab = (role === 'owner' || role === 'assistant') && !isDemo(c.env) ? await financyTabAvailable(c.env.DB, businessId) : false;
     // R29: in the demo the Tax Authority always shows as connected, as on its own page.
     const demoIta = (d: DashboardData): DashboardData =>
       isDemo(c.env) ? { ...d, ita: { connected: true, state: 'connected', message: 'Connected. Allocation numbers are requested on their own.' } } : d;
-    if (request.cards) return c.json({ ...scoped(demoIta(await buildDashboard(c.env.DB, today(), businessId, request))), whatsappDue: due, bank });
+    if (request.cards) return c.json({ ...scoped(demoIta(await buildDashboard(c.env.DB, today(), businessId, request))), whatsappDue: due, financyTab });
     const layout = await getDashboardLayout(c.env.DB, businessId);
     const cards = layout.filter((e) => e.visible).map((e) => e.id);
-    return c.json({ ...scoped(demoIta(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards }))), whatsappDue: due, bank, layout });
+    return c.json({ ...scoped(demoIta(await buildDashboard(c.env.DB, today(), businessId, { ...request, cards }))), whatsappDue: due, financyTab, layout });
   });
   // R28: Share on WhatsApp for a due reminder. Returns the prefilled message link and logs it shared.
   routes.post('/reminders/:id/share', requireRole('owner', 'assistant'), async (c) => {

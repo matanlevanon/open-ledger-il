@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ApiError } from '../../api/client';
-import { BackLink } from '../../components/BackLink';
 import { usePreferences } from '../../app/preferences';
+import { BackLink } from '../../components/BackLink';
 import { type MessageKey, useT } from '../../i18n';
+import { type ActivityFilter, type BankAccount, type BankTransaction, type Flow, type MatchStatus, financyApi, formatMinor } from '../financy/api';
+import { RowActions, StatusCell } from '../financy/actions';
 import { categoryText } from '../financy/categories';
-import { type ActivityFilter, type BankAccount, type BankTransaction, type MatchStatus, financyApi, formatMinor } from '../financy/api';
 
 /**
- * R40: Expenses > Bank activity. What Financy pulled, with filters. Money out with no expense can
- * be added as an expense waiting for its receipt, or set aside as not a business expense. Money
- * in with a suggested document opens Record payment there, filled in. Nothing is recorded here.
- * The accountant reads only.
+ * R40: Expenses > Bank activity, the full list of what Financy pulled. R42: the same status column
+ * and actions as the Financy Dashboard (financy/actions.tsx), a filter for rows not counted, and
+ * filters read from the address so the dashboard's links open it filtered. Nothing records a
+ * payment here. The accountant reads only.
  */
 
 const STATUS_KEYS: Record<MatchStatus, MessageKey> = {
@@ -21,23 +22,39 @@ const STATUS_KEYS: Record<MatchStatus, MessageKey> = {
   added: 'expenses.bank.status.added',
 };
 
-const STATUS_CLASS: Record<MatchStatus, string> = {
-  unmatched: 'bg-band text-brand',
-  matched: 'bg-success/15 text-success',
-  ignored: 'bg-canvas text-muted border border-line',
-  added: 'bg-surface text-ink border border-line',
+const FLOW_KEYS: Record<Flow, MessageKey> = {
+  normal: 'expenses.bank.flow.normal',
+  own_transfer: 'expenses.bank.flow.ownTransfer',
+  card_payment: 'expenses.bank.flow.cardPayment',
 };
+
+const MATCH_STATUSES = Object.keys(STATUS_KEYS) as MatchStatus[];
+const FLOWS = Object.keys(FLOW_KEYS) as Flow[];
+
+/** The filter the address names. With none named, the current month. */
+function filterFrom(params: URLSearchParams): ActivityFilter {
+  const pick = <T extends string>(value: string | null, allowed: readonly T[]) => (value && (allowed as readonly string[]).includes(value) ? (value as T) : undefined);
+  const named = ['month', 'account', 'direction', 'status', 'flow'].some((k) => params.has(k));
+  if (!named) return { month: new Date().toISOString().slice(0, 7) };
+  return {
+    month: /^\d{4}-\d{2}$/.test(params.get('month') ?? '') ? params.get('month')! : undefined,
+    account: params.get('account') || undefined,
+    direction: pick(params.get('direction'), ['in', 'out'] as const),
+    status: pick(params.get('status'), MATCH_STATUSES),
+    flow: pick(params.get('flow'), FLOWS),
+  };
+}
 
 export function BankActivityPage() {
   const t = useT();
   const { locale } = usePreferences();
-  const [filter, setFilter] = useState<ActivityFilter>({ month: new Date().toISOString().slice(0, 7) });
+  const [params] = useSearchParams();
+  const [filter, setFilter] = useState<ActivityFilter>(() => filterFrom(params));
   const [rows, setRows] = useState<BankTransaction[] | null>(null);
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [canEdit, setCanEdit] = useState(false);
   const [notConnected, setNotConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [busyId, setBusyId] = useState<number | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<number, string>>({});
 
   const load = useCallback(async () => {
@@ -58,17 +75,9 @@ export function BankActivityPage() {
     void load();
   }, [load]);
 
-  const act = async (row: BankTransaction, action: () => Promise<{ transaction: BankTransaction }>) => {
-    setBusyId(row.id);
-    setRowErrors(({ [row.id]: _, ...rest }) => rest);
-    try {
-      const res = await action();
-      setRows((list) => (list ?? []).map((r) => (r.id === row.id ? res.transaction : r)));
-    } catch (err) {
-      setRowErrors((all) => ({ ...all, [row.id]: err instanceof Error && err.message ? err.message : t('expenses.bank.actionError') }));
-    } finally {
-      setBusyId(null);
-    }
+  const replace = (next: BankTransaction) => {
+    setRowErrors(({ [next.id]: _, ...rest }) => rest);
+    setRows((list) => (list ?? []).map((r) => (r.id === next.id ? next : r)));
   };
 
   const set = (patch: Partial<ActivityFilter>) => setFilter((f) => ({ ...f, ...patch }));
@@ -118,9 +127,20 @@ export function BankActivityPage() {
               {t('expenses.bank.statusLabel')}
               <select className={select} value={filter.status ?? ''} onChange={(e) => set({ status: (e.target.value || undefined) as MatchStatus | undefined })}>
                 <option value="">{t('expenses.bank.all')}</option>
-                {(Object.keys(STATUS_KEYS) as MatchStatus[]).map((s) => (
+                {MATCH_STATUSES.map((s) => (
                   <option key={s} value={s}>
                     {t(STATUS_KEYS[s])}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-muted">
+              {t('expenses.bank.flowLabel')}
+              <select className={select} value={filter.flow ?? ''} onChange={(e) => set({ flow: (e.target.value || undefined) as Flow | undefined })}>
+                <option value="">{t('expenses.bank.all')}</option>
+                {FLOWS.map((f) => (
+                  <option key={f} value={f}>
+                    {t(FLOW_KEYS[f])}
                   </option>
                 ))}
               </select>
@@ -159,7 +179,11 @@ export function BankActivityPage() {
                           </span>
                         )}
                         <span className="block text-xs text-muted" dir="auto">
-                          {[r.accountName ? `${r.accountName}${r.accountLast4 ? ` ··${r.accountLast4}` : ''}` : null, categoryText(r.categoryMain, r.categorySub, locale), r.installment ? t('expenses.bank.installment', { number: String(r.installment.number), total: String(r.installment.total) }) : null]
+                          {[
+                            r.accountName ? `${r.accountName}${r.accountLast4 ? ` ··${r.accountLast4}` : ''}` : null,
+                            categoryText(r.categoryMain, r.categorySub, locale),
+                            r.installment ? t('expenses.bank.installment', { number: String(r.installment.number), total: String(r.installment.total) }) : null,
+                          ]
                             .filter(Boolean)
                             .join(' · ')}
                         </span>
@@ -171,44 +195,18 @@ export function BankActivityPage() {
                         )}
                       </td>
                       <td className="px-3 py-2">
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_CLASS[r.matchStatus]}`}>{t(STATUS_KEYS[r.matchStatus])}</span>
+                        <StatusCell tx={r} />
                       </td>
                       <td className="px-3 py-2">
-                        <div className="flex flex-wrap gap-2">
-                          {r.expenseId !== null && (
+                        {canEdit ? (
+                          <RowActions tx={r} onChange={replace} onError={(message) => setRowErrors((all) => ({ ...all, [r.id]: message }))} />
+                        ) : (
+                          r.expenseId !== null && (
                             <Link to={`/expenses/${r.expenseId}`} className="text-sm text-brand hover:underline">
                               {t('expenses.bank.openExpense')}
                             </Link>
-                          )}
-                          {canEdit && r.matchStatus === 'unmatched' && r.amountMinor < 0 && (
-                            <>
-                              <button
-                                type="button"
-                                disabled={busyId === r.id}
-                                onClick={() => void act(r, () => financyApi.addExpense(r.id))}
-                                className="rounded-full border border-brand px-3 py-1 text-xs font-semibold text-brand hover:bg-band disabled:opacity-50"
-                              >
-                                {t('expenses.bank.addExpense')}
-                              </button>
-                              <button
-                                type="button"
-                                disabled={busyId === r.id}
-                                onClick={() => void act(r, () => financyApi.ignore(r.id))}
-                                className="rounded-full border border-line px-3 py-1 text-xs text-ink hover:bg-canvas disabled:opacity-50"
-                              >
-                                {t('expenses.bank.ignore')}
-                              </button>
-                            </>
-                          )}
-                          {canEdit && r.matchStatus === 'unmatched' && r.amountMinor > 0 && r.suggestion && (
-                            <Link
-                              to={`/income/documents/${r.suggestion.documentId}?payAmount=${r.amountMinor}&payOn=${r.date}`}
-                              className="rounded-full border border-brand px-3 py-1 text-xs font-semibold text-brand hover:bg-band"
-                            >
-                              {t('expenses.bank.recordPayment', { number: r.suggestion.displayNumber ?? String(r.suggestion.documentId) })}
-                            </Link>
-                          )}
-                        </div>
+                          )
+                        )}
                         {rowErrors[r.id] && (
                           <p role="alert" className="mt-1 text-xs text-danger">
                             {rowErrors[r.id]}

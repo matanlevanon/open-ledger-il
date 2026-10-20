@@ -44,6 +44,10 @@ export interface FinancyDetails {
 }
 
 export type MatchStatus = 'unmatched' | 'matched' | 'ignored' | 'added';
+/** R42: normal money, a transfer between own accounts, or a card bill paid from checking. */
+export type Flow = 'normal' | 'own_transfer' | 'card_payment';
+/** R42: the status column. */
+export type RowStatus = 'matched' | 'to_match' | 'suggested' | 'not_business' | 'not_counted';
 
 export interface BankAccount {
   id: string;
@@ -81,14 +85,53 @@ export interface BankTransaction {
   category: string | null;
   installment: { number: number; total: number } | null;
   matchStatus: MatchStatus;
+  flow: Flow;
+  status: RowStatus;
   expenseId: number | null;
   suggestion: { documentId: number; displayNumber: string | null } | null;
 }
 
-export interface BankSummary {
+export interface Tally {
+  income: number;
+  expenses: number;
+  net: number;
+}
+
+export interface CategoryRow {
+  key: string;
+  label: string;
+  amount: number;
+  /** Basis points: 4500 is 45%. */
+  shareBp: number;
+}
+
+/** R42: GET /api/financy/dashboard. Shekel minor units. */
+export interface FinancyDashboardData {
+  accountCount: number;
   lastSyncAt: string | null;
   status: 'connected' | 'error';
-  accounts: BankAccount[];
+  months: number;
+  liquidity: { cash: number; cardsCurrent: number; net: number };
+  month: { month: string; previousMonth: string; current: Tally; previous: Tally; changePct: { income: number | null; expenses: number | null; net: number | null } };
+  cashflow: { month: string; income: number; expenses: number }[];
+  categories: { expenses: { total: number; rows: CategoryRow[] }; income: { total: number; rows: CategoryRow[] } };
+  accounts: {
+    checking: { totals: Record<string, number>; rows: { id: string; provider: string | null; name: string | null; last4: string | null; balances: { currency: string; balanceMinor: number; ilsMinor: number | null }[] }[] };
+    cards: { totalCurrent: number; rows: { id: string; provider: string | null; name: string | null; last4: string | null; currentMinor: number; statementMinor: number | null; dueDay: string | null; blocked: boolean }[] };
+  };
+  recent: BankTransaction[];
+  toMatch: { out: { count: number; sum: number }; in: { count: number; sum: number } };
+  excluded: { sum: number; ownTransfer: number; cardPayment: number };
+  unconverted: string[];
+}
+
+export interface MatchCandidate {
+  kind: 'expense' | 'document';
+  id: number;
+  label: string;
+  date: string | null;
+  amountMinor: number;
+  currency: string;
 }
 
 export interface ActivityFilter {
@@ -96,6 +139,7 @@ export interface ActivityFilter {
   account?: string;
   direction?: 'in' | 'out';
   status?: MatchStatus;
+  flow?: Flow;
 }
 
 export const financyApi = {
@@ -115,6 +159,12 @@ export const financyApi = {
   },
   addExpense: (id: number) => apiSend<{ expenseId: number; transaction: BankTransaction }>('POST', `/financy/transactions/${id}/add-expense`),
   ignore: (id: number) => apiSend<{ transaction: BankTransaction }>('POST', `/financy/transactions/${id}/ignore`),
+  // R42
+  dashboard: (months: 3 | 6) => apiGet<{ dashboard: FinancyDashboardData | null }>(`/financy/dashboard?months=${months}`),
+  count: (id: number) => apiSend<{ transaction: BankTransaction }>('POST', `/financy/transactions/${id}/count`),
+  candidates: (id: number, q = '') => apiGet<{ candidates: MatchCandidate[] }>(`/financy/transactions/${id}/candidates${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  match: (id: number, target: { expenseId: number } | { documentId: number }) => apiSend<{ transaction: BankTransaction }>('PUT', `/financy/transactions/${id}/match`, target),
+  unmatch: (id: number) => apiSend<{ transaction: BankTransaction }>('DELETE', `/financy/transactions/${id}/match`),
 };
 
 /** "2026-10-20T07:00:12.345Z" as "2026-10-20 07:00". */

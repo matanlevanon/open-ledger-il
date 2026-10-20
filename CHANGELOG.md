@@ -27,6 +27,14 @@
 - The dashboard shows a Bank card, one line per currency. New report Bank vs books. MCP tools
   `bank_activity` and `bank_balances`.
 - Savings, loans and securities are never read. No owner name, national id or full account number is stored.
+- Dashboard > Financy Dashboard, a tab built like Financy's own dashboard: liquidity, income,
+  expenses and net against last month, cash flow, categories, the accounts, recent transactions with
+  their status and actions, and what waits to be matched. The Bank card leaves the main Dashboard.
+- Money is not counted twice: a card bill paid from checking and a transfer between your own accounts
+  stay out of income, expenses, matching and Bank vs books. "Count this" puts a wrong mark back.
+  Migration `4200_bank_flags.sql`.
+- Match a bank row to an expense or a document by hand, and Unmatch. MCP `bank_summary`, and
+  `bank_activity` returns each row's flow.
 
 ### Expenses
 - An expense the reader could not read shows "Not read automatically" with the reason and a

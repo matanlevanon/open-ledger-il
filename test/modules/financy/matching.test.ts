@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { first, run } from '../../../src/core/db';
+import { classifyFlows } from '../../../src/modules/financy/flows';
 import { matchBankTransactions, sharesWord } from '../../../src/modules/financy/matching';
 import { businessesApp, finalPaymentRequest } from '../businesses/helpers';
 import { env, resetFinancy } from './helpers';
@@ -109,16 +110,18 @@ describe('R40: matching', () => {
     expect(await matchBankTransactions(env.DB, 1)).toBe(0);
   });
 
-  it('a transfer between two of the owner accounts is ignored on both sides', async () => {
+  it('a transfer between two of the owner accounts is not counted on either side, and never matched (R42)', async () => {
     await expense({ amount: 50000, date: '2026-10-10' });
     const out = await tx({ amount: -50000, date: '2026-10-10', account: 'acc-checking', kind: 'BANK' });
     const back = await tx({ amount: 50000, date: '2026-10-10', account: 'acc-savings', kind: 'BANK' });
     const sameAccount = await tx({ amount: 700, date: '2026-10-10', account: 'acc-checking', kind: 'BANK' });
     const sameAccountOut = await tx({ amount: -700, date: '2026-10-10', account: 'acc-checking', kind: 'BANK' });
+    await classifyFlows(env.DB, 1);
     await matchBankTransactions(env.DB, 1);
-    expect((await row(out))!.match_status).toBe('ignored');
-    expect((await row(back))!.match_status).toBe('ignored');
-    expect((await row(sameAccount))!.match_status).toBe('unmatched');
+    const flow = async (id: number) => (await first<{ flow: string }>(env.DB, 'SELECT flow FROM bank_transactions WHERE id = ?', id))!.flow;
+    expect([await flow(out), await flow(back)]).toEqual(['own_transfer', 'own_transfer']);
+    expect(await row(out)).toMatchObject({ match_status: 'unmatched', matched_expense_id: null });
+    expect([await flow(sameAccount), await flow(sameAccountOut)]).toEqual(['normal', 'normal']);
     expect((await row(sameAccountOut))!.match_status).toBe('unmatched');
   });
 

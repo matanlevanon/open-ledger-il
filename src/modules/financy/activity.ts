@@ -3,19 +3,37 @@ import { all, first, nowIso, stmt, transaction } from '../../core/db';
 import { ConflictError, NotFoundError, ValidationError } from '../../core/errors';
 import { formatMinor, isCurrency } from '../../core/money';
 import type { Env } from '../../env';
+import { openDemands } from '../documents/balances';
 import { displayNumber } from '../documents/types';
 import { recordGivenExpense } from '../expenses/service';
 import { boiRateSource } from '../fx';
 import { categoryLabel } from './categories';
 import { loadConnection } from './connection';
+import { FLOWS, type Flow } from './flows';
 
 /**
- * R40 tasks 4, 6 and 7: what the pulled bank data shows. The Bank activity list and its two
- * actions, the dashboard's Bank card, and the rows of the Bank vs books report.
+ * R40 tasks 6 and 7, R42 tasks 3 and 5: what the pulled bank data shows. The Bank activity list
+ * and its actions (add, set aside, count, match and unmatch), the accounts, and the rows of the
+ * Bank vs books report.
  */
 
 export const MATCH_STATUSES = ['unmatched', 'matched', 'ignored', 'added'] as const;
 export type MatchStatus = (typeof MATCH_STATUSES)[number];
+
+/**
+ * R42: what the status column shows. Not counted (a transfer or a card bill) wins, then matched or
+ * added, then not business, then a suggested document, else to match.
+ */
+export const ROW_STATUSES = ['matched', 'to_match', 'suggested', 'not_business', 'not_counted'] as const;
+export type RowStatus = (typeof ROW_STATUSES)[number];
+
+export function rowStatus(r: { flow: Flow; match_status: MatchStatus; matched_document_id: number | null }): RowStatus {
+  if (r.flow !== 'normal') return 'not_counted';
+  if (r.match_status === 'matched' || r.match_status === 'added') return 'matched';
+  if (r.match_status === 'ignored') return 'not_business';
+  if (r.matched_document_id !== null) return 'suggested';
+  return 'to_match';
+}
 
 export interface BankTransactionView {
   id: number;
@@ -37,6 +55,9 @@ export interface BankTransactionView {
   category: string | null;
   installment: { number: number; total: number } | null;
   matchStatus: MatchStatus;
+  /** R42: normal, own_transfer or card_payment, and the status column's value. */
+  flow: Flow;
+  status: RowStatus;
   expenseId: number | null;
   /** A suggested payment request or transaction invoice for money in. Nothing is recorded yet. */
   suggestion: { documentId: number; displayNumber: string | null; remainingMinor: number | null } | null;
@@ -48,6 +69,8 @@ export interface ActivityFilter {
   accountId?: string;
   direction?: 'in' | 'out';
   status?: MatchStatus;
+  /** R42 */
+  flow?: Flow;
   limit?: number;
 }
 
@@ -69,6 +92,7 @@ interface TxSqlRow {
   installment_number: number | null;
   installment_total: number | null;
   match_status: MatchStatus;
+  flow: Flow;
   matched_expense_id: number | null;
   matched_document_id: number | null;
   doc_type: string | null;
@@ -94,6 +118,8 @@ function view(r: TxSqlRow): BankTransactionView {
     category: [categoryLabel(r.category_main), categoryLabel(r.category_sub)].filter(Boolean).join(' / ') || null,
     installment: r.installment_number !== null && r.installment_total !== null ? { number: r.installment_number, total: r.installment_total } : null,
     matchStatus: r.match_status,
+    flow: r.flow,
+    status: rowStatus(r),
     expenseId: r.matched_expense_id,
     suggestion:
       r.matched_document_id !== null && r.match_status === 'unmatched'
@@ -125,6 +151,11 @@ export async function listBankTransactions(db: D1Database, businessId: number, f
     clauses.push('t.match_status = ?');
     params.push(filter.status);
   }
+  if (filter.flow) {
+    if (!(FLOWS as readonly string[]).includes(filter.flow)) throw new ValidationError('Unknown flow.');
+    clauses.push('t.flow = ?');
+    params.push(filter.flow);
+  }
   const limit = Math.min(Math.max(filter.limit ?? 500, 1), 1000);
   return (await all<TxSqlRow>(db, `${TX_SELECT} WHERE ${clauses.join(' AND ')} ORDER BY t.booked_on DESC, t.id DESC LIMIT ${limit}`, ...params)).map(view);
 }
@@ -142,7 +173,7 @@ async function loadTx(db: D1Database, id: number, businessId: number): Promise<T
 export async function addAsExpense(env: Env, id: number, actor: AuditActor): Promise<{ expenseId: number; transaction: BankTransactionView }> {
   const businessId = actorBiz(actor);
   const tx = await loadTx(env.DB, id, businessId);
-  if (tx.amount_minor >= 0 || tx.match_status !== 'unmatched') {
+  if (tx.amount_minor >= 0 || tx.match_status !== 'unmatched' || tx.flow !== 'normal') {
     throw new ConflictError('bank_not_addable', 'Only money out that is not matched yet can be added as an expense.');
   }
   if (!isCurrency(tx.currency)) throw new ConflictError('bank_currency', `The Ledger keeps expenses in ILS, USD, EUR or GBP, not ${tx.currency}. Add this one by hand.`);
@@ -179,12 +210,131 @@ export async function addAsExpense(env: Env, id: number, actor: AuditActor): Pro
 export async function ignoreTransaction(db: D1Database, id: number, actor: AuditActor): Promise<BankTransactionView> {
   const businessId = actorBiz(actor);
   const tx = await loadTx(db, id, businessId);
-  if (tx.match_status !== 'unmatched') throw new ConflictError('bank_not_ignorable', 'Only a row that is not matched yet can be set aside.');
+  if (tx.match_status !== 'unmatched' || tx.flow !== 'normal') throw new ConflictError('bank_not_ignorable', 'Only a counted row that is not matched yet can be set aside.');
   await transaction(db, [
     stmt(db, "UPDATE bank_transactions SET match_status = 'ignored', updated_at = ? WHERE id = ?", nowIso(), id),
     auditStatement(db, actor, 'financy.ignore', 'bank_transaction', id, {}),
   ]);
   return view(await loadTx(db, id, businessId));
+}
+
+/** R42: "Count this". A row marked as a transfer or a card bill counts again, and later syncs keep it so. */
+export async function countTransaction(db: D1Database, id: number, actor: AuditActor): Promise<BankTransactionView> {
+  const businessId = actorBiz(actor);
+  const tx = await loadTx(db, id, businessId);
+  await transaction(db, [
+    stmt(db, "UPDATE bank_transactions SET flow = 'normal', flow_locked = 1, updated_at = ? WHERE id = ?", nowIso(), id),
+    auditStatement(db, actor, 'financy.count', 'bank_transaction', id, { was: tx.flow }),
+  ]);
+  return view(await loadTx(db, id, businessId));
+}
+
+/**
+ * R42 task 5: match money out to an expense by hand. The expense must be of this business and not
+ * matched to another row. A row set aside as not business can be matched too.
+ */
+export async function matchToExpense(db: D1Database, id: number, expenseId: number, actor: AuditActor): Promise<BankTransactionView> {
+  const businessId = actorBiz(actor);
+  const tx = await loadTx(db, id, businessId);
+  if (tx.amount_minor >= 0 || tx.flow !== 'normal' || (tx.match_status !== 'unmatched' && tx.match_status !== 'ignored')) {
+    throw new ConflictError('bank_not_matchable', 'Only counted money out with no expense yet can be matched to an expense.');
+  }
+  const expense = await first<{ id: number }>(db, 'SELECT id FROM expenses WHERE id = ? AND business_id = ?', expenseId, businessId);
+  if (!expense) throw new NotFoundError('Expense', expenseId);
+  const taken = await first<{ id: number }>(db, 'SELECT id FROM bank_transactions WHERE matched_expense_id = ? AND id <> ?', expenseId, id);
+  if (taken) throw new ConflictError('expense_already_matched', 'This expense is already matched to another bank row.');
+  await transaction(db, [
+    stmt(db, "UPDATE bank_transactions SET match_status = 'matched', matched_expense_id = ?, updated_at = ? WHERE id = ?", expenseId, nowIso(), id),
+    auditStatement(db, actor, 'financy.match', 'bank_transaction', id, { expenseId }),
+  ]);
+  return view(await loadTx(db, id, businessId));
+}
+
+/** R42 task 5: money in gets an open payment request or transaction invoice as its suggestion. No payment is recorded. */
+export async function suggestDocument(db: D1Database, id: number, documentId: number, actor: AuditActor): Promise<BankTransactionView> {
+  const businessId = actorBiz(actor);
+  const tx = await loadTx(db, id, businessId);
+  if (tx.amount_minor <= 0 || tx.flow !== 'normal' || tx.match_status !== 'unmatched') {
+    throw new ConflictError('bank_not_matchable', 'Only counted money in can be matched to a document.');
+  }
+  const open = (await openDemands(db, businessId)).find((d) => d.id === documentId);
+  if (!open) throw new NotFoundError('Open document', documentId);
+  await transaction(db, [
+    stmt(db, 'UPDATE bank_transactions SET matched_document_id = ?, updated_at = ? WHERE id = ?', documentId, nowIso(), id),
+    auditStatement(db, actor, 'financy.match', 'bank_transaction', id, { documentId }),
+  ]);
+  return view(await loadTx(db, id, businessId));
+}
+
+/** R42 task 5: "Unmatch". The expense or the suggested document lets go, and the row waits again. */
+export async function unmatchTransaction(db: D1Database, id: number, actor: AuditActor): Promise<BankTransactionView> {
+  const businessId = actorBiz(actor);
+  const tx = await loadTx(db, id, businessId);
+  if (tx.match_status === 'unmatched' && tx.matched_document_id === null) throw new ConflictError('bank_not_matched', 'This row is not matched.');
+  await transaction(db, [
+    stmt(db, "UPDATE bank_transactions SET match_status = 'unmatched', matched_expense_id = NULL, matched_document_id = NULL, updated_at = ? WHERE id = ?", nowIso(), id),
+    auditStatement(db, actor, 'financy.unmatch', 'bank_transaction', id, { expenseId: tx.matched_expense_id, documentId: tx.matched_document_id }),
+  ]);
+  return view(await loadTx(db, id, businessId));
+}
+
+export interface MatchCandidate {
+  kind: 'expense' | 'document';
+  id: number;
+  label: string;
+  date: string | null;
+  amountMinor: number;
+  currency: string;
+}
+
+/**
+ * R42 task 5: what a row can be matched to. Money out: expenses of the business within 15 days, in
+ * the row's currency, not matched to another row, closest amount first. Money in: open payment
+ * requests and transaction invoices in the row's currency, closest amount first. `q` narrows by
+ * supplier, client or number.
+ */
+export async function matchCandidates(db: D1Database, id: number, businessId: number, q?: string): Promise<MatchCandidate[]> {
+  const tx = await loadTx(db, id, businessId);
+  const needle = (q ?? '').trim().toLowerCase();
+  const amount = Math.abs(tx.amount_minor);
+  const closest = (a: MatchCandidate, b: MatchCandidate) => Math.abs(a.amountMinor - amount) - Math.abs(b.amountMinor - amount) || a.id - b.id;
+  if (tx.amount_minor < 0) {
+    const rows = await all<{ id: number; document_date: string | null; amount_minor: number; currency: string; supplier: string | null; document_number: string | null }>(
+      db,
+      `SELECT e.id, e.document_date, e.amount_minor, e.currency, s.name AS supplier, e.document_number
+         FROM expenses e LEFT JOIN suppliers s ON s.id = e.supplier_id
+        WHERE e.business_id = ? AND e.currency = ? AND e.status IN ('new', 'filed', 'returned')
+          AND e.document_date BETWEEN date(?, '-15 days') AND date(?, '+15 days')
+          AND NOT EXISTS (SELECT 1 FROM bank_transactions b WHERE b.matched_expense_id = e.id AND b.id <> ?)`,
+      businessId,
+      tx.currency,
+      tx.booked_on,
+      tx.booked_on,
+      id,
+    );
+    return rows
+      .map((e): MatchCandidate => ({ kind: 'expense', id: e.id, label: [e.supplier, e.document_number].filter(Boolean).join(' / ') || `Expense ${e.id}`, date: e.document_date, amountMinor: e.amount_minor, currency: e.currency }))
+      .filter((c) => !needle || c.label.toLowerCase().includes(needle))
+      .sort(closest)
+      .slice(0, 30);
+  }
+  const demands = (await openDemands(db, businessId)).filter((d) => d.currency === tx.currency);
+  if (demands.length === 0) return [];
+  const docs = await all<{ id: number; type: string; number: number | null; name_en: string | null; name_he: string | null }>(
+    db,
+    `SELECT d.id, d.type, d.number, c.name_en, c.name_he FROM documents d LEFT JOIN clients c ON c.id = d.client_id WHERE d.id IN (${demands.map(() => '?').join(',')})`,
+    ...demands.map((d) => d.id),
+  );
+  const byId = new Map(docs.map((d) => [d.id, d]));
+  return demands
+    .map((d): MatchCandidate => {
+      const doc = byId.get(d.id);
+      const label = [displayNumber(doc?.type ?? '', doc?.number ?? null), doc?.name_en || doc?.name_he].filter(Boolean).join(' / ');
+      return { kind: 'document', id: d.id, label, date: d.date, amountMinor: d.remaining_minor, currency: d.currency };
+    })
+    .filter((c) => !needle || c.label.toLowerCase().includes(needle))
+    .sort(closest)
+    .slice(0, 30);
 }
 
 export interface BankAccountView {
@@ -201,6 +351,9 @@ export interface BankAccountView {
   cardDueDate: string | null;
   /** One entry per currency, shekels first. */
   balances: { currency: string; balanceMinor: number; balanceType: string }[];
+  /** R42: the bank or card company id from Financy, and a card's last statement. */
+  provider: string | null;
+  statementMinor: number | null;
   blocked: boolean;
   updatedAt: string;
 }
@@ -219,6 +372,8 @@ export async function listBankAccounts(db: D1Database, businessId: number): Prom
     card_due_date: string | null;
     balances_json: string | null;
     blocked: number;
+    provider_id: string | null;
+    statement_minor: number | null;
     updated_at: string;
   }>(db, "SELECT * FROM bank_accounts WHERE business_id = ? ORDER BY CASE account_type WHEN 'CHECKING' THEN 0 WHEN 'CARD' THEN 1 ELSE 2 END, name", businessId);
   return rows.map((r) => ({
@@ -233,6 +388,8 @@ export async function listBankAccounts(db: D1Database, businessId: number): Prom
     creditLimitMinor: r.credit_limit_minor,
     cardDueDate: r.card_due_date,
     balances: parseBalances(r.balances_json, r.currency, r.balance_minor, r.balance_type),
+    provider: r.provider_id,
+    statementMinor: r.statement_minor,
     blocked: r.blocked === 1,
     updatedAt: r.updated_at,
   }));
@@ -246,20 +403,6 @@ function parseBalances(json: string | null, currency: string | null, minor: numb
     // Fall back to the single columns.
   }
   return minor !== null && currency ? [{ currency, balanceMinor: minor, balanceType: type ?? '' }] : [];
-}
-
-export interface BankSummary {
-  lastSyncAt: string | null;
-  status: 'connected' | 'error';
-  accounts: BankAccountView[];
-}
-
-/** The dashboard's Bank card: checking accounts and cards. Null when Financy is not connected. */
-export async function bankSummary(db: D1Database, businessId: number): Promise<BankSummary | null> {
-  const row = await loadConnection(db, businessId);
-  if (!row || row.status === 'disconnected') return null;
-  const accounts = (await listBankAccounts(db, businessId)).filter((a) => a.type === 'CHECKING' || a.type === 'CARD');
-  return { lastSyncAt: row.last_sync_at, status: row.status, accounts };
 }
 
 /** MCP and the routes refuse plainly when nothing is connected. */
@@ -291,7 +434,7 @@ export async function bankVsBooks(db: D1Database, from: string, to: string, busi
   const bankOut = await all<{ month: string; category: string | null; n: number; total: number }>(
     db,
     `SELECT strftime('%Y-%m', booked_on) AS month, category_main AS category, COUNT(*) AS n, -SUM(amount_minor) AS total
-       FROM bank_transactions WHERE business_id = ? AND currency = 'ILS' AND amount_minor < 0 AND booked_on BETWEEN ? AND ?
+       FROM bank_transactions WHERE business_id = ? AND currency = 'ILS' AND flow = 'normal' AND amount_minor < 0 AND booked_on BETWEEN ? AND ?
       GROUP BY month, category_main ORDER BY month, total DESC`,
     businessId,
     from,
@@ -300,7 +443,7 @@ export async function bankVsBooks(db: D1Database, from: string, to: string, busi
   const bankIn = await all<{ month: string; n: number; total: number }>(
     db,
     `SELECT strftime('%Y-%m', booked_on) AS month, COUNT(*) AS n, SUM(amount_minor) AS total
-       FROM bank_transactions WHERE business_id = ? AND currency = 'ILS' AND amount_minor > 0 AND booked_on BETWEEN ? AND ? GROUP BY month`,
+       FROM bank_transactions WHERE business_id = ? AND currency = 'ILS' AND flow = 'normal' AND amount_minor > 0 AND booked_on BETWEEN ? AND ? GROUP BY month`,
     businessId,
     from,
     to,
@@ -308,7 +451,7 @@ export async function bankVsBooks(db: D1Database, from: string, to: string, busi
   const gaps = await all<{ month: string; dir: string; n: number; total: number }>(
     db,
     `SELECT strftime('%Y-%m', booked_on) AS month, CASE WHEN amount_minor < 0 THEN 'out' ELSE 'in' END AS dir, COUNT(*) AS n, SUM(ABS(amount_minor)) AS total
-       FROM bank_transactions WHERE business_id = ? AND currency = 'ILS' AND match_status = 'unmatched' AND booked_on BETWEEN ? AND ?
+       FROM bank_transactions WHERE business_id = ? AND currency = 'ILS' AND flow = 'normal' AND match_status = 'unmatched' AND booked_on BETWEEN ? AND ?
         AND (amount_minor < 0 OR kind = 'BANK')
       GROUP BY month, dir`,
     businessId,

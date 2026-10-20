@@ -3,6 +3,7 @@ import { first, nowIso, stmt, transaction } from '../../core/db';
 import { ValidationError } from '../../core/errors';
 import { parseMajor } from '../../core/money';
 import type { Env } from '../../env';
+import type { RateSource } from '../fx';
 import { decryptToken, encryptToken, importTokenKey } from '../ita/crypto';
 import { FinancyClient, type FinancyCredentials } from './client';
 
@@ -16,6 +17,8 @@ export interface FinancyDeps {
   fetch: typeof fetch;
   /** Space between pages. Tests pass 0. */
   pageGapMs?: number;
+  /** R42: the rates the dashboard converts other currencies with. Default: the Bank of Israel rates. */
+  fx?: RateSource;
 }
 
 export interface ConnectionRow {
@@ -67,6 +70,12 @@ export function pickedIds(row: Pick<ConnectionRow, 'account_ids'> | null): strin
   } catch {
     return [];
   }
+}
+
+/** R42: the Financy Dashboard tab shows when Financy is connected and at least one account is picked. */
+export async function financyTabAvailable(db: D1Database, businessId: number): Promise<boolean> {
+  const row = await first<ConnectionRow>(db, 'SELECT * FROM financy_connection WHERE business_id = ?', businessId);
+  return Boolean(row && row.status !== 'disconnected' && pickedIds(row).length > 0);
 }
 
 export async function loadConnection(db: D1Database, businessId: number): Promise<ConnectionRow | null> {

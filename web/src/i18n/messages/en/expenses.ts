@@ -135,4 +135,8 @@ export const expenses = {
   'expenses.bank.addExpense': 'Add as expense',
   'expenses.bank.ignore': 'Not a business expense',
   'expenses.bank.recordPayment': 'Record payment on {number}',
+  'expenses.bank.flowLabel': 'Counted',
+  'expenses.bank.flow.normal': 'Counted',
+  'expenses.bank.flow.ownTransfer': 'Between own accounts',
+  'expenses.bank.flow.cardPayment': 'Card bill',
 };

@@ -3,6 +3,7 @@ import { all, nowIso, stmt, todayIsrael, transaction } from '../../core/db';
 import type { Env } from '../../env';
 import { type FinancyAccount, FinancyError, type FinancyTransaction } from './client';
 import { type FinancyDeps, type SyncCounts, clientFor, credentialsFor, loadConnection, pickedIds, toMinor } from './connection';
+import { classifyFlows } from './flows';
 import { matchBankTransactions } from './matching';
 
 /**
@@ -93,15 +94,17 @@ function accountStatement(db: D1Database, businessId: number, a: FinancyAccount)
   const primary = balances[0] ?? null;
   const available = accountBalances(a, ['interimAvailable']).find((b) => b.currency === primary?.currency) ?? null;
   const limit = typeof a.creditLimit === 'object' && a.creditLimit !== null ? a.creditLimit.amount : a.creditLimit;
+  // R42: a card's last statement, in the card's main currency.
+  const statement = accountType(a) === 'CARD' ? (accountBalances(a, ['closingBooked']).find((b) => b.currency === primary?.currency) ?? null) : null;
   return stmt(
     db,
     `INSERT INTO bank_accounts (business_id, financy_id, account_type, name, provider_id, masked_number, currency, balance_minor, balance_type, available_minor,
-       credit_limit_minor, card_due_date, balances_json, blocked, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       credit_limit_minor, card_due_date, balances_json, blocked, statement_minor, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT (business_id, financy_id) DO UPDATE SET account_type = excluded.account_type, name = excluded.name, provider_id = excluded.provider_id,
        masked_number = excluded.masked_number, currency = excluded.currency, balance_minor = excluded.balance_minor, balance_type = excluded.balance_type,
        available_minor = excluded.available_minor, credit_limit_minor = excluded.credit_limit_minor, card_due_date = excluded.card_due_date,
-       balances_json = excluded.balances_json, blocked = excluded.blocked, updated_at = excluded.updated_at`,
+       balances_json = excluded.balances_json, blocked = excluded.blocked, statement_minor = excluded.statement_minor, updated_at = excluded.updated_at`,
     businessId,
     a.id!,
     accountType(a),
@@ -116,6 +119,7 @@ function accountStatement(db: D1Database, businessId: number, a: FinancyAccount)
     accountType(a) === 'CARD' ? cardDueDay(a) : null,
     JSON.stringify(balances),
     isBlocked(a) ? 1 : 0,
+    statement?.balanceMinor ?? null,
     nowIso(),
   );
 }
@@ -231,6 +235,8 @@ export async function syncFinancy(
     );
     const fresh = new Set(values.filter((v) => !known.has(v.financyId)).map((v) => v.financyId)).size;
     await inChunks(env.DB, [...accounts.map((a) => accountStatement(env.DB, businessId, a)), ...values.map((v) => transactionStatement(env.DB, businessId, v))]);
+    // R42: transfers between own accounts and card bills first, so matching sees normal money only.
+    await classifyFlows(env.DB, businessId);
     const matched = await matchBankTransactions(env.DB, businessId);
 
     const counts: SyncCounts = { accounts: accounts.length, transactions: values.length, new: fresh, matched };

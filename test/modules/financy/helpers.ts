@@ -3,6 +3,7 @@ import { run } from '../../../src/core/db';
 import type { Env } from '../../../src/env';
 import { createApp } from '../../../src/index';
 import { createFinancyModule } from '../../../src/modules/financy';
+import type { RateSource } from '../../../src/modules/fx';
 import { clearFinancyTokenCache } from '../../../src/modules/financy/client';
 import { FAKE_CLIENT_ID, FAKE_CLIENT_SECRET, FAKE_USER_ID, FakeFinancy } from '../../../src/modules/financy/fake';
 
@@ -12,8 +13,9 @@ export const fenv = { ...(env as unknown as Env), ITA_TOKEN_KEY: TEST_KEY } as E
 export const CREDS = { clientId: FAKE_CLIENT_ID, clientSecret: FAKE_CLIENT_SECRET, userId: FAKE_USER_ID };
 export const TODAY = new Date().toISOString().slice(0, 10);
 
-export function financyApp(fake: FakeFinancy) {
-  const deps = () => ({ fetch: fake.fetch, pageGapMs: 0 });
+/** R42: the dashboard converts other currencies with `fx`. Tests pass fake rates, never the Bank of Israel. */
+export function financyApp(fake: FakeFinancy, fx?: RateSource) {
+  const deps = () => ({ fetch: fake.fetch, pageGapMs: 0, fx });
   return { app: createApp({ modules: [createFinancyModule(deps)] }), module: createFinancyModule(deps), deps: deps() };
 }
 

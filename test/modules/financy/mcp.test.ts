@@ -61,4 +61,16 @@ describe('R40: MCP bank tools', () => {
     expect(open.data.some((r: any) => r.id === first.id)).toBe(false);
     expect((await tool('bank_activity', { month: '2026-13' })).isError).toBe(true);
   });
+
+  it('R42: bank_activity says the flow of each row, and bank_summary gives the month', async () => {
+    await connect(financyApp(new FakeFinancy()).app);
+    const rows = (await tool('bank_activity', {})).data;
+    expect(rows.every((r: any) => ['normal', 'own_transfer', 'card_payment'].includes(r.flow))).toBe(true);
+    const summary = await tool('bank_summary', {});
+    expect(summary.isError).toBe(false);
+    expect(summary.data.month).toBe(TODAY.slice(0, 7));
+    expect(summary.data.liquidity).toEqual({ cash: 1410025, cardsCurrent: 231040, net: 1410025 - 231040 });
+    expect(summary.data.notCounted).toEqual({ sum: 0, ownTransfer: 0, cardPayment: 0 });
+    expect((await tool('bank_summary', { month: 'not-a-month' })).isError).toBe(true);
+  });
 });
