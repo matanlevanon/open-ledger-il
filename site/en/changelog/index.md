@@ -4,6 +4,16 @@ Every release, newest first. The current version is 1.6.0.
 
 ## 1.6.0 (2026-10-13)
 
+### Expenses
+
+- An expense the reader could not read shows "Not read automatically" with the reason and a **Read again** button, and a **Not read** badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration `3900_expense_read.sql`.
+- A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then says "<Provider> is busy right now (HTTP n)."
+- MCP `list_expenses` returns `readStatus`.
+
+### People
+
+- A business always keeps one active owner. The only owner has no Remove button and a locked role. The server answers 409 `last_owner`. Errors show in the row, and the table stays.
+
 ### Documents
 
 - A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel column and the two-column totals now show only on a USD, EUR or GBP document.

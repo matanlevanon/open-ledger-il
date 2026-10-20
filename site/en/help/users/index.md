@@ -38,6 +38,8 @@ Until step 5, Cloudflare stops the person at its own sign-in page.
 
 ## Remove a person
 
+A business always keeps one owner. The only owner has no Remove button and its role is locked. Add another owner first.
+
 1. In the Ledger: **Accountant > Users**, click **Revoke** on the row.
 2. In Cloudflare Access: open the same policy, remove the email from **Include > Emails** and click **Save policy**.
 

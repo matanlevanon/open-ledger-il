@@ -337,6 +337,10 @@ section[id] { scroll-margin-top: 64px; }
   </div>
   <section class="plain">
     <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="1-6-0-2026-10-13">1.6.0 (2026-10-13)</h2>
+<h3 id="expenses">Expenses</h3>
+<ul><li>An expense the reader could not read shows "Not read automatically" with the reason and a <b>Read again</b> button, and a <b>Not read</b> badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration <code>3900_expense_read.sql</code>.</li><li>A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then says "&lt;Provider&gt; is busy right now (HTTP n)."</li><li>MCP <code>list_expenses</code> returns <code>readStatus</code>.</li></ul>
+<h3 id="people">People</h3>
+<ul><li>A business always keeps one active owner. The only owner has no Remove button and a locked role. The server answers 409 <code>last_owner</code>. Errors show in the row, and the table stays.</li></ul>
 <h3 id="documents">Documents</h3>
 <ul><li>A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel column and the two-column totals now show only on a USD, EUR or GBP document.</li></ul>
 <h3 id="tax-authority-connection">Tax Authority connection</h3>

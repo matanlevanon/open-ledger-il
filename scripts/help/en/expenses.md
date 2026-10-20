@@ -126,6 +126,14 @@ Optional. Some people keep a monthly spreadsheet of their expenses. When the mon
 
 Rows with any other status, such as a totals row, are ignored.
 
+## Not read automatically
+
+Sometimes the AI reader can't read a file, most often because the AI provider is busy for a few minutes. The expense is saved anyway, with a **Not read** badge in the list and the reason on the expense.
+
+- Open the expense and click **Read again**. Fields you already typed stay as they are.
+- Or leave it. Every night the Ledger tries again, up to 4 reads in all, for 30 days.
+- Or type the fields yourself. The file stays attached.
+
 ## Bank and card transactions
 
 The Ledger collects receipts and invoices. It does not connect to your bank. For bank, credit card and Bit transactions, [Financy]({{financy}}) connects to Israeli banks and card companies through Open Banking, read only. It sorts the transactions and answers questions like how much you spent on software this month. It has a free plan.

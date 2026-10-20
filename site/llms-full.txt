@@ -434,6 +434,16 @@ Source: https://open-ledger.dev/help/
 
 ## 1.6.0 (2026-10-13)
 
+### Expenses
+
+- An expense the reader could not read shows "Not read automatically" with the reason and a **Read again** button, and a **Not read** badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration `3900_expense_read.sql`.
+- A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then says "<Provider> is busy right now (HTTP n)."
+- MCP `list_expenses` returns `readStatus`.
+
+### People
+
+- A business always keeps one active owner. The only owner has no Remove button and a locked role. The server answers 409 `last_owner`. Errors show in the row, and the table stays.
+
 ### Documents
 
 - A shekel document prints one total column. It printed "סה"כ לתשלום (₪)" twice. The shekel column and the two-column totals now show only on a USD, EUR or GBP document.
@@ -1079,6 +1089,16 @@ Source: https://open-ledger.dev/en/help/
 Every release, newest first. The current version is 1.6.0.
 
 ## 1.6.0 (2026-10-13)
+
+### Expenses
+
+- An expense the reader could not read shows "Not read automatically" with the reason and a **Read again** button, and a **Not read** badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration `3900_expense_read.sql`.
+- A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then says "<Provider> is busy right now (HTTP n)."
+- MCP `list_expenses` returns `readStatus`.
+
+### People
+
+- A business always keeps one active owner. The only owner has no Remove button and a locked role. The server answers 409 `last_owner`. Errors show in the row, and the table stays.
 
 ### Documents
 
@@ -1797,6 +1817,14 @@ Source: https://open-ledger.dev/help/email/
 
 שורות עם כל סטטוס אחר, כמו שורת סיכום, לא נקראות.
 
+## לא נקרא אוטומטית
+
+לפעמים קורא ה-AI לא מצליח לקרוא קובץ, בדרך כלל כי ספק ה-AI עמוס לכמה דקות. ההוצאה נשמרת בכל זאת, עם תגית **Not read** ברשימה והסיבה בהוצאה עצמה.
+
+- פותחים את ההוצאה ולוחצים **Read again**. שדות שכבר הקלדתם נשארים כמו שהם.
+- או משאירים. בכל לילה הלדג'ר מנסה שוב, עד 4 קריאות בסך הכל, במשך 30 יום.
+- או מקלידים את השדות בעצמכם. הקובץ נשאר מצורף.
+
 ## תנועות בבנק ובכרטיסי אשראי
 
 הלדג'ר אוסף קבלות וחשבוניות. הוא לא מתחבר לבנק. לתנועות בבנק, בכרטיסי האשראי ובביט, [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) מתחבר לבנקים ולחברות האשראי בישראל דרך בנקאות פתוחה, בהרשאת קריאה בלבד. הוא ממיין את התנועות ועונה על שאלות כמו כמה הוצאתם החודש על תוכנה. יש לו תוכנית חינמית.
@@ -2428,6 +2456,8 @@ Source: https://open-ledger.dev/help/updates-backups/
 
 ## הסרת אדם
 
+לכל עסק נשאר תמיד בעלים אחד. לבעלים היחיד אין כפתור הסרה, והתפקיד שלו נעול. מוסיפים קודם בעלים נוסף.
+
 1. בלדג'ר: **Accountant > Users**, לוחצים **Revoke** בשורה שלו.
 2. ב-Cloudflare Access: פותחים את אותה מדיניות, מוחקים את המייל מ-**Include > Emails** ולוחצים **Save policy**.
 
@@ -2959,6 +2989,14 @@ Optional. Some people keep a monthly spreadsheet of their expenses. When the mon
 | File link | No | The Drive link to the receipt. The Ledger attaches that file to the expense. |
 
 Rows with any other status, such as a totals row, are ignored.
+
+## Not read automatically
+
+Sometimes the AI reader can't read a file, most often because the AI provider is busy for a few minutes. The expense is saved anyway, with a **Not read** badge in the list and the reason on the expense.
+
+- Open the expense and click **Read again**. Fields you already typed stay as they are.
+- Or leave it. Every night the Ledger tries again, up to 4 reads in all, for 30 days.
+- Or type the fields yourself. The file stays attached.
 
 ## Bank and card transactions
 
@@ -3590,6 +3628,8 @@ Emails you listed in the installer are there already. For anyone new:
 Until step 5, Cloudflare stops the person at its own sign-in page.
 
 ## Remove a person
+
+A business always keeps one owner. The only owner has no Remove button and its role is locked. Add another owner first.
 
 1. In the Ledger: **Accountant > Users**, click **Revoke** on the row.
 2. In Cloudflare Access: open the same policy, remove the email from **Include > Emails** and click **Save policy**.
