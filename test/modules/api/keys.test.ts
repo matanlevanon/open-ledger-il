@@ -14,7 +14,7 @@ beforeAll(async () => {
   const bapp = businessesApp();
   await okIn(bapp, OWNER, null, 'GET', '/businesses');
   b2 = (await okIn(bapp, OWNER, 1, 'POST', '/businesses', { entityType: 'company', nameEn: 'Second Ltd', nameHe: 'שני בע"מ', taxId: '516666666', addressEn: 'Haifa' })).businessId;
-  await run(env.DB, "UPDATE businesses SET tax_id = '000000018' WHERE id = 1 AND (tax_id IS NULL OR tax_id = '')");
+  await run(env.DB, "UPDATE businesses SET tax_id = '000000018' WHERE id = 1");
 });
 
 describe('R41: API keys', () => {
