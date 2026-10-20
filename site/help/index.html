@@ -90,6 +90,7 @@ section.plain { padding-top: 24px; border-top: 0; }
 h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02em; margin: 0 0 10px; font-weight: 700; }
 .sec-head p { color: var(--text-dim); margin: 0; font-size: 17px; }
 .sec-head p:empty { display: none; }
+#financy a:not(.btn) { color: var(--blue); text-underline-offset: 3px; }
 /* Hero links: three equal secondary buttons under the demo button. */
 .cta-links .btn { min-width: 0; }
 .btn-setup { border-color: rgba(22,163,74,.45); color: var(--green-2); }
@@ -305,7 +306,7 @@ section[id] { scroll-margin-top: 64px; }
       Open Ledger IL
     </a>
     <nav class="nav-links" aria-label="ראשי">
-      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/" aria-current="page">עזרה</a>
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/" aria-current="page">עזרה</a>
     </nav>
     <div class="nav-end">
       <a class="lang" href="/en/help/" hreflang="en" lang="en">English</a>
@@ -314,7 +315,7 @@ section[id] { scroll-margin-top: 64px; }
     </div>
   </div>
   <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
-    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/" aria-current="page">עזרה</a>
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/" aria-current="page">עזרה</a>
     <a href="/en/help/" hreflang="en" lang="en">English</a>
     <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
@@ -338,7 +339,7 @@ section[id] { scroll-margin-top: 64px; }
   <section class="plain"><div class="wrap"><ul class="guide-list"><li><a href="/help/before-you-start/">לפני ההתקנה: מה צריך להכין</a><p>החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.</p></li><li><a href="/help/install/">התקנת Open Ledger IL צעד אחר צעד</a><p>כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג&#x27;ר, עם מה למלא ומה אפשר לדלג.</p></li><li><a href="/help/cloudflare-token/">יצירת ה-API token ב-Cloudflare</a><p>שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.</p></li><li><a href="/help/first-sign-in/">כניסה ראשונה והגדרות</a><p>הכניסה הראשונה ללדג&#x27;ר, פרטי העסק, לוגו, חתימה ומספור, ובדיקה של קבלה אחת לפני שמתחילים לעבוד.</p></li><li><a href="/help/users/">גישה לרואה חשבון או לעוזר</a><p>הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג&#x27;ר, בלדג&#x27;ר וב-Cloudflare Access, והסרה שלהם.</p></li><li><a href="/help/tax-authority/">חיבור לרשות המסים למספרי הקצאה</a><p>מספרי הקצאה עם תוכנת ההתקנה או בהתקנה עצמית: מה כל דרך דורשת, איך מתחברים, וההתחברות מחדש כל 90 יום.</p></li><li><a href="/help/first-invoice/">מהצעת מחיר לקבלה: המסמכים הראשונים</a><p>סדר המסמכים בלדג&#x27;ר, מהצעת מחיר ודרישת תשלום ועד הקבלה, ולמה הקבלה היא המסמך שנחשב.</p></li><li><a href="/help/digital-signature/">חתימה דיגיטלית: מה רשות המסים דורשת ואיך הלדג&#x27;ר עומד בכל כלל</a><p>הכללים למשלוח קבלות וחשבוניות במייל, לפי סעיף 18ב וחוק חתימה אלקטרונית, היכולת בלדג&#x27;ר שעונה על כל כלל, והצעד היחיד שנשאר לכם.</p></li><li><a href="/help/payment-providers/">גבייה עם גרואו, קארדקום או סולק אחר</a><p>סולק גובה את הכסף והלדג&#x27;ר מוציא את הקבלות, ידנית או אוטומטית, בלי שני מסמכים לאותו תשלום.</p></li><li><a href="/help/expenses/">הכנסת הוצאות ללדג&#x27;ר</a><p>העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.</p></li><li><a href="/help/email/">שליחת מסמכים במייל, בלי ספאם</a><p>חיבור Resend כדי שהלדג&#x27;ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.</p></li><li><a href="/help/connect-claude/">חיבור Claude או אפליקציית AI אחרת (MCP)</a><p>נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג&#x27;ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.</p></li><li><a href="/help/api/">API לאפליקציות אחרות</a><p>מחברים את Financy, Make, Zapier, n8n או את התוכנה של רואה החשבון ללדג&#x27;ר עם מפתח API, ומה ה-API יכול ולא יכול לעשות.</p></li><li><a href="/help/keys-later/">הוספה או החלפה של מפתח אחרי ההתקנה</a><p>הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג&#x27;ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.</p></li><li><a href="/help/updates-backups/">עדכונים וגיבויים</a><p>איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג&#x27;ר שומר גיבויים.</p></li><li><a href="/help/troubleshooting/">בעיות נפוצות ואיך פותרים אותן</a><p>פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.</p></li></ul></div></section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>

@@ -90,6 +90,7 @@ section.plain { padding-top: 24px; border-top: 0; }
 h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02em; margin: 0 0 10px; font-weight: 700; }
 .sec-head p { color: var(--text-dim); margin: 0; font-size: 17px; }
 .sec-head p:empty { display: none; }
+#financy a:not(.btn) { color: var(--blue); text-underline-offset: 3px; }
 /* Hero links: three equal secondary buttons under the demo button. */
 .cta-links .btn { min-width: 0; }
 .btn-setup { border-color: rgba(22,163,74,.45); color: var(--green-2); }
@@ -305,7 +306,7 @@ section[id] { scroll-margin-top: 64px; }
       Open Ledger IL
     </a>
     <nav class="nav-links" aria-label="ראשי">
-      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a>
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
       <a class="lang" href="/en/changelog/" hreflang="en" lang="en">English</a>
@@ -314,7 +315,7 @@ section[id] { scroll-margin-top: 64px; }
     </div>
   </div>
   <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
-    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a>
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a>
     <a href="/en/changelog/" hreflang="en" lang="en">English</a>
     <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
@@ -342,7 +343,7 @@ section[id] { scroll-margin-top: 64px; }
 <h3 id="bank-and-card-data-financy">Bank and card data (Financy)</h3>
 <ul><li>Settings &gt; Expenses &gt; Financy connection: paste the Client ID, Client Secret and User ID from Financy &gt; Settings &gt; API. The Ledger tests them and saves them with the secret encrypted. Then tick the business accounts. Only those are pulled, 90 days at first. Migrations <code>4000_financy.sql</code> and <code>4001_financy_accounts.sql</code>.</li><li>Sync now, Choose accounts, Replace details, Disconnect and Delete bank data. Unticking an account deletes its stored transactions after a confirm.</li><li>The daily cron pulls the last 35 days. Money out is matched to expenses by amount and date, deposits get a suggested payment request, and transfers between own accounts are set aside.</li><li>Expenses &gt; Bank activity: Add as expense, Not a business expense, and Record payment on the suggested document, filled in for the person to confirm.</li><li>The dashboard shows a Bank card, one line per currency. New report Bank vs books. MCP tools <code>bank_activity</code> and <code>bank_balances</code>.</li><li>Savings, loans and securities are never read. No owner name, national id or full account number is stored.</li><li>Dashboard &gt; Financy Dashboard, a tab built like Financy's own dashboard: liquidity, income, expenses and net against last month, cash flow, categories, the accounts, recent transactions with their status and actions, and what waits to be matched. The Bank card leaves the main Dashboard.</li><li>Money is not counted twice: a card bill paid from checking and a transfer between your own accounts stay out of income, expenses, matching and Bank vs books. "Count this" puts a wrong mark back. Migration <code>4200_bank_flags.sql</code>.</li><li>Match a bank row to an expense or a document by hand, and Unmatch. MCP <code>bank_summary</code>, and <code>bank_activity</code> returns each row's flow.</li></ul>
 <h3 id="expenses">Expenses</h3>
-<ul><li>An expense the reader could not read shows "Not read automatically" with the reason and a <b>Read again</b> button, and a <b>Not read</b> badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration <code>3900_expense_read.sql</code>.</li><li>A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then says "&lt;Provider&gt; is busy right now (HTTP n)."</li><li>MCP <code>list_expenses</code> returns <code>readStatus</code>.</li></ul>
+<ul><li>An expense the reader could not read shows "Not read automatically" with the reason and a <b>Read again</b> button, and a <b>Not read</b> badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration <code>3900_expense_read.sql</code>.</li><li>A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then names the provider, for example "Gemini is busy right now (HTTP 503)."</li><li>MCP <code>list_expenses</code> returns <code>readStatus</code>.</li></ul>
 <h3 id="people">People</h3>
 <ul><li>A business always keeps one active owner. The only owner has no Remove button and a locked role. The server answers 409 <code>last_owner</code>. Errors show in the row, and the table stays.</li></ul>
 <h3 id="documents">Documents</h3>
@@ -410,7 +411,7 @@ section[id] { scroll-margin-top: 64px; }
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>

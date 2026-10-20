@@ -29,13 +29,6 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/features/"/>
   </url>
   <url>
-    <loc>https://open-ledger.dev/guides/</loc>
-    <lastmod>2026-10-20</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/"/>
-    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/"/>
-  </url>
-  <url>
     <loc>https://open-ledger.dev/help/</loc>
     <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/"/>
@@ -202,13 +195,6 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/features/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/features/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/features/"/>
-  </url>
-  <url>
-    <loc>https://open-ledger.dev/en/guides/</loc>
-    <lastmod>2026-10-20</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/"/>
-    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/"/>
   </url>
   <url>
     <loc>https://open-ledger.dev/en/help/</loc>

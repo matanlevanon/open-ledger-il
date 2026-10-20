@@ -229,11 +229,11 @@ Source: https://open-ledger.dev/
 
 בנק וכרטיסי אשראי
 
-## התמונה המלאה עם Financy
+## התמונה המלאה עם [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
 
-מחברים את Financy, והתנועות בבנק ובכרטיסי האשראי נכנסות ללדג'ר ליד החשבוניות וההוצאות. קריאה בלבד. אתה בוחר אילו חשבונות שייכים לעסק.
+מחברים את [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d), והתנועות בבנק ובכרטיסי האשראי נכנסות ללדג'ר ליד החשבוניות וההוצאות. קריאה בלבד. אתה בוחר אילו חשבונות שייכים לעסק.
 
-### דשבורד Financy
+### דשבורד [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
 
 לשונית ליד הדשבורד: נזילות, הכנסות, הוצאות ונטו מול החודש הקודם, תזרים, קטגוריות וכל החשבונות. חיוב כרטיס מהעו"ש לא נספר פעמיים.
 
@@ -243,7 +243,7 @@ Source: https://open-ledger.dev/
 
 ### הגדרה בהגדרות
 
-מדביקים את ה-Client ID, ה-Client Secret וה-User ID מ-Financy. אחר כך סנכרון, בחירת חשבונות, החלפת פרטים, ניתוק או מחיקת נתוני הבנק.
+מדביקים את ה-Client ID, ה-Client Secret וה-User ID מ-[Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d). אחר כך סנכרון, בחירת חשבונות, החלפת פרטים, ניתוק או מחיקת נתוני הבנק.
 
 **דשבורד Financy.** החודש מול החודש הקודם, תזרים וכל חשבון של העסק, במטבע שלו או בשקלים.
 
@@ -255,7 +255,7 @@ Source: https://open-ledger.dev/
 
 ## API לכלים האחרים שלך
 
-בהגדרות > MCP ו-API כל אפליקציה מקבלת מפתח משלה. Financy, Make, Zapier, n8n או התוכנה של רואה החשבון קוראים לקוחות, מסמכים, תשלומים והוצאות. מפתח כתיבה גם יוצר לקוחות וטיוטות. דרך ה-API שום דבר לא מופק, לא נשלח ולא נמחק.
+בהגדרות > MCP ו-API כל אפליקציה מקבלת מפתח משלה. [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d), Make, Zapier, n8n או התוכנה של רואה החשבון קוראים לקוחות, מסמכים, תשלומים והוצאות. מפתח כתיבה גם יוצר לקוחות וטיוטות. דרך ה-API שום דבר לא מופק, לא נשלח ולא נמחק.
 
 [למדריך ה-API](https://open-ledger.dev/help/api/) [לאתר Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
 
@@ -444,15 +444,6 @@ Source: https://open-ledger.dev/demo/
 
 ---
 
-# מדריכים
-
-המדריכים נכתבים ועוברים בדיקה. הם יופיעו כאן אחרי הפרסום.
-
-Source: https://open-ledger.dev/guides/
-
-
----
-
 # עזרה
 
 הוראות צעד אחר צעד, לפי הסדר שבו תצטרכו אותן. בהתקנה ראשונה, התחילו מלמעלה.
@@ -509,7 +500,7 @@ Source: https://open-ledger.dev/help/
 ### Expenses
 
 - An expense the reader could not read shows "Not read automatically" with the reason and a **Read again** button, and a **Not read** badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration `3900_expense_read.sql`.
-- A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then says "<Provider> is busy right now (HTTP n)."
+- A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then names the provider, for example "Gemini is busy right now (HTTP 503)."
 - MCP `list_expenses` returns `readStatus`.
 
 ### People
@@ -964,11 +955,11 @@ What ships today, grouped by job.
 
 Bank and card data
 
-## See the whole picture with Financy
+## See the whole picture with [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
 
-Connect Financy and your bank and credit card transactions arrive in the Ledger next to your invoices and expenses. Read only. You pick the accounts that belong to the business.
+Connect [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) and your bank and credit card transactions arrive in the Ledger next to your invoices and expenses. Read only. You pick the accounts that belong to the business.
 
-### Financy Dashboard
+### [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) Dashboard
 
 A tab next to the Dashboard: liquidity, income, expenses and net against last month, cash flow, categories and every account. A card bill paid from checking is never counted twice.
 
@@ -978,7 +969,7 @@ Each transaction shows Matched, Suggested, To match or Not counted, with the nex
 
 ### Set up in Settings
 
-Paste the Client ID, Client Secret and User ID from Financy. Then Sync now, Choose accounts, Replace details, Disconnect or Delete bank data.
+Paste the Client ID, Client Secret and User ID from [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d). Then Sync now, Choose accounts, Replace details, Disconnect or Delete bank data.
 
 **Financy Dashboard.** This month against last month, cash flow and every business account, in its own currency or in shekels.
 
@@ -990,7 +981,7 @@ Paste the Client ID, Client Secret and User ID from Financy. Then Sync now, Choo
 
 ## An API for your other tools
 
-Settings > MCP and API gives each app its own key. Financy, Make, Zapier, n8n or your accountant's software read clients, documents, payments and expenses. A write key also creates clients and drafts. Nothing finalizes, sends or deletes through the API.
+Settings > MCP and API gives each app its own key. [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d), Make, Zapier, n8n or your accountant's software read clients, documents, payments and expenses. A write key also creates clients and drafts. Nothing finalizes, sends or deletes through the API.
 
 [Read the API guide](https://open-ledger.dev/en/help/api/) [Open Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
 
@@ -1179,15 +1170,6 @@ Source: https://open-ledger.dev/en/demo/
 
 ---
 
-# Guides
-
-The guides are being written and reviewed. They will appear here once published.
-
-Source: https://open-ledger.dev/en/guides/
-
-
----
-
 # Help
 
 Step-by-step instructions, in the order you need them. Start at the top if this is your first install.
@@ -1242,7 +1224,7 @@ Every release, newest first. The current version is 1.7.0.
 ### Expenses
 
 - An expense the reader could not read shows "Not read automatically" with the reason and a **Read again** button, and a **Not read** badge in the list. Fields already typed stay. The daily cron reads such expenses again, up to 10 a business, 4 reads in all, for 30 days, and stops when the AI provider is busy. Migration `3900_expense_read.sql`.
-- A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then says "<Provider> is busy right now (HTTP n)."
+- A busy AI provider (429, 5xx) gets a pause of 3 seconds, or its Retry-After up to 8, before the one retry. The note then names the provider, for example "Gemini is busy right now (HTTP 503)."
 - MCP `list_expenses` returns `readStatus`.
 
 ### People

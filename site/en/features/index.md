@@ -123,11 +123,11 @@ What ships today, grouped by job.
 
 Bank and card data
 
-## See the whole picture with Financy
+## See the whole picture with [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
 
-Connect Financy and your bank and credit card transactions arrive in the Ledger next to your invoices and expenses. Read only. You pick the accounts that belong to the business.
+Connect [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) and your bank and credit card transactions arrive in the Ledger next to your invoices and expenses. Read only. You pick the accounts that belong to the business.
 
-### Financy Dashboard
+### [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d) Dashboard
 
 A tab next to the Dashboard: liquidity, income, expenses and net against last month, cash flow, categories and every account. A card bill paid from checking is never counted twice.
 
@@ -137,7 +137,7 @@ Each transaction shows Matched, Suggested, To match or Not counted, with the nex
 
 ### Set up in Settings
 
-Paste the Client ID, Client Secret and User ID from Financy. Then Sync now, Choose accounts, Replace details, Disconnect or Delete bank data.
+Paste the Client ID, Client Secret and User ID from [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d). Then Sync now, Choose accounts, Replace details, Disconnect or Delete bank data.
 
 **Financy Dashboard.** This month against last month, cash flow and every business account, in its own currency or in shekels.
 
@@ -149,7 +149,7 @@ Paste the Client ID, Client Secret and User ID from Financy. Then Sync now, Choo
 
 ## An API for your other tools
 
-Settings > MCP and API gives each app its own key. Financy, Make, Zapier, n8n or your accountant's software read clients, documents, payments and expenses. A write key also creates clients and drafts. Nothing finalizes, sends or deletes through the API.
+Settings > MCP and API gives each app its own key. [Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d), Make, Zapier, n8n or your accountant's software read clients, documents, payments and expenses. A write key also creates clients and drafts. Nothing finalizes, sends or deletes through the API.
 
 [Read the API guide](https://open-ledger.dev/en/help/api/) [Open Financy](https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d)
 

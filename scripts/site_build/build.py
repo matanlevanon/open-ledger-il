@@ -266,11 +266,19 @@ GA4_ID = re.compile(r'^G-[A-Z0-9]{4,20}$')
 CF_TOKEN = re.compile(r'^[0-9a-f]{32}$')
 
 
+# Guides show in the menu only once one is published in that language.
+GUIDES_LIVE = {}
+
+
+def nav_items(lang):
+    return [(k, label) for k, label in NAV[lang] if k != 'guides' or GUIDES_LIVE.get(lang, True)]
+
+
 def header(page):
     lang = page['lang']
     other = 'en' if lang == 'he' else 'he'
     links = []
-    for key, label in NAV[lang]:
+    for key, label in nav_items(lang):
         current = ' aria-current="page"' if page['key'] == key or (page['key'] == 'guide' and key == 'guides') or (page['key'] == 'helpitem' and key == 'help') else ''
         links.append(f'<a href="{path_of(lang, key)}"{current}>{E(label)}</a>')
     switch_to = (page.get('pair') or {}).get(other) or path_of(other, 'home')
@@ -318,7 +326,7 @@ def footer(page):
         (path_of(lang, 'changelog'), PAGES[lang]['changelog']['crumb']),
     ]
     links = '\n      '.join(f'<a href="{u}">{E(t)}</a>' for u, t in items)
-    pages = ''.join(f'<a href="{path_of(lang, key)}">{E(label)}</a>' for key, label in [('home', 'Home' if lang == 'en' else 'בית')] + list(NAV[lang]))
+    pages = ''.join(f'<a href="{path_of(lang, key)}">{E(label)}</a>' for key, label in [('home', 'Home' if lang == 'en' else 'בית')] + nav_items(lang))
     return f'''<footer>
   <nav class="wrap foot-pages" aria-label="{E('Pages' if lang == 'en' else 'עמודים')}">{pages}</nav>
   <div class="wrap foot">
@@ -489,13 +497,20 @@ def section_gallery(lang):
   </section>'''
 
 
-def _feat_grid(items):
+def _feat_grid(items, fmt=None):
+    fmt = fmt or E
     return '\n'.join(
         f'''        <div class="feat">
           <div class="ico" aria-hidden="true">{ico}</div>
-          <h3>{E(h)}</h3>
-          <p>{E(p)}</p>
+          <h3>{fmt(h)}</h3>
+          <p>{fmt(p)}</p>
         </div>''' for ico, h, p in items)
+
+
+def financy_linked(text):
+    """Escapes the text, then makes every "Financy" the partner link."""
+    a = f'<a href="{FINANCY_URL}" rel="sponsored noopener" target="_blank">Financy</a>'
+    return E(text).replace('Financy', a)
 
 
 def section_own(lang):
@@ -528,18 +543,18 @@ def section_financy(lang):
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">{E(c['fin_eyebrow'])}</div>
-        <h2>{E(c['fin_h'])}</h2>
-        <p>{E(c['fin_p'])}</p>
+        <h2>{financy_linked(c['fin_h'])}</h2>
+        <p>{financy_linked(c['fin_p'])}</p>
       </div>
       <div class="features">
-{_feat_grid(c['fin'])}
+{_feat_grid(c['fin'], financy_linked)}
       </div>
       <div class="gallery">
 {shots}
       </div>
       <div class="sec-head" style="margin-top:64px">
         <h2>{E(c['api_h'])}</h2>
-        <p>{E(c['api_p'])}</p>
+        <p>{financy_linked(c['api_p'])}</p>
       </div>
       <div class="actions" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn-ghost" href="{api}">{E(c['api_link'])}</a> <a class="btn btn-ghost" href="{FINANCY_URL}" rel="sponsored noopener" target="_blank">{E(c['fin_cta'])}</a></div>
       <p class="shot-cap">{E(c['fin_note'])}</p>
@@ -780,6 +795,8 @@ def build_guides_index(lang, guides):
         items = ''.join(f'<li><a href="{g["path"]}">{E(g["title"])}</a><p>{E(g["desc"])}</p></li>' for g in published)
         body = f'<ul class="guide-list">{items}</ul>'
     else:
+        # Not in the menu, the sitemap or llms.txt until a guide is published.
+        page['noindex'] = True
         body = f'<p class="lead">{E(UI[lang]["guides_none"])}</p>'
     main = page_intro(page) + f'\n  <section class="plain"><div class="wrap">{body}</div></section>'
     return page, main, ''
@@ -1217,6 +1234,8 @@ def main():
     rates = load_rates()
     guides = load_guides(rates)
     helps = load_guides(rates, HELP_DIR, 'helpitem')
+    for lang in LANGS:
+        GUIDES_LIVE[lang] = any(g['lang'] == lang and g['published'] for g in guides)
     built = []
     for lang in LANGS:
         for key in KEYS:
