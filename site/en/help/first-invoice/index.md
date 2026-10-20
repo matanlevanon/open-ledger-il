@@ -51,6 +51,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)

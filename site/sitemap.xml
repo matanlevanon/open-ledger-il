@@ -43,6 +43,13 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/"/>
   </url>
   <url>
+    <loc>https://open-ledger.dev/help/api/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/api/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/api/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/api/"/>
+  </url>
+  <url>
     <loc>https://open-ledger.dev/help/before-you-start/</loc>
     <lastmod>2026-10-17</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/before-you-start/"/>
@@ -58,7 +65,7 @@
   </url>
   <url>
     <loc>https://open-ledger.dev/help/connect-claude/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/connect-claude/"/>
@@ -211,6 +218,13 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/"/>
   </url>
   <url>
+    <loc>https://open-ledger.dev/en/help/api/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/api/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/api/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/api/"/>
+  </url>
+  <url>
     <loc>https://open-ledger.dev/en/help/before-you-start/</loc>
     <lastmod>2026-10-17</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/before-you-start/"/>
@@ -226,7 +240,7 @@
   </url>
   <url>
     <loc>https://open-ledger.dev/en/help/connect-claude/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/connect-claude/"/>

@@ -417,6 +417,7 @@ Source: https://open-ledger.dev/guides/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)חיבור Resend כדי שהלדג'ר ישלח קבלות וחשבוניות מהדומיין שלכם, והגדרות ה-DNS והניסוח שמשאירים אותן בתיבה הראשית.
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)מחברים את Financy, Make, Zapier, n8n או את התוכנה של רואה החשבון ללדג'ר עם מפתח API, ומה ה-API יכול ולא יכול לעשות.
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
@@ -433,6 +434,13 @@ Source: https://open-ledger.dev/help/
 יומן השינויים נכתב באנגלית.
 
 ## 1.6.0 (2026-10-13)
+
+### API
+
+- A public REST API at `/v1` for Financy, Make, Zapier, n8n and an accountant's software. Each call carries an API key and the Business ID. Read keys read the business, clients, documents with lines and payments, the client copy PDF, payments, expenses and suppliers. Write keys can also create clients and draft documents. Nothing finalizes, sends, credits or deletes.
+- Cursor paging, `updatedSince`, 120 requests a minute per key, `Idempotency-Key` on writes, and `/v1/openapi.json`. Migration `4100_api_keys.sql`.
+- Settings > MCP is now "MCP and API": the MCP section as before, then the API address, the Business ID and the keys. A key shows once.
+- A Ledger set up by hand adds a Bypass Access application for the path `v1`, see `docs/cloudflare-access.md`.
 
 ### Bank and card data (Financy)
 
@@ -1084,6 +1092,7 @@ Step-by-step instructions, in the order you need them. Start at the top if this 
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)Connect Resend so the Ledger emails receipts and invoices from your own domain, and the DNS and wording that keep them in the inbox.
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
+- [API for other apps](https://open-ledger.dev/en/help/api/)Connect Financy, Make, Zapier, n8n or your accountant's software to your Ledger with an API key, and what the API can and cannot do.
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
@@ -1098,6 +1107,13 @@ Source: https://open-ledger.dev/en/help/
 Every release, newest first. The current version is 1.6.0.
 
 ## 1.6.0 (2026-10-13)
+
+### API
+
+- A public REST API at `/v1` for Financy, Make, Zapier, n8n and an accountant's software. Each call carries an API key and the Business ID. Read keys read the business, clients, documents with lines and payments, the client copy PDF, payments, expenses and suppliers. Write keys can also create clients and draft documents. Nothing finalizes, sends, credits or deletes.
+- Cursor paging, `updatedSince`, 120 requests a minute per key, `Idempotency-Key` on writes, and `/v1/openapi.json`. Migration `4100_api_keys.sql`.
+- Settings > MCP is now "MCP and API": the MCP section as before, then the API address, the Business ID and the keys. A key shows once.
+- A Ledger set up by hand adds a Bypass Access application for the path `v1`, see `docs/cloudflare-access.md`.
 
 ### Bank and card data (Financy)
 
@@ -1330,6 +1346,129 @@ Source: https://open-ledger.dev/en/license/
 
 ---
 
+# API לאפליקציות אחרות
+
+מחברים את Financy, Make, Zapier, n8n או את התוכנה של רואה החשבון ללדג'ר עם מפתח API, ומה ה-API יכול ולא יכול לעשות.
+
+עודכן 2026-10-20
+
+ה-API נותן לאפליקציה אחרת לקרוא את הלדג'ר: Financy שמשווה חיובים בבנק, Make, Zapier או n8n שמעבירים נתונים בין אפליקציות, או התוכנה של רואה החשבון. כל אפליקציה מקבלת מפתח משלה, ואפשר לנתק כל אחת מהן בכל רגע.
+
+ל-Claude ולאפליקציות AI אחרות משתמשים ב-[MCP](https://open-ledger.dev/help/connect-claude/).
+
+## יצירת מפתח
+
+1. פותחים **הגדרות > MCP ו-API**. רק בעלים רואים את הלשונית הזו.
+2. תחת **API לאפליקציות אחרות** לוחצים **יצירת מפתח**.
+3. נותנים לו שם לפי האפליקציה, למשל "Financy".
+4. בוחרים **קריאה** או **קריאה וכתיבה**. לרוב האפליקציות מספיקה קריאה.
+5. לוחצים **יצירת מפתח**. המפתח מוצג פעם אחת. מעתיקים אותו ולוחצים **העתקתי**.
+
+המפתח אבד? מבטלים אותו ויוצרים חדש.
+
+## מה נותנים לאפליקציה
+
+שלושה ערכים, כולם באותו עמוד:
+
+- **כתובת ה-API**: `https://<הלדג'ר שלכם>/v1`
+- **מזהה העסק**: המספר שלידה. גם מספר העוסק של העסק עובד.
+- **המפתח**: מתחיל ב-`ol_live_`
+
+## מפתח קריאה ומפתח כתיבה
+
+- מפתח **קריאה** קורא את פרטי העסק, לקוחות, מסמכים, קובצי PDF, תשלומים, הוצאות וספקים.
+- מפתח **כתיבה** יכול גם ליצור לקוחות וטיוטות מסמכים: הצעות מחיר, דרישות תשלום, חשבונות עסקה וקבלות.
+- אף מפתח לא יכול להפיק, לשלוח, לזכות, לבטל או למחוק מסמך. טיוטה מה-API מחכה בלדג'ר עד שאתם בודקים ומפיקים אותה בעצמכם.
+
+## ביטול מפתח
+
+**הגדרות > MCP ו-API**, בשורה של המפתח, **ביטול מפתח**, ומאשרים. האפליקציה שהשתמשה בו מפסיקה לעבוד מיד. המתג של ה-MCP באותו עמוד מכבה רק את ה-MCP, לא את ה-API.
+
+## למפתחים
+
+### אימות
+
+כל קריאה נושאת שתי כותרות:
+
+`Authorization: Bearer ol_live_... X-Business-Id: 1`
+
+מפתח חסר, לא מוכר או מבוטל מקבל 401. מפתח של עסק אחר מקבל 403.
+
+### דפדוף וסנכרון
+
+רשימות עונות `{ "data": ..., "nextCursor": "..." }`. מעבירים `cursor=<nextCursor>` לעמוד הבא, עד ש-`nextCursor` הוא `null`. `limit` בין 1 ל-200, ברירת המחדל 50. מוסיפים `updatedSince=2026-10-01T00:00:00Z` כדי לקבל רק מה שהשתנה מאז הסנכרון האחרון.
+
+### כסף ותאריכים
+
+סכומים ביחידות קטנות עם שדה `currency`: `11800` עם `ILS` הם ₪118.00. תאריכים `YYYY-MM-DD`. זמנים ב-ISO, ב-UTC. מזהים הם מספרים.
+
+### שגיאות
+
+כל שגיאה היא `{ "error": { "code": "...", "message": "..." } }` עם 400, 401, 403, 404, 409, 422 או 429. מפתח קריאה בקריאת כתיבה מקבל 403 `scope_required`.
+
+### מגבלת קצב
+
+120 בקשות לדקה לכל מפתח. מעבר לזה, 429 עם כותרת `Retry-After` בשניות.
+
+### Idempotency
+
+שולחים `Idempotency-Key: <מחרוזת ייחודית>` ב-POST. אותו מפתח ואותו גוף בתוך 24 שעות מחזירים את התשובה הראשונה ולעולם לא יוצרים טיוטה שנייה. אותו מפתח עם גוף אחר מקבל 409.
+
+### נקודות קצה
+
+מחליפים את המפתח ואת הכתובת בשלכם.
+
+| קריאה | מה היא מחזירה |
+| --- | --- |
+| `GET /v1/business` | שם, מספר עוסק, מצב משפטי, מטבע, כתובת |
+| `GET /v1/clients` | לקוחות עם היתרה הפתוחה. סינון `q`, `active` |
+| `GET /v1/clients/{id}` | לקוח אחד |
+| `GET /v1/documents` | מסמכים עם סכומים. סינון `type`, `status`, `from`, `to`, `clientId` |
+| `GET /v1/documents/{id}` | מסמך אחד עם שורות ותשלומים |
+| `GET /v1/documents/{id}/pdf` | עותק הלקוח ב-PDF, למסמך סופי בלבד |
+| `GET /v1/payments` | תשלומים שנרשמו. סינון `from`, `to` |
+| `GET /v1/expenses` | הוצאות. סינון `from`, `to`, `status` |
+| `GET /v1/suppliers` | ספקים |
+| `POST /v1/clients` | יוצר לקוח (מפתח כתיבה) |
+| `POST /v1/documents` | יוצר טיוטה (מפתח כתיבה) |
+
+`curl https://ledger.example.com/v1/business -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl "https://ledger.example.com/v1/clients?q=acme" -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/clients/12 -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl "https://ledger.example.com/v1/documents?type=305,320&from=2026-10-01" -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/documents/40 -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/documents/40/pdf -o document.pdf -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl "https://ledger.example.com/v1/payments?from=2026-10-01" -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl "https://ledger.example.com/v1/expenses?status=new" -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/suppliers -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/clients -X POST -H "Authorization: Bearer ol_live_YOUR_WRITE_KEY" -H "X-Business-Id: 1" -H "Content-Type: application/json" -d "{\"nameEn\":\"Acme Ltd\",\"email\":\"billing@acme.example\"}" curl https://ledger.example.com/v1/documents -X POST -H "Authorization: Bearer ol_live_YOUR_WRITE_KEY" -H "X-Business-Id: 1" -H "Idempotency-Key: oct-retainer-12" -H "Content-Type: application/json" -d "{\"type\":\"PR\",\"clientId\":12,\"lines\":{\"description\":\"Retainer, October\",\"unitPriceMinor\":500000}}"`
+
+ב-Windows, ב-PowerShell:
+
+`Invoke-RestMethod https://ledger.example.com/v1/business -Headers @{ Authorization = "Bearer ol_live_YOUR_KEY"; "X-Business-Id" = "1" }`
+
+התשובה של טיוטה כוללת `editUrl`, העמוד בלדג'ר שבו בודקים ומפיקים אותה.
+
+### התיאור המלא
+
+הלדג'ר שלכם מפרסם אותו, עם כל שדה ודוגמה, בכתובת `https://<הלדג'ר שלכם>/v1/openapi.json`. לא צריך מפתח. מייבאים אותו ל-Postman, ל-Make או לכל כלי OpenAPI.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [חתימה דיגיטלית: מה רשות המסים דורשת ואיך הלדג'ר עומד בכל כלל](https://open-ledger.dev/help/digital-signature/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+
+Source: https://open-ledger.dev/help/api/
+
+
+---
+
 # לפני ההתקנה: מה צריך להכין
 
 החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.
@@ -1378,6 +1517,7 @@ Source: https://open-ledger.dev/en/license/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -1457,6 +1597,7 @@ Source: https://open-ledger.dev/help/before-you-start/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -1470,7 +1611,9 @@ Source: https://open-ledger.dev/help/cloudflare-token/
 
 נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
 
-עודכן 2026-10-17
+עודכן 2026-10-20
+
+לאפליקציות אחרות, כמו Financy, Make או Zapier, משתמשים ב-[API](https://open-ledger.dev/help/api/).
 
 עם MCP מחובר, שואלים את Claude דברים כמו "כמה Acme חייבים לי" או "תכין דרישת תשלום על 3 שעות ייעוץ", ו-Claude עובד בלדג'ר שלכם. Claude יוצר טיוטות, ומסיים מסמך רק אחרי שאתם מאשרים.
 
@@ -1506,7 +1649,7 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 
 ### בלדג'ר
 
-1. פותחים **Settings > MCP**. רק בעלים רואים את הלשונית הזו.
+1. פותחים **Settings > MCP and API**. רק בעלים רואים את הלשונית הזו.
 2. לוחצים **Make a new token**, ואז **Make the token** לאישור.
 3. מעתיקים את הטוקן, או לוחצים **Download for Claude Desktop** או **Download for Claude Code**. הוא מוצג פעם אחת.
 4. מכניסים אותו להגדרות של Claude ומפעילים אותו מחדש.
@@ -1539,6 +1682,7 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 - [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -1646,6 +1790,7 @@ Source: https://open-ledger.dev/help/connect-claude/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -1701,6 +1846,7 @@ Source: https://open-ledger.dev/help/digital-signature/
 - [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -1890,6 +2036,7 @@ Source: https://open-ledger.dev/help/email/
 - [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -1952,6 +2099,7 @@ Source: https://open-ledger.dev/help/expenses/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -2021,6 +2169,7 @@ Source: https://open-ledger.dev/help/first-invoice/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -2142,6 +2291,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -2204,6 +2354,7 @@ Source: https://open-ledger.dev/help/install/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
@@ -2261,6 +2412,7 @@ Source: https://open-ledger.dev/help/keys-later/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -2331,6 +2483,7 @@ Source: https://open-ledger.dev/help/payment-providers/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
@@ -2398,6 +2551,7 @@ Source: https://open-ledger.dev/help/tax-authority/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 
@@ -2450,6 +2604,7 @@ Source: https://open-ledger.dev/help/troubleshooting/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
@@ -2518,11 +2673,135 @@ Source: https://open-ledger.dev/help/updates-backups/
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
 
 Source: https://open-ledger.dev/help/users/
+
+
+---
+
+# API for other apps
+
+Connect Financy, Make, Zapier, n8n or your accountant's software to your Ledger with an API key, and what the API can and cannot do.
+
+Updated 2026-10-20
+
+The API lets another app read your Ledger: Financy matching bank charges, Make, Zapier or n8n moving data between apps, or your accountant's software. Each app gets its own key, and you can cut any one of them off at any time.
+
+For Claude and other AI apps, use [MCP](https://open-ledger.dev/en/help/connect-claude/) instead.
+
+## Create a key
+
+1. Open **Settings > MCP and API**. Only an owner sees this tab.
+2. Under **API for other apps**, click **Create key**.
+3. Name it after the app, for example "Financy".
+4. Pick **Read** or **Read and write**. Most apps need Read only.
+5. Click **Create key**. The key shows once. Copy it now, then click **I copied it**.
+
+Lost the key? Revoke it and create a new one.
+
+## What to give the app
+
+Three values, all on the same page:
+
+- **API address**: `https://<your ledger>/v1`
+- **Business ID**: the number next to it. The business tax number works too.
+- **The key**: starts with `ol_live_`
+
+## Read and write keys
+
+- A **read** key reads the business details, clients, documents, PDFs, payments, expenses and suppliers.
+- A **write** key can also create clients and draft documents: quotes, payment requests, transaction invoices and receipts.
+- No key can ever issue, send, credit, cancel or delete a document. A draft from the API waits in the Ledger until you check it and issue it yourself.
+
+## Revoke a key
+
+**Settings > MCP and API**, the key's row, **Revoke**, confirm. The app that used it stops working at once. The MCP switch on the same page turns off MCP only, not the API.
+
+## For developers
+
+### Authentication
+
+Every call carries two headers:
+
+`Authorization: Bearer ol_live_... X-Business-Id: 1`
+
+A missing, unknown or revoked key answers 401. A key used with another business answers 403.
+
+### Paging and syncing
+
+Lists answer `{ "data": ..., "nextCursor": "..." }`. Pass `cursor=<nextCursor>` for the next page, until `nextCursor` is `null`. `limit` is 1 to 200, 50 by default. Add `updatedSince=2026-10-01T00:00:00Z` to get only what changed since your last sync.
+
+### Money and dates
+
+Money is in minor units with a `currency` field: `11800` with `ILS` is ₪118.00. Dates are `YYYY-MM-DD`. Times are ISO in UTC. Ids are numbers.
+
+### Errors
+
+Every error is `{ "error": { "code": "...", "message": "..." } }` with 400, 401, 403, 404, 409, 422 or 429. A read key on a write call gets 403 `scope_required`.
+
+### Rate limit
+
+120 requests a minute per key. Past that, 429 with a `Retry-After` header in seconds.
+
+### Idempotency
+
+Send `Idempotency-Key: <any unique string>` on a POST. The same key and body within 24 hours returns the first answer and never makes a second draft. The same key with another body answers 409.
+
+### Endpoints
+
+Replace the key and the address with yours.
+
+| Call | What it returns |
+| --- | --- |
+| `GET /v1/business` | Name, tax id, legal mode, currency, address |
+| `GET /v1/clients` | Clients with their open balance. Filters `q`, `active` |
+| `GET /v1/clients/{id}` | One client |
+| `GET /v1/documents` | Documents with totals. Filters `type`, `status`, `from`, `to`, `clientId` |
+| `GET /v1/documents/{id}` | One document with lines and payments |
+| `GET /v1/documents/{id}/pdf` | The client copy PDF, final documents only |
+| `GET /v1/payments` | Recorded payments. Filters `from`, `to` |
+| `GET /v1/expenses` | Expenses. Filters `from`, `to`, `status` |
+| `GET /v1/suppliers` | Suppliers |
+| `POST /v1/clients` | Creates a client (write key) |
+| `POST /v1/documents` | Creates a draft (write key) |
+
+`curl https://ledger.example.com/v1/business -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl "https://ledger.example.com/v1/clients?q=acme" -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/clients/12 -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl "https://ledger.example.com/v1/documents?type=305,320&from=2026-10-01" -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/documents/40 -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/documents/40/pdf -o document.pdf -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl "https://ledger.example.com/v1/payments?from=2026-10-01" -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl "https://ledger.example.com/v1/expenses?status=new" -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/suppliers -H "Authorization: Bearer ol_live_YOUR_KEY" -H "X-Business-Id: 1" curl https://ledger.example.com/v1/clients -X POST -H "Authorization: Bearer ol_live_YOUR_WRITE_KEY" -H "X-Business-Id: 1" -H "Content-Type: application/json" -d "{\"nameEn\":\"Acme Ltd\",\"email\":\"billing@acme.example\"}" curl https://ledger.example.com/v1/documents -X POST -H "Authorization: Bearer ol_live_YOUR_WRITE_KEY" -H "X-Business-Id: 1" -H "Idempotency-Key: oct-retainer-12" -H "Content-Type: application/json" -d "{\"type\":\"PR\",\"clientId\":12,\"lines\":{\"description\":\"Retainer, October\",\"unitPriceMinor\":500000}}"`
+
+On Windows, in PowerShell:
+
+`Invoke-RestMethod https://ledger.example.com/v1/business -Headers @{ Authorization = "Bearer ol_live_YOUR_KEY"; "X-Business-Id" = "1" }`
+
+The draft's answer carries `editUrl`, the Ledger page where you check and issue it.
+
+### The full description
+
+Your own Ledger publishes it, with every field and example, at `https://<your ledger>/v1/openapi.json`. It needs no key. Import it into Postman, Make or any OpenAPI tool.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.dev/en/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.dev/en/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.dev/en/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.dev/en/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.dev/en/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.dev/en/help/first-invoice/)
+- [Digital signatures: what the Tax Authority requires and how the Ledger meets each rule](https://open-ledger.dev/en/help/digital-signature/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.dev/en/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
+- [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+
+Source: https://open-ledger.dev/en/help/api/
 
 
 ---
@@ -2575,6 +2854,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -2654,6 +2934,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -2667,7 +2948,9 @@ Source: https://open-ledger.dev/en/help/cloudflare-token/
 
 Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
 
-Updated 2026-10-17
+Updated 2026-10-20
+
+For other apps, such as Financy, Make or Zapier, use the [API](https://open-ledger.dev/en/help/api/).
 
 With MCP connected, you ask Claude things like "how much does Acme owe me" or "make a payment request for 3 hours of consulting", and Claude works in your Ledger. Claude creates drafts, and finalizes a document only after you confirm.
 
@@ -2703,7 +2986,7 @@ Cloudflare never shows a secret again, so you make a new token. The old one stop
 
 ### In the Ledger
 
-1. Open **Settings > MCP**. Only an owner sees this tab.
+1. Open **Settings > MCP and API**. Only an owner sees this tab.
 2. Click **Make a new token**, then **Make the token** to confirm.
 3. Copy the token, or click **Download for Claude Desktop** or **Download for Claude Code**. It is shown once.
 4. Put it in the Claude config and restart Claude.
@@ -2736,6 +3019,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Take payments with Grow, Cardcom or another provider](https://open-ledger.dev/en/help/payment-providers/)
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -2843,6 +3127,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -2898,6 +3183,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Take payments with Grow, Cardcom or another provider](https://open-ledger.dev/en/help/payment-providers/)
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -3087,6 +3373,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Take payments with Grow, Cardcom or another provider](https://open-ledger.dev/en/help/payment-providers/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -3149,6 +3436,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -3218,6 +3506,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -3339,6 +3628,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -3401,6 +3691,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
 
@@ -3458,6 +3749,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -3528,6 +3820,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
@@ -3595,6 +3888,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 
@@ -3647,6 +3941,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
 
@@ -3715,6 +4010,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)

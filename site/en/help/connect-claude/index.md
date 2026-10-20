@@ -2,7 +2,9 @@
 
 Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
 
-Updated 2026-10-17
+Updated 2026-10-20
+
+For other apps, such as Financy, Make or Zapier, use the [API](https://open-ledger.dev/en/help/api/).
 
 With MCP connected, you ask Claude things like "how much does Acme owe me" or "make a payment request for 3 hours of consulting", and Claude works in your Ledger. Claude creates drafts, and finalizes a document only after you confirm.
 
@@ -38,7 +40,7 @@ Cloudflare never shows a secret again, so you make a new token. The old one stop
 
 ### In the Ledger
 
-1. Open **Settings > MCP**. Only an owner sees this tab.
+1. Open **Settings > MCP and API**. Only an owner sees this tab.
 2. Click **Make a new token**, then **Make the token** to confirm.
 3. Copy the token, or click **Download for Claude Desktop** or **Download for Claude Code**. It is shown once.
 4. Put it in the Claude config and restart Claude.
@@ -71,6 +73,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Take payments with Grow, Cardcom or another provider](https://open-ledger.dev/en/help/payment-providers/)
 - [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
 - [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)

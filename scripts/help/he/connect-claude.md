@@ -1,11 +1,13 @@
 ---
 title: חיבור Claude או אפליקציית AI אחרת (MCP)
 description: נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
-updated: 2026-10-17
+updated: 2026-10-20
 published: true
 nav: חיבור Claude (MCP)
 order: 12
 ---
+
+לאפליקציות אחרות, כמו Financy, Make או Zapier, משתמשים ב-[API](/help/api/).
 
 עם MCP מחובר, שואלים את Claude דברים כמו "כמה Acme חייבים לי" או "תכין דרישת תשלום על 3 שעות ייעוץ", ו-Claude עובד בלדג'ר שלכם. Claude יוצר טיוטות, ומסיים מסמך רק אחרי שאתם מאשרים.
 
@@ -41,7 +43,7 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 
 ### בלדג'ר
 
-1. פותחים **Settings > MCP**. רק בעלים רואים את הלשונית הזו.
+1. פותחים **Settings > MCP and API**. רק בעלים רואים את הלשונית הזו.
 2. לוחצים **Make a new token**, ואז **Make the token** לאישור.
 3. מעתיקים את הטוקן, או לוחצים **Download for Claude Desktop** או **Download for Claude Code**. הוא מוצג פעם אחת.
 4. מכניסים אותו להגדרות של Claude ומפעילים אותו מחדש.

@@ -1,11 +1,13 @@
 ---
 title: Connect Claude or another AI app (MCP)
 description: Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
-updated: 2026-10-17
+updated: 2026-10-20
 published: true
 nav: Connect Claude (MCP)
 order: 12
 ---
+
+For other apps, such as Financy, Make or Zapier, use the [API](/en/help/api/).
 
 With MCP connected, you ask Claude things like "how much does Acme owe me" or "make a payment request for 3 hours of consulting", and Claude works in your Ledger. Claude creates drafts, and finalizes a document only after you confirm.
 
@@ -41,7 +43,7 @@ Cloudflare never shows a secret again, so you make a new token. The old one stop
 
 ### In the Ledger
 
-1. Open **Settings > MCP**. Only an owner sees this tab.
+1. Open **Settings > MCP and API**. Only an owner sees this tab.
 2. Click **Make a new token**, then **Make the token** to confirm.
 3. Copy the token, or click **Download for Claude Desktop** or **Download for Claude Code**. It is shown once.
 4. Put it in the Claude config and restart Claude.

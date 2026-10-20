@@ -58,6 +58,7 @@
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)

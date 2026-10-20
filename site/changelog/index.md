@@ -6,6 +6,13 @@
 
 ## 1.6.0 (2026-10-13)
 
+### API
+
+- A public REST API at `/v1` for Financy, Make, Zapier, n8n and an accountant's software. Each call carries an API key and the Business ID. Read keys read the business, clients, documents with lines and payments, the client copy PDF, payments, expenses and suppliers. Write keys can also create clients and draft documents. Nothing finalizes, sends, credits or deletes.
+- Cursor paging, `updatedSince`, 120 requests a minute per key, `Idempotency-Key` on writes, and `/v1/openapi.json`. Migration `4100_api_keys.sql`.
+- Settings > MCP is now "MCP and API": the MCP section as before, then the API address, the Business ID and the keys. A key shows once.
+- A Ledger set up by hand adds a Bypass Access application for the path `v1`, see `docs/cloudflare-access.md`.
+
 ### Bank and card data (Financy)
 
 - Settings > Expenses > Financy connection: paste the Client ID, Client Secret and User ID from Financy > Settings > API. The Ledger tests them and saves them with the secret encrypted. Then tick the business accounts. Only those are pulled, 90 days at first. Migrations `4000_financy.sql` and `4001_financy_accounts.sql`.

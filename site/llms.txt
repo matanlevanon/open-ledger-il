@@ -16,6 +16,7 @@
 
 ## Help in English
 
+- [API for other apps](https://open-ledger.dev/en/help/api/): Connect Financy, Make, Zapier, n8n or your accountant's software to your Ledger with an API key, and what the API can and cannot do.
 - [Before you install: what you need](https://open-ledger.dev/en/help/before-you-start/): The accounts, details and 30 minutes you need before you run the Open Ledger IL installer, and which parts are optional.
 - [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/): The exact permission rows, account and zone settings for the installer's Cloudflare token, with and without a domain.
 - [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/): Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
@@ -46,6 +47,7 @@
 
 ## Help in Hebrew
 
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/): מחברים את Financy, Make, Zapier, n8n או את התוכנה של רואה החשבון ללדג'ר עם מפתח API, ומה ה-API יכול ולא יכול לעשות.
 - [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/): החשבונות, הפרטים וחצי השעה שצריך לפני שמריצים את תוכנת ההתקנה של Open Ledger IL, ומה מהם לא חובה.
 - [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/): שורות ההרשאה המדויקות, החשבון וה-Zone של הטוקן שתוכנת ההתקנה צריכה, עם דומיין ובלי דומיין.
 - [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/): נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.

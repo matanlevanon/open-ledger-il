@@ -2,7 +2,9 @@
 
 נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
 
-עודכן 2026-10-17
+עודכן 2026-10-20
+
+לאפליקציות אחרות, כמו Financy, Make או Zapier, משתמשים ב-[API](https://open-ledger.dev/help/api/).
 
 עם MCP מחובר, שואלים את Claude דברים כמו "כמה Acme חייבים לי" או "תכין דרישת תשלום על 3 שעות ייעוץ", ו-Claude עובד בלדג'ר שלכם. Claude יוצר טיוטות, ומסיים מסמך רק אחרי שאתם מאשרים.
 
@@ -38,7 +40,7 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 
 ### בלדג'ר
 
-1. פותחים **Settings > MCP**. רק בעלים רואים את הלשונית הזו.
+1. פותחים **Settings > MCP and API**. רק בעלים רואים את הלשונית הזו.
 2. לוחצים **Make a new token**, ואז **Make the token** לאישור.
 3. מעתיקים את הטוקן, או לוחצים **Download for Claude Desktop** או **Download for Claude Code**. הוא מוצג פעם אחת.
 4. מכניסים אותו להגדרות של Claude ומפעילים אותו מחדש.
@@ -71,6 +73,7 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 - [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
 - [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
 - [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
