@@ -178,8 +178,8 @@ export function InboxSection() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <span className={label}>{t('settings.inbox.gmailTitle')}</span>
+      <details className="flex flex-col gap-2" open={state.events.length === 0} data-testid="inbox-setup">
+        <summary className={`${label} cursor-pointer`}>{t('settings.inbox.gmailTitle')}</summary>
         <ol className="list-decimal ps-5 text-sm text-ink">
           <li>{t('settings.inbox.gmailStep1')}</li>
           <li>{t('settings.inbox.gmailStep2')}</li>
@@ -193,10 +193,12 @@ export function InboxSection() {
         <p className="text-xs text-muted">{t('settings.inbox.gmailSearchHint')}</p>
         <span className={label}>{t('settings.inbox.outlookTitle')}</span>
         <p className="text-sm text-ink">{t('settings.inbox.outlook')}</p>
-      </div>
+      </details>
 
-      <div className="flex flex-col gap-2">
-        <span className={label}>{t('settings.inbox.lastReceived')}</span>
+      <details className="flex flex-col gap-2">
+        <summary className={`${label} cursor-pointer`}>
+          {t('settings.inbox.lastReceived')} <span className="normal-case text-muted">({state.events.length})</span>
+        </summary>
         {state.events.length === 0 ? (
           <p className="text-sm text-muted">{t('settings.inbox.noEvents')}</p>
         ) : (
@@ -208,7 +210,7 @@ export function InboxSection() {
             ))}
           </ul>
         )}
-      </div>
+      </details>
 
       {state.canRotate && (
         <div>

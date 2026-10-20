@@ -113,11 +113,17 @@ export function ExpensesTab() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <FinancySection demo={Boolean(demo)} />
-      {!demo && <InboxSection />}
+    <div className="flex flex-col">
+      <div className={GROUP_FIRST}>
+        <FinancySection demo={Boolean(demo)} />
+      </div>
+      {!demo && (
+        <div className={GROUP}>
+          <InboxSection />
+        </div>
+      )}
       {settings.reader && (
-        <section className="flex flex-col gap-2">
+        <section className="flex flex-col gap-2 border-t border-line py-6">
           <h2 className="font-heading text-lg text-ink">{t('settings.expenses.readerTitle')}</h2>
           <p className="text-sm text-ink" data-testid="reader-status">
             {settings.reader.provider === null
@@ -130,6 +136,7 @@ export function ExpensesTab() {
         </section>
       )}
 
+      <div className={GROUP}>
       <section className="flex flex-col gap-2">
         <h2 className="font-heading text-lg text-ink">
           {t('settings.expenses.folderTitle')}
@@ -216,8 +223,10 @@ export function ExpensesTab() {
         </label>
       </section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="font-heading text-lg text-ink">{t('settings.expenses.runsTitle')}</h2>
+      <details className="flex flex-col gap-2" data-testid="import-runs">
+        <summary className="cursor-pointer font-heading text-lg text-ink">
+          {t('settings.expenses.runsTitle')} <span className="text-sm text-muted">({settings.runs.length})</span>
+        </summary>
         {settings.runs.length === 0 ? (
           <p className="text-sm text-muted">{t('settings.expenses.runsEmpty')}</p>
         ) : (
@@ -248,10 +257,15 @@ export function ExpensesTab() {
             </tbody>
           </table>
         )}
-      </section>
+      </details>
+      </div>
     </div>
   );
 }
+
+/** Each topic on the tab sits in its own group, with a divider line above every group but the first. */
+const GROUP_FIRST = 'flex flex-col gap-6 pb-6';
+const GROUP = 'flex flex-col gap-6 border-t border-line py-6';
 
 /** What the Check folder button found: the folder and its month folders, or the one thing to fix. */
 function DriveCheckResult({ check }: { check: DriveCheck }) {
