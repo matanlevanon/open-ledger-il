@@ -47,7 +47,7 @@ export interface McpEnv {
   bindings?: Env;
 }
 
-function ctxOf(env: McpEnv): Ctx {
+export function ctxOf(env: McpEnv): Ctx {
   const today = env.today ?? (() => todayIsrael());
   return {
     db: env.db,

@@ -54,6 +54,20 @@ on the whole domain, clients hit a sign-in wall. Add a second, more specific app
 Access applies the most specific path first, so only these links skip sign-in. Each one still
 carries a signed token that the Worker verifies inside the route.
 
+## Third application: the API for other apps (Bypass)
+
+Financy, Make, Zapier, n8n and an accountant's software call the Ledger at `/v1` with an API
+key from Settings > MCP and API. They have no Cloudflare sign-in. The installer adds this
+application on a new install and on an update. For a Ledger set up by hand:
+
+1. Cloudflare dashboard > **Zero Trust** > **Access controls** > **Applications** > **Add an application** > **Self-hosted**.
+   Name it "Open Ledger IL API".
+2. Domain `ledger.example.com`, path `v1`.
+3. Policy: name "API", action **Bypass**, include **Everyone**. Save.
+
+Every call under `/v1` still needs a valid API key and the business id, checked by the Worker.
+`/v1/openapi.json` is the one path that answers without a key.
+
 ## 4. Wire the Worker to this application
 
 In the Cloudflare dashboard, Compute > Workers & Pages > `open-ledger-il` > Settings > Runtime variables and secrets:

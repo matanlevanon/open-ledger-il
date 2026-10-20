@@ -11,6 +11,7 @@ import type { AppEnv, Env } from './env';
 import { modules as registeredModules } from './modules';
 import { isPublicApiPath } from './modules/sending/public-paths';
 import { mcpModule } from './modules/mcp';
+import { type ApiRoutesOptions, createApiRoutes } from './modules/api';
 import { demoEnv, demoGuard, demoMisconfigured, isDemo, visitorReady } from './modules/demo';
 import { demoTexts } from './modules/demo/config';
 import { type AdminOptions, createDemoAdminRoutes } from './modules/demo/admin';
@@ -25,6 +26,8 @@ export interface AppOptions {
   modules?: ModuleDef[];
   /** R26: the demo admin's Access check and fetch. Tests pass a local JWKS. */
   demoAdmin?: AdminOptions;
+  /** R41: the /v1 router's fakes, for example the client copy PDF. */
+  api?: ApiRoutesOptions;
 }
 
 function errorBody(code: string, message: string, details?: unknown) {
@@ -48,7 +51,7 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
     }
     c.env = demoEnv(c.env);
     const path = c.req.path;
-    if (path.startsWith('/api/') || path === '/api' || path.startsWith('/mcp') || path.startsWith('/admin')) return next();
+    if (path.startsWith('/api/') || path === '/api' || path.startsWith('/mcp') || path.startsWith('/v1') || path.startsWith('/admin')) return next();
     const lang = c.req.query('lang') === 'en' ? 'en' : 'he'; // The demo opens in Hebrew.
     if (path === '/privacy') return c.html(privacyPageHtml(c.env, lang));
     // Static files (scripts, styles, icons) load without a session. Pages need one.
@@ -141,6 +144,10 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
   // Bearer-token MCP endpoint (MCP_TOKEN secret), not Cloudflare Access, so it is mounted here
   // rather than through the /api registry. wrangler.toml routes /mcp and /mcp/* to the Worker.
   app.route('/mcp', mcpModule.routes);
+
+  // R41: the public REST API. API keys, not Cloudflare Access, so it mounts beside /mcp.
+  // wrangler.toml routes /v1 and /v1/* to the Worker.
+  app.route('/v1', createApiRoutes(options.api) as never);
 
   app.notFound(async (c) => {
     if (c.req.path.startsWith('/api/')) return c.json(errorBody('not_found', 'No such endpoint.'), 404);

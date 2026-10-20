@@ -163,6 +163,54 @@ export async function listDocuments(db: D1Database, user: AuthUser, filter: List
   return { items, summary };
 }
 
+/** R41: the public API's document list. Oldest id first, after `afterId`, for cursor paging. */
+export interface DocumentPageFilter {
+  types?: string[];
+  status?: string;
+  from?: string;
+  to?: string;
+  clientId?: number;
+  updatedSince?: string;
+  afterId: number;
+  limit: number;
+}
+
+export async function documentsPage(db: D1Database, businessId: number, filter: DocumentPageFilter, today: string) {
+  const where: string[] = ['d.business_id = ?', 'd.id > ?'];
+  const params: (string | number)[] = [businessId, filter.afterId];
+  if (filter.types?.length) {
+    where.push(`d.type IN (${filter.types.map(() => '?').join(',')})`);
+    params.push(...filter.types);
+  }
+  if (filter.status) {
+    where.push('d.status = ?');
+    params.push(filter.status);
+  }
+  if (filter.from) {
+    where.push('d.date >= ?');
+    params.push(filter.from);
+  }
+  if (filter.to) {
+    where.push('d.date <= ?');
+    params.push(filter.to);
+  }
+  if (filter.clientId) {
+    where.push('d.client_id = ?');
+    params.push(filter.clientId);
+  }
+  if (filter.updatedSince) {
+    where.push('d.updated_at > ?');
+    params.push(filter.updatedSince);
+  }
+  const rows = await all<ListRow>(db, `${LIST_SELECT} WHERE ${where.join(' AND ')} ORDER BY d.id LIMIT ?`, ...params, filter.limit);
+  const balances = await demandBalances(
+    db,
+    businessId,
+    rows.filter((r) => r.kind === 'demand' && r.status === 'final').map((r) => r.id),
+  );
+  return rows.map((r) => decorate(r, balances.get(r.id), today));
+}
+
 interface LinkView extends LinkRow {
   other_id: number;
   other_type: string;

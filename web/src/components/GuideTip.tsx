@@ -21,6 +21,7 @@ export const GUIDES = {
   numbering: { page: 'first-sign-in', anchor: { en: 'numbering-if-you-used-another-system-before', he: 'מספור-אם-עבדתם-קודם-בתוכנה-אחרת' }, text: 'help.guide.numbering' },
   email: { page: 'email', text: 'help.guide.email' },
   mcp: { page: 'connect-claude', text: 'help.guide.mcp' },
+  api: { page: 'api', text: 'help.guide.api' },
   paymentMethods: { page: 'payment-providers', text: 'help.guide.paymentMethods' },
   signature: { page: 'digital-signature', text: 'help.guide.signature' },
   expenses: { page: 'expenses', text: 'help.guide.expenses' },

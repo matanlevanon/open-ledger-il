@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { ApiError, apiGet } from '../../api/client';
 import { Dialog } from '../../components/Dialog';
+import { GuideTip } from '../../components/GuideTip';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import { apiSend } from '../documents/api';
 import { btnPrimary, btnSecondary, label } from '../documents/ui';
+import { ApiSection } from './ApiSection';
 
 /**
  * R34: Settings > MCP. The address, the token state, Make a new token, and MCP on or off. A new
@@ -121,10 +123,15 @@ export function McpTab() {
           }`
         : t('settings.mcp.state.none');
 
+  // R41: one page, two sections. MCP first, then the API for other apps.
   return (
-    <div className="flex max-w-2xl flex-col gap-4">
+    <div className="flex flex-col gap-8">
+    <section data-testid="mcp-section" className="flex max-w-2xl flex-col gap-4">
       <div>
-        <h2 className="text-lg font-semibold text-ink">{t('settings.mcp.title')}</h2>
+        <h2 className="text-lg font-semibold text-ink">
+          {t('settings.mcp.title')}
+          <GuideTip id="mcp" />
+        </h2>
         <p className="text-sm text-muted">{t('settings.mcp.intro')}</p>
       </div>
 
@@ -201,6 +208,9 @@ export function McpTab() {
       >
         <p className="text-sm text-ink">{t('settings.mcp.confirmBody')}</p>
       </Dialog>
+      <p className="text-xs text-muted">{t('settings.mcp.switchNote')}</p>
+    </section>
+    <ApiSection />
     </div>
   );
 }

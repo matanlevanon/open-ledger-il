@@ -84,7 +84,7 @@ binding = "BROWSER"
 directory = "./web/dist"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
-run_worker_first = ["/api/*", "/mcp", "/mcp/*", "/admin", "/admin/*"]
+run_worker_first = ["/api/*", "/mcp", "/mcp/*", "/v1", "/v1/*", "/admin", "/admin/*"]
 
 # Cron triggers. One block for the whole Worker. The single scheduled handler in src/scheduled.ts
 # receives every fire and dispatches it to each module that lists the cron in its `crons`.
