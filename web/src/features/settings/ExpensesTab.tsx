@@ -114,6 +114,7 @@ export function ExpensesTab() {
 
   return (
     <div className="flex flex-col gap-6">
+      <FinancyCard />
       {!demo && <InboxSection />}
       {settings.reader && (
         <section className="flex flex-col gap-2">
@@ -248,8 +249,6 @@ export function ExpensesTab() {
           </table>
         )}
       </section>
-
-      <FinancyCard />
     </div>
   );
 }
