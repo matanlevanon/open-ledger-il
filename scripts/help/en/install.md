@@ -1,7 +1,7 @@
 ---
 title: Install Open Ledger IL step by step
 description: Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
-updated: 2026-10-18
+updated: 2026-10-20
 published: true
 nav: Install
 cta: buy
@@ -17,11 +17,11 @@ Setting up from the source code is free, and the [setup guide]({{repo}}/blob/mai
 - **No Tax Authority API app.** On your own, you register in the Tax Authority developer portal, apply for an API app, wait for approval, and keep its client secret safe. The installer connects you through MTN's approved app. You sign in with your own Tax Authority user and that is all.
 - **No Israeli server.** The Tax Authority turns away calls from outside Israel, and Cloudflare often serves a Worker from Frankfurt. On your own, you run a relay on a server with an Israeli address. With the installer, every call goes out through MTN's Israeli route.
 - **No command line.** No Node.js, no wrangler, no database ids, no secrets to type. The wizard creates everything in your Cloudflare account in about 3 minutes.
-- **Updates in one step.** Run the new installer, and your data stays.
+- **Updates in one step.** Run the same installer again. It downloads the latest Ledger, and your data stays.
 
 ## 1. Download and open the installer
 
-1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, about 100 MB.
+1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup.exe`, about 100 MB. Keep it. It downloads the latest Ledger while it runs, so the same file installs now and updates later.
 2. The link works for 72 hours and 5 downloads. If it no longer works, open it anyway and click **Email me a fresh link**.
 3. Double-click the file. Windows shows **Windows protected your PC**. Click **More info**, then **Run anyway**. The file is not signed with a paid certificate yet, so Windows warns about every new copy.
 4. The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.
@@ -29,6 +29,8 @@ Setting up from the source code is free, and the [setup guide]({{repo}}/blob/mai
 ## 2. Licence key
 
 Paste the licence key and the business tax number. The key works for this number only.
+
+Click **Next**. The installer downloads the latest Ledger with your key and checks that it comes from MTN, unchanged. It shows the version when it is done, for example **Ledger 1.6.0 downloaded and checked.** If the download server does not answer and this computer ran the installer before, it offers **Use the saved Ledger** with its version and date.
 
 ## 3. Cloudflare account
 
@@ -72,7 +74,7 @@ Skip anything you do not have. You add it later, see [Add or change a key after 
 
 ## 8. Install and finish
 
-1. Check the summary and click **Install**. On an update the button reads **Update**. It takes about 3 minutes.
+1. Check the summary and click **Install**. It shows the Ledger version. On an update the button reads **Update**, and the summary shows the move, for example **Updates your Ledger from 1.5.0 to 1.6.0**. It takes about 3 minutes.
 2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. See [Connect Claude](/en/help/connect-claude/). Lost it later? **Settings > MCP** in the Ledger makes a new one.
 3. It also shows your **email inbox** address, for forwarding receipts. See [Get your expenses into the Ledger](/en/help/expenses/).
 4. The installer leaves a summary file on the Desktop, without secrets.
@@ -80,7 +82,7 @@ Skip anything you do not have. You add it later, see [Add or change a key after 
 
 ## Update later
 
-Run the new installer on the same Cloudflare account. It finds your Ledger, fills in the address and the business details, keeps your data and keys, and the last button reads **Update**. On the same computer it also remembers your answers from the last run. See [Updates and backups](/en/help/updates-backups/).
+Run the same installer again on the same Cloudflare account. It downloads the latest Ledger, finds your Ledger, fills in the address and the business details, keeps your data and keys, and the last button reads **Update**. On the same computer it also remembers your answers from the last run. See [Updates and backups](/en/help/updates-backups/).
 
 ## Next
 

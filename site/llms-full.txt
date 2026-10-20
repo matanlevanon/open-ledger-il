@@ -1964,7 +1964,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 
 כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
 
-עודכן 2026-10-18
+עודכן 2026-10-20
 
 ## תוכנת ההתקנה מגיעה עם הרכישה
 
@@ -1986,11 +1986,11 @@ Source: https://open-ledger.dev/help/first-sign-in/
 - **בלי אפליקציית API ברשות המסים.** לבד, נרשמים בפורטל המפתחים של רשות המסים, מבקשים אפליקציית API, מחכים לאישור ושומרים על ה-client secret שלה. תוכנת ההתקנה מחברת אתכם דרך האפליקציה המאושרת של MTN. נכנסים עם המשתמש שלכם ברשות המסים וזהו.
 - **בלי שרת בישראל.** רשות המסים חוסמת פניות מחוץ לישראל, ו-Cloudflare מריץ לא פעם את ה-Worker מפרנקפורט. לבד, מפעילים ממסר על שרת עם כתובת ישראלית. עם תוכנת ההתקנה, כל פנייה יוצאת דרך הנתיב הישראלי של MTN.
 - **בלי שורת פקודה.** בלי Node.js, בלי wrangler, בלי מזהי מסד נתונים ובלי סודות להקליד. האשף מקים הכול בחשבון Cloudflare שלכם בערך ב-3 דקות.
-- **עדכון בצעד אחד.** מריצים את תוכנת ההתקנה החדשה, והנתונים נשארים.
+- **עדכון בצעד אחד.** מריצים שוב את אותה תוכנת התקנה. היא מורידה את הלדג'ר העדכני, והנתונים נשארים.
 
 ## 1. מורידים ופותחים את תוכנת ההתקנה
 
-1. לוחצים על קישור ההורדה במייל הרכישה. הקובץ הוא `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, בערך 100MB.
+1. לוחצים על קישור ההורדה במייל הרכישה. הקובץ הוא `MTN-Open-Ledger-Setup.exe`, בערך 100MB. שומרים אותו. הוא מוריד את הלדג'ר העדכני בזמן שהוא רץ, כך שאותו קובץ מתקין עכשיו ומעדכן בהמשך.
 2. הקישור עובד 72 שעות ו-5 הורדות. אם הוא כבר לא עובד, פותחים אותו בכל זאת ולוחצים **Email me a fresh link**.
 3. לוחצים פעמיים על הקובץ. Windows מציג **Windows protected your PC**. לוחצים **More info** ואז **Run anyway**. הקובץ עדיין לא חתום בתעודה בתשלום, ולכן Windows מזהיר על כל עותק חדש.
 4. תוכנת ההתקנה נפתחת בדפדפן. משאירים פתוחים את הלשונית ואת החלון השחור הקטן עד הסוף. סגירה של אחד מהם עוצרת את ההתקנה.
@@ -1998,6 +1998,8 @@ Source: https://open-ledger.dev/help/first-sign-in/
 ## 2. מפתח רישיון
 
 מדביקים את מפתח הרישיון ואת מספר העוסק. המפתח עובד רק למספר הזה.
+
+לוחצים **Next**. תוכנת ההתקנה מורידה את הלדג'ר העדכני עם המפתח שלכם ובודקת שהוא מגיע מ-MTN ולא שונה. בסוף היא מציגה את הגרסה, למשל **Ledger 1.6.0 downloaded and checked.** אם שרת ההורדות לא עונה והמחשב הזה כבר הריץ את תוכנת ההתקנה, היא מציעה **Use the saved Ledger** עם הגרסה והתאריך.
 
 ## 3. חשבון Cloudflare
 
@@ -2041,7 +2043,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 
 ## 8. התקנה וסיום
 
-1. בודקים את הסיכום ולוחצים **Install**. בעדכון הכפתור הוא **Update**. זה לוקח בערך 3 דקות.
+1. בודקים את הסיכום ולוחצים **Install**. הסיכום מציג את גרסת הלדג'ר. בעדכון הכפתור הוא **Update**, והסיכום מציג את המעבר, למשל **Updates your Ledger from 1.5.0 to 1.6.0**. זה לוקח בערך 3 דקות.
 2. המסך האחרון מציג את כתובת הלדג'ר ו-**MCP token**. מעתיקים את הטוקן עכשיו, או לוחצים על אחד מכפתורי ההורדה. ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/). איבדתם אותו? **Settings > MCP** בלדג'ר יוצר חדש.
 3. הוא מציג גם את כתובת **תיבת המייל** להעברת קבלות. ראו [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/).
 4. תוכנת ההתקנה משאירה קובץ סיכום על שולחן העבודה, בלי סודות.
@@ -2049,7 +2051,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 
 ## עדכון בהמשך
 
-מריצים את תוכנת ההתקנה החדשה על אותו חשבון Cloudflare. היא מוצאת את הלדג'ר, ממלאת את הכתובת ואת פרטי העסק, שומרת את הנתונים והמפתחות, והכפתור האחרון הוא **Update**. באותו מחשב היא זוכרת גם את התשובות מההרצה הקודמת. ראו [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/).
+מריצים שוב את אותה תוכנת התקנה על אותו חשבון Cloudflare. היא מורידה את הלדג'ר העדכני, מוצאת את הלדג'ר שלכם, ממלאת את הכתובת ואת פרטי העסק, שומרת את הנתונים והמפתחות, והכפתור האחרון הוא **Update**. באותו מחשב היא זוכרת גם את התשובות מההרצה הקודמת. ראו [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/).
 
 ## הצעד הבא
 
@@ -2338,7 +2340,7 @@ Source: https://open-ledger.dev/help/troubleshooting/
 
 איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
 
-עודכן 2026-10-18
+עודכן 2026-10-20
 
 ## בדיקת עדכונים
 
@@ -2346,11 +2348,11 @@ Source: https://open-ledger.dev/help/troubleshooting/
 
 ## עדכון
 
-1. פותחים את קישור ההורדה ממייל הרכישה. אם הוא כבר לא עובד, פותחים אותו בכל זאת ולוחצים **Email me a fresh link**.
-2. מריצים את תוכנת ההתקנה החדשה על אותו חשבון Cloudflare, עם אותו מפתח רישיון.
+1. מריצים שוב את אותה תוכנת התקנה: `MTN-Open-Ledger-Setup.exe`, הקובץ ששמרתם. היא מורידה את הלדג'ר העדכני בזמן שהיא רצה. הקובץ אבד? פותחים את קישור ההורדה ממייל הרכישה. אם הוא כבר לא עובד, פותחים אותו בכל זאת ולוחצים **Email me a fresh link**.
+2. מריצים אותה על אותו חשבון Cloudflare, עם אותו מפתח רישיון.
 3. היא מעדכנת את הלדג'ר ושומרת הכול: מסד הנתונים, הקבצים, הכניסה והמפתחות.
 
-אחרי שמדביקים את טוקן ה-Cloudflare, תוכנת ההתקנה מוצאת את הלדג'ר בחשבון וממלאת ממנו את פרטי העסק. כתובת האתר וסוג העסק נעולים בעדכון. מפתחות שכבר הוגדרו נשארים כמו שהם כשמשאירים את השדה שלהם ריק. באותו מחשב התוכנה זוכרת גם את התשובות מההרצה הקודמת, ואת הטוקן אם מסמנים **Remember the token on this computer** (רק ב-Windows, שמור מוצפן למשתמש ה-Windows שלכם).
+אחרי שמדביקים את טוקן ה-Cloudflare, תוכנת ההתקנה מוצאת את הלדג'ר בחשבון וממלאת ממנו את פרטי העסק. כתובת האתר וסוג העסק נעולים בעדכון. מפתחות שכבר הוגדרו נשארים כמו שהם כשמשאירים את השדה שלהם ריק. הסיכום לפני **Update** מציג את המעבר, למשל **Updates your Ledger from 1.5.0 to 1.6.0**. אם תוכנת ההתקנה אומרת שהיא ישנה מדי ללדג'ר הנוכחי, מורידים את תוכנת ההתקנה החדשה ממייל הרכישה. באותו מחשב התוכנה זוכרת גם את התשובות מההרצה הקודמת, ואת הטוקן אם מסמנים **Remember the token on this computer** (רק ב-Windows, שמור מוצפן למשתמש ה-Windows שלכם).
 
 ## גיבויים
 
@@ -3125,7 +3127,7 @@ Source: https://open-ledger.dev/en/help/first-sign-in/
 
 Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
 
-Updated 2026-10-18
+Updated 2026-10-20
 
 ## The installer comes with your purchase
 
@@ -3147,11 +3149,11 @@ Setting up from the source code is free, and the [setup guide](https://github.co
 - **No Tax Authority API app.** On your own, you register in the Tax Authority developer portal, apply for an API app, wait for approval, and keep its client secret safe. The installer connects you through MTN's approved app. You sign in with your own Tax Authority user and that is all.
 - **No Israeli server.** The Tax Authority turns away calls from outside Israel, and Cloudflare often serves a Worker from Frankfurt. On your own, you run a relay on a server with an Israeli address. With the installer, every call goes out through MTN's Israeli route.
 - **No command line.** No Node.js, no wrangler, no database ids, no secrets to type. The wizard creates everything in your Cloudflare account in about 3 minutes.
-- **Updates in one step.** Run the new installer, and your data stays.
+- **Updates in one step.** Run the same installer again. It downloads the latest Ledger, and your data stays.
 
 ## 1. Download and open the installer
 
-1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup-relay-1.6.0.exe`, about 100 MB.
+1. Click the download link in the purchase email. The file is `MTN-Open-Ledger-Setup.exe`, about 100 MB. Keep it. It downloads the latest Ledger while it runs, so the same file installs now and updates later.
 2. The link works for 72 hours and 5 downloads. If it no longer works, open it anyway and click **Email me a fresh link**.
 3. Double-click the file. Windows shows **Windows protected your PC**. Click **More info**, then **Run anyway**. The file is not signed with a paid certificate yet, so Windows warns about every new copy.
 4. The installer opens in your browser. Keep that browser tab and the small black window open until the end. Closing either one stops the install.
@@ -3159,6 +3161,8 @@ Setting up from the source code is free, and the [setup guide](https://github.co
 ## 2. Licence key
 
 Paste the licence key and the business tax number. The key works for this number only.
+
+Click **Next**. The installer downloads the latest Ledger with your key and checks that it comes from MTN, unchanged. It shows the version when it is done, for example **Ledger 1.6.0 downloaded and checked.** If the download server does not answer and this computer ran the installer before, it offers **Use the saved Ledger** with its version and date.
 
 ## 3. Cloudflare account
 
@@ -3202,7 +3206,7 @@ Skip anything you do not have. You add it later, see [Add or change a key after 
 
 ## 8. Install and finish
 
-1. Check the summary and click **Install**. On an update the button reads **Update**. It takes about 3 minutes.
+1. Check the summary and click **Install**. It shows the Ledger version. On an update the button reads **Update**, and the summary shows the move, for example **Updates your Ledger from 1.5.0 to 1.6.0**. It takes about 3 minutes.
 2. The last screen shows the Ledger's address and an **MCP token**. Copy the token now, or click one of the download buttons. See [Connect Claude](https://open-ledger.dev/en/help/connect-claude/). Lost it later? **Settings > MCP** in the Ledger makes a new one.
 3. It also shows your **email inbox** address, for forwarding receipts. See [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/).
 4. The installer leaves a summary file on the Desktop, without secrets.
@@ -3210,7 +3214,7 @@ Skip anything you do not have. You add it later, see [Add or change a key after 
 
 ## Update later
 
-Run the new installer on the same Cloudflare account. It finds your Ledger, fills in the address and the business details, keeps your data and keys, and the last button reads **Update**. On the same computer it also remembers your answers from the last run. See [Updates and backups](https://open-ledger.dev/en/help/updates-backups/).
+Run the same installer again on the same Cloudflare account. It downloads the latest Ledger, finds your Ledger, fills in the address and the business details, keeps your data and keys, and the last button reads **Update**. On the same computer it also remembers your answers from the last run. See [Updates and backups](https://open-ledger.dev/en/help/updates-backups/).
 
 ## Next
 
@@ -3499,7 +3503,7 @@ Source: https://open-ledger.dev/en/help/troubleshooting/
 
 How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
 
-Updated 2026-10-18
+Updated 2026-10-20
 
 ## Check for updates
 
@@ -3507,11 +3511,11 @@ Updated 2026-10-18
 
 ## Update
 
-1. Open the download link from your purchase email. If it no longer works, open it anyway and click **Email me a fresh link**.
-2. Run the new installer on the same Cloudflare account, with the same licence key.
+1. Run the same installer again: `MTN-Open-Ledger-Setup.exe`, the file you kept. It downloads the latest Ledger while it runs. Lost the file? Open the download link from your purchase email. If it no longer works, open it anyway and click **Email me a fresh link**.
+2. Run it on the same Cloudflare account, with the same licence key.
 3. It updates the Ledger and keeps everything: the database, the files, the sign-in and your keys.
 
-After you paste the Cloudflare token, the installer finds the Ledger in your account and fills in the business details from it. The web address and the business type are locked on an update. Keys already set stay as they are when you leave their fields empty. On the same computer, the installer also remembers your answers from the last run, and the token too if you tick **Remember the token on this computer** (Windows only, stored encrypted for your Windows user).
+After you paste the Cloudflare token, the installer finds the Ledger in your account and fills in the business details from it. The web address and the business type are locked on an update. Keys already set stay as they are when you leave their fields empty. The summary before **Update** shows the move, for example **Updates your Ledger from 1.5.0 to 1.6.0**. If the installer says it is too old for the current Ledger, download the new installer from your purchase email. On the same computer, the installer also remembers your answers from the last run, and the token too if you tick **Remember the token on this computer** (Windows only, stored encrypted for your Windows user).
 
 ## Backups
 
