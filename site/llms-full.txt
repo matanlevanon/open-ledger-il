@@ -1,4 +1,4 @@
-**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.6.0
+**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.7.0
 
 # חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, על תשתית שבבעלותך.
 
@@ -338,7 +338,7 @@ Source: https://open-ledger.dev/pricing/
 
 # רשומה ברשות המסים
 
-חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.6.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
+חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
 
 רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
 
@@ -429,11 +429,11 @@ Source: https://open-ledger.dev/help/
 
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
 
 יומן השינויים נכתב באנגלית.
 
-## 1.6.0 (2026-10-13)
+## 1.7.0 (2026-10-20)
 
 ### API
 
@@ -481,6 +481,21 @@ Source: https://open-ledger.dev/help/
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
 
+### MCP
+
+- Settings > MCP shows the MCP address, makes a new token and shows it once, and turns MCP off. A token made there replaces the Worker secret `MCP_TOKEN`. Owner only.
+
+### Expenses
+
+- Forward receipts by email. Each PDF or image attachment becomes an expense waiting for review. Only senders on the list count. Settings > Expenses > Email inbox shows the address, the senders, the Gmail confirmation code and the setup steps. A Ledger on its own domain takes email through Email Routing with no gateway. The gateway is `tools/ledger-inbox`.
+
+### Database
+
+- Migration 3500: `inbox_signatures` and `inbox_events`, for the email inbox.
+- Migration 3400: `mcp_tokens`, the token made in Settings > MCP, stored as its SHA-256 only.
+
+## 1.6.0 (2026-10-13)
+
 ### Demo mode
 
 - Visitors enter at once. Every visitor reads the same sample businesses, and nothing is copied on entry.
@@ -498,18 +513,8 @@ Source: https://open-ledger.dev/help/
 
 - The Tax Authority card reads the real connection state, in English and Hebrew.
 
-### MCP
-
-- Settings > MCP shows the MCP address, makes a new token and shows it once, and turns MCP off. A token made there replaces the Worker secret `MCP_TOKEN`. Owner only.
-
-### Expenses
-
-- Forward receipts by email. Each PDF or image attachment becomes an expense waiting for review. Only senders on the list count. Settings > Expenses > Email inbox shows the address, the senders, the Gmail confirmation code and the setup steps. A Ledger on its own domain takes email through Email Routing with no gateway. The gateway is `tools/ledger-inbox`.
-
 ### Database
 
-- Migration 3500: `inbox_signatures` and `inbox_events`, for the email inbox.
-- Migration 3400: `mcp_tokens`, the token made in Settings > MCP, stored as its SHA-256 only.
 - Migration 2900: demo session tags on the demo tables, the build lock and the sweep log.
 
 ## 1.5.0 (2026-10-13)
@@ -676,7 +681,7 @@ Source: https://open-ledger.dev/license/
 
 ---
 
-**Free** · Source available · Registered with the Israel Tax Authority · v1.6.0
+**Free** · Source available · Registered with the Israel Tax Authority · v1.7.0
 
 # Invoices, receipts and books for an Israeli business, on infrastructure you own.
 
@@ -1016,7 +1021,7 @@ Source: https://open-ledger.dev/en/pricing/
 
 # Registered with the Israel Tax Authority
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.6.0, and new versions are added to the certificate as they are filed. [2]
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
 
@@ -1107,9 +1112,9 @@ Source: https://open-ledger.dev/en/help/
 
 # Changelog
 
-Every release, newest first. The current version is 1.6.0.
+Every release, newest first. The current version is 1.7.0.
 
-## 1.6.0 (2026-10-13)
+## 1.7.0 (2026-10-20)
 
 ### API
 
@@ -1157,6 +1162,21 @@ Every release, newest first. The current version is 1.6.0.
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
 
+### MCP
+
+- Settings > MCP shows the MCP address, makes a new token and shows it once, and turns MCP off. A token made there replaces the Worker secret `MCP_TOKEN`. Owner only.
+
+### Expenses
+
+- Forward receipts by email. Each PDF or image attachment becomes an expense waiting for review. Only senders on the list count. Settings > Expenses > Email inbox shows the address, the senders, the Gmail confirmation code and the setup steps. A Ledger on its own domain takes email through Email Routing with no gateway. The gateway is `tools/ledger-inbox`.
+
+### Database
+
+- Migration 3500: `inbox_signatures` and `inbox_events`, for the email inbox.
+- Migration 3400: `mcp_tokens`, the token made in Settings > MCP, stored as its SHA-256 only.
+
+## 1.6.0 (2026-10-13)
+
 ### Demo mode
 
 - Visitors enter at once. Every visitor reads the same sample businesses, and nothing is copied on entry.
@@ -1174,18 +1194,8 @@ Every release, newest first. The current version is 1.6.0.
 
 - The Tax Authority card reads the real connection state, in English and Hebrew.
 
-### MCP
-
-- Settings > MCP shows the MCP address, makes a new token and shows it once, and turns MCP off. A token made there replaces the Worker secret `MCP_TOKEN`. Owner only.
-
-### Expenses
-
-- Forward receipts by email. Each PDF or image attachment becomes an expense waiting for review. Only senders on the list count. Settings > Expenses > Email inbox shows the address, the senders, the Gmail confirmation code and the setup steps. A Ledger on its own domain takes email through Email Routing with no gateway. The gateway is `tools/ledger-inbox`.
-
 ### Database
 
-- Migration 3500: `inbox_signatures` and `inbox_events`, for the email inbox.
-- Migration 3400: `mcp_tokens`, the token made in Settings > MCP, stored as its SHA-256 only.
 - Migration 2900: demo session tags on the demo tables, the build lock and the sweep log.
 
 ## 1.5.0 (2026-10-13)

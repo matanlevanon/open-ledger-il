@@ -1,10 +1,10 @@
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.6.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
 
 יומן השינויים נכתב באנגלית.
 
-## 1.6.0 (2026-10-13)
+## 1.7.0 (2026-10-20)
 
 ### API
 
@@ -52,6 +52,21 @@
 - Migration `0002_licences.sql` adds the licence columns. Installs with no licence keep working.
 - The admin page shows each install's licence last 4, or "no licence".
 
+### MCP
+
+- Settings > MCP shows the MCP address, makes a new token and shows it once, and turns MCP off. A token made there replaces the Worker secret `MCP_TOKEN`. Owner only.
+
+### Expenses
+
+- Forward receipts by email. Each PDF or image attachment becomes an expense waiting for review. Only senders on the list count. Settings > Expenses > Email inbox shows the address, the senders, the Gmail confirmation code and the setup steps. A Ledger on its own domain takes email through Email Routing with no gateway. The gateway is `tools/ledger-inbox`.
+
+### Database
+
+- Migration 3500: `inbox_signatures` and `inbox_events`, for the email inbox.
+- Migration 3400: `mcp_tokens`, the token made in Settings > MCP, stored as its SHA-256 only.
+
+## 1.6.0 (2026-10-13)
+
 ### Demo mode
 
 - Visitors enter at once. Every visitor reads the same sample businesses, and nothing is copied on entry.
@@ -69,18 +84,8 @@
 
 - The Tax Authority card reads the real connection state, in English and Hebrew.
 
-### MCP
-
-- Settings > MCP shows the MCP address, makes a new token and shows it once, and turns MCP off. A token made there replaces the Worker secret `MCP_TOKEN`. Owner only.
-
-### Expenses
-
-- Forward receipts by email. Each PDF or image attachment becomes an expense waiting for review. Only senders on the list count. Settings > Expenses > Email inbox shows the address, the senders, the Gmail confirmation code and the setup steps. A Ledger on its own domain takes email through Email Routing with no gateway. The gateway is `tools/ledger-inbox`.
-
 ### Database
 
-- Migration 3500: `inbox_signatures` and `inbox_events`, for the email inbox.
-- Migration 3400: `mcp_tokens`, the token made in Settings > MCP, stored as its SHA-256 only.
 - Migration 2900: demo session tags on the demo tables, the build lock and the sweep log.
 
 ## 1.5.0 (2026-10-13)
