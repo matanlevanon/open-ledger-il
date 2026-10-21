@@ -28,4 +28,6 @@ paths = [
 ]
 regexes = [
   '''test-[a-z-]+-not-a-secret''',
+  # The API guide's curl examples: a placeholder where the reader puts their own key.
+  '''ol_live_YOUR_(WRITE_)?KEY''',
 ]
