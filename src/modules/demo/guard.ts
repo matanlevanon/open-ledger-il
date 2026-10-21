@@ -87,7 +87,7 @@ export function capKindOf(method: string, path: string): CapKind | null {
   return null;
 }
 
-export const READ_ONLY_MESSAGE = 'Read-only in the demo. The sample data is shared by every visitor. Create a draft of your own to try this.';
+export const READ_ONLY_MESSAGE = 'Read-only in the demo. The sample data is shared by every visitor.';
 
 export class DemoReadOnlyError extends DomainError {
   constructor() {

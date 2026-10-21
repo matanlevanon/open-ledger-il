@@ -138,8 +138,16 @@ export async function verifyTurnstile(env: Env, token: string | undefined, ip: s
   }
 }
 
-function redirectWithSession(token: string): Response {
-  return new Response(null, { status: 303, headers: { Location: '/', 'Set-Cookie': sessionCookie(token), 'Cache-Control': 'no-store' } });
+/** R43: the visit opens on the sample company, the business with the Financy Dashboard. */
+async function firstBusiness(db: D1Database): Promise<number | null> {
+  return (await first<{ business_id: number }>(db, "SELECT business_id FROM demo_master_businesses WHERE sample_key = 'company'"))?.business_id ?? null;
+}
+
+function redirectWithSession(token: string, businessId: number | null = null): Response {
+  const headers = new Headers({ Location: '/', 'Cache-Control': 'no-store' });
+  headers.append('Set-Cookie', sessionCookie(token));
+  if (businessId !== null) headers.append('Set-Cookie', `ledger_business=${businessId}; Path=/; SameSite=Strict; Max-Age=31536000`);
+  return new Response(null, { status: 303, headers });
 }
 
 function sixDigits(): string {
@@ -197,7 +205,8 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
         return c.html(codePageHtml(lang, lead.email));
       }
     }
-    return redirectWithSession(await openVisit(c.env, { documentsOptions: options.documentsOptions, notifier: notifier(c.env), now: now() }, lead.id));
+    const token = await openVisit(c.env, { documentsOptions: options.documentsOptions, notifier: notifier(c.env), now: now() }, lead.id);
+    return redirectWithSession(token, await firstBusiness(c.env.DB));
   });
 
   r.post('/verify', manual, async (c) => {

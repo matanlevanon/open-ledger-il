@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ApiError } from '../../api/client';
 import { useDemoLocked } from '../../app/demo';
 import { Dialog } from '../../components/Dialog';
 import { type MessageKey, useT } from '../../i18n';
@@ -60,7 +61,7 @@ export function RowActions({ tx, onChange, onError }: { tx: BankTransaction; onC
     try {
       onChange((await action()).transaction);
     } catch (err) {
-      onError(err instanceof Error && err.message ? err.message : t('financy.action.error'));
+      onError(err instanceof ApiError && err.code === 'demo_read_only' ? t('demo.readOnly') : err instanceof Error && err.message ? err.message : t('financy.action.error'));
     } finally {
       setBusy(false);
     }
@@ -144,7 +145,7 @@ export function MatchPicker({ tx, onClose, onMatched, onError }: { tx: BankTrans
       onClose();
       if (c.kind === 'document') navigate(`/income/documents/${c.id}?payAmount=${tx.amountMinor}&payOn=${tx.date}`);
     } catch (err) {
-      onError(err instanceof Error && err.message ? err.message : t('financy.action.error'));
+      onError(err instanceof ApiError && err.code === 'demo_read_only' ? t('demo.readOnly') : err instanceof Error && err.message ? err.message : t('financy.action.error'));
     }
   };
 

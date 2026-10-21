@@ -190,6 +190,8 @@ describe('the gate', () => {
     expect(mail.text).toContain('/api/demo/unsubscribe/');
     const res = await enter('Someone', 'someone@example.com');
     expect(res.headers.get('set-cookie')).toMatch(/HttpOnly; Secure; SameSite=Lax/);
+    // R43: the visit opens on the sample company, the one with the Financy Dashboard.
+    expect(res.headers.get('set-cookie')).toContain(`ledger_business=${company}`);
     expect(await (await call('/', { cookie: visitorA })).text()).not.toContain('Enter the demo');
   });
 
