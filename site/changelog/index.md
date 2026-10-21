@@ -1,19 +1,21 @@
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.1.
 
 יומן השינויים נכתב באנגלית.
 
-## Unreleased
+## 1.7.1 (2026-10-21)
 
 ### Tax Authority connection
 
 - The token call asks for `invoices_scope`, as SHAAM requires from 01.11.2026 (notice of 21.10.2026). Until 31.10.2026 a refresh the ITA refuses with the new scope is tried once more with the old `scope`, for a login made under it. From 01.11.2026 only the new scope is sent.
+- A refresh that needed the old scope writes `ita.legacy_scope` to the audit log, so the install connects to ITA again before 01.11.2026.
 - Login broker: asks for `invoices_scope`, passes an install's scope only while the ITA takes it, so an install that has not updated keeps working through the broker. The log shows the scope.
 
 ### Demo mode
 
 - The sample company has invented bank and card data, so visitors see Dashboard > Financy Dashboard and Expenses > Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.
+- A new visit opens on the sample company. The read-only note is shorter and in the visitor's language. The reset Worker's cron builds the sample set, never a visitor's request.
 
 ## 1.7.0 (2026-10-20)
 

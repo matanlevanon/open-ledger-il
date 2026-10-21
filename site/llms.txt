@@ -10,7 +10,7 @@
 - [Open Ledger IL: Tax Authority certificate 281801](https://open-ledger.dev/en/registration/): Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.
 - [Open Ledger IL live demo: try it in your browser](https://open-ledger.dev/en/demo/): Open the Open Ledger IL demo: sample businesses, the real screens, private drafts and preview PDFs. No install. The sample data stays as it is.
 - [Open Ledger IL help: install, set up and daily use](https://open-ledger.dev/en/help/): Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.
-- [Open Ledger IL changelog: what changed in each version](https://open-ledger.dev/en/changelog/): Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.0.
+- [Open Ledger IL changelog: what changed in each version](https://open-ledger.dev/en/changelog/): Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.1.
 - [Open Ledger IL licence: FSL-1.1, free for your business](https://open-ledger.dev/en/license/): Open Ledger IL ships under the FSL-1.1 licence. Free for your own business, no reselling, and each version turns Apache 2.0 after two years.
 
 ## Help in English
@@ -40,7 +40,7 @@
 - [Open Ledger IL רשומה ברשות המסים: תעודה 281801](https://open-ledger.dev/registration/): Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. אפשר לבדוק במאגר של רשות המסים.
 - [הדגמה חיה של Open Ledger IL: נסו בדפדפן](https://open-ledger.dev/demo/): פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.
 - [עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש](https://open-ledger.dev/help/): צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.
-- [יומן שינויים של Open Ledger IL: מה חדש בכל גרסה](https://open-ledger.dev/changelog/): כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+- [יומן שינויים של Open Ledger IL: מה חדש בכל גרסה](https://open-ledger.dev/changelog/): כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.1.
 - [רישיון Open Ledger IL: FSL-1.1, חינם לעסק שלכם](https://open-ledger.dev/license/): Open Ledger IL ברישיון FSL-1.1. חינם לעסק שלכם, בלי מכירה חוזרת, וכל גרסה עוברת ל-Apache 2.0 אחרי שנתיים.
 
 ## Help in Hebrew

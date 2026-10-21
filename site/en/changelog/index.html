@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Open Ledger IL changelog: what changed in each version</title>
-<meta name="description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.0.">
+<meta name="description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.1.">
 <link rel="canonical" href="https://open-ledger.dev/en/changelog/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/changelog/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/changelog/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/en/changelog/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="Open Ledger IL changelog: what changed in each version">
-<meta property="og:description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.0.">
+<meta property="og:description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.1.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://open-ledger.dev/en/changelog/">
 <meta property="og:image" content="https://open-ledger.dev/assets/og/en-changelog.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Open Ledger IL changelog: what changed in each version">
-<meta name="twitter:description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.0.">
+<meta name="twitter:description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.1.">
 <meta name="twitter:image" content="https://open-ledger.dev/assets/og/en-changelog.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
@@ -334,14 +334,14 @@ section[id] { scroll-margin-top: 64px; }
   <div class="wrap page">
     <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/en/">Home</a></li><li aria-current="page">Changelog</li></ol></nav>
     <h1>Changelog</h1>
-    <p class="lead">Every release, newest first. The current version is 1.7.0.</p>
+    <p class="lead">Every release, newest first. The current version is 1.7.1.</p>
   </div>
   <section class="plain">
-    <div class="wrap"><div class="prose changelog" lang="en"><h2 id="unreleased">Unreleased</h2>
+    <div class="wrap"><div class="prose changelog" lang="en"><h2 id="1-7-1-2026-10-21">1.7.1 (2026-10-21)</h2>
 <h3 id="tax-authority-connection">Tax Authority connection</h3>
-<ul><li>The token call asks for <code>invoices_scope</code>, as SHAAM requires from 01.11.2026 (notice of 21.10.2026). Until 31.10.2026 a refresh the ITA refuses with the new scope is tried once more with the old <code>scope</code>, for a login made under it. From 01.11.2026 only the new scope is sent.</li><li>Login broker: asks for <code>invoices_scope</code>, passes an install's scope only while the ITA takes it, so an install that has not updated keeps working through the broker. The log shows the scope.</li></ul>
+<ul><li>The token call asks for <code>invoices_scope</code>, as SHAAM requires from 01.11.2026 (notice of 21.10.2026). Until 31.10.2026 a refresh the ITA refuses with the new scope is tried once more with the old <code>scope</code>, for a login made under it. From 01.11.2026 only the new scope is sent.</li><li>A refresh that needed the old scope writes <code>ita.legacy_scope</code> to the audit log, so the install connects to ITA again before 01.11.2026.</li><li>Login broker: asks for <code>invoices_scope</code>, passes an install's scope only while the ITA takes it, so an install that has not updated keeps working through the broker. The log shows the scope.</li></ul>
 <h3 id="demo-mode">Demo mode</h3>
-<ul><li>The sample company has invented bank and card data, so visitors see Dashboard &gt; Financy Dashboard and Expenses &gt; Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.</li></ul>
+<ul><li>The sample company has invented bank and card data, so visitors see Dashboard &gt; Financy Dashboard and Expenses &gt; Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.</li><li>A new visit opens on the sample company. The read-only note is shorter and in the visitor's language. The reset Worker's cron builds the sample set, never a visitor's request.</li></ul>
 <h2 id="1-7-0-2026-10-20">1.7.0 (2026-10-20)</h2>
 <h3 id="api">API</h3>
 <ul><li>A public REST API at <code>/v1</code> for Financy, Make, Zapier, n8n and an accountant's software. Each call carries an API key and the Business ID. Read keys read the business, clients, documents with lines and payments, the client copy PDF, payments, expenses and suppliers. Write keys can also create clients and draft documents. Nothing finalizes, sends, credits or deletes.</li><li>Cursor paging, <code>updatedSince</code>, 120 requests a minute per key, <code>Idempotency-Key</code> on writes, and <code>/v1/openapi.json</code>. Migration <code>4100_api_keys.sql</code>.</li><li>Settings &gt; MCP is now "MCP and API": the MCP section as before, then the API address, the Business ID and the keys. A key shows once.</li><li>A Ledger set up by hand adds a Bypass Access application for the path <code>v1</code>, see <code>docs/cloudflare-access.md</code>.</li></ul>

@@ -1,4 +1,4 @@
-**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.7.0
+**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.7.1
 
 # חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, על תשתית שבבעלותך.
 
@@ -390,7 +390,7 @@ Source: https://open-ledger.dev/pricing/
 
 # רשומה ברשות המסים
 
-חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
+חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.1, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
 
 רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
 
@@ -472,20 +472,22 @@ Source: https://open-ledger.dev/help/
 
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.0.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.1.
 
 יומן השינויים נכתב באנגלית.
 
-## Unreleased
+## 1.7.1 (2026-10-21)
 
 ### Tax Authority connection
 
 - The token call asks for `invoices_scope`, as SHAAM requires from 01.11.2026 (notice of 21.10.2026). Until 31.10.2026 a refresh the ITA refuses with the new scope is tried once more with the old `scope`, for a login made under it. From 01.11.2026 only the new scope is sent.
+- A refresh that needed the old scope writes `ita.legacy_scope` to the audit log, so the install connects to ITA again before 01.11.2026.
 - Login broker: asks for `invoices_scope`, passes an install's scope only while the ITA takes it, so an install that has not updated keeps working through the broker. The log shows the scope.
 
 ### Demo mode
 
 - The sample company has invented bank and card data, so visitors see Dashboard > Financy Dashboard and Expenses > Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.
+- A new visit opens on the sample company. The read-only note is shorter and in the visitor's language. The reset Worker's cron builds the sample set, never a visitor's request.
 
 ## 1.7.0 (2026-10-20)
 
@@ -735,7 +737,7 @@ Source: https://open-ledger.dev/license/
 
 ---
 
-**Free** · Source available · Registered with the Israel Tax Authority · v1.7.0
+**Free** · Source available · Registered with the Israel Tax Authority · v1.7.1
 
 # Invoices, receipts and books for an Israeli business, on infrastructure you own.
 
@@ -1127,7 +1129,7 @@ Source: https://open-ledger.dev/en/pricing/
 
 # Registered with the Israel Tax Authority
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.0, and new versions are added to the certificate as they are filed. [2]
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.1, and new versions are added to the certificate as they are filed. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
 
@@ -1209,18 +1211,20 @@ Source: https://open-ledger.dev/en/help/
 
 # Changelog
 
-Every release, newest first. The current version is 1.7.0.
+Every release, newest first. The current version is 1.7.1.
 
-## Unreleased
+## 1.7.1 (2026-10-21)
 
 ### Tax Authority connection
 
 - The token call asks for `invoices_scope`, as SHAAM requires from 01.11.2026 (notice of 21.10.2026). Until 31.10.2026 a refresh the ITA refuses with the new scope is tried once more with the old `scope`, for a login made under it. From 01.11.2026 only the new scope is sent.
+- A refresh that needed the old scope writes `ita.legacy_scope` to the audit log, so the install connects to ITA again before 01.11.2026.
 - Login broker: asks for `invoices_scope`, passes an install's scope only while the ITA takes it, so an install that has not updated keeps working through the broker. The log shows the scope.
 
 ### Demo mode
 
 - The sample company has invented bank and card data, so visitors see Dashboard > Financy Dashboard and Expenses > Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.
+- A new visit opens on the sample company. The read-only note is shorter and in the visitor's language. The reset Worker's cron builds the sample set, never a visitor's request.
 
 ## 1.7.0 (2026-10-20)
 

@@ -29,7 +29,7 @@ PUBLIC_APP_URL = ""                             # e.g. "https://ledger.example.c
 MAIL_FROM = ""                                  # e.g. "Sample Business Ltd <billing@example.com>", a sender on a domain verified in Resend. Empty disables email.
 # Unified file (מבנה אחיד) INI.TXT software fields, section 3.1: the software as registered with the Tax Authority.
 SOFTWARE_NAME = "Open Ledger IL"
-SOFTWARE_VERSION = "1.7.0"
+SOFTWARE_VERSION = "1.7.1"
 SOFTWARE_REGISTRATION_NUMBER = ""   # 8 digits, from the Tax Authority's registration certificate
 SOFTWARE_PRODUCER_VAT = ""          # tax ID of the software producer; empty means the business itself
 SOFTWARE_PRODUCER_NAME = ""
@@ -145,7 +145,7 @@ DEMO_RESET_URL = ""                 # The reset Worker's URL. Empty runs the res
 MAIL_FROM = ""                      # e.g. "Open Ledger demo <demo@example.com>". Empty uses the Resend default.
 AI_PROVIDER = ""
 SOFTWARE_NAME = "Open Ledger IL demo"
-SOFTWARE_VERSION = "1.7.0"
+SOFTWARE_VERSION = "1.7.1"
 UPDATE_REPO = ""
 OWNER_EMAIL = ""                    # No bootstrap owner: visitors sign in by the demo session only.
 SOFTWARE_REGISTRATION_NUMBER = ""
