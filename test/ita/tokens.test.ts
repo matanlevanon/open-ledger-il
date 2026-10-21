@@ -122,6 +122,8 @@ describe('ITA OAuth2 tokens', () => {
     clock.advance(11 * MIN);
     expect(await service.tokens.accessToken()).toMatch(/^at-/);
     expect(mock.tokenScopes.slice(-2)).toEqual(['invoices_scope', 'scope']);
+    // Logged, so it is fixed before the old scope stops working.
+    expect(await first(env.DB, "SELECT 1 FROM audit_log WHERE action = 'ita.legacy_scope'")).not.toBeNull();
   });
 
   it('SHAAM scope change: from 01.11.2026 the old scope is never sent', async () => {

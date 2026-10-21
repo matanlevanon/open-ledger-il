@@ -274,9 +274,23 @@ export class ItaTokenStore {
     // tried once more with the old scope, for a refresh token issued under it.
     let status = 0;
     let json: unknown = null;
+    let used = ITA_SCOPE;
     for (const scope of itaScopes(now)) {
+      used = scope;
       ({ status, json } = await this.postToken({ grant_type: 'refresh_token', refresh_token: refreshToken, scope, ...credentials }));
       if (status !== 400) break;
+    }
+    // Before 01.11.2026 only: the ITA refused invoices_scope and took the old scope. Logged so it is
+    // seen and fixed (a new login) before the old scope stops working.
+    if (status === 200 && used !== ITA_SCOPE) {
+      console.warn(`ita refresh env=${this.environment} business=${this.businessId} took the old scope "${used}" after invoices_scope was refused`);
+      await run(
+        this.db,
+        "INSERT INTO audit_log (action, entity, entity_id, details, business_id) VALUES ('ita.legacy_scope', 'ita_tokens', ?, ?, ?)",
+        this.environment,
+        JSON.stringify({ scope: used, note: 'invoices_scope was refused. Connect to ITA again before 01.11.2026.' }),
+        this.businessId,
+      );
     }
     if (status >= 500) throw new ItaUnavailableError('The ITA login service is not answering.');
     const tokens = ItaTokenStore.parse(json);
