@@ -2,7 +2,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { createHash, generateKeyPairSync, sign } from 'node:crypto';
-import broker from '../src/index.js';
+import broker, { scopesFor } from '../src/index.js';
 const sq = new DatabaseSync(':memory:'); for (const f of ['0001_clients.sql', '0002_licences.sql']) sq.exec(readFileSync(new URL(`../migrations/${f}`, import.meta.url), 'utf8'));
 const stmt = (sql, args = []) => ({
   bind: (...a) => stmt(sql, a),
@@ -16,7 +16,8 @@ const jwk = { ...publicKey.export({ format: 'jwk' }), kid: 'k1', alg: 'RS256' };
 const b64u = (b) => Buffer.from(b).toString('base64url');
 const jwt = (email, aud = 'AUD') => { const h = b64u(JSON.stringify({ alg: 'RS256', kid: 'k1' })); const p = b64u(JSON.stringify({ aud: [aud], email, exp: Date.now() / 1000 + 600 })); return `${h}.${p}.${b64u(sign('sha256', Buffer.from(`${h}.${p}`), privateKey))}`; };
 let itaCalls = 0;
-globalThis.fetch = async (u) => { u = String(u); if (u.endsWith('/cdn-cgi/access/certs')) return new Response(JSON.stringify({ keys: [jwk] })); itaCalls++; return new Response('{"access_token":"x"}', { status: 200, headers: { 'Content-Type': 'application/json' } }); };
+let lastItaBody = null;
+globalThis.fetch = async (u, init) => { u = String(u); if (u.endsWith('/cdn-cgi/access/certs')) return new Response(JSON.stringify({ keys: [jwk] })); itaCalls++; lastItaBody = new URLSearchParams(String(init?.body ?? '')); return new Response('{"access_token":"x"}', { status: 200, headers: { 'Content-Type': 'application/json' } }); };
 const env = { DB, PUBLIC_URL: 'https://ita-auth.example.com', STATE_SECRET: 'x'.repeat(40), REGISTER_SECRET: 's'.repeat(44), ACCESS_TEAM_DOMAIN: 'https://team.cloudflareaccess.com', ACCESS_AUD: 'AUD', ADMIN_EMAILS: 'boss@example.com', ITA_CLIENT_ID_PRODUCTION: 'id', ITA_CLIENT_SECRET_PRODUCTION: 'sec' };
 const call = (path, init = {}) => broker.fetch(new Request(`https://ita-auth.example.com${path}`, init), env);
 const ok = (c, m) => { console.log(`${c ? 'PASS' : 'FAIL'} ${m}`); if (!c) process.exitCode = 1; };
@@ -47,3 +48,13 @@ r = await tok(a.name, a2.key); ok(r.status === 200, 'resumed client works with t
 r = await reg({ origin: 'https://ledger-acme.co.il' }); const b = await r.json(); ok(b.name === 'ledger-acme-co-il-2', `name clash gets a suffix (${b.name})`);
 ok(sq.prepare('SELECT count(*) n FROM client_events').get().n === 5, 'every change logged in client_events');
 r = await call(`/authorize?client=${a.name}&environment=production&state=s`); ok(r.status === 302 && r.headers.get('Location').includes('client_id=id'), 'authorize redirects an active client');
+
+// SHAAM's scope change of 01.11.2026.
+ok(r.headers.get('Location').includes('scope=invoices_scope'), 'authorize asks for invoices_scope');
+ok(JSON.stringify(scopesFor(new Date('2026-10-25T10:00:00Z'))) === '["invoices_scope","scope"]', 'before 01.11.2026 the old scope is still allowed');
+ok(JSON.stringify(scopesFor(new Date('2026-10-31T22:30:00Z'))) === '["invoices_scope"]', 'from 01.11.2026 Israel time only invoices_scope');
+const tokScope = (scope) => call('/token', { method: 'POST', headers: { 'X-Ita-Broker-Client': a.name, 'X-Ita-Broker-Key': a2.key }, body: `grant_type=refresh_token&refresh_token=r&environment=production${scope === null ? '' : `&scope=${scope}`}` });
+await tokScope(null); ok(lastItaBody.get('scope') === 'invoices_scope', 'no scope from the install: invoices_scope');
+await tokScope('invoices_scope'); ok(lastItaBody.get('scope') === 'invoices_scope', 'invoices_scope passes through');
+await tokScope('scope'); ok(lastItaBody.get('scope') === (scopesFor(new Date()).includes('scope') ? 'scope' : 'invoices_scope'), 'the old scope passes only before 01.11.2026');
+await tokScope('anything'); ok(lastItaBody.get('scope') === 'invoices_scope', 'an unknown scope becomes invoices_scope');

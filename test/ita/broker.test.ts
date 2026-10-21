@@ -28,7 +28,8 @@ function setup(key = KEY) {
     const itaEnvName = body.get('environment') === 'production' ? 'production' : 'tsandbox';
     const forward = new URLSearchParams(body);
     forward.delete('environment');
-    forward.set('scope', 'scope');
+    // The broker passes the install's scope when the ITA takes it, else invoices_scope.
+    if (forward.get('scope') !== 'scope') forward.set('scope', 'invoices_scope');
     if (forward.get('grant_type') === 'authorization_code') forward.set('redirect_uri', `${BROKER}/callback`);
     return mock.fetch(`https://ita-api.taxes.gov.il/shaam/${itaEnvName}/longtimetoken/oauth2/token`, {
       method: 'POST',

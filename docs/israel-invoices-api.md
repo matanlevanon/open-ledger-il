@@ -48,11 +48,11 @@ Grant: Authorization Code. Every Invoices endpoint is "OAuth2: User Restricted".
 
 | Step | Value |
 |---|---|
-| Authorize (browser) | `https://openapi.taxes.gov.il/shaam/tsandbox/longtimetoken/oauth2/authorize?response_type=code&client_id=...&scope=scope&redirect_uri=...` |
+| Authorize (browser) | `https://openapi.taxes.gov.il/shaam/tsandbox/longtimetoken/oauth2/authorize?response_type=code&client_id=...&scope=invoices_scope&redirect_uri=...` |
 | Token | `POST .../shaam/{tsandbox or production}/longtimetoken/oauth2/token` |
 | Token auth | `Authorization: Basic base64(client_id:client_secret)`, form-encoded body |
-| Token body | `grant_type=authorization_code&code=...&redirect_uri=...&scope=scope` |
-| Scope | the literal string `scope` |
+| Token body | `grant_type=authorization_code&code=...&redirect_uri=...&scope=invoices_scope` |
+| Scope | `invoices_scope` for Invoices, Multi-invoices, InvoiceDecisionApi and invoice-information (SHAAM notice of 21.10.2026, required from 01.11.2026). The old literal `scope` works until 31.10.2026, and the Ledger falls back to it on a refused refresh until then |
 | Access token TTL | `expires_in: 601` seconds |
 | Refresh token TTL | `refresh_token_expires_in: 7776000` seconds (90 days) |
 | Refresh | same token URL, `grant_type=refresh_token`, rotating: store the new refresh token after every use |

@@ -48,8 +48,22 @@ export const ITA_PATHS = {
 
 export type ItaPath = (typeof ITA_PATHS)[keyof typeof ITA_PATHS];
 
-/** The literal OAuth2 scope the ITA expects. */
-export const ITA_SCOPE = 'scope';
+/**
+ * The OAuth2 scope for the invoice services. SHAAM's notice of 21.10.2026: from 01.11.2026 the
+ * token call names the service family. Invoices, Multi-invoices, InvoiceDecisionApi and
+ * invoice-information all use invoices_scope. The old literal "scope" works until that date only.
+ */
+export const ITA_SCOPE = 'invoices_scope';
+/** The scope before 01.11.2026. A refresh token issued under it may still need it until then. */
+export const ITA_LEGACY_SCOPE = 'scope';
+/** The first day the ITA accepts only the new scope (Israel time). */
+export const ITA_SCOPE_CUTOVER = '2026-11-01';
+
+/** The scopes to try, in order, on a given day. The old one only before the cutover. */
+export function itaScopes(now: Date): string[] {
+  const israelDay = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+  return israelDay < ITA_SCOPE_CUTOVER ? [ITA_SCOPE, ITA_LEGACY_SCOPE] : [ITA_SCOPE];
+}
 
 /** ITA web app for manual allocation requests (fallback) and the hearing request portal. */
 export const ITA_WEB_APP_URL = 'https://secapp.taxes.gov.il/em-hkz-hsb-intr';

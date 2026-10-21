@@ -52,7 +52,13 @@ const ITA = {
     token: 'https://ita-api.taxes.gov.il/shaam/production/longtimetoken/oauth2/token',
   },
 };
-const SCOPE = 'scope';
+// SHAAM's notice of 21.10.2026: from 01.11.2026 the invoice services take invoices_scope. Until then
+// a refresh refused with the new scope (400) is tried once more with the old literal "scope".
+const SCOPE = 'invoices_scope';
+const LEGACY_SCOPE = 'scope';
+const SCOPE_CUTOVER = '2026-11-01';
+const israelDay = (now) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+export const scopesFor = (now) => (israelDay(now) < SCOPE_CUTOVER ? [SCOPE, LEGACY_SCOPE] : [SCOPE]);
 const STATE_TTL_MS = 15 * 60_000;
 const RELAY_HOSTS = { 'openapi.taxes.gov.il': 'openapi', 'ita-api.taxes.gov.il': 'ita-api' };
 
@@ -194,12 +200,16 @@ async function token(env, request) {
   if (!creds) return fail(400, 'Unknown environment, or no ITA app set up for it.');
 
   const grant = form.get('grant_type') ?? '';
+  // The install's scope when it is one the ITA takes today, else the new one. An older install still
+  // sends "scope": it keeps working until 01.11.2026 and gets the new scope from then on.
+  const allowed = scopesFor(new Date());
+  const scope = allowed.includes(form.get('scope') ?? '') ? form.get('scope') : SCOPE;
   let body;
   if (grant === 'authorization_code' && form.get('code')) {
-    body = { grant_type: grant, code: form.get('code'), redirect_uri: `${publicUrl(env, request.url)}/callback`, scope: SCOPE };
+    body = { grant_type: grant, code: form.get('code'), redirect_uri: `${publicUrl(env, request.url)}/callback`, scope };
   } else if (grant === 'refresh_token' && form.get('refresh_token')) {
     // The ITA developer guide sends the client credentials in the refresh body too.
-    body = { grant_type: grant, refresh_token: form.get('refresh_token'), scope: SCOPE, client_id: creds.id, client_secret: creds.secret };
+    body = { grant_type: grant, refresh_token: form.get('refresh_token'), scope, client_id: creds.id, client_secret: creds.secret };
   } else {
     return fail(400, 'Send grant_type authorization_code with code, or refresh_token with refresh_token.');
   }
@@ -222,7 +232,7 @@ async function token(env, request) {
     return fail(502, 'The ITA token address did not answer.');
   }
   const text = await res.text();
-  console.log(`token client=${client.name} env=${environment} grant=${grant} ${res.status} ${Date.now() - started}ms`);
+  console.log(`token client=${client.name} env=${environment} grant=${grant} scope=${scope} ${res.status} ${Date.now() - started}ms`);
   return new Response(text, {
     status: res.status,
     headers: { 'Content-Type': res.headers.get('Content-Type') ?? 'application/json', 'Cache-Control': 'no-store' },

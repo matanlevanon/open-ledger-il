@@ -1,6 +1,6 @@
 import { first, run } from '../../core/db';
 import { ConfigError, ValidationError } from '../../core/errors';
-import { type ItaEnv, type ItaEnvironment, ITA_SCOPE, ITA_URLS, itaBroker, itaCredentials, itaEnvironment, relayedFetch } from './config';
+import { type ItaEnv, type ItaEnvironment, ITA_SCOPE, ITA_URLS, itaBroker, itaScopes, itaCredentials, itaEnvironment, relayedFetch } from './config';
 import { decryptToken, encryptToken, importTokenKey } from './crypto';
 import { ItaReconnectError, ItaUnavailableError } from './errors';
 
@@ -270,12 +270,14 @@ export class ItaTokenStore {
     // the Basic header. The first refresh with the header alone was refused.
     // A login broker adds the client credentials itself.
     const credentials = itaBroker(this.env) ? {} : (({ clientId, clientSecret }) => ({ client_id: clientId, client_secret: clientSecret }))(itaCredentials(this.env));
-    const { status, json } = await this.postToken({
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
-      scope: ITA_SCOPE,
-      ...credentials,
-    });
+    // SHAAM's scope change of 01.11.2026: the new scope first. Until that date a refusal (400) is
+    // tried once more with the old scope, for a refresh token issued under it.
+    let status = 0;
+    let json: unknown = null;
+    for (const scope of itaScopes(now)) {
+      ({ status, json } = await this.postToken({ grant_type: 'refresh_token', refresh_token: refreshToken, scope, ...credentials }));
+      if (status !== 400) break;
+    }
     if (status >= 500) throw new ItaUnavailableError('The ITA login service is not answering.');
     const tokens = ItaTokenStore.parse(json);
     if (status !== 200 || !tokens) {

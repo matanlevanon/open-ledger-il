@@ -101,10 +101,36 @@ describe('ITA OAuth2 tokens', () => {
     const url = new URL(prod.service.tokens.authorizeUrl('s', 'https://x/cb'));
     expect(url.pathname).toContain('/shaam/production/');
     expect(url.searchParams.get('client_id')).toBe('prod-client-id');
-    expect(url.searchParams.get('scope')).toBe('scope');
+    expect(url.searchParams.get('scope')).toBe('invoices_scope');
     const sandboxUrl = new URL(sandbox.service.tokens.authorizeUrl('s', 'https://x/cb'));
     expect(sandboxUrl.pathname).toContain('/shaam/tsandbox/');
     expect(sandboxUrl.searchParams.get('client_id')).toBe('client-id');
+  });
+
+  it('SHAAM scope change: the token calls send invoices_scope', async () => {
+    const { service, mock, clock } = await setupIta();
+    clock.advance(11 * MIN);
+    await service.tokens.accessToken();
+    expect(mock.tokenScopes.length).toBeGreaterThanOrEqual(2);
+    expect(new Set(mock.tokenScopes)).toEqual(new Set(['invoices_scope']));
+  });
+
+  it('SHAAM scope change: before 01.11.2026 a refresh refused with the new scope retries with the old one', async () => {
+    const { service, mock, clock } = await setupIta({ start: '2026-10-25T08:00:00.000Z' });
+    // An ITA that has not switched yet, or a refresh token issued under the old scope.
+    mock.scopes = ['scope'];
+    clock.advance(11 * MIN);
+    expect(await service.tokens.accessToken()).toMatch(/^at-/);
+    expect(mock.tokenScopes.slice(-2)).toEqual(['invoices_scope', 'scope']);
+  });
+
+  it('SHAAM scope change: from 01.11.2026 the old scope is never sent', async () => {
+    const { service, mock, clock } = await setupIta({ start: '2026-10-31T21:50:00.000Z' });
+    mock.scopes = ['scope'];
+    clock.advance(11 * MIN);
+    await expect(service.tokens.accessToken()).rejects.toBeInstanceOf(ItaReconnectError);
+    expect(mock.tokenScopes.at(-1)).toBe('invoices_scope');
+    expect(mock.tokenScopes.filter((s) => s === 'scope')).toHaveLength(0);
   });
 
   it('a token that no longer decrypts asks for a new login', async () => {

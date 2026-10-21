@@ -92,6 +92,10 @@ export class MockIta {
   readonly hearingsWon = new Set<string>();
   readonly supplierInvoices: SupplierInvoice[] = [];
   down = false;
+  /** The scopes the token endpoint takes. From 01.11.2026 the ITA takes invoices_scope only. */
+  scopes = ['invoices_scope'];
+  /** The scope of every token call, in order. */
+  readonly tokenScopes: string[] = [];
   private forced: { status: number; body?: unknown }[] = [];
   private codes = new Map<string, Env>();
   private refresh = new Map<string, { env: Env; expires: number }>();
@@ -168,7 +172,8 @@ export class MockIta {
     if (this.header(headers, 'Authorization') !== `Basic ${btoa(`${this.client.id}:${this.client.secret}`)}`) {
       return done(401, { error: 'invalid_client' });
     }
-    if (params.get('scope') !== 'scope') return done(400, { error: 'invalid_scope' });
+    this.tokenScopes.push(params.get('scope') ?? '');
+    if (!this.scopes.includes(params.get('scope') ?? '')) return done(400, { error: 'invalid_scope' });
     if (grant === 'authorization_code') {
       const code = params.get('code') ?? '';
       if (this.codes.get(code) !== env || !params.get('redirect_uri')) return done(400, { error: 'invalid_grant' });
@@ -197,7 +202,7 @@ export class MockIta {
       expires_in: 601,
       refresh_token: refresh,
       refresh_token_expires_in: Math.round((refreshUntil - this.now()) / 1000),
-      scope: 'scope',
+      scope: 'invoices_scope',
     };
   }
 
