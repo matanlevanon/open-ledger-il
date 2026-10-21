@@ -338,6 +338,8 @@ section[id] { scroll-margin-top: 64px; }
   </div>
   <section class="plain">
     <div class="wrap"><div class="prose changelog" lang="en"><h2 id="unreleased">Unreleased</h2>
+<h3 id="tax-authority-connection">Tax Authority connection</h3>
+<ul><li>The token call asks for <code>invoices_scope</code>, as SHAAM requires from 01.11.2026 (notice of 21.10.2026). Until 31.10.2026 a refresh the ITA refuses with the new scope is tried once more with the old <code>scope</code>, for a login made under it. From 01.11.2026 only the new scope is sent.</li><li>Login broker: asks for <code>invoices_scope</code>, passes an install's scope only while the ITA takes it, so an install that has not updated keeps working through the broker. The log shows the scope.</li></ul>
 <h3 id="demo-mode">Demo mode</h3>
 <ul><li>The sample company has invented bank and card data, so visitors see Dashboard &gt; Financy Dashboard and Expenses &gt; Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.</li></ul>
 <h2 id="1-7-0-2026-10-20">1.7.0 (2026-10-20)</h2>

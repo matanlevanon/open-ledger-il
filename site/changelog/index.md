@@ -6,6 +6,11 @@
 
 ## Unreleased
 
+### Tax Authority connection
+
+- The token call asks for `invoices_scope`, as SHAAM requires from 01.11.2026 (notice of 21.10.2026). Until 31.10.2026 a refresh the ITA refuses with the new scope is tried once more with the old `scope`, for a login made under it. From 01.11.2026 only the new scope is sent.
+- Login broker: asks for `invoices_scope`, passes an install's scope only while the ITA takes it, so an install that has not updated keeps working through the broker. The log shows the scope.
+
 ### Demo mode
 
 - The sample company has invented bank and card data, so visitors see Dashboard > Financy Dashboard and Expenses > Bank activity with every status. The buttons show, read-only, and a note says the data is invented. Nothing calls Financy, and the daily sync skips the demo. Sample set version 2.
