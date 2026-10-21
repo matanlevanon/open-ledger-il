@@ -9,6 +9,7 @@
   "shopLive": false,
   "financyUrl": "https://financy.open-finance.ai/?ref=fin_01m5atfp5ctrp1b10fyq1pk71d",
   "contactEndpoint": "https://contact.matanlevanon.com/lead",
+  "turnstileSiteKey": "0x4AAAAAAFfBiE9Ucglunw0l",
   "analytics": {
     "cfBeaconToken": "",
     "ga4Id": ""

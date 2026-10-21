@@ -375,6 +375,8 @@ section[id] { scroll-margin-top: 64px; }
         <label>סוג העסק<select name="type"><option>עוסק פטור</option><option>עוסק מורשה</option><option>חברה בע"מ</option><option>אחר</option></select></label>
         <label class="full">משהו שכדאי שאדע<textarea name="message" rows="4"></textarea></label>
         <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>
+        <div class="full cf-turnstile" data-sitekey="0x4AAAAAAFfBiE9Ucglunw0l" data-size="flexible" data-appearance="interaction-only"></div>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         <div class="full"><button class="btn btn-primary" type="submit">שליחת בקשה</button></div>
         <p class="status" role="status"></p>
       </form>
@@ -382,6 +384,7 @@ section[id] { scroll-margin-top: 64px; }
       (function () {
         var f = document.getElementById('setup-form'); if (!f) return;
         var st = f.querySelector('.status');
+        var t0 = Date.now();
         f.addEventListener('submit', function (e) {
           e.preventDefault();
           var d = new FormData(f);
@@ -392,11 +395,11 @@ section[id] { scroll-margin-top: 64px; }
           var msg = 'טלפון: ' + (d.get('phone') || '-') + '\nסוג העסק: ' + d.get('type') + '\n\n' + (d.get('message') || '');
           fetch('https://contact.matanlevanon.com/lead', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)' })
+            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)', elapsed_ms: Date.now() - t0, turnstile: String(d.get('cf-turnstile-response') || '') })
           }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
             .then(function (ok) { st.textContent = ok ? 'תודה. הבקשה הגיעה אליי, ואחזור אליך באימייל.' : 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; if (ok) { f.reset(); if (window.gtag) window.gtag('event', 'setup_request'); } })
             .catch(function () { st.textContent = 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; })
-            .finally(function () { btn.disabled = false; });
+            .finally(function () { btn.disabled = false; if (window.turnstile) { try { window.turnstile.reset(); } catch (x) {} } });
         });
       })();
       </script>

@@ -531,7 +531,7 @@ OPTIONS_EN = r'''  <section id="options">
         <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
         <label>Business type<select name="type"><option>Osek patur (עוסק פטור)</option><option>Osek murshe (עוסק מורשה)</option><option>Company (חברה בע"מ)</option><option>Other</option></select></label>
         <label class="full">Anything I should know<textarea name="message" rows="4"></textarea></label>
-        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>
+        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>__TURNSTILE__
         <div class="full"><button class="btn btn-primary" type="submit">Send request</button></div>
         <p class="status" role="status"></p>
       </form>
@@ -539,6 +539,7 @@ OPTIONS_EN = r'''  <section id="options">
       (function () {
         var f = document.getElementById('setup-form'); if (!f) return;
         var st = f.querySelector('.status');
+        var t0 = Date.now();
         f.addEventListener('submit', function (e) {
           e.preventDefault();
           var d = new FormData(f);
@@ -549,11 +550,11 @@ OPTIONS_EN = r'''  <section id="options">
           var msg = 'Phone: ' + (d.get('phone') || '-') + '\nBusiness type: ' + d.get('type') + '\n\n' + (d.get('message') || '');
           fetch('__CONTACT__', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (en)' })
+            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (en)', elapsed_ms: Date.now() - t0, turnstile: String(d.get('cf-turnstile-response') || '') })
           }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
             .then(function (ok) { st.textContent = ok ? 'Thanks. Your request reached me, and I will reply by email.' : 'The request did not go through. Try again in a minute.'; if (ok) { f.reset(); if (window.gtag) window.gtag('event', 'setup_request'); } })
             .catch(function () { st.textContent = 'The request did not go through. Try again in a minute.'; })
-            .finally(function () { btn.disabled = false; });
+            .finally(function () { btn.disabled = false; if (window.turnstile) { try { window.turnstile.reset(); } catch (x) {} } });
         });
       })();
       </script>
@@ -612,7 +613,7 @@ OPTIONS_HE = r'''  <section id="options">
         <label>טלפון<input name="phone" type="tel" autocomplete="tel"></label>
         <label>סוג העסק<select name="type"><option>עוסק פטור</option><option>עוסק מורשה</option><option>חברה בע"מ</option><option>אחר</option></select></label>
         <label class="full">משהו שכדאי שאדע<textarea name="message" rows="4"></textarea></label>
-        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>
+        <label class="hp" aria-hidden="true">Leave empty<input name="hp" tabindex="-1" autocomplete="off"></label>__TURNSTILE__
         <div class="full"><button class="btn btn-primary" type="submit">שליחת בקשה</button></div>
         <p class="status" role="status"></p>
       </form>
@@ -620,6 +621,7 @@ OPTIONS_HE = r'''  <section id="options">
       (function () {
         var f = document.getElementById('setup-form'); if (!f) return;
         var st = f.querySelector('.status');
+        var t0 = Date.now();
         f.addEventListener('submit', function (e) {
           e.preventDefault();
           var d = new FormData(f);
@@ -630,11 +632,11 @@ OPTIONS_HE = r'''  <section id="options">
           var msg = 'טלפון: ' + (d.get('phone') || '-') + '\nסוג העסק: ' + d.get('type') + '\n\n' + (d.get('message') || '');
           fetch('__CONTACT__', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)' })
+            body: JSON.stringify({ name: d.get('name'), email: email, company: d.get('type'), message: msg, source: 'Open Ledger IL setup request (he)', elapsed_ms: Date.now() - t0, turnstile: String(d.get('cf-turnstile-response') || '') })
           }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok && j.ok; }); })
             .then(function (ok) { st.textContent = ok ? 'תודה. הבקשה הגיעה אליי, ואחזור אליך באימייל.' : 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; if (ok) { f.reset(); if (window.gtag) window.gtag('event', 'setup_request'); } })
             .catch(function () { st.textContent = 'הבקשה לא נשלחה. נסה שוב בעוד דקה.'; })
-            .finally(function () { btn.disabled = false; });
+            .finally(function () { btn.disabled = false; if (window.turnstile) { try { window.turnstile.reset(); } catch (x) {} } });
         });
       })();
       </script>

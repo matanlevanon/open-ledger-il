@@ -8,7 +8,8 @@
  *      On siteUrl itself an old /he/ path also answers 301 to its root form.
  *   3. 301 from the GitHub Pages era paths: /index.html, /he.html, /docs/*.
  *   4. Security headers on every reply, with a Content-Security-Policy that allows only this site,
- *      the analytics hosts set in site.config.json and the contact endpoint. Fonts are self-hosted.
+ *      the analytics hosts set in site.config.json, the contact endpoint and, when turnstileSiteKey
+ *      is set, Cloudflare Turnstile. Fonts are self-hosted.
  *   5. The search console verification file named in searchVerification.googleFile, served as
  *      Google expects it on every host, with no redirect. Empty: no such file.
  *   6. Cache headers: hashed assets one year immutable, other assets a day, pages 10 minutes, and
@@ -39,8 +40,13 @@ export function contentSecurityPolicy(cfg = config) {
   const script = ["'self'", "'unsafe-inline'"];
   const connect = ["'self'"];
   const img = ["'self'", 'data:'];
+  const frame = [];
   const contact = origin(cfg.contactEndpoint);
   if (contact) connect.push(contact);
+  if (String(cfg.turnstileSiteKey ?? '').trim()) {
+    script.push('https://challenges.cloudflare.com');
+    frame.push('https://challenges.cloudflare.com');
+  }
   if (a.cfBeaconToken) {
     script.push('https://static.cloudflareinsights.com');
     connect.push('https://cloudflareinsights.com');
@@ -57,6 +63,7 @@ export function contentSecurityPolicy(cfg = config) {
     "font-src 'self'",
     `img-src ${img.join(' ')}`,
     `connect-src ${connect.join(' ')}`,
+    ...(frame.length ? [`frame-src ${frame.join(' ')}`] : []),
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

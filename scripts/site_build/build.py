@@ -10,7 +10,8 @@ import hashlib, html, json, os, re, shutil, sys
 
 from . import md, to_md
 from .config import (CERTIFICATE, CLONE, CONFIG, DEMO_URL, DEPLOY, ITA_REG, ITA_REGISTRY, OUT, REPO, ROOT,
-                     SETUP, SHOP_LIVE, SHOP_URL, SITE_URL, CONTACT_ENDPOINT, FINANCY_URL, LICENSE, VERSION)
+                     SETUP, SHOP_LIVE, SHOP_URL, SITE_URL, CONTACT_ENDPOINT, FINANCY_URL, LICENSE, VERSION,
+                    TURNSTILE_SITE_KEY)
 
 md.SPONSORED.append(FINANCY_URL)
 from .pages_text import NAV, PAGES, UI
@@ -582,9 +583,18 @@ def section_rules(lang):
   </section>'''
 
 
+def turnstile_widget():
+    """The Turnstile widget for the setup form, or nothing when no site key is set."""
+    if not TURNSTILE_SITE_KEY:
+        return ''
+    return ('\n        <div class="full cf-turnstile" data-sitekey="' + html.escape(TURNSTILE_SITE_KEY, quote=True) + '" data-size="flexible" data-appearance="interaction-only"></div>'
+            '\n        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>')
+
+
 def section_options(lang):
     """The pricing cards and the setup form. Before the shop is live the ₪99 card is left out."""
     html_ = (OPTIONS_EN if lang == 'en' else OPTIONS_HE).replace('__SHOP__', SHOP_URL).replace('__DEPLOY__', DEPLOY).replace('__CONTACT__', CONTACT_ENDPOINT)
+    html_ = html_.replace('__TURNSTILE__', turnstile_widget())
     if SHOP_LIVE:
         return re.sub(r'<!--/?(SHOP|H)-->\n?', '', html_)
     html_ = re.sub(r'<!--SHOP-->.*?<!--/SHOP-->\n', '', html_, flags=re.S)

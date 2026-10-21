@@ -35,6 +35,8 @@ SHOP_URL = CONFIG['shopUrl']
 # and uncomment the ₪99 paragraph in README.md.
 SHOP_LIVE = CONFIG['shopLive']
 CONTACT_ENDPOINT = CONFIG['contactEndpoint']
+# Cloudflare Turnstile site key for the setup form. Empty: no widget, and the form sends no token.
+TURNSTILE_SITE_KEY = str(CONFIG.get('turnstileSiteKey', '')).strip()
 # The Financy partner link. Help pages use it as {{financy}}, and md.py marks it rel="sponsored".
 FINANCY_URL = CONFIG.get('financyUrl', '')
 ANALYTICS = CONFIG['analytics']

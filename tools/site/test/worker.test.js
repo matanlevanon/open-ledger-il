@@ -129,6 +129,15 @@ describe('headers', () => {
     expect(both).toContain('https://www.googletagmanager.com');
   });
 
+  it('allows Cloudflare Turnstile only when a site key is set', () => {
+    const off = contentSecurityPolicy({ ...config, turnstileSiteKey: '' });
+    expect(off).not.toContain('challenges.cloudflare.com');
+    expect(off).not.toContain('frame-src');
+    const on = contentSecurityPolicy({ ...config, turnstileSiteKey: '0xTEST' });
+    expect(on).toMatch(/script-src [^;]*https:\/\/challenges\.cloudflare\.com/);
+    expect(on).toContain('frame-src https://challenges.cloudflare.com');
+  });
+
   it('caches pages 10 minutes and hashed assets a year', async () => {
     expect((await get(`${SITE}/`)).headers.get('Cache-Control')).toBe('public, max-age=600');
     const asset = await get(`${SITE}/assets/screenshots/dashboard.png`);
