@@ -31,6 +31,7 @@ PAGE_CSS = '''
 .skip:focus { inset-inline-start: 12px; top: 12px; z-index: 60; background: var(--surface); padding: 8px 12px; border-radius: 8px; }
 .nav-links a[aria-current=page] { color: var(--text); font-weight: 600; }
 .page { padding: 40px 22px 8px; }
+@media (max-width: 640px) { .page { padding: 24px 16px 4px; } .crumbs { margin-bottom: 10px; } }
 .page h1 { font-size: clamp(30px, 4.4vw, 46px); }
 .page .lead { margin-inline: 0; }
 .crumbs { font-size: 13px; color: var(--text-mute); margin-bottom: 18px; }

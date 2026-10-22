@@ -217,11 +217,33 @@ footer { border-top: 1px solid var(--border-soft); padding: 34px 0 46px; color: 
 .setup-form .status { grid-column: 1 / -1; margin: 0; font-size: 14px; color: var(--text-dim); }
 @media (max-width: 640px) { .setup-form { grid-template-columns: 1fr; } }
 section[id] { scroll-margin-top: 64px; }
+/* Phones: shorter sections and cards, and on the pricing cards the paid ₪99 plan comes first. */
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  section { padding: 44px 0; }
+  .sub { margin-top: 40px; }
+  .hero { padding: 40px 0 28px; }
+  h2 { font-size: 24px; }
+  .lead { margin-bottom: 20px; }
+  .plans { gap: 12px; }
+  .plan { padding: 18px; }
+  .plan-main { order: -1; }
+  .price { font-size: 30px; margin: 2px 0 8px; }
+  .price .was { font-size: 18px; }
+  .plan ul { margin-bottom: 14px; }
+  .plan li { margin: 4px 0; font-size: 14.5px; line-height: 1.45; }
+  .setup-form { padding: 16px; gap: 10px; margin-top: 16px; }
+  .setup-form input, .setup-form select, .setup-form textarea { padding: 9px 11px; }
+  .facts { padding: 14px 16px; }
+  .btn-lg { padding: 15px 24px; font-size: 16px; }
+  footer { padding: 24px 0 32px; }
+}
 
 .skip { position: absolute; inset-inline-start: -9999px; }
 .skip:focus { inset-inline-start: 12px; top: 12px; z-index: 60; background: var(--surface); padding: 8px 12px; border-radius: 8px; }
 .nav-links a[aria-current=page] { color: var(--text); font-weight: 600; }
 .page { padding: 40px 22px 8px; }
+@media (max-width: 640px) { .page { padding: 24px 16px 4px; } .crumbs { margin-bottom: 10px; } }
 .page h1 { font-size: clamp(30px, 4.4vw, 46px); }
 .page .lead { margin-inline: 0; }
 .crumbs { font-size: 13px; color: var(--text-mute); margin-bottom: 18px; }
