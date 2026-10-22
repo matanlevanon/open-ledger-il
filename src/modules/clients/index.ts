@@ -15,6 +15,7 @@ import {
   copyClientToBusiness,
   createClient,
   getClient,
+  listClientGroups,
   listClients,
   removeContact,
   setActive,
@@ -52,6 +53,8 @@ export function createClientsModule(options: ClientsModuleOptions = {}): ModuleD
     const q = clientListQuery.parse(c.req.query());
     return c.json({ clients: await listClients(c.env.DB, q, today(), businessIdOf(c)) });
   });
+
+  r.get('/groups', requireFeature('clients'), async (c) => c.json({ groups: await listClientGroups(c.env.DB, businessIdOf(c)) }));
 
   r.post('/', requireRole('owner', 'assistant'), async (c) => {
     const raw = await body(c);

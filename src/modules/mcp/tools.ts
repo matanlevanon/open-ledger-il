@@ -77,6 +77,7 @@ const confirmTrue = z
 const listClientsInput = z.object({
   query: z.string().trim().max(200).optional(),
   includeInactive: z.boolean().default(false),
+  group: z.string().trim().max(60).optional(),
 });
 
 // ---------------------------------------------------------------------------
@@ -217,13 +218,14 @@ export const MCP_TOOLS: McpTool[] = [
       properties: {
         query: { type: 'string', description: 'Search text.' },
         includeInactive: { type: 'boolean', description: 'Include not-active clients. Default false.' },
+        group: { type: 'string', description: 'Only clients in this group. "__none__" for clients with no group.' },
       },
     },
     async handler(env, args) {
       const input = listClientsInput.parse(args ?? {});
       const today = (env.today ?? (() => todayIsrael()))();
-      const rows = await listClients(env.db, { q: input.query, active: input.includeInactive ? 'all' : '1' }, today, env.businessId);
-      return rows.map((r) => ({ id: r.id, nameEn: r.name_en, nameHe: r.name_he, currency: r.currency, balances: r.balances, overdue: r.overdue }));
+      const rows = await listClients(env.db, { q: input.query, active: input.includeInactive ? 'all' : '1', group: input.group }, today, env.businessId);
+      return rows.map((r) => ({ id: r.id, nameEn: r.name_en, nameHe: r.name_he, group: r.client_group, currency: r.currency, balances: r.balances, overdue: r.overdue }));
     },
   },
   {

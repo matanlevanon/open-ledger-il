@@ -29,6 +29,8 @@ const clientFields = z.object({
   city: text(100),
   postalCode: text(20),
   notes: text(5000),
+  /** R45: a label for sorting the client list, for example "Open Ledger". Empty means no group. */
+  group: z.string().trim().max(60).nullish().transform((v) => (v ? v : null)),
   /** Prefills a new quote or payment request for this client (R16 task 7); falls back to the business default. */
   paymentInstructions: text(5000),
   /** R28: off, the client gets no automatic payment or signing reminder. Manual Remind still works. */
@@ -83,7 +85,12 @@ export const clientListQuery = z.object({
   q: z.string().trim().max(100).optional(),
   /** '1' (default): active only. '0': not active only. 'all': every client (R18 task 6). */
   active: z.enum(['0', '1', 'all']).default('1'),
+  /** R45: absent, every group. NO_GROUP: clients with no group. Anything else: that group only. */
+  group: z.string().trim().max(60).optional(),
 });
+
+/** R45: the group filter value for "no group". Not a name a person types. */
+export const NO_GROUP = '__none__';
 
 export const ledgerQuery = z.object({
   from: dateString.optional(),

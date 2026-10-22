@@ -5,7 +5,7 @@ import { clientBalances, openDemands } from '../documents/balances';
 import { uploadService } from '../import';
 import { manualConsentDetail, manualConsentStatement } from '../sending/consent';
 import { assertMethodIdsExist } from '../payment-methods/service';
-import { hasClientName, NO_NAME_MESSAGE, type ClientInput, type ClientPatch, type ConsentInput, type ContactInput } from './schemas';
+import { hasClientName, NO_GROUP, NO_NAME_MESSAGE, type ClientInput, type ClientPatch, type ConsentInput, type ContactInput } from './schemas';
 
 export interface ClientRow {
   id: number;
@@ -25,6 +25,8 @@ export interface ClientRow {
   city: string | null;
   postal_code: string | null;
   notes: string | null;
+  /** R45: the client's group, a list label only. NULL: no group. */
+  client_group: string | null;
   payment_instructions: string | null;
   /** R28: 1 sends automatic payment and signing reminders, 0 sends none. */
   auto_reminders: number;
@@ -64,6 +66,7 @@ const COLUMNS: [keyof ClientInput, keyof ClientRow][] = [
   ['city', 'city'],
   ['postalCode', 'postal_code'],
   ['notes', 'notes'],
+  ['group', 'client_group'],
   ['paymentInstructions', 'payment_instructions'],
   ['autoReminders', 'auto_reminders'],
   ['defaultPaymentMethodIds', 'default_payment_method_ids'],
@@ -76,11 +79,16 @@ export async function getClient(db: D1Database, id: number, businessId: number):
   return row;
 }
 
-export async function listClients(db: D1Database, q: { q?: string; active: '0' | '1' | 'all' }, today: string, businessId: number) {
+export async function listClients(db: D1Database, q: { q?: string; active: '0' | '1' | 'all'; group?: string }, today: string, businessId: number) {
   const where: string[] = ['business_id = ?'];
   const params: (string | number)[] = [businessId];
   if (q.active === '1') where.push('active = 1');
   if (q.active === '0') where.push('active = 0');
+  if (q.group === NO_GROUP) where.push('client_group IS NULL');
+  else if (q.group) {
+    where.push('client_group = ? COLLATE NOCASE');
+    params.push(q.group);
+  }
   if (q.q) {
     where.push('(name_en LIKE ? OR name_he LIKE ? OR company_id LIKE ? OR email LIKE ?)');
     const like = `%${q.q.replace(/[%_]/g, '')}%`;
@@ -104,6 +112,15 @@ export async function listClients(db: D1Database, q: { q?: string; active: '0' |
     overdue.set(d.client_id, t);
   }
   return rows.map((r) => ({ ...r, balances: balances.get(r.id) ?? {}, overdue: overdue.get(r.id) ?? {} }));
+}
+
+/** R45: the groups in use, with how many clients each, for the list filter. */
+export async function listClientGroups(db: D1Database, businessId: number): Promise<{ name: string; count: number }[]> {
+  return all<{ name: string; count: number }>(
+    db,
+    'SELECT client_group AS name, COUNT(*) AS count FROM clients WHERE business_id = ? AND client_group IS NOT NULL GROUP BY client_group COLLATE NOCASE ORDER BY client_group COLLATE NOCASE',
+    businessId,
+  );
 }
 
 export async function clientDetail(db: D1Database, id: number, businessId: number) {

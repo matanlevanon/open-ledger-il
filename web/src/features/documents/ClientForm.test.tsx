@@ -120,3 +120,18 @@ describe('R28 client form, automatic reminders', () => {
     expect(await screen.findByRole('checkbox', { name: 'Send automatic reminders to this client' })).not.toBeChecked();
   });
 });
+
+describe('R45 client form, group', () => {
+  it('shows the client group, suggests existing groups and saves a new one', async () => {
+    routes['GET /api/clients/7'] = () => DETAIL({ client_group: 'Open Ledger' });
+    routes['GET /api/clients/groups'] = () => ({ groups: [{ name: 'Open Ledger', count: 3 }, { name: 'Consulting', count: 2 }] });
+    const { container } = wrap('/clients/7/edit');
+    const box = (await screen.findByRole('combobox', { name: /^Group/ })) as HTMLInputElement;
+    expect(box.value).toBe('Open Ledger');
+    await waitFor(() => expect(container.querySelectorAll('#client-groups option')).toHaveLength(2));
+    fireEvent.change(box, { target: { value: 'Consulting' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save client' }));
+    await screen.findByText('Client page');
+    expect((calls.find((c) => c.key === 'PATCH /api/clients/7')!.body as any).group).toBe('Consulting');
+  });
+});

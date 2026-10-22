@@ -36,6 +36,8 @@ export interface Client {
   city: string | null;
   postal_code: string | null;
   notes: string | null;
+  /** R45: the client's group, a list label only. Older servers leave it out. */
+  client_group?: string | null;
   payment_instructions: string | null;
   payment_method_ids: string | null;
   /** R28: 0 when the client gets no automatic reminders. Older servers leave it out. */
@@ -315,7 +317,9 @@ function announceClients<T>(p: Promise<T>): Promise<T> {
 }
 
 export const clientsApi = {
-  list: (params: { q?: string; active?: string } = {}) => apiGet<{ clients: Client[] }>(`/clients${qs(params)}`),
+  list: (params: { q?: string; active?: string; group?: string } = {}) => apiGet<{ clients: Client[] }>(`/clients${qs(params)}`),
+  /** R45: the groups in use, with a count each. */
+  groups: () => apiGet<{ groups: { name: string; count: number }[] }>('/clients/groups'),
   get: (id: number) => apiGet<ClientDetail>(`/clients/${id}`),
   create: (body: Record<string, unknown>) => announceClients(apiSend<ClientDetail>('POST', '/clients', body)),
   update: (id: number, body: Record<string, unknown>) => announceClients(apiSend<ClientDetail>('PATCH', `/clients/${id}`, body)),

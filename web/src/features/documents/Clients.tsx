@@ -1,4 +1,7 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react';
+
+/** R45: the group filter value for clients with no group. Same as the server's NO_GROUP. */
+const NO_GROUP = '__none__';
 import { useIssuing } from '../../app/issuing';
 import { DemoReadOnlyNote, useDemoReadOnly } from '../../app/demo';
 import { Link, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -56,7 +59,13 @@ export function ClientList() {
   const t = useT();
   const [q, setQ] = useState('');
   const [showInactive, setShowInactive] = useState(false);
-  const { data, error } = useLoad(() => clientsApi.list({ q, active: showInactive ? 'all' : '1' }), [q, showInactive]);
+  // R45: '' every group, NO_GROUP clients with none, else that group.
+  const [group, setGroup] = useState('');
+  const groups = useLoad(() => clientsApi.groups().catch(() => ({ groups: [] })), []);
+  const { data, error } = useLoad(
+    () => clientsApi.list({ q, active: showInactive ? 'all' : '1', ...(group ? { group } : {}) }),
+    [q, showInactive, group],
+  );
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl">
@@ -77,6 +86,20 @@ export function ClientList() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
+        {groups.data && groups.data.groups.length > 0 && (
+          <label className="flex items-center gap-2 text-sm text-muted">
+            {t('clients.list.groupFilter')}
+            <select className={`${input} w-auto`} value={group} onChange={(e) => setGroup(e.target.value)} data-testid="client-group-filter">
+              <option value="">{t('clients.list.allGroups')}</option>
+              <option value={NO_GROUP}>{t('clients.list.noGroup')}</option>
+              {groups.data.groups.map((g) => (
+                <option key={g.name} value={g.name}>
+                  {g.name} ({g.count})
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="flex items-center gap-2 text-sm text-muted">
           <input type="checkbox" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} /> {t('clients.list.showInactive')}
         </label>
@@ -115,6 +138,7 @@ export function ClientList() {
                         <bdi dir="rtl">{c.name_he}</bdi>
                       </Link>
                     )}
+                    {c.client_group && <span className="ms-3 rounded bg-band px-1.5 py-0.5 text-xs text-muted">{c.client_group}</span>}
                     {c.active !== 1 && <span className="ms-3 text-xs text-muted">{t('clients.notActiveBadge')}</span>}
                   </td>
                   <td className="px-4 py-2">{c.country}</td>
@@ -153,6 +177,7 @@ type ClientFields = {
   city: string;
   postalCode: string;
   notes: string;
+  group: string;
   paymentInstructions: string;
   autoReminders: boolean;
   defaultPaymentMethodIds: number[];
@@ -175,6 +200,7 @@ function fieldsFrom(c?: Client): ClientFields {
     city: c?.city ?? '',
     postalCode: c?.postal_code ?? '',
     notes: c?.notes ?? '',
+    group: c?.client_group ?? '',
     paymentInstructions: c?.payment_instructions ?? '',
     autoReminders: c?.auto_reminders !== 0,
     defaultPaymentMethodIds: c?.default_payment_method_ids ? (JSON.parse(c.default_payment_method_ids) as number[]) : [],
@@ -200,6 +226,7 @@ export function ClientForm() {
   const loaded = useLoad(async () => (editing ? clientsApi.get(Number(id)) : null), [id]);
   // R28 task 11: the business's active payment methods, one checkbox each.
   const methods = useLoad(() => paymentMethodsApi.list(true), []);
+  const groupList = useLoad(() => clientsApi.groups().catch(() => ({ groups: [] })), []);
   const [fields, setFields] = useState<ClientFields | null>(null);
   const [consent, setConsent] = useState<ConsentFields | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -298,6 +325,16 @@ export function ClientForm() {
           <label className="mt-4 block">
             <span className={label}>{t('clients.form.notes')}</span>
             <textarea className={input} rows={3} value={current.notes} onChange={(e) => set('notes', e.target.value)} />
+          </label>
+          <label className="mt-4 block md:max-w-sm">
+            <span className={label}>{t('clients.form.group')}</span>
+            <input className={input} list="client-groups" maxLength={60} value={current.group} onChange={(e) => set('group', e.target.value)} />
+            <datalist id="client-groups">
+              {(groupList.data?.groups ?? []).map((g) => (
+                <option key={g.name} value={g.name} />
+              ))}
+            </datalist>
+            <span className="mt-1 block text-xs text-muted">{t('clients.form.groupHint')}</span>
           </label>
           <label className="mt-4 block">
             <span className={label}>{t('clients.form.paymentInstructions')}</span>
@@ -538,6 +575,7 @@ export function ClientPage() {
       </PageTitle>
       <p className="mb-4 text-sm text-muted">
         {t('clients.page.balanceLabel')} <span className="ltr-nums font-semibold text-ink">{totalsText(data.balances)}</span>
+        {c.client_group && <span className="ms-3 rounded bg-band px-1.5 py-0.5 text-xs text-muted">{c.client_group}</span>}
         {c.active !== 1 && <span className="ms-3 text-danger">{t('clients.notActiveBadge')}</span>}
       </p>
       {readOnly && <DemoReadOnlyNote />}
