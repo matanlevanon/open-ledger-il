@@ -504,7 +504,7 @@ OPTIONS_EN = r'''  <section id="options">
         </div>
 <!--SHOP-->
         <div class="plan plan-main">
-          <div class="promo">First release: 50% off for a limited time</div>
+          <div class="promo">Launch release: 50% off for a limited time</div>
           <h3>Install it yourself, connected</h3>
           <div class="price"><s class="was">₪199</s> ₪99 <span>one time</span></div>
           <ul>
@@ -516,7 +516,7 @@ OPTIONS_EN = r'''  <section id="options">
         </div>
 <!--/SHOP-->
         <div class="plan">
-          <div class="promo">First release: 30% off for a limited time</div>
+          <div class="promo">Launch release: 30% off for a limited time</div>
           <h3>Set up for you</h3>
           <div class="price"><s class="was">₪999</s> ₪699 <span>one time</span></div>
           <ul>
@@ -586,7 +586,7 @@ OPTIONS_HE = r'''  <section id="options">
         </div>
 <!--SHOP-->
         <div class="plan plan-main">
-          <div class="promo">גרסה ראשונה: 50% הנחה לזמן מוגבל</div>
+          <div class="promo">גרסת השקה: 50% הנחה לזמן מוגבל</div>
           <h3>התקנה עצמית, מחוברת</h3>
           <div class="price"><s class="was">₪199</s> ₪99 <span>חד פעמי</span></div>
           <ul>
@@ -598,7 +598,7 @@ OPTIONS_HE = r'''  <section id="options">
         </div>
 <!--/SHOP-->
         <div class="plan">
-          <div class="promo">גרסה ראשונה: 30% הנחה לזמן מוגבל</div>
+          <div class="promo">גרסת השקה: 30% הנחה לזמן מוגבל</div>
           <h3>הקמה עבורך</h3>
           <div class="price"><s class="was">₪999</s> ₪699 <span>חד פעמי</span></div>
           <ul>

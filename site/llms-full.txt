@@ -86,7 +86,7 @@ API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.
 
 ## חינם מקוד המקור, או הקמה עבורך
 
-הקוד חינמי לעסק שלכם. התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99 (גרסה ראשונה, 50% הנחה מ-₪199), או הקמה עבורך ב-₪699 (גרסה ראשונה, 30% הנחה מ-₪999). תשלום אחד, בלי מנוי.
+הקוד חינמי לעסק שלכם. התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99 (גרסת השקה, 50% הנחה מ-₪199), או הקמה עבורך ב-₪699 (גרסת השקה, 30% הנחה מ-₪999). תשלום אחד, בלי מנוי.
 
 [למחירים ולאפשרויות ההתקנה](https://open-ledger.dev/pricing/)
 
@@ -312,7 +312,7 @@ Source: https://open-ledger.dev/features/
 
 [למדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
 
-גרסה ראשונה: 50% הנחה לזמן מוגבל
+גרסת השקה: 50% הנחה לזמן מוגבל
 
 ### התקנה עצמית, מחוברת
 
@@ -324,7 +324,7 @@ Source: https://open-ledger.dev/features/
 
 [לרכישה והתקנה](https://get.open-ledger.dev/buy?lang=he)
 
-גרסה ראשונה: 30% הנחה לזמן מוגבל
+גרסת השקה: 30% הנחה לזמן מוגבל
 
 ### הקמה עבורך
 
@@ -489,6 +489,12 @@ Source: https://open-ledger.dev/help/
 כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.1.
 
 יומן השינויים נכתב באנגלית.
+
+## Unreleased
+
+### Clients
+
+- A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
 
 ## 1.7.1 (2026-10-21)
 
@@ -839,7 +845,7 @@ P&L, client ledgers, the unified file and an accountant login.
 
 ## Free from source, or set up for you
 
-The code is free for your own business. Install it yourself with the connected installer for ₪99 (first release, 50% off ₪199), or have it set up for you for ₪699 (first release, 30% off ₪999). One payment, no subscription.
+The code is free for your own business. Install it yourself with the connected installer for ₪99 (launch release, 50% off ₪199), or have it set up for you for ₪699 (launch release, 30% off ₪999). One payment, no subscription.
 
 [See pricing and setup](https://open-ledger.dev/en/pricing/)
 
@@ -1065,7 +1071,7 @@ Free
 
 [Read the setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
 
-First release: 50% off for a limited time
+Launch release: 50% off for a limited time
 
 ### Install it yourself, connected
 
@@ -1077,7 +1083,7 @@ First release: 50% off for a limited time
 
 [Buy and install](https://get.open-ledger.dev/buy)
 
-First release: 30% off for a limited time
+Launch release: 30% off for a limited time
 
 ### Set up for you
 
@@ -1240,6 +1246,12 @@ Source: https://open-ledger.dev/en/help/
 # Changelog
 
 Every release, newest first. The current version is 1.7.1.
+
+## Unreleased
+
+### Clients
+
+- A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
 
 ## 1.7.1 (2026-10-21)
 

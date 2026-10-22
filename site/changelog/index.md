@@ -4,6 +4,12 @@
 
 יומן השינויים נכתב באנגלית.
 
+## Unreleased
+
+### Clients
+
+- A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
+
 ## 1.7.1 (2026-10-21)
 
 ### Tax Authority connection

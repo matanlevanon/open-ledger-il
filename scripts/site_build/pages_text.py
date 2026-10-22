@@ -93,8 +93,8 @@ UI = {
         crumbs_label='Breadcrumbs', switch='עברית',
         all_features='See every feature',
         strip_h='Free from source, or set up for you',
-        strip_p='The code is free for your own business. Prefer not to do it yourself? We set it up for you for ₪699 (first release, 30% off ₪999), once, with no subscription.',
-        strip_p_shop='The code is free for your own business. Install it yourself with the connected installer for ₪99 (first release, 50% off ₪199), or have it set up for you for ₪699 (first release, 30% off ₪999). One payment, no subscription.',
+        strip_p='The code is free for your own business. Prefer not to do it yourself? We set it up for you for ₪699 (launch release, 30% off ₪999), once, with no subscription.',
+        strip_p_shop='The code is free for your own business. Install it yourself with the connected installer for ₪99 (launch release, 50% off ₪199), or have it set up for you for ₪699 (launch release, 30% off ₪999). One payment, no subscription.',
         strip_btn='See pricing and setup',
         demo_h='Try it before you install it',
         demo_points=[
@@ -164,8 +164,8 @@ UI = {
         crumbs_label='פירורי לחם', switch='English',
         all_features='לכל היכולות',
         strip_h='חינם מקוד המקור, או הקמה עבורך',
-        strip_p='הקוד חינמי לעסק שלכם. לא רוצים להתקין לבד? אנחנו מקימים עבורך ב-₪699 (גרסה ראשונה, 30% הנחה מ-₪999), חד פעמי, בלי מנוי.',
-        strip_p_shop='הקוד חינמי לעסק שלכם. התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99 (גרסה ראשונה, 50% הנחה מ-₪199), או הקמה עבורך ב-₪699 (גרסה ראשונה, 30% הנחה מ-₪999). תשלום אחד, בלי מנוי.',
+        strip_p='הקוד חינמי לעסק שלכם. לא רוצים להתקין לבד? אנחנו מקימים עבורך ב-₪699 (גרסת השקה, 30% הנחה מ-₪999), חד פעמי, בלי מנוי.',
+        strip_p_shop='הקוד חינמי לעסק שלכם. התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99 (גרסת השקה, 50% הנחה מ-₪199), או הקמה עבורך ב-₪699 (גרסת השקה, 30% הנחה מ-₪999). תשלום אחד, בלי מנוי.',
         strip_btn='למחירים ולאפשרויות ההתקנה',
         demo_h='קודם מנסים, אחר כך מתקינים',
         demo_points=[

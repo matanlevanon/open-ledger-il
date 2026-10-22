@@ -86,7 +86,7 @@ P&L, client ledgers, the unified file and an accountant login.
 
 ## Free from source, or set up for you
 
-The code is free for your own business. Install it yourself with the connected installer for ₪99 (first release, 50% off ₪199), or have it set up for you for ₪699 (first release, 30% off ₪999). One payment, no subscription.
+The code is free for your own business. Install it yourself with the connected installer for ₪99 (launch release, 50% off ₪199), or have it set up for you for ₪699 (launch release, 30% off ₪999). One payment, no subscription.
 
 [See pricing and setup](https://open-ledger.dev/en/pricing/)
 

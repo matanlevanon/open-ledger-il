@@ -14,7 +14,7 @@ Free
 
 [Read the setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
 
-First release: 50% off for a limited time
+Launch release: 50% off for a limited time
 
 ### Install it yourself, connected
 
@@ -26,7 +26,7 @@ First release: 50% off for a limited time
 
 [Buy and install](https://get.open-ledger.dev/buy)
 
-First release: 30% off for a limited time
+Launch release: 30% off for a limited time
 
 ### Set up for you
 
