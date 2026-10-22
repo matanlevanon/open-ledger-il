@@ -6,6 +6,8 @@
 - A client can have a group, a label for sorting the client list. The Clients page filters by
   group (all, no group, each group with its count) next to Show inactive, and shows the group as a
   badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
+- The sidebar's client list has a Group dropdown too. It filters both Active and Not active, and
+  the sidebar and the Clients page remember the last group (and Show inactive) per browser.
 
 ## 1.7.1 (2026-10-21)
 

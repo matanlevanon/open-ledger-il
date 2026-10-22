@@ -6,7 +6,7 @@ import { PreferencesProvider } from '../app/preferences';
 import { Sidebar } from './Sidebar';
 
 const CLIENTS = [
-  { id: 1, name_en: 'Zeta Corp', name_he: null, active: 1 },
+  { id: 1, name_en: 'Zeta Corp', name_he: null, active: 1, client_group: 'Open Ledger' },
   { id: 2, name_en: 'Alpha Inc', name_he: null, active: 1 },
   { id: 3, name_en: 'Old Client', name_he: null, active: 0 },
 ];
@@ -122,6 +122,26 @@ describe('Sidebar: Clients', () => {
     renderSidebar('/clients', 'accountant@example.com');
     await waitFor(() => expect(screen.getByText('Not active (1)')).toBeInTheDocument());
     expect(screen.queryByRole('link', { name: 'Old Client' })).not.toBeInTheDocument();
+  });
+});
+
+/** R46: a group filter in the sidebar, remembered per user. */
+describe('Sidebar: client group filter', () => {
+  it('shows only the picked group in both lists and remembers it', async () => {
+    const first = renderSidebar('/clients');
+    await waitFor(() => expect(screen.getByText('Active (2)')).toBeInTheDocument());
+    fireEvent.change(screen.getByRole('combobox', { name: 'Group' }), { target: { value: 'Open Ledger' } });
+    expect(screen.getByText('Active (1)')).toBeInTheDocument();
+    expect(screen.getByText('Not active (0)')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Zeta Corp' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Alpha Inc' })).not.toBeInTheDocument();
+    first.unmount();
+
+    renderSidebar('/clients');
+    await waitFor(() => expect(screen.getByText('Active (1)')).toBeInTheDocument());
+    fireEvent.change(screen.getByRole('combobox', { name: 'Group' }), { target: { value: '__none__' } });
+    expect(screen.getByText('Active (1)')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Alpha Inc' })).toBeInTheDocument();
   });
 });
 

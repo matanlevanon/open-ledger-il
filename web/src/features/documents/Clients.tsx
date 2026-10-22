@@ -2,6 +2,24 @@ import { type FormEvent, useEffect, useRef, useState } from 'react';
 
 /** R45: the group filter value for clients with no group. Same as the server's NO_GROUP. */
 const NO_GROUP = '__none__';
+
+/** R46: the client list's filters, remembered per browser. Never throws in private browsing. */
+function readListPref(name: 'group' | 'inactive'): string | null {
+  try {
+    return localStorage.getItem(`mtn-ledger-clients-list-${name}`);
+  } catch {
+    return null;
+  }
+}
+
+function writeListPref(name: 'group' | 'inactive', value: string): void {
+  try {
+    if (value) localStorage.setItem(`mtn-ledger-clients-list-${name}`, value);
+    else localStorage.removeItem(`mtn-ledger-clients-list-${name}`);
+  } catch {
+    // Not remembered, still works this session.
+  }
+}
 import { useIssuing } from '../../app/issuing';
 import { DemoReadOnlyNote, useDemoReadOnly } from '../../app/demo';
 import { Link, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -58,9 +76,18 @@ export function ClientsArea() {
 export function ClientList() {
   const t = useT();
   const [q, setQ] = useState('');
-  const [showInactive, setShowInactive] = useState(false);
+  // R46: the last group and Show inactive are remembered per browser.
+  const [showInactive, setShowInactiveState] = useState(() => readListPref('inactive') === '1');
   // R45: '' every group, NO_GROUP clients with none, else that group.
-  const [group, setGroup] = useState('');
+  const [group, setGroupState] = useState(() => readListPref('group') ?? '');
+  const setShowInactive = (v: boolean) => {
+    setShowInactiveState(v);
+    writeListPref('inactive', v ? '1' : '');
+  };
+  const setGroup = (v: string) => {
+    setGroupState(v);
+    writeListPref('group', v);
+  };
   const groups = useLoad(() => clientsApi.groups().catch(() => ({ groups: [] })), []);
   const { data, error } = useLoad(
     () => clientsApi.list({ q, active: showInactive ? 'all' : '1', ...(group ? { group } : {}) }),
@@ -86,7 +113,7 @@ export function ClientList() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-        {groups.data && groups.data.groups.length > 0 && (
+        {groups.data && (groups.data.groups.length > 0 || group !== '') && (
           <label className="flex items-center gap-2 text-sm text-muted">
             {t('clients.list.groupFilter')}
             <select className={`${input} w-auto`} value={group} onChange={(e) => setGroup(e.target.value)} data-testid="client-group-filter">
@@ -97,6 +124,7 @@ export function ClientList() {
                   {g.name} ({g.count})
                 </option>
               ))}
+              {group && group !== NO_GROUP && !groups.data.groups.some((g) => g.name.toLowerCase() === group.toLowerCase()) && <option value={group}>{group}</option>}
             </select>
           </label>
         )}

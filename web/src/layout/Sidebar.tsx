@@ -35,6 +35,27 @@ function readGroupOpen(email: string | undefined, group: 'active' | 'notActive',
   }
 }
 
+/** R46: the client group the sidebar shows, remembered per browser. '' every group, NO_GROUP clients with none. */
+const NO_GROUP = '__none__';
+const groupFilterKey = (email: string | undefined) => `mtn-ledger-sidebar-clients-group:${email ?? 'anon'}`;
+
+function readGroupFilter(email: string | undefined): string {
+  try {
+    return localStorage.getItem(groupFilterKey(email)) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+function writeGroupFilter(email: string | undefined, value: string): void {
+  try {
+    if (value) localStorage.setItem(groupFilterKey(email), value);
+    else localStorage.removeItem(groupFilterKey(email));
+  } catch {
+    // Private browsing or storage disabled: the filter still works this session, just not remembered.
+  }
+}
+
 function writeGroupOpen(email: string | undefined, group: 'active' | 'notActive', open: boolean): void {
   try {
     localStorage.setItem(groupStorageKey(email, group), open ? '1' : '0');
@@ -163,6 +184,7 @@ function ClientsNavItem({ onNavigate, email }: ClientsNavItemProps) {
   const expanded = location.pathname === '/clients' || location.pathname.startsWith('/clients/');
   const [clients, setClients] = useState<Client[] | null>(null);
   const [filter, setFilter] = useState('');
+  const [groupFilter, setGroupFilter] = useState(() => readGroupFilter(email));
   const [activeOpen, setActiveOpen] = useState(() => readGroupOpen(email, 'active', true));
   const [notActiveOpen, setNotActiveOpen] = useState(() => readGroupOpen(email, 'notActive', false));
 
@@ -197,14 +219,25 @@ function ClientsNavItem({ onNavigate, email }: ClientsNavItemProps) {
   const { active, notActive } = useMemo(() => {
     const all = clients ?? [];
     const needle = filter.trim().toLowerCase();
+    const inGroup = (c: Client) =>
+      groupFilter === '' ||
+      (groupFilter === NO_GROUP ? !c.client_group : (c.client_group ?? '').toLowerCase() === groupFilter.toLowerCase());
     const matches = (c: Client) =>
-      needle === '' || c.name_en.toLowerCase().includes(needle) || (c.name_he ?? '').toLowerCase().includes(needle);
+      inGroup(c) && (needle === '' || c.name_en.toLowerCase().includes(needle) || (c.name_he ?? '').toLowerCase().includes(needle));
     const sorted = (list: Client[]) => [...list].sort((a, b) => clientName(a, locale).localeCompare(clientName(b, locale), locale));
     return {
       active: sorted(all.filter((c) => c.active === 1 && matches(c))),
       notActive: sorted(all.filter((c) => c.active !== 1 && matches(c))),
     };
-  }, [clients, filter, locale]);
+  }, [clients, filter, groupFilter, locale]);
+
+  // The groups in use, from the clients already loaded. A remembered group that no longer exists still shows, so it can be cleared.
+  const groups = useMemo(() => {
+    const names = new Map<string, string>();
+    for (const c of clients ?? []) if (c.client_group) names.set(c.client_group.toLowerCase(), c.client_group);
+    if (groupFilter && groupFilter !== NO_GROUP && !names.has(groupFilter.toLowerCase())) names.set(groupFilter.toLowerCase(), groupFilter);
+    return [...names.values()].sort((a, b) => a.localeCompare(b, locale));
+  }, [clients, groupFilter, locale]);
 
   return (
     <li>
@@ -221,6 +254,25 @@ function ClientsNavItem({ onNavigate, email }: ClientsNavItemProps) {
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />
+          {groups.length > 0 && (
+            <select
+              aria-label={t('clients.list.groupFilter')}
+              className="w-full rounded-md border border-line bg-canvas px-2 py-1 text-sm"
+              value={groupFilter}
+              onChange={(e) => {
+                setGroupFilter(e.target.value);
+                writeGroupFilter(email, e.target.value);
+              }}
+            >
+              <option value="">{t('clients.list.allGroups')}</option>
+              <option value={NO_GROUP}>{t('clients.list.noGroup')}</option>
+              {groups.map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </select>
+          )}
           <ClientGroup
             title={t('sidebar.clients.active')}
             clients={active}
