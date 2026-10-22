@@ -238,6 +238,8 @@ EN = dict(
     final_h='See it working first',
     final_p='Open the demo, then read the code. Every rule is in the open.',
     foot_links=['GitHub', 'Deploy guide', 'Setup guide', 'FSL-1.1 licence'],
+    foot_terms='Terms and cancellation policy',
+    foot_contact='Contact and seller details',
     foot_note='Self-hosted on Cloudflare Workers · Source available under FSL-1.1 · Not affiliated with Cloudflare or the Israel Tax Authority',
 )
 
@@ -475,6 +477,8 @@ HE = dict(
     final_h='קודם רואים אותה עובדת',
     final_p='פותחים את ההדגמה, ואז קוראים את הקוד. כל כלל גלוי.',
     foot_links=['GitHub', 'מדריך פריסה', 'מדריך הגדרה', 'רישיון FSL-1.1'],
+    foot_terms='תקנון ומדיניות ביטול',
+    foot_contact='יצירת קשר ופרטי המוכר',
     foot_note='מאוחסן ב-Cloudflare Workers · קוד מקור גלוי ברישיון FSL-1.1 · לא קשור ל-Cloudflare או לרשות המסים',
 )
 

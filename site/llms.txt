@@ -1,6 +1,6 @@
 # Open Ledger IL
 
-> Open Ledger IL (חשבונאות פתוחה) is source-available invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority under certificate 281801. It is free for your own business under the FSL-1.1 licence, or set up for you for ₪699 once.
+> Open Ledger IL (חשבונאות פתוחה) is source-available invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority under certificate 281801. It is free for your own business under the FSL-1.1 licence, or set up for you for ₪699 once. The connected installer costs ₪99 once, a first-release price, 50% off the regular ₪199.
 
 ## Pages in English
 

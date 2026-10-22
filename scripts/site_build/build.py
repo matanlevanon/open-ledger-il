@@ -326,6 +326,10 @@ def footer(page):
         (path_of(lang, 'license'), labels[3]),
         (path_of(lang, 'changelog'), PAGES[lang]['changelog']['crumb']),
     ]
+    if SHOP_LIVE:
+        # The seller's terms (with the cancellation policy) and contact details live on the shop.
+        q = '?lang=he' if lang == 'he' else ''
+        items += [(f'{SHOP_URL}/terms{q}', c['foot_terms']), (f'{SHOP_URL}/contact{q}', c['foot_contact'])]
     links = '\n      '.join(f'<a href="{u}">{E(t)}</a>' for u, t in items)
     pages = ''.join(f'<a href="{path_of(lang, key)}">{E(label)}</a>' for key, label in [('home', 'Home' if lang == 'en' else 'בית')] + nav_items(lang))
     return f'''<footer>

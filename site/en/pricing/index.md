@@ -2,7 +2,7 @@
 
 Pricing
 
-## Install it yourself, or have it set up for you
+## Free from source, installed by you, or set up for you
 
 ### Free from source
 
@@ -13,6 +13,18 @@ Free
 - Step-by-step setup guide
 
 [Read the setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+
+First release: 50% off for a limited time
+
+### Install it yourself, connected
+
+₪199 ₪99 one time
+
+- A Windows installer sets it up in your own Cloudflare account
+- Tax Authority connection through MTN, no ITA app of your own
+- One licence key for one business
+
+[Buy and install](https://get.open-ledger.dev/buy)
 
 First release: 30% off for a limited time
 
@@ -35,6 +47,7 @@ Book a call
 - Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
+- The connected installer, which you run yourself, costs ₪99, once. That is a first-release price, 50% off the regular ₪199, for a limited time.
 
 How it works
 

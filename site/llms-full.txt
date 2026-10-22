@@ -82,10 +82,11 @@ API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.
 - הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה לגרסה הראשונה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
 - היא תומכת בעוסק פטור ובעוסק מורשה.
 - היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
+- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה לגרסה הראשונה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
 
 ## חינם מקוד המקור, או הקמה עבורך
 
-הקוד חינמי לעסק שלכם. לא רוצים להתקין לבד? אנחנו מקימים עבורך ב-₪699 (גרסה ראשונה, 30% הנחה מ-₪999), חד פעמי, בלי מנוי.
+הקוד חינמי לעסק שלכם. התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99 (גרסה ראשונה, 50% הנחה מ-₪199), או הקמה עבורך ב-₪699 (גרסה ראשונה, 30% הנחה מ-₪999). תשלום אחד, בלי מנוי.
 
 [למחירים ולאפשרויות ההתקנה](https://open-ledger.dev/pricing/)
 
@@ -299,7 +300,7 @@ Source: https://open-ledger.dev/features/
 
 מחירים
 
-## להתקין בעצמך, או לקבל אותה מוקמת
+## חינם מקוד המקור, התקנה עצמית, או הקמה עבורך
 
 ### חינם מקוד המקור
 
@@ -310,6 +311,18 @@ Source: https://open-ledger.dev/features/
 - מדריך התקנה שלב אחר שלב
 
 [למדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+
+גרסה ראשונה: 50% הנחה לזמן מוגבל
+
+### התקנה עצמית, מחוברת
+
+₪199 ₪99 חד פעמי
+
+- תוכנת התקנה ל-Windows מקימה הכול בחשבון Cloudflare שלך
+- חיבור לרשות המסים דרך MTN, בלי אפליקציית API משלך
+- מפתח רישיון אחד לעסק אחד
+
+[לרכישה והתקנה](https://get.open-ledger.dev/buy?lang=he)
 
 גרסה ראשונה: 30% הנחה לזמן מוגבל
 
@@ -332,6 +345,7 @@ Source: https://open-ledger.dev/features/
 - הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה לגרסה הראשונה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
 - היא תומכת בעוסק פטור ובעוסק מורשה.
 - היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
+- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה לגרסה הראשונה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
 
 איך זה עובד
 
@@ -821,10 +835,11 @@ P&L, client ledgers, the unified file and an accountant login.
 - Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
+- The connected installer, which you run yourself, costs ₪99, once. That is a first-release price, 50% off the regular ₪199, for a limited time.
 
 ## Free from source, or set up for you
 
-The code is free for your own business. Prefer not to do it yourself? We set it up for you for ₪699 (first release, 30% off ₪999), once, with no subscription.
+The code is free for your own business. Install it yourself with the connected installer for ₪99 (first release, 50% off ₪199), or have it set up for you for ₪699 (first release, 30% off ₪999). One payment, no subscription.
 
 [See pricing and setup](https://open-ledger.dev/en/pricing/)
 
@@ -1038,7 +1053,7 @@ Source: https://open-ledger.dev/en/features/
 
 Pricing
 
-## Install it yourself, or have it set up for you
+## Free from source, installed by you, or set up for you
 
 ### Free from source
 
@@ -1049,6 +1064,18 @@ Free
 - Step-by-step setup guide
 
 [Read the setup guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
+
+First release: 50% off for a limited time
+
+### Install it yourself, connected
+
+₪199 ₪99 one time
+
+- A Windows installer sets it up in your own Cloudflare account
+- Tax Authority connection through MTN, no ITA app of your own
+- One licence key for one business
+
+[Buy and install](https://get.open-ledger.dev/buy)
 
 First release: 30% off for a limited time
 
@@ -1071,6 +1098,7 @@ Book a call
 - Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
+- The connected installer, which you run yourself, costs ₪99, once. That is a first-release price, 50% off the regular ₪199, for a limited time.
 
 How it works
 
