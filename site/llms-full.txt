@@ -79,10 +79,10 @@ API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.
 - Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
 - היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
 - היא חינמית לעסק שלכם, ברישיון FSL-1.1.
-- הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה לגרסה הראשונה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
+- הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
 - היא תומכת בעוסק פטור ובעוסק מורשה.
 - היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
-- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה לגרסה הראשונה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
+- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
 
 ## חינם מקוד המקור, או הקמה עבורך
 
@@ -342,10 +342,10 @@ Source: https://open-ledger.dev/features/
 - Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
 - היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
 - היא חינמית לעסק שלכם, ברישיון FSL-1.1.
-- הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה לגרסה הראשונה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
+- הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
 - היא תומכת בעוסק פטור ובעוסק מורשה.
 - היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
-- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה לגרסה הראשונה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
+- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
 
 איך זה עובד
 
@@ -495,6 +495,7 @@ Source: https://open-ledger.dev/help/
 ### Clients
 
 - A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
+- The sidebar's client list has a Group dropdown too. It filters both Active and Not active, and the sidebar and the Clients page remember the last group (and Show inactive) per browser.
 
 ## 1.7.1 (2026-10-21)
 
@@ -838,10 +839,10 @@ P&L, client ledgers, the unified file and an accountant login.
 - Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
 - It is free for your own business under the FSL-1.1 licence.
-- Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.
+- Having it set up for you costs ₪699, once, with no subscription. That is a launch price, 30% off the regular ₪999, for a limited time.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
-- The connected installer, which you run yourself, costs ₪99, once. That is a first-release price, 50% off the regular ₪199, for a limited time.
+- The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
 
 ## Free from source, or set up for you
 
@@ -1101,10 +1102,10 @@ Book a call
 - Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
 - It is free for your own business under the FSL-1.1 licence.
-- Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.
+- Having it set up for you costs ₪699, once, with no subscription. That is a launch price, 30% off the regular ₪999, for a limited time.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
-- The connected installer, which you run yourself, costs ₪99, once. That is a first-release price, 50% off the regular ₪199, for a limited time.
+- The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
 
 How it works
 
@@ -1252,6 +1253,7 @@ Every release, newest first. The current version is 1.7.1.
 ### Clients
 
 - A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
+- The sidebar's client list has a Group dropdown too. It filters both Active and Not active, and the sidebar and the Clients page remember the last group (and Show inactive) per browser.
 
 ## 1.7.1 (2026-10-21)
 
@@ -2370,7 +2372,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 
 ## תוכנת ההתקנה מגיעה עם הרכישה
 
-קונים את תוכנת ההתקנה המחוברת ב-₪99, מחיר השקה לגרסה הראשונה (מחיר רגיל ₪199). מפתח הרישיון וקישור ההורדה מגיעים למייל תוך דקה.
+קונים את תוכנת ההתקנה המחוברת ב-₪99, מחיר השקה (מחיר רגיל ₪199). מפתח הרישיון וקישור ההורדה מגיעים למייל תוך דקה.
 
 - בלי בקשה לאפליקציית API ברשות המסים. מתחברים דרך האפליקציה המאושרת של MTN.
 - בלי שרת ישראלי או ממסר להפעיל. כל פנייה לרשות המסים יוצאת מכתובת ישראלית, ולכן לא נחסמת כמו Worker שרץ בחו"ל.
@@ -3722,7 +3724,7 @@ Updated 2026-10-20
 
 ## The installer comes with your purchase
 
-Buy the connected installer for ₪99, a first-release price (regular ₪199). The licence key and the download link reach your email within a minute.
+Buy the connected installer for ₪99, a launch price (regular ₪199). The licence key and the download link reach your email within a minute.
 
 - No Tax Authority API app to apply for. You connect through MTN's approved app.
 - No Israeli server or relay to run. Every Tax Authority call leaves from an Israeli address, so it never gets the 403 a Worker abroad gets.

@@ -44,10 +44,10 @@ Book a call
 - Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
 - It is free for your own business under the FSL-1.1 licence.
-- Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.
+- Having it set up for you costs ₪699, once, with no subscription. That is a launch price, 30% off the regular ₪999, for a limited time.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
-- The connected installer, which you run yourself, costs ₪99, once. That is a first-release price, 50% off the regular ₪199, for a limited time.
+- The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
 
 How it works
 

@@ -6,7 +6,7 @@ Updated 2026-10-20
 
 ## The installer comes with your purchase
 
-Buy the connected installer for ₪99, a first-release price (regular ₪199). The licence key and the download link reach your email within a minute.
+Buy the connected installer for ₪99, a launch price (regular ₪199). The licence key and the download link reach your email within a minute.
 
 - No Tax Authority API app to apply for. You connect through MTN's approved app.
 - No Israeli server or relay to run. Every Tax Authority call leaves from an Israeli address, so it never gets the 403 a Worker abroad gets.

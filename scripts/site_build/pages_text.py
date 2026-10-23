@@ -15,8 +15,8 @@ PAGES = {
             desc='Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses by email and AI, Claude via MCP.',
             h1='Every feature', crumb='Features'),
         'pricing': dict(
-            title='Open Ledger IL pricing: free, or set up for you',
-            desc='Run Open Ledger IL free from source, or have it set up for you for ₪699 once. What you need, how it works and the known limits.',
+            title='Open Ledger IL pricing: free, ₪99 installer, or setup',
+            desc='Run Open Ledger IL free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. No subscription.',
             h1='Pricing and setup options', crumb='Pricing'),
         'registration': dict(
             title='Open Ledger IL: Tax Authority certificate 281801',
@@ -53,8 +53,8 @@ PAGES = {
             desc='כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות במייל ובקריאת AI, וחיבור Claude.',
             h1='כל היכולות', crumb='יכולות'),
         'pricing': dict(
-            title='מחירים: Open Ledger IL בחינם או בהקמה עבורך',
-            desc='הפעלת Open Ledger IL בחינם מקוד המקור, או הקמה עבורך ב-₪699 חד פעמי. מה צריך, איך זה עובד ומה המגבלות.',
+            title='מחירים: Open Ledger IL בחינם, ב-₪99 או בהקמה עבורך',
+            desc='הפעלת Open Ledger IL בחינם מקוד המקור, התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99, או הקמה עבורך ב-₪699. תשלום אחד, בלי מנוי.',
             h1='מחירים ואפשרויות התקנה', crumb='מחירים'),
         'registration': dict(
             title='Open Ledger IL רשומה ברשות המסים: תעודה 281801',
@@ -116,7 +116,7 @@ UI = {
         help_stuck_link='Write to us from the pricing page.',
         help_topics='Topics',
         help_buy_h='The installer comes with your purchase',
-        help_buy_p='Buy the connected installer for ₪99, a first-release price (regular ₪199). The licence key and the download link reach your email within a minute.',
+        help_buy_p='Buy the connected installer for ₪99, a launch price (regular ₪199). The licence key and the download link reach your email within a minute.',
         help_buy_points=[
             'No Tax Authority API app to apply for. You connect through MTN\'s approved app.',
             'No Israeli server or relay to run. Every Tax Authority call leaves from an Israeli address, so it never gets the 403 a Worker abroad gets.',
@@ -151,13 +151,13 @@ UI = {
             'Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.',
             'It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.',
             'It is free for your own business under the FSL-1.1 licence.',
-            'Having it set up for you costs ₪699, once, with no subscription. That is a first-release price, 30% off the regular ₪999, for a limited time.',
+            'Having it set up for you costs ₪699, once, with no subscription. That is a launch price, 30% off the regular ₪999, for a limited time.',
             'It supports עוסק פטור and עוסק מורשה businesses.',
             'It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.',
         ],
-        fact_shop='The connected installer, which you run yourself, costs ₪99, once. That is a first-release price, 50% off the regular ₪199, for a limited time.',
+        fact_shop='The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.',
         llms_intro='Open Ledger IL (חשבונאות פתוחה) is source-available invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority under certificate 281801. It is free for your own business under the FSL-1.1 licence, or set up for you for ₪699 once.',
-        llms_intro_shop=' The connected installer costs ₪99 once, a first-release price, 50% off the regular ₪199.',
+        llms_intro_shop=' The connected installer costs ₪99 once, a launch price, 50% off the regular ₪199.',
         draft='Draft',
     ),
     'he': dict(
@@ -187,7 +187,7 @@ UI = {
         help_stuck_link='כתבו לנו מעמוד המחירים.',
         help_topics='נושאים',
         help_buy_h='תוכנת ההתקנה מגיעה עם הרכישה',
-        help_buy_p='קונים את תוכנת ההתקנה המחוברת ב-₪99, מחיר השקה לגרסה הראשונה (מחיר רגיל ₪199). מפתח הרישיון וקישור ההורדה מגיעים למייל תוך דקה.',
+        help_buy_p='קונים את תוכנת ההתקנה המחוברת ב-₪99, מחיר השקה (מחיר רגיל ₪199). מפתח הרישיון וקישור ההורדה מגיעים למייל תוך דקה.',
         help_buy_points=[
             'בלי בקשה לאפליקציית API ברשות המסים. מתחברים דרך האפליקציה המאושרת של MTN.',
             'בלי שרת ישראלי או ממסר להפעיל. כל פנייה לרשות המסים יוצאת מכתובת ישראלית, ולכן לא נחסמת כמו Worker שרץ בחו"ל.',
@@ -222,11 +222,11 @@ UI = {
             'Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.',
             'היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.',
             'היא חינמית לעסק שלכם, ברישיון FSL-1.1.',
-            'הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה לגרסה הראשונה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.',
+            'הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.',
             'היא תומכת בעוסק פטור ובעוסק מורשה.',
             'היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.',
         ],
-        fact_shop='תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה לגרסה הראשונה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.',
+        fact_shop='תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.',
         draft='טיוטה',
     ),
 }

@@ -140,6 +140,7 @@ export function withHeaders(res, path) {
   h.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   h.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
   h.set('X-Frame-Options', 'DENY');
+  h.set('Strict-Transport-Security', 'max-age=31536000');
   if (res.status === 200 || res.status === 304) h.set('Cache-Control', cacheControl(path, h.get('Content-Type') ?? ''));
   else if (res.status === 404) h.set('Cache-Control', 'public, max-age=60');
   if (path === '/' || path === '/en/') h.set('Link', HOME_LINK);

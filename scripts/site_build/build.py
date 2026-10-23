@@ -593,7 +593,9 @@ def turnstile_widget():
     if not TURNSTILE_SITE_KEY:
         return ''
     return ('\n        <div class="full cf-turnstile" data-sitekey="' + html.escape(TURNSTILE_SITE_KEY, quote=True) + '" data-size="flexible" data-appearance="interaction-only"></div>'
-            '\n        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>')
+            # Loaded only when the form comes near the screen, so the check script never delays the first paint.
+            '\n        <script>(function(){var d=false,f=document.querySelector(".setup-form");function go(){if(d)return;d=true;var s=document.createElement("script");s.src="https://challenges.cloudflare.com/turnstile/v0/api.js";s.async=true;document.head.appendChild(s);}'
+            'if(!f||!("IntersectionObserver" in window)){go();return;}f.addEventListener("focusin",go,{once:true});new IntersectionObserver(function(e,o){if(e.some(function(x){return x.isIntersecting;})){go();o.disconnect();}},{rootMargin:"300px"}).observe(f);})();</script>')
 
 
 def section_options(lang):
@@ -910,7 +912,8 @@ def fill(text, values, where):
 def seo_title(title):
     """The <title>: the guide title when it fits, else the part before the colon and the brand."""
     if len(title) < 60:
-        return title
+        # A short help or guide title gets the brand, so the result names the product.
+        return f'{title} · Open Ledger IL' if 'Open Ledger' not in title and len(title) + 17 < 60 else title
     short = title.split(':')[0].strip()
     return f'{short} · Open Ledger IL' if len(short) + 17 < 60 else short[:59]
 

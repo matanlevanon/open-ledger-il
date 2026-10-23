@@ -1,12 +1,12 @@
 # Open Ledger IL
 
-> Open Ledger IL (חשבונאות פתוחה) is source-available invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority under certificate 281801. It is free for your own business under the FSL-1.1 licence, or set up for you for ₪699 once. The connected installer costs ₪99 once, a first-release price, 50% off the regular ₪199.
+> Open Ledger IL (חשבונאות פתוחה) is source-available invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority under certificate 281801. It is free for your own business under the FSL-1.1 licence, or set up for you for ₪699 once. The connected installer costs ₪99 once, a launch price, 50% off the regular ₪199.
 
 ## Pages in English
 
 - [Open Ledger IL: invoices and books on your own Cloudflare](https://open-ledger.dev/en/): Source-available invoicing, receipts and bookkeeping for עוסק פטור and עוסק מורשה. Registered with the Israel Tax Authority. Runs on your Cloudflare.
 - [Open Ledger IL features: documents, reports, rules](https://open-ledger.dev/en/features/): Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses by email and AI, Claude via MCP.
-- [Open Ledger IL pricing: free, or set up for you](https://open-ledger.dev/en/pricing/): Run Open Ledger IL free from source, or have it set up for you for ₪699 once. What you need, how it works and the known limits.
+- [Open Ledger IL pricing: free, ₪99 installer, or setup](https://open-ledger.dev/en/pricing/): Run Open Ledger IL free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. No subscription.
 - [Open Ledger IL: Tax Authority certificate 281801](https://open-ledger.dev/en/registration/): Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.
 - [Open Ledger IL live demo: try it in your browser](https://open-ledger.dev/en/demo/): Open the Open Ledger IL demo: sample businesses, the real screens, private drafts and preview PDFs. No install. The sample data stays as it is.
 - [Open Ledger IL help: install, set up and daily use](https://open-ledger.dev/en/help/): Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.
@@ -36,7 +36,7 @@
 
 - [Open Ledger IL: חשבוניות והנהלת חשבונות בענן שלך](https://open-ledger.dev/): מערכת בקוד מקור גלוי לחשבוניות, קבלות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.
 - [היכולות של Open Ledger IL: מסמכים, דוחות וכללים](https://open-ledger.dev/features/): כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות במייל ובקריאת AI, וחיבור Claude.
-- [מחירים: Open Ledger IL בחינם או בהקמה עבורך](https://open-ledger.dev/pricing/): הפעלת Open Ledger IL בחינם מקוד המקור, או הקמה עבורך ב-₪699 חד פעמי. מה צריך, איך זה עובד ומה המגבלות.
+- [מחירים: Open Ledger IL בחינם, ב-₪99 או בהקמה עבורך](https://open-ledger.dev/pricing/): הפעלת Open Ledger IL בחינם מקוד המקור, התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99, או הקמה עבורך ב-₪699. תשלום אחד, בלי מנוי.
 - [Open Ledger IL רשומה ברשות המסים: תעודה 281801](https://open-ledger.dev/registration/): Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. אפשר לבדוק במאגר של רשות המסים.
 - [הדגמה חיה של Open Ledger IL: נסו בדפדפן](https://open-ledger.dev/demo/): פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.
 - [עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש](https://open-ledger.dev/help/): צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.
