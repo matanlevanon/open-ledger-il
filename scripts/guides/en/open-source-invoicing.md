@@ -1,7 +1,7 @@
 ---
 title: "An open-source alternative to paid invoicing software: a plain comparison"
 description: Subscription software, your accountant's system or open source. Three ways for a small Israeli business to keep its books, and what to check in each.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md

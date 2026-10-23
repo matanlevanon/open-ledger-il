@@ -1,7 +1,7 @@
 ---
 title: מספר הקצאה: מה זה, מתי חובה ואיך מקבלים אותו אוטומטית
 description: מתי חשבונית מס צריכה מספר הקצאה מרשות המסים, מה קורה בלעדיו, ואיך תוכנה מחוברת מבקשת אותו לבד בזמן ההפקה.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - https://www.gov.il/he/service/request-assignment-number-for-tax-invoice

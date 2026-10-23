@@ -1,7 +1,7 @@
 ---
 title: "Software registered with the Tax Authority: what it means and how to check"
 description: Who must register accounting software with the Israel Tax Authority, what registration says and does not say, and how to check a registration.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system

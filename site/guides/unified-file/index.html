@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו</title>
 <meta name="description" content="מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.">
-<meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://open-ledger.dev/guides/unified-file/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/unified-file/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/unified-file/">
 <link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/unified-file/">
+<link rel="alternate" type="text/markdown" href="/guides/unified-file/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו">
 <meta property="og:description" content="מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.">
@@ -324,7 +324,6 @@ section[id] { scroll-margin-top: 64px; }
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"he","mainEntity":[{"@type":"Question","name":"מה יש בקובץ?","acceptedAnswer":{"@type":"Answer","text":"שני קבצי טקסט. INI.TXT עם פרטי העסק, התוכנה וסיכום הרשומות, ו-BKMVDATA.TXT עם המסמכים, השורות והתשלומים."}},{"@type":"Question","name":"הצעות מחיר ודרישות תשלום נכנסות לקובץ?","acceptedAnswer":{"@type":"Answer","text":"לא. אין להן קוד בנספח של המפרט, ולכן הן נשארות בחוץ."}},{"@type":"Question","name":"אני צריך להפיק את הקובץ בעצמי?","acceptedAnswer":{"@type":"Answer","text":"בדרך כלל לא. מפיקים אותו כשמבקשים אותו, ותוכנה תקינה מפיקה אותו מתוך הנתונים שכבר יש בה."}},{"@type":"Question","name":"מסמך שבוטל מופיע בקובץ?","acceptedAnswer":{"@type":"Answer","text":"כן. מסמך מבוטל נכלל, עם סימון שהוא בוטל."}}]}</script>
 </head>
 <body>
-<div class="draft-bar" role="note">טיוטה. המדריך הזה בבדיקה ועדיין לא פורסם.</div>
 <header>
   <div class="wrap nav">
     <a class="brand" href="/">
@@ -337,7 +336,7 @@ section[id] { scroll-margin-top: 64px; }
       Open Ledger IL
     </a>
     <nav class="nav-links" aria-label="ראשי">
-      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a>
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
       <a class="lang" href="/en/guides/unified-file/" hreflang="en" lang="en">English</a>
@@ -346,7 +345,7 @@ section[id] { scroll-margin-top: 64px; }
     </div>
   </div>
   <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
-    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a>
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     <a href="/en/guides/unified-file/" hreflang="en" lang="en">English</a>
     <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
@@ -381,7 +380,7 @@ section[id] { scroll-margin-top: 64px; }
 <p>כל שדה ברשומה הוא ברוחב קבוע, לפי טבלה במפרט <sup><a href="#src-2">[2]</a></sup>. שדה טקסט מיושר לשמאל ומרופד ברווחים. שדה מספרי מיושר לימין ומרופד באפסים <sup><a href="#src-2">[2]</a></sup>.</p>
 <h2 id="אילו-מסמכים-נכנסים">אילו מסמכים נכנסים</h2>
 <p>הקובץ מכסה תקופה. נכנס כל מסמך ממוספר מסוג שיש לו קוד בנספח 1 של המפרט, לפי תאריך המסמך <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li>חשבוניות מס, חשבוניות מס/קבלה, קבלות וחשבוניות זיכוי נכנסים.</li><li>טבלת הקודים במפרט הקובץ נותנת את קוד 300 ל"חשבונית/חשבונית עסקה" <sup><a href="#src-5">[5]</a></sup>. היא לא אומרת אם חשבון עסקה שהוא רק דרישת תשלום חייב להיכנס. [TO CHECK] מסמך הדרישות במאגר <sup><a href="#src-3">[3]</a></sup> וקוד הייצוא <sup><a href="#src-1">[1]</a></sup> עדיין לא מסכימים בנקודה הזו.</li><li>מסמך שבוטל נכנס גם הוא, עם סימון בשדה מיוחד <sup><a href="#src-1">[1]</a></sup>.</li><li>הצעות מחיר ודרישות תשלום לא נכנסות, כי אין להן קוד בנספח <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<ul><li>חשבוניות מס, חשבוניות מס/קבלה, קבלות וחשבוניות זיכוי נכנסים.</li><li>חשבון עסקה נכנס לקובץ. טבלת הקודים במפרט הקובץ נותנת את קוד 300 ל"חשבונית/חשבונית עסקה" <sup><a href="#src-5">[5]</a></sup>. Open Ledger IL מייצאת חשבון עסקה בקוד 300 בלי לספור אותו כחיוב, כי הקבלה היא ההכנסה <sup><a href="#src-1">[1]</a></sup>.</li><li>מסמך שבוטל נכנס גם הוא, עם סימון בשדה מיוחד <sup><a href="#src-1">[1]</a></sup>.</li><li>הצעות מחיר ודרישות תשלום לא נכנסות, כי אין להן קוד בנספח <sup><a href="#src-1">[1]</a></sup>.</li></ul>
 <h2 id="מתי-רואה-החשבון-צריך-את-הקובץ">מתי רואה החשבון צריך את הקובץ</h2>
 <p>תוכנה שחייבת ברישום צריכה לאפשר הפקת קבצים כאלה, הכול כפי שיורה המנהל, לפי נספח ה׳ להוראה 36 בהוראות ניהול פנקסי חשבונות <sup><a href="#src-6">[6]</a></sup>. אין בהוראות רשימה סגורה של מקרים. בפועל, רשות המסים מבקשת את הקובץ כשהיא פותחת ביקורת ספרים <sup><a href="#src-7">[7]</a></sup>.</p>
 <p>מה שאפשר לומר בלי מקור חיצוני: הקובץ נועד לקריאה על ידי מי שלא משתמש בתוכנה שלכם. רואה חשבון שעובד עם תוכנה אחרת יכול לקלוט ממנו את המסמכים. ביקורת יכולה לבדוק ממנו את הסדרות, את הסכומים ואת המסמכים שבוטלו.</p>
@@ -405,7 +404,7 @@ section[id] { scroll-margin-top: 64px; }
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>

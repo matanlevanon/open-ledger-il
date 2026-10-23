@@ -1,7 +1,7 @@
 ---
 title: "מחירי תוכנות חשבוניות בישראל, השוואה (2026)"
 description: כמה עולות מורנינג, iCount, SUMIT, EZcount, Invoice4U וריווחית בשנה, איזו תוכנית פותחת API, ואיך משתווה אפשרות חינמית או חד פעמית.
-published: false
+published: true
 updated: 2026-10-23
 sources:
   - https://www.greeninvoice.co.il/pricing/

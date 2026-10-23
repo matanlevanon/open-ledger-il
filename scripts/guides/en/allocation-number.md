@@ -1,7 +1,7 @@
 ---
 title: "Allocation numbers: what they are, when you need one, and how to get one automatically"
 description: When an Israeli tax invoice needs an allocation number from the Tax Authority, what happens without one, and how connected software asks for it.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - https://www.gov.il/he/service/request-assignment-number-for-tax-invoice

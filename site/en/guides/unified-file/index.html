@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The unified file (מבנה אחיד) · Open Ledger IL</title>
 <meta name="description" content="What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.">
-<meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://open-ledger.dev/en/guides/unified-file/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/unified-file/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/unified-file/">
 <link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/unified-file/">
+<link rel="alternate" type="text/markdown" href="/en/guides/unified-file/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="The unified file (מבנה אחיד) · Open Ledger IL">
 <meta property="og:description" content="What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.">
@@ -324,7 +324,6 @@ section[id] { scroll-margin-top: 64px; }
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"en","mainEntity":[{"@type":"Question","name":"What is in the file?","acceptedAnswer":{"@type":"Answer","text":"Two text files. INI.TXT with the business, the software and a summary of the records, and BKMVDATA.TXT with the documents, their lines and payments."}},{"@type":"Question","name":"Do quotes and payment requests go in?","acceptedAnswer":{"@type":"Answer","text":"No. They have no code in the specification's appendix, so they stay out."}},{"@type":"Question","name":"Do I produce the file myself?","acceptedAnswer":{"@type":"Answer","text":"Usually not. You produce it when someone asks for it, and sound software builds it from the data it already holds."}},{"@type":"Question","name":"Does a cancelled document appear in the file?","acceptedAnswer":{"@type":"Answer","text":"Yes. A cancelled document is included, marked as cancelled."}}]}</script>
 </head>
 <body>
-<div class="draft-bar" role="note">Draft. This guide is under review and not published yet.</div>
 <header>
   <div class="wrap nav">
     <a class="brand" href="/en/">
@@ -337,7 +336,7 @@ section[id] { scroll-margin-top: 64px; }
       Open Ledger IL
     </a>
     <nav class="nav-links" aria-label="Main">
-      <a href="/en/features/">Features</a><a href="/en/pricing/">Pricing</a><a href="/en/registration/">Registration</a><a href="/en/demo/">Demo</a><a href="/en/help/">Help</a>
+      <a href="/en/features/">Features</a><a href="/en/pricing/">Pricing</a><a href="/en/registration/">Registration</a><a href="/en/demo/">Demo</a><a href="/en/guides/" aria-current="page">Guides</a><a href="/en/help/">Help</a>
     </nav>
     <div class="nav-end">
       <a class="lang" href="/guides/unified-file/" hreflang="he" lang="he">עברית</a>
@@ -346,7 +345,7 @@ section[id] { scroll-margin-top: 64px; }
     </div>
   </div>
   <nav class="mobile-nav" id="mobile-nav" aria-label="Menu">
-    <a href="/en/features/">Features</a><a href="/en/pricing/">Pricing</a><a href="/en/registration/">Registration</a><a href="/en/demo/">Demo</a><a href="/en/help/">Help</a>
+    <a href="/en/features/">Features</a><a href="/en/pricing/">Pricing</a><a href="/en/registration/">Registration</a><a href="/en/demo/">Demo</a><a href="/en/guides/" aria-current="page">Guides</a><a href="/en/help/">Help</a>
     <a href="/guides/unified-file/" hreflang="he" lang="he">עברית</a>
     <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">View on GitHub</a>
   </nav>
@@ -381,7 +380,7 @@ section[id] { scroll-margin-top: 64px; }
 <p>Each field in a record has a fixed width, set by a table in the specification <sup><a href="#src-2">[2]</a></sup>. A text field is left aligned and padded with spaces. A number field is right aligned and padded with zeros <sup><a href="#src-2">[2]</a></sup>.</p>
 <h2 id="which-documents-go-in">Which documents go in</h2>
 <p>The file covers a period. Every numbered document of a type that has a code in appendix 1 of the specification goes in, by document date <sup><a href="#src-1">[1]</a></sup>:</p>
-<ul><li>Tax invoices, tax invoice/receipts, receipts and credit invoices go in.</li><li>The code table in the file specification gives code 300 to "חשבונית/חשבונית עסקה" <sup><a href="#src-5">[5]</a></sup>. It does not say whether a pro forma that is only a demand for payment must go in. [TO CHECK] The requirements document in the repository <sup><a href="#src-3">[3]</a></sup> and the export code <sup><a href="#src-1">[1]</a></sup> still disagree on this.</li><li>A cancelled document goes in too, marked in a dedicated field <sup><a href="#src-1">[1]</a></sup>.</li><li>Quotes and payment requests stay out, since they have no code in the appendix <sup><a href="#src-1">[1]</a></sup>.</li></ul>
+<ul><li>Tax invoices, tax invoice/receipts, receipts and credit invoices go in.</li><li>A pro forma (חשבון עסקה) goes in. The code table in the file specification gives code 300 to "חשבונית/חשבונית עסקה" <sup><a href="#src-5">[5]</a></sup>. Open Ledger IL exports a pro forma under code 300 without counting it as a charge, since the receipt is the income <sup><a href="#src-1">[1]</a></sup>.</li><li>A cancelled document goes in too, marked in a dedicated field <sup><a href="#src-1">[1]</a></sup>.</li><li>Quotes and payment requests stay out, since they have no code in the appendix <sup><a href="#src-1">[1]</a></sup>.</li></ul>
 <h2 id="when-your-accountant-needs-the-file">When your accountant needs the file</h2>
 <p>Software that must be registered has to be able to produce these files, as the director instructs, under appendix 5 to instruction 36 of the bookkeeping instructions <sup><a href="#src-6">[6]</a></sup>. There is no fixed list of cases in the instructions. In practice, the Tax Authority asks for the unified file when it opens an audit of the books <sup><a href="#src-7">[7]</a></sup>.</p>
 <p>What can be said without an outside source: the file is meant to be read by someone who does not use your software. An accountant on other software can load your documents from it. An audit can check the series, the amounts and the cancelled documents from it.</p>
@@ -405,7 +404,7 @@ section[id] { scroll-margin-top: 64px; }
   </section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="Pages"><a href="/en/">Home</a><a href="/en/features/">Features</a><a href="/en/pricing/">Pricing</a><a href="/en/registration/">Registration</a><a href="/en/demo/">Demo</a><a href="/en/help/">Help</a></nav>
+  <nav class="wrap foot-pages" aria-label="Pages"><a href="/en/">Home</a><a href="/en/features/">Features</a><a href="/en/pricing/">Pricing</a><a href="/en/registration/">Registration</a><a href="/en/demo/">Demo</a><a href="/en/guides/">Guides</a><a href="/en/help/">Help</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>

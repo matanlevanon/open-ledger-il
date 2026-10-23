@@ -1,7 +1,7 @@
 ---
 title: "Israeli invoicing software prices compared (2026)"
 description: What Morning, iCount, SUMIT, EZcount, Invoice4U and Rivhit cost a year, which plan opens the API, and how a free or one-time option compares.
-published: false
+published: true
 updated: 2026-10-23
 sources:
   - https://www.greeninvoice.co.il/pricing/

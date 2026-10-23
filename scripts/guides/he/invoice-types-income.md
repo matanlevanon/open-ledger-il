@@ -1,7 +1,7 @@
 ---
 title: חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה
 description: מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md

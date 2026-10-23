@@ -1,7 +1,7 @@
 ---
 title: חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית
 description: שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md

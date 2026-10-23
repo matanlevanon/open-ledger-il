@@ -29,6 +29,76 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/features/"/>
   </url>
   <url>
+    <loc>https://open-ledger.dev/guides/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/allocation-number/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/allocation-number/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/allocation-number/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/allocation-number/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/invoice-types-income/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/invoice-types-income/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/invoice-types-income/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/invoice-types-income/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/invoicing-software-prices/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/invoicing-software-prices/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/invoicing-software-prices/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/invoicing-software-prices/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/open-source-invoicing/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/open-source-invoicing/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/open-source-invoicing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/open-source-invoicing/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/osek-patur-ceiling/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/osek-patur-ceiling/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/osek-patur-ceiling/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/osek-patur-ceiling/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/osek-patur-invoice/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/osek-patur-invoice/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/osek-patur-invoice/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/osek-patur-invoice/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/own-cloud-bookkeeping/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/own-cloud-bookkeeping/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/own-cloud-bookkeeping/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/own-cloud-bookkeeping/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/registered-software/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/registered-software/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/registered-software/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/registered-software/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/guides/unified-file/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/unified-file/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/unified-file/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/unified-file/"/>
+  </url>
+  <url>
     <loc>https://open-ledger.dev/help/</loc>
     <lastmod>2026-10-23</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/"/>
@@ -195,6 +265,76 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/features/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/features/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/features/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/allocation-number/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/allocation-number/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/allocation-number/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/allocation-number/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/invoice-types-income/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/invoice-types-income/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/invoice-types-income/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/invoice-types-income/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/invoicing-software-prices/</loc>
+    <lastmod>2026-10-23</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/invoicing-software-prices/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/invoicing-software-prices/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/invoicing-software-prices/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/open-source-invoicing/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/open-source-invoicing/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/open-source-invoicing/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/open-source-invoicing/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/osek-patur-ceiling/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/osek-patur-ceiling/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/osek-patur-ceiling/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/osek-patur-ceiling/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/osek-patur-invoice/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/osek-patur-invoice/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/osek-patur-invoice/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/osek-patur-invoice/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/own-cloud-bookkeeping/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/own-cloud-bookkeeping/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/own-cloud-bookkeeping/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/own-cloud-bookkeeping/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/registered-software/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/registered-software/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/registered-software/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/registered-software/"/>
+  </url>
+  <url>
+    <loc>https://open-ledger.dev/en/guides/unified-file/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/unified-file/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/unified-file/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/unified-file/"/>
   </url>
   <url>
     <loc>https://open-ledger.dev/en/help/</loc>

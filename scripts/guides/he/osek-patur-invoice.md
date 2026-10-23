@@ -1,7 +1,7 @@
 ---
 title: חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם
 description: עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md

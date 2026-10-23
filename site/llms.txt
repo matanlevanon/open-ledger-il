@@ -9,9 +9,22 @@
 - [Open Ledger IL pricing: free, ₪99 installer, or setup](https://open-ledger.dev/en/pricing/): Run Open Ledger IL free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. No subscription.
 - [Open Ledger IL: Tax Authority certificate 281801](https://open-ledger.dev/en/registration/): Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.
 - [Open Ledger IL live demo: try it in your browser](https://open-ledger.dev/en/demo/): Open the Open Ledger IL demo: sample businesses, the real screens, private drafts and preview PDFs. No install. The sample data stays as it is.
+- [Open Ledger IL guides: invoicing for Israeli businesses](https://open-ledger.dev/en/guides/): Plain guides to Israeli invoicing: allocation numbers, the עוסק פטור ceiling, registered software, the unified file and which document is income.
 - [Open Ledger IL help: install, set up and daily use](https://open-ledger.dev/en/help/): Step by step: the installer, Cloudflare, the Tax Authority, payments, expenses, email, Claude and fixes for where people get stuck.
 - [Open Ledger IL changelog: what changed in each version](https://open-ledger.dev/en/changelog/): Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.1.
 - [Open Ledger IL licence: FSL-1.1, free for your business](https://open-ledger.dev/en/license/): Open Ledger IL ships under the FSL-1.1 licence. Free for your own business, no reselling, and each version turns Apache 2.0 after two years.
+
+## Guides in English
+
+- [Allocation numbers: what they are, when you need one, and how to get one automatically](https://open-ledger.dev/en/guides/allocation-number/): When an Israeli tax invoice needs an allocation number from the Tax Authority, what happens without one, and how connected software asks for it.
+- [Pro forma, payment request and receipt: the difference, and what counts as income](https://open-ledger.dev/en/guides/invoice-types-income/): Pro forma, payment request, receipt and tax invoice in Israel. Which one is income, and why a report never counts a request and its receipt twice.
+- [Israeli invoicing software prices compared (2026)](https://open-ledger.dev/en/guides/invoicing-software-prices/): What Morning, iCount, SUMIT, EZcount, Invoice4U and Rivhit cost a year, which plan opens the API, and how a free or one-time option compares.
+- [An open-source alternative to paid invoicing software: a plain comparison](https://open-ledger.dev/en/guides/open-source-invoicing/): Subscription software, your accountant's system or open source. Three ways for a small Israeli business to keep its books, and what to check in each.
+- [The עוסק פטור ceiling: how to track it and what happens when you cross it](https://open-ledger.dev/en/guides/osek-patur-ceiling/): What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.
+- [Invoices for an עוסק פטור: which documents you may issue and what they say](https://open-ledger.dev/en/guides/osek-patur-invoice/): An עוסק פטור issues no tax invoices. Which documents it does issue, what they must show, and how to number, correct and send them digitally.
+- [Bookkeeping on your own cloud: what Cloudflare is, and why it costs little](https://open-ledger.dev/en/guides/own-cloud-bookkeeping/): What it means to run your bookkeeping in your own cloud account, what Cloudflare Workers is, what costs money and what stays free.
+- [Software registered with the Tax Authority: what it means and how to check](https://open-ledger.dev/en/guides/registered-software/): Who must register accounting software with the Israel Tax Authority, what registration says and does not say, and how to check a registration.
+- [The unified file (מבנה אחיד): what it is and when your accountant needs it](https://open-ledger.dev/en/guides/unified-file/): What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.
 
 ## Help in English
 
@@ -39,9 +52,22 @@
 - [מחירים: Open Ledger IL בחינם, ב-₪99 או בהקמה עבורך](https://open-ledger.dev/pricing/): הפעלת Open Ledger IL בחינם מקוד המקור, התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99, או הקמה עבורך ב-₪699. תשלום אחד, בלי מנוי.
 - [Open Ledger IL רשומה ברשות המסים: תעודה 281801](https://open-ledger.dev/registration/): Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. אפשר לבדוק במאגר של רשות המסים.
 - [הדגמה חיה של Open Ledger IL: נסו בדפדפן](https://open-ledger.dev/demo/): פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.
+- [מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל](https://open-ledger.dev/guides/): מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.
 - [עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש](https://open-ledger.dev/help/): צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.
 - [יומן שינויים של Open Ledger IL: מה חדש בכל גרסה](https://open-ledger.dev/changelog/): כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.1.
 - [רישיון Open Ledger IL: FSL-1.1, חינם לעסק שלכם](https://open-ledger.dev/license/): Open Ledger IL ברישיון FSL-1.1. חינם לעסק שלכם, בלי מכירה חוזרת, וכל גרסה עוברת ל-Apache 2.0 אחרי שנתיים.
+
+## Guides in Hebrew
+
+- [מספר הקצאה: מה זה, מתי חובה ואיך מקבלים אותו אוטומטית](https://open-ledger.dev/guides/allocation-number/): מתי חשבונית מס צריכה מספר הקצאה מרשות המסים, מה קורה בלעדיו, ואיך תוכנה מחוברת מבקשת אותו לבד בזמן ההפקה.
+- [חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה](https://open-ledger.dev/guides/invoice-types-income/): מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.
+- [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/): כמה עולות מורנינג, iCount, SUMIT, EZcount, Invoice4U וריווחית בשנה, איזו תוכנית פותחת API, ואיך משתווה אפשרות חינמית או חד פעמית.
+- [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/): שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.
+- [תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה](https://open-ledger.dev/guides/osek-patur-ceiling/): מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.
+- [חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם](https://open-ledger.dev/guides/osek-patur-invoice/): עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.
+- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/): מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.
+- [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/): מי חייב לרשום תוכנה להנהלת חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
+- [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/): מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.
 
 ## Help in Hebrew
 

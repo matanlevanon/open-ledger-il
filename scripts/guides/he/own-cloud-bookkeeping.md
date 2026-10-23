@@ -1,7 +1,7 @@
 ---
 title: הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול
 description: מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - https://developers.cloudflare.com/workers/platform/pricing/

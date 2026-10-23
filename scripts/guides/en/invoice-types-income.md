@@ -1,7 +1,7 @@
 ---
 title: "Pro forma, payment request and receipt: the difference, and what counts as income"
 description: Pro forma, payment request, receipt and tax invoice in Israel. Which one is income, and why a report never counts a request and its receipt twice.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md

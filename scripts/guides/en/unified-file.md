@@ -1,7 +1,7 @@
 ---
 title: "The unified file (מבנה אחיד): what it is and when your accountant needs it"
 description: What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.
-published: false
+published: true
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/src/modules/exports/unified-file/build.ts
@@ -53,7 +53,7 @@ Each field in a record has a fixed width, set by a table in the specification [2
 The file covers a period. Every numbered document of a type that has a code in appendix 1 of the specification goes in, by document date [1]:
 
 - Tax invoices, tax invoice/receipts, receipts and credit invoices go in.
-- The code table in the file specification gives code 300 to "חשבונית/חשבונית עסקה" [5]. It does not say whether a pro forma that is only a demand for payment must go in. [TO CHECK] The requirements document in the repository [3] and the export code [1] still disagree on this.
+- A pro forma (חשבון עסקה) goes in. The code table in the file specification gives code 300 to "חשבונית/חשבונית עסקה" [5]. Open Ledger IL exports a pro forma under code 300 without counting it as a charge, since the receipt is the income [1].
 - A cancelled document goes in too, marked in a dedicated field [1].
 - Quotes and payment requests stay out, since they have no code in the appendix [1].
 

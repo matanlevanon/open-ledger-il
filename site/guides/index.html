@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל</title>
 <meta name="description" content="מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.">
-<meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://open-ledger.dev/guides/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/guides/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/guides/">
 <link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/guides/">
+<link rel="alternate" type="text/markdown" href="/guides/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל">
 <meta property="og:description" content="מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.">
@@ -334,7 +334,7 @@ section[id] { scroll-margin-top: 64px; }
       Open Ledger IL
     </a>
     <nav class="nav-links" aria-label="ראשי">
-      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a>
+      <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     </nav>
     <div class="nav-end">
       <a class="lang" href="/en/guides/" hreflang="en" lang="en">English</a>
@@ -343,7 +343,7 @@ section[id] { scroll-margin-top: 64px; }
     </div>
   </div>
   <nav class="mobile-nav" id="mobile-nav" aria-label="תפריט">
-    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a>
+    <a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/" aria-current="page">מדריכים</a><a href="/help/">עזרה</a>
     <a href="/en/guides/" hreflang="en" lang="en">English</a>
     <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">לקוד ב-GitHub</a>
   </nav>
@@ -364,10 +364,10 @@ section[id] { scroll-margin-top: 64px; }
     <h1>מדריכים</h1>
     
   </div>
-  <section class="plain"><div class="wrap"><p class="lead">המדריכים נכתבים ועוברים בדיקה. הם יופיעו כאן אחרי הפרסום.</p></div></section>
+  <section class="plain"><div class="wrap"><ul class="guide-list"><li><a href="/guides/allocation-number/">מספר הקצאה: מה זה, מתי חובה ואיך מקבלים אותו אוטומטית</a><p>מתי חשבונית מס צריכה מספר הקצאה מרשות המסים, מה קורה בלעדיו, ואיך תוכנה מחוברת מבקשת אותו לבד בזמן ההפקה.</p></li><li><a href="/guides/invoice-types-income/">חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה</a><p>מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.</p></li><li><a href="/guides/invoicing-software-prices/">מחירי תוכנות חשבוניות בישראל, השוואה (2026)</a><p>כמה עולות מורנינג, iCount, SUMIT, EZcount, Invoice4U וריווחית בשנה, איזו תוכנית פותחת API, ואיך משתווה אפשרות חינמית או חד פעמית.</p></li><li><a href="/guides/open-source-invoicing/">חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית</a><p>שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.</p></li><li><a href="/guides/osek-patur-ceiling/">תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה</a><p>מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.</p></li><li><a href="/guides/osek-patur-invoice/">חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם</a><p>עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.</p></li><li><a href="/guides/own-cloud-bookkeeping/">הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול</a><p>מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.</p></li><li><a href="/guides/registered-software/">תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים</a><p>מי חייב לרשום תוכנה להנהלת חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.</p></li><li><a href="/guides/unified-file/">מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו</a><p>מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.</p></li></ul></div></section>
 </main>
 <footer>
-  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/help/">עזרה</a></nav>
+  <nav class="wrap foot-pages" aria-label="עמודים"><a href="/">בית</a><a href="/features/">יכולות</a><a href="/pricing/">מחירים</a><a href="/registration/">רישום</a><a href="/demo/">הדגמה</a><a href="/guides/">מדריכים</a><a href="/help/">עזרה</a></nav>
   <div class="wrap foot">
     <div>
       <a href="https://github.com/matanlevanon/open-ledger-il" target="_blank" rel="noopener">GitHub</a>
