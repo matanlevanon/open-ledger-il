@@ -65,7 +65,7 @@ test('inner pages carry a BreadcrumbList that ends at the page itself', () => {
 
 test('guides carry an Article and an FAQPage with questions and answers', () => {
   const guides = all.filter((x) => x.path.includes('/guides/') && !x.path.endsWith('/guides/'));
-  assert.equal(guides.length, 16);
+  assert.equal(guides.length, 18);
   for (const p of guides) {
     const list = blocks(p.html);
     const article = list.find((b) => b['@type'] === 'Article');
@@ -78,6 +78,16 @@ test('guides carry an Article and an FAQPage with questions and answers', () => 
       assert.equal(q.acceptedAnswer['@type'], 'Answer');
       assert.ok(q.name && q.acceptedAnswer.text, `${p.path}: question text`);
     }
+  }
+});
+
+test('the pricing page carries an FAQPage when the shop is live', () => {
+  for (const path of ['/pricing/', '/en/pricing/']) {
+    const p = all.find((x) => x.path === path);
+    const faq = blocks(p.html).find((b) => b['@type'] === 'FAQPage');
+    if (!p.html.includes('id="compare"')) { assert.equal(faq, undefined, `${path}: no FAQ before the shop`); continue; }
+    assert.ok(faq && faq.mainEntity.length >= 3, `${path}: pricing questions`);
+    assert.ok(p.html.includes('id="faq"'), `${path}: questions shown on the page`);
   }
 });
 

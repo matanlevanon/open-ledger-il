@@ -14,7 +14,7 @@ Website: [open-ledger.dev](https://open-ledger.dev/) ([English](https://open-led
 **Install it yourself, connected. ₪99, one time.** A Windows installer sets everything up in your own Cloudflare account, and the Tax Authority connection runs through MTN, so you need no ITA app of your own. One licence key for one business. Buy and install at [get.open-ledger.dev](https://get.open-ledger.dev/buy) ([עברית](https://get.open-ledger.dev/buy?lang=he)).
 -->
 
-**Set up for you. ₪699, one time.** Prefer not to do it yourself? I create every account for you with your own emails, install and deploy it, and hand it over working, with full control to you. The Tax Authority connection uses your own ITA API app, or the connection through MTN. A mid-tier plan in paid invoicing software costs about ₪700 to ₪1,200 every year. After that it is yours: no subscription, free updates, and you maintain it yourself. Book a call through the form on the pricing page ([English](https://open-ledger.dev/en/pricing/) · [עברית](https://open-ledger.dev/pricing/)).
+**Set up for you. ₪699, one time.** Prefer not to do it yourself? I create every account for you with your own emails, install and deploy it, and hand it over working, with full control to you. The Tax Authority connection uses your own ITA API app, or the connection through MTN. A mid-tier plan in paid invoicing software costs about ₪350 to ₪900 a year before VAT, every year. After that it is yours: no subscription, free updates, and you maintain it yourself. Book a call through the form on the pricing page ([English](https://open-ledger.dev/en/pricing/) · [עברית](https://open-ledger.dev/pricing/)).
 
 ## Who it is for
 

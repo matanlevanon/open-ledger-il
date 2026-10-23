@@ -15,6 +15,7 @@ from .config import (CERTIFICATE, CLONE, CONFIG, DEMO_URL, DEPLOY, ITA_REG, ITA_
 
 md.SPONSORED.append(FINANCY_URL)
 from .pages_text import NAV, PAGES, UI
+from .pricing_text import PRICING
 from .style import CSS, FAVICON, LOGO
 from .text import EN, HE, OPTIONS_EN, OPTIONS_HE
 
@@ -612,10 +613,26 @@ def section_options(lang):
 
 def section_how(lang):
     c = TEXT[lang]
-    steps = '\n'.join(f'''        <li class="step">
+    pr = PRICING[lang]
+
+    def step_list(items):
+        return '\n'.join(f'''        <li class="step">
           <h3>{E(h)}</h3>
           <p>{E(p)}</p>
-        </li>''' for h, p in c['steps'])
+        </li>''' for h, p in items)
+
+    steps = step_list(c['steps'])
+    installer = ''
+    if SHOP_LIVE:
+        # The ₪99 path comes first, the from-source steps follow under their own heading.
+        help_link = path_of(lang, 'helpitem', 'before-you-start')
+        installer = f'''      <h3 class="path-h">{E(pr['how_installer_h'])}</h3>
+      <ol class="steps">
+{step_list(pr['steps_installer'])}
+      </ol>
+      <p class="cmd-note">{E(pr['installer_note'])} <a href="{help_link}">{E(pr['installer_link'])}</a></p>
+      <h3 class="path-h">{E(pr['how_source_h'])}</h3>
+'''
     needs = '\n'.join(
         f'''          <tr><td><b>{E(n)}</b><span class="tag{' req' if req else ''}">{E(c['required'] if req else c['optional'])}</span></td><td><span>{E(note)}</span></td></tr>'''
         for n, req, note in c['needs'])
@@ -630,7 +647,7 @@ def section_how(lang):
         <h2>{E(c['how_h'])}</h2>
         <p>{E(c['how_p'])}</p>
       </div>
-      <ol class="steps">
+{installer}      <ol class="steps">
 {steps}
       </ol>
       <div class="cmd">
@@ -641,7 +658,7 @@ def section_how(lang):
 
       <div class="sec-head sub" id="setup">
         <h2>{E(c['need_h'])}</h2>
-        <p>{E(c['need_p'])}</p>
+        <p>{E(pr['need_p_shop'] if SHOP_LIVE else c['need_p'])}</p>
       </div>
       <table>
         <thead><tr><th>{E(c['need_cols'][0])}</th><th>{E(c['need_cols'][1])}</th></tr></thead>
@@ -763,9 +780,51 @@ def build_features(lang):
     return page, main, ''
 
 
+def section_compare(lang):
+    """The three options in one table. Only when the shop is live, since the middle column is the ₪99 installer."""
+    if not SHOP_LIVE:
+        return ''
+    pr = PRICING[lang]
+    head = ''.join(f'<th scope="col">{E(x)}</th>' for x in pr['cmp_cols'])
+    rows = '\n'.join('          <tr><th scope="row">' + E(r[0]) + '</th>' + ''.join(f'<td>{E(x)}</td>' for x in r[1:]) + '</tr>' for r in pr['cmp_rows'])
+    return f'''  <section id="compare">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">{E(pr['cmp_eyebrow'])}</div>
+        <h2>{E(pr['cmp_h'])}</h2>
+        <p>{E(pr['cmp_p'])}</p>
+      </div>
+      <div class="table-scroll">
+      <table class="compare">
+        <thead><tr>{head}</tr></thead>
+        <tbody>
+{rows}
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </section>'''
+
+
+def pricing_faq(lang):
+    if not SHOP_LIVE:
+        return []
+    return PRICING[lang]['faq']
+
+
+def section_pricing_faq(lang):
+    items = pricing_faq(lang)
+    if not items:
+        return ''
+    dl = ''.join(f'<dt>{E(q)}</dt><dd>{E(a)}</dd>' for q, a in items)
+    return f'''  <section class="plain" id="faq">
+    <div class="wrap prose"><h2>{E(PRICING[lang]['faq_h'])}</h2><dl class="faq">{dl}</dl></div>
+  </section>'''
+
+
 def build_pricing(lang):
     page = base_page(lang, 'pricing')
-    main = '\n'.join([page_intro(page), section_options(lang), key_facts(lang), section_how(lang)])
+    main = '\n'.join(x for x in [page_intro(page), section_options(lang), section_compare(lang), key_facts(lang), section_how(lang), section_pricing_faq(lang)] if x)
     return page, main, COPY_SCRIPT.replace('__COPIED__', E(TEXT[lang]['copied']))
 
 
@@ -856,7 +915,11 @@ def build_license(lang):
 def key_facts(lang):
     """Plain sentences an AI answer can quote, on the home and pricing pages."""
     u = UI[lang]
-    facts = list(u['facts']) + ([u['fact_shop']] if SHOP_LIVE else [])
+    facts = list(u['facts'])
+    if SHOP_LIVE:
+        # The ₪99 installer reads before the ₪699 setup, as on the pricing cards.
+        at = next((i for i, f in enumerate(facts) if '₪699' in f), len(facts))
+        facts.insert(at, u['fact_shop'])
     items = ''.join(f'<li>{E(f)}</li>' for f in facts)
     return f'''  <section class="plain" id="key-facts">
     <div class="wrap"><div class="facts"><h2>{E(u['key_facts_h'])}</h2><ul>{items}</ul></div></div>
@@ -1070,6 +1133,9 @@ def jsonld(page):
                      'הונפקה למהדורה 1.1.0, בתוקף מ-7.10.2026 עד 31.10.2028.')
         blocks.append({'@context': 'https://schema.org', '@type': 'WebPage', 'name': page['title'], 'url': url, 'inLanguage': lang,
                        'description': about, 'isPartOf': {'@id': SITE_ID}, 'publisher': {'@id': ORG_ID}})
+    if page['key'] == 'pricing' and pricing_faq(lang):
+        blocks.append({'@context': 'https://schema.org', '@type': 'FAQPage', 'inLanguage': lang, 'mainEntity': [
+            {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in pricing_faq(lang)]})
     if page['key'] in ARTICLE_KEYS:
         g = page['guide']
         blocks.append({

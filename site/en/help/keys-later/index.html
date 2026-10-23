@@ -145,6 +145,12 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { counter-increment: step; }
+.path-h { max-width: 980px; margin: 8px auto 18px; font-size: 19px; font-weight: 650; }
+.table-scroll { overflow-x: auto; max-width: 980px; margin: 0 auto; }
+table.compare { min-width: 640px; }
+table.compare td, table.compare th { padding-inline: 10px; }
+table.compare th[scope=row] { color: var(--text); font-size: 14.5px; text-transform: none; letter-spacing: 0; font-weight: 650; }
+table.compare td:nth-child(3), table.compare thead th:nth-child(3) { background: var(--blue-soft); }
 .step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
 .step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
 .step p { margin: 0; color: var(--text-dim); font-size: 15px; }

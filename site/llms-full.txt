@@ -79,10 +79,10 @@ API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.
 - Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
 - היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
 - היא חינמית לעסק שלכם, ברישיון FSL-1.1.
+- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
 - הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
 - היא תומכת בעוסק פטור ובעוסק מורשה.
 - היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
-- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
 
 ## חינם מקוד המקור, או הקמה עבורך
 
@@ -333,25 +333,51 @@ Source: https://open-ledger.dev/features/
 - אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך
 - רשות המסים: אפליקציית API משלך, או חיבור דרך MTN
 - נמסרת לך פועלת, עם שליטה מלאה בידיך
-- בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה
+- בלי מנוי. תוכנית אמצעית בתוכנת חשבוניות בתשלום עולה בערך ₪350 עד ₪900 בשנה, לפני מע"מ
 
 לתיאום שיחה
+
+השוואה
+
+## שלוש האפשרויות זו לצד זו
+
+התוכנה זהה בשלושתן. מה שמשתנה הוא מי מתקין אותה ואיך היא מתחברת לרשות המסים.
+
+| | חינם מקוד המקור | תוכנת התקנה ב-₪99 | הקמה עבורך ב-₪699 |
+| --- | --- | --- | --- |
+| מחיר | חינם | ₪99 חד פעמי (במקום ₪199) | ₪699 חד פעמי (במקום ₪999) |
+| מי מתקין | אתה, עם Node.js ו-Wrangler | אתה, עם תוכנת התקנה לווינדוס | אנחנו, איתך בשיחה |
+| זמן התקנה | אחר צהריים | כ-30 דקות | אנחנו מטפלים בזה |
+| מספרי הקצאה | אפליקציית API משלך ברשות המסים | דרך האפליקציה המאושרת של MTN | אפליקציה משלך, או דרך MTN |
+| מה צריך להביא | חשבון Cloudflare, Node.js ומפתח חתימה ל-PDF | מחשב Windows, חשבון Cloudflare ומפתח הרישיון | פרטי העסק וכתובות המייל שלך |
+| איפה המידע | בחשבון Cloudflare שלך | בחשבון Cloudflare שלך | בחשבון Cloudflare שלך |
+| מנוי | אין | אין | אין |
 
 ## עובדות עיקריות
 
 - Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
 - היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
 - היא חינמית לעסק שלכם, ברישיון FSL-1.1.
+- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
 - הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.
 - היא תומכת בעוסק פטור ובעוסק מורשה.
 - היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.
-- תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
 
 איך זה עובד
 
 ## שלושה שלבים למסמך הראשון
 
 אתה פורס עותק משלך. אף אחד אחר לא מריץ אותו ולא מחזיק את המידע שלך.
+
+### עם תוכנת ההתקנה ב-₪99
+
+1. **קונים ומקבלים מפתח** משלמים ₪99 ומפתח הרישיון מגיע במייל. מפתח אחד לעסק אחד, לפי מספר העוסק.
+2. **מריצים את תוכנת ההתקנה** מדביקים טוקן API של Cloudflare. תוכנת ההתקנה יוצרת בחשבון שלך את מסד הנתונים, אחסון הקבצים והכניסה. בלי שורת פקודה.
+3. **הגדרת העסק** פרטי העסק, לוגו, חתימה ומספר ההתחלה של כל סדרה, כדי שהמספור ימשיך מהמערכת הקודמת.
+
+כ-30 דקות בפעם הראשונה, רובן פתיחת חשבונות. [מה צריך לפני ההתקנה](https://open-ledger.dev/help/before-you-start/)
+
+### מקוד המקור, בחינם
 
 1. **פריסת עותק משלך** יוצרים מסד נתונים D1 אחד ושני דליי R2, מחברים את ה-Worker ל-fork שלך ב-GitHub ומוסיפים דומיין. כל push ל-main נפרס.
 2. **נעילה** Cloudflare Access מכניס אותך עם המייל שלך. מוסיפים סודות: מפתח החתימה, מפתח המייל ופרטי רשות המסים כשאתה עוסק מורשה.
@@ -363,7 +389,7 @@ Source: https://open-ledger.dev/features/
 
 ## מה צריך
 
-מתחילים בתוכניות חינמיות.
+הרשימה הזו היא למסלול החינמי מקוד המקור. תוכנת ההתקנה צריכה פחות: מחשב Windows, חשבון Cloudflare ומפתח הרישיון.
 
 | דרישה | הערות |
 | --- | --- |
@@ -396,6 +422,28 @@ Workers Paid ומגבלות ידועות
 - אתה מריץ אותה: עדכונים, סודות וחשבון Cloudflare הם שלך.
 
 [צריך לרשום את התוכנה ברשות המסים?](https://open-ledger.dev/registration/)
+
+## שאלות על המחיר
+
+**יש תשלום חודשי?**
+
+לא. כל אפשרות היא בחינם או בתשלום אחד. המערכת רצה על התוכניות החינמיות של Cloudflare. Workers Paid, מ-$5 לחודש, הוא רשות ומשולם ל-Cloudflare, לא לנו.
+
+**מה תוכנת ההתקנה ב-₪99 מוסיפה על הגרסה החינמית?**
+
+שני דברים. תוכנת התקנה לווינדוס שמקימה הכול בחשבון Cloudflare שלך, וחיבור לרשות המסים דרך האפליקציה המאושרת של MTN, כך שלא צריך לרשום אפליקציית API משלך. התוכנה עצמה זהה.
+
+**איזו אפשרות מתאימה לעוסק פטור?**
+
+כל אחת מהן. עוסק פטור מוציא קבלות ולא חשבוניות מס, ולכן לא צריך מספרי הקצאה. תוכנת ההתקנה ב-₪99 היא הדרך המהירה להתחיל בלי עבודה טכנית.
+
+**מי מחזיק את המידע שלי?**
+
+אתה. בכל אפשרות מסד הנתונים והקבצים נוצרים בחשבון Cloudflare שלך. MTN לא מחזיקה את המידע שלך.
+
+**התוכנה רשומה ברשות המסים?**
+
+כן. Open Ledger IL רשומה כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
 
 Source: https://open-ledger.dev/pricing/
 
@@ -839,10 +887,10 @@ P&L, client ledgers, the unified file and an accountant login.
 - Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
 - It is free for your own business under the FSL-1.1 licence.
+- The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
 - Having it set up for you costs ₪699, once, with no subscription. That is a launch price, 30% off the regular ₪999, for a limited time.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
-- The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
 
 ## Free from source, or set up for you
 
@@ -1093,25 +1141,51 @@ Launch release: 30% off for a limited time
 - We create every account for you, with your own emails
 - Tax Authority: your own ITA API app, or the connection through MTN
 - Handed over working, with full control to you
-- No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year
+- No subscription. A mid-tier plan of paid invoicing software costs about ₪350 to ₪900 a year, before VAT
 
 Book a call
+
+Compare
+
+## The three options side by side
+
+The software is the same in all three. What changes is who installs it and how it reaches the Tax Authority.
+
+| | Free from source | ₪99 installer | ₪699 set up for you |
+| --- | --- | --- | --- |
+| Price | Free | ₪99 once (regular ₪199) | ₪699 once (regular ₪999) |
+| Who installs it | You, with Node.js and Wrangler | You, with a Windows installer | We do, with you on a call |
+| Time to install | An afternoon | About 30 minutes | We handle it |
+| Allocation numbers | Your own ITA API app | Through MTN’s approved app | Your own app, or through MTN |
+| What you bring | A Cloudflare account, Node.js and a PDF signing key | A Windows computer, a Cloudflare account and the licence key | Your business details and your emails |
+| Where the data lives | Your Cloudflare account | Your Cloudflare account | Your Cloudflare account |
+| Subscription | None | None | None |
 
 ## Key facts
 
 - Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
 - It is free for your own business under the FSL-1.1 licence.
+- The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
 - Having it set up for you costs ₪699, once, with no subscription. That is a launch price, 30% off the regular ₪999, for a limited time.
 - It supports עוסק פטור and עוסק מורשה businesses.
 - It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.
-- The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
 
 How it works
 
 ## Three steps to your first document
 
 You deploy your own copy. Nobody else runs it or holds your data.
+
+### With the ₪99 installer
+
+1. **Buy and get the key** Pay ₪99 and the licence key arrives by email. One key is one business, tied to its tax number.
+2. **Run the Windows installer** Paste a Cloudflare API token. The installer creates the database, file storage and sign-in in your own account. No command line.
+3. **Set up the business** Business profile, logo, signature and the starting number of each series, so numbering continues from your previous system.
+
+About 30 minutes the first time, mostly creating accounts. [See what you need before you install](https://open-ledger.dev/en/help/before-you-start/)
+
+### From source, free
 
 1. **Deploy your copy** Create one D1 database and two R2 buckets, connect the Worker to your fork on GitHub, and add your domain. Every push to main deploys.
 2. **Lock it down** Cloudflare Access signs you in with your own email. Add the secrets: the PDF signing key, the mail key, and ITA credentials when you are מורשה.
@@ -1123,7 +1197,7 @@ Starts on the Workers Free plan. Setup takes an afternoon.
 
 ## What you need
 
-It starts on free tiers.
+This list is for the free path from source. The installer needs less: a Windows computer, a Cloudflare account and the licence key.
 
 | Requirement | Notes |
 | --- | --- |
@@ -1156,6 +1230,28 @@ The ledger uses 5 scheduled jobs, the most Workers Free allows. Free has three o
 - You run it: updates, secrets and the Cloudflare bill are yours.
 
 [Do you need to register the software with the Tax Authority?](https://open-ledger.dev/en/registration/)
+
+## Pricing questions
+
+**Is there a monthly fee?**
+
+No. Each option is free or paid once. The Ledger runs on Cloudflare’s free plans. Workers Paid, from $5 a month, is optional and is paid to Cloudflare, not to us.
+
+**What does the ₪99 installer add to the free version?**
+
+Two things. A Windows installer that sets everything up in your Cloudflare account, and the Tax Authority connection through MTN’s approved app, so you do not register an ITA API app of your own. The software is the same.
+
+**Which option fits an עוסק פטור?**
+
+Any of them. A פטור business issues receipts, not tax invoices, so it does not need allocation numbers. The ₪99 installer is the quickest way to start without technical work.
+
+**Who holds my data?**
+
+You do. Every option creates the database and the files in your own Cloudflare account. MTN does not hold your data.
+
+**Is the software registered with the Tax Authority?**
+
+Yes. Open Ledger IL is registered as software for a computerized accounting system, under certificate 281801.
 
 Source: https://open-ledger.dev/en/pricing/
 

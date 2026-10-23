@@ -145,6 +145,12 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { counter-increment: step; }
+.path-h { max-width: 980px; margin: 8px auto 18px; font-size: 19px; font-weight: 650; }
+.table-scroll { overflow-x: auto; max-width: 980px; margin: 0 auto; }
+table.compare { min-width: 640px; }
+table.compare td, table.compare th { padding-inline: 10px; }
+table.compare th[scope=row] { color: var(--text); font-size: 14.5px; text-transform: none; letter-spacing: 0; font-weight: 650; }
+table.compare td:nth-child(3), table.compare thead th:nth-child(3) { background: var(--blue-soft); }
 .step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
 .step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
 .step p { margin: 0; color: var(--text-dim); font-size: 15px; }
@@ -367,7 +373,7 @@ section[id] { scroll-margin-top: 64px; }
       <p>An עוסק פטור is a business whose annual turnover stays under a ceiling set by law. The ceiling for 2026 is ₪122,833 <sup><a href="#src-1">[1]</a></sup>. It is updated every year in line with the index, and next year's figure is usually published around January <sup><a href="#src-1">[1]</a></sup>.</p>
 <p>This guide covers how to track turnover through the year, and what happens the day it goes past the ceiling.</p>
 <h2 id="what-counts-as-turnover">What counts as turnover</h2>
-<p>Turnover is the total of your transactions, not your profit. As secondary sources summarise it, the test looks at expected turnover, not only money already received <sup><a href="#src-1">[1]</a></sup>. [TO CHECK] The wording of the law itself, since the secondary sources were not checked against the primary text.</p>
+<p>Turnover is the total of your transactions, not your profit. Section 1 of the VAT Law sets the ceiling as turnover per year <sup><a href="#src-3">[3]</a></sup>. The VAT registration regulations say how to measure it: a running business looks at the past tax year, and a new business uses its estimate for the coming year, as if it worked the whole year <sup><a href="#src-4">[4]</a></sup>.</p>
 <p>So adding up receipts is not enough. A payment request that is still open is money you expect, and it belongs in the picture now.</p>
 <h2 id="how-to-track-it-through-the-year">How to track it through the year</h2>
 <p>Good tracking rests on three figures:</p>
@@ -377,7 +383,7 @@ section[id] { scroll-margin-top: 64px; }
 <h2 id="what-happens-when-you-cross-it">What happens when you cross it</h2>
 <p>As secondary sources summarise it <sup><a href="#src-1">[1]</a></sup>:</p>
 <ul><li><b>The switch is neither automatic nor on a fixed date.</b> It happens when turnover goes past the ceiling.</li><li><b>VAT applies from the moment you cross.</b> Earlier transactions stay exempt.</li><li><b>You tell the VAT office within 15 days of the event</b>, under regulation 8(a) of the VAT (registration) regulations <sup><a href="#src-2">[2]</a></sup>.</li></ul>
-<p>[TO CHECK] Whether the transaction that crosses the ceiling carries VAT in full, or only the part above the ceiling. The source document leaves this open too <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>The law and the regulations do not say whether the transaction that crosses the ceiling carries VAT in full, or only the part above it. Ask your accountant before you issue that document. Section 63 of the VAT Law sets when a change of classification takes effect: 30 days after the month in which you gave notice, or another date the director sets <sup><a href="#src-3">[3]</a></sup>.</p>
 <p>After the switch, the business issues tax invoices, charges VAT and files VAT reports. Open payment requests issued before the switch are re-priced with VAT <sup><a href="#src-1">[1]</a></sup>.</p>
 <h2 id="what-to-do-before-you-get-there">What to do before you get there</h2>
 <ul><li><b>Look early.</b> When the room left is small, plan the timing of the switch with your accountant.</li><li><b>Watch open requests.</b> One large transaction can take you past the ceiling.</li><li><b>Get ready for tax invoices.</b> After the switch, a tax invoice above the threshold needs an allocation number from the Tax Authority <sup><a href="#src-1">[1]</a></sup>. Setting up that connection takes time.</li></ul>
@@ -395,7 +401,7 @@ section[id] { scroll-margin-top: 64px; }
       <h2 id="faq">Questions and answers</h2>
       <dl class="faq"><dt>What is the ceiling this year?</dt><dd>₪122,833 for 2026. The ceiling is updated every year.</dd><dt>Do I become מורשה on 1 January?</dt><dd>No. The switch happens when turnover goes past the ceiling, not on a fixed date.</dd><dt>Is the test based on money received?</dt><dd>Not only. The test looks at expected turnover, not only money already received.</dd><dt>How soon do I tell the VAT office?</dt><dd>Within 15 days of the event, under regulation 8(a) of the VAT registration regulations, as secondary sources summarise it.</dd><dt>What is the VAT rate after the switch?</dt><dd>18%, the rate in force from 1 January 2025.</dd></dl>
       <h2 id="sources">Sources</h2>
-      <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.btl.gov.il/Laws1/02_0022_100001.pdf" rel="noopener" target="_blank">https://www.btl.gov.il/Laws1/02_0022_100001.pdf</a></li></ol>
+      <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.btl.gov.il/Laws1/02_0022_100001.pdf" rel="noopener" target="_blank">https://www.btl.gov.il/Laws1/02_0022_100001.pdf</a></li><li id="src-3"><a href="https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3" rel="noopener" target="_blank">https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3</a></li><li id="src-4"><a href="https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3_%28%D7%A8%D7%99%D7%A9%D7%95%D7%9D%29" rel="noopener" target="_blank">https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3_%28%D7%A8%D7%99%D7%A9%D7%95%D7%9D%29</a></li></ol>
     </div>
   </section>
 </main>

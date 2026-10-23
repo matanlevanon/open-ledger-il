@@ -145,6 +145,12 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { counter-increment: step; }
+.path-h { max-width: 980px; margin: 8px auto 18px; font-size: 19px; font-weight: 650; }
+.table-scroll { overflow-x: auto; max-width: 980px; margin: 0 auto; }
+table.compare { min-width: 640px; }
+table.compare td, table.compare th { padding-inline: 10px; }
+table.compare th[scope=row] { color: var(--text); font-size: 14.5px; text-transform: none; letter-spacing: 0; font-weight: 650; }
+table.compare td:nth-child(3), table.compare thead th:nth-child(3) { background: var(--blue-soft); }
 .step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
 .step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
 .step p { margin: 0; color: var(--text-dim); font-size: 15px; }
@@ -315,6 +321,7 @@ section[id] { scroll-margin-top: 64px; }
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://open-ledger.dev/#website","name":"Open Ledger IL","url":"https://open-ledger.dev/","inLanguage":["he","en"],"publisher":{"@id":"https://open-ledger.dev/#organization"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Open Ledger IL","alternateName":"חשבונאות פתוחה","url":"https://open-ledger.dev/","description":"הפעלת Open Ledger IL בחינם מקוד המקור, התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99, או הקמה עבורך ב-₪699. תשלום אחד, בלי מנוי.","applicationCategory":"BusinessApplication","operatingSystem":"Web","softwareVersion":"1.7.1","inLanguage":["he","en"],"license":"https://fsl.software/FSL-1.1-ALv2.template.md","offers":[{"@type":"Offer","name":"חינם מקוד המקור","price":"0","priceCurrency":"ILS"},{"@type":"Offer","name":"התקנה עצמית, מחוברת","price":"99","priceCurrency":"ILS","url":"https://get.open-ledger.dev/buy"},{"@type":"Offer","name":"הקמה עבורך","price":"699","priceCurrency":"ILS"}],"publisher":{"@id":"https://open-ledger.dev/#organization"},"screenshot":"https://open-ledger.dev/assets/screenshots/dashboard-he.c4a7384a.png"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"דף הבית","item":"https://open-ledger.dev/"},{"@type":"ListItem","position":2,"name":"מחירים","item":"https://open-ledger.dev/pricing/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"he","mainEntity":[{"@type":"Question","name":"יש תשלום חודשי?","acceptedAnswer":{"@type":"Answer","text":"לא. כל אפשרות היא בחינם או בתשלום אחד. המערכת רצה על התוכניות החינמיות של Cloudflare. Workers Paid, מ-$5 לחודש, הוא רשות ומשולם ל-Cloudflare, לא לנו."}},{"@type":"Question","name":"מה תוכנת ההתקנה ב-₪99 מוסיפה על הגרסה החינמית?","acceptedAnswer":{"@type":"Answer","text":"שני דברים. תוכנת התקנה לווינדוס שמקימה הכול בחשבון Cloudflare שלך, וחיבור לרשות המסים דרך האפליקציה המאושרת של MTN, כך שלא צריך לרשום אפליקציית API משלך. התוכנה עצמה זהה."}},{"@type":"Question","name":"איזו אפשרות מתאימה לעוסק פטור?","acceptedAnswer":{"@type":"Answer","text":"כל אחת מהן. עוסק פטור מוציא קבלות ולא חשבוניות מס, ולכן לא צריך מספרי הקצאה. תוכנת ההתקנה ב-₪99 היא הדרך המהירה להתחיל בלי עבודה טכנית."}},{"@type":"Question","name":"מי מחזיק את המידע שלי?","acceptedAnswer":{"@type":"Answer","text":"אתה. בכל אפשרות מסד הנתונים והקבצים נוצרים בחשבון Cloudflare שלך. MTN לא מחזיקה את המידע שלך."}},{"@type":"Question","name":"התוכנה רשומה ברשות המסים?","acceptedAnswer":{"@type":"Answer","text":"כן. Open Ledger IL רשומה כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801."}}]}</script>
 </head>
 <body>
 <header>
@@ -395,7 +402,7 @@ section[id] { scroll-margin-top: 64px; }
             <li>אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך</li>
             <li>רשות המסים: אפליקציית API משלך, או חיבור דרך MTN</li>
             <li>נמסרת לך פועלת, עם שליטה מלאה בידיך</li>
-            <li>בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה</li>
+            <li>בלי מנוי. תוכנית אמצעית בתוכנת חשבוניות בתשלום עולה בערך ₪350 עד ₪900 בשנה, לפני מע"מ</li>
           </ul>
           <a class="btn btn-ghost" href="#setup-form">לתיאום שיחה</a>
         </div>
@@ -440,8 +447,31 @@ section[id] { scroll-margin-top: 64px; }
   </section>
 
 
+  <section id="compare">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">השוואה</div>
+        <h2>שלוש האפשרויות זו לצד זו</h2>
+        <p>התוכנה זהה בשלושתן. מה שמשתנה הוא מי מתקין אותה ואיך היא מתחברת לרשות המסים.</p>
+      </div>
+      <div class="table-scroll">
+      <table class="compare">
+        <thead><tr><th scope="col"></th><th scope="col">חינם מקוד המקור</th><th scope="col">תוכנת התקנה ב-₪99</th><th scope="col">הקמה עבורך ב-₪699</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">מחיר</th><td>חינם</td><td>₪99 חד פעמי (במקום ₪199)</td><td>₪699 חד פעמי (במקום ₪999)</td></tr>
+          <tr><th scope="row">מי מתקין</th><td>אתה, עם Node.js ו-Wrangler</td><td>אתה, עם תוכנת התקנה לווינדוס</td><td>אנחנו, איתך בשיחה</td></tr>
+          <tr><th scope="row">זמן התקנה</th><td>אחר צהריים</td><td>כ-30 דקות</td><td>אנחנו מטפלים בזה</td></tr>
+          <tr><th scope="row">מספרי הקצאה</th><td>אפליקציית API משלך ברשות המסים</td><td>דרך האפליקציה המאושרת של MTN</td><td>אפליקציה משלך, או דרך MTN</td></tr>
+          <tr><th scope="row">מה צריך להביא</th><td>חשבון Cloudflare, Node.js ומפתח חתימה ל-PDF</td><td>מחשב Windows, חשבון Cloudflare ומפתח הרישיון</td><td>פרטי העסק וכתובות המייל שלך</td></tr>
+          <tr><th scope="row">איפה המידע</th><td>בחשבון Cloudflare שלך</td><td>בחשבון Cloudflare שלך</td><td>בחשבון Cloudflare שלך</td></tr>
+          <tr><th scope="row">מנוי</th><td>אין</td><td>אין</td><td>אין</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </section>
   <section class="plain" id="key-facts">
-    <div class="wrap"><div class="facts"><h2>עובדות עיקריות</h2><ul><li>Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.</li><li>היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.</li><li>היא חינמית לעסק שלכם, ברישיון FSL-1.1.</li><li>הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.</li><li>היא תומכת בעוסק פטור ובעוסק מורשה.</li><li>היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.</li><li>תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.</li></ul></div></div>
+    <div class="wrap"><div class="facts"><h2>עובדות עיקריות</h2><ul><li>Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.</li><li>היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.</li><li>היא חינמית לעסק שלכם, ברישיון FSL-1.1.</li><li>תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.</li><li>הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.</li><li>היא תומכת בעוסק פטור ובעוסק מורשה.</li><li>היא מבקשת מרשות המסים מספרי הקצאה לחשבוניות המס שצריכות אותם.</li></ul></div></div>
   </section>
   <section id="how">
     <div class="wrap">
@@ -450,6 +480,23 @@ section[id] { scroll-margin-top: 64px; }
         <h2>שלושה שלבים למסמך הראשון</h2>
         <p>אתה פורס עותק משלך. אף אחד אחר לא מריץ אותו ולא מחזיק את המידע שלך.</p>
       </div>
+      <h3 class="path-h">עם תוכנת ההתקנה ב-₪99</h3>
+      <ol class="steps">
+        <li class="step">
+          <h3>קונים ומקבלים מפתח</h3>
+          <p>משלמים ₪99 ומפתח הרישיון מגיע במייל. מפתח אחד לעסק אחד, לפי מספר העוסק.</p>
+        </li>
+        <li class="step">
+          <h3>מריצים את תוכנת ההתקנה</h3>
+          <p>מדביקים טוקן API של Cloudflare. תוכנת ההתקנה יוצרת בחשבון שלך את מסד הנתונים, אחסון הקבצים והכניסה. בלי שורת פקודה.</p>
+        </li>
+        <li class="step">
+          <h3>הגדרת העסק</h3>
+          <p>פרטי העסק, לוגו, חתימה ומספר ההתחלה של כל סדרה, כדי שהמספור ימשיך מהמערכת הקודמת.</p>
+        </li>
+      </ol>
+      <p class="cmd-note">כ-30 דקות בפעם הראשונה, רובן פתיחת חשבונות. <a href="/help/before-you-start/">מה צריך לפני ההתקנה</a></p>
+      <h3 class="path-h">מקוד המקור, בחינם</h3>
       <ol class="steps">
         <li class="step">
           <h3>פריסת עותק משלך</h3>
@@ -472,7 +519,7 @@ section[id] { scroll-margin-top: 64px; }
 
       <div class="sec-head sub" id="setup">
         <h2>מה צריך</h2>
-        <p>מתחילים בתוכניות חינמיות.</p>
+        <p>הרשימה הזו היא למסלול החינמי מקוד המקור. תוכנת ההתקנה צריכה פחות: מחשב Windows, חשבון Cloudflare ומפתח הרישיון.</p>
       </div>
       <table>
         <thead><tr><th>דרישה</th><th>הערות</th></tr></thead>
@@ -506,6 +553,9 @@ section[id] { scroll-margin-top: 64px; }
         </div>
       </details>
     </div>
+  </section>
+  <section class="plain" id="faq">
+    <div class="wrap prose"><h2>שאלות על המחיר</h2><dl class="faq"><dt>יש תשלום חודשי?</dt><dd>לא. כל אפשרות היא בחינם או בתשלום אחד. המערכת רצה על התוכניות החינמיות של Cloudflare. Workers Paid, מ-$5 לחודש, הוא רשות ומשולם ל-Cloudflare, לא לנו.</dd><dt>מה תוכנת ההתקנה ב-₪99 מוסיפה על הגרסה החינמית?</dt><dd>שני דברים. תוכנת התקנה לווינדוס שמקימה הכול בחשבון Cloudflare שלך, וחיבור לרשות המסים דרך האפליקציה המאושרת של MTN, כך שלא צריך לרשום אפליקציית API משלך. התוכנה עצמה זהה.</dd><dt>איזו אפשרות מתאימה לעוסק פטור?</dt><dd>כל אחת מהן. עוסק פטור מוציא קבלות ולא חשבוניות מס, ולכן לא צריך מספרי הקצאה. תוכנת ההתקנה ב-₪99 היא הדרך המהירה להתחיל בלי עבודה טכנית.</dd><dt>מי מחזיק את המידע שלי?</dt><dd>אתה. בכל אפשרות מסד הנתונים והקבצים נוצרים בחשבון Cloudflare שלך. MTN לא מחזיקה את המידע שלך.</dd><dt>התוכנה רשומה ברשות המסים?</dt><dd>כן. Open Ledger IL רשומה כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.</dd></dl></div>
   </section>
 </main>
 <footer>

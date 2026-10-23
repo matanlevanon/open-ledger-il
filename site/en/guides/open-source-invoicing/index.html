@@ -145,6 +145,12 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { counter-increment: step; }
+.path-h { max-width: 980px; margin: 8px auto 18px; font-size: 19px; font-weight: 650; }
+.table-scroll { overflow-x: auto; max-width: 980px; margin: 0 auto; }
+table.compare { min-width: 640px; }
+table.compare td, table.compare th { padding-inline: 10px; }
+table.compare th[scope=row] { color: var(--text); font-size: 14.5px; text-transform: none; letter-spacing: 0; font-weight: 650; }
+table.compare td:nth-child(3), table.compare thead th:nth-child(3) { background: var(--blue-soft); }
 .step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
 .step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
 .step p { margin: 0; color: var(--text-dim); font-size: 15px; }
@@ -388,7 +394,7 @@ section[id] { scroll-margin-top: 64px; }
 <p>A few questions help you decide:</p>
 <ol><li><b>Who should hold the data?</b> If you want the books in an account in your own name, the third approach fits.</li><li><b>How much time do you want to spend?</b> If you never want to touch an install, choose a subscription, your accountant, or a set-up service.</li><li><b>What happens the day you leave?</b> In every approach, make sure you can take the books, in a format the Tax Authority and another accountant can read.</li><li><b>Does the software meet the requirements?</b> Go through the list above for each option.</li></ol>
 <h2 id="how-open-ledger-il-does-it">How Open Ledger IL does it</h2>
-<p>Open Ledger IL is close to the third approach: the source is public under the FSL-1.1 licence, free for your own business, and runs in your own Cloudflare account. Each version becomes Apache 2.0 open source two years after release. It is registered with the Tax Authority, certificate 281801. It locks final documents, numbers them without gaps, asks for allocation numbers, backs up every quarter and produces a unified file. Install it yourself with the deploy guide, or ask for it to be set up for you.</p>
+<p>Open Ledger IL is close to the third approach: the source is public under the FSL-1.1 licence, free for your own business, and runs in your own Cloudflare account. Each version becomes Apache 2.0 open source two years after release. It is registered with the Tax Authority, certificate 281801. It locks final documents, numbers them without gaps, asks for allocation numbers, backs up every quarter and produces a unified file. Run it free from source with the deploy guide, install it yourself with the ₪99 connected installer, or have it set up for you.</p>
       <div class="guide-cta">
         <a class="btn btn-primary" href="https://demo.open-ledger.dev" target="_blank" rel="noopener" data-demo>Try the live demo</a>
         <a class="btn btn-ghost" href="/en/pricing/">See pricing and setup</a>

@@ -145,6 +145,12 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { counter-increment: step; }
+.path-h { max-width: 980px; margin: 8px auto 18px; font-size: 19px; font-weight: 650; }
+.table-scroll { overflow-x: auto; max-width: 980px; margin: 0 auto; }
+table.compare { min-width: 640px; }
+table.compare td, table.compare th { padding-inline: 10px; }
+table.compare th[scope=row] { color: var(--text); font-size: 14.5px; text-transform: none; letter-spacing: 0; font-weight: 650; }
+table.compare td:nth-child(3), table.compare thead th:nth-child(3) { background: var(--blue-soft); }
 .step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
 .step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
 .step p { margin: 0; color: var(--text-dim); font-size: 15px; }
@@ -370,7 +376,7 @@ section[id] { scroll-margin-top: 64px; }
 <ul><li><b>קבלה</b>. מתעדת כסף שהתקבל. חובה להפיק קבלה על כל תשלום, סמוך לקבלת התשלום <sup><a href="#src-1">[1]</a></sup>. זה המסמך שנחשב הכנסה.</li><li><b>קבלת זיכוי</b>. מתקנת קבלה שכבר יצאה, כשמחזירים כסף או כשהייתה טעות.</li><li><b>חשבון עסקה</b>. מבקש תשלום לפני שהוא מתקבל. הוא מודפס עם הכיתוב "אינו חשבונית מס", ואינו נחשב הכנסה <sup><a href="#src-1">[1]</a></sup>.</li><li><b>דרישת תשלום</b>. כמו חשבון עסקה: מבקשת כסף, ואינה מסמך הנהלת חשבונות <sup><a href="#src-1">[1]</a></sup>.</li><li><b>הצעת מחיר</b>. אינה מסמך הנהלת חשבונות, ונשארת ניתנת לעריכה עד שהיא הופכת למסמך אחר <sup><a href="#src-1">[1]</a></sup>.</li></ul>
 <p>חשבונית מס, חשבונית מס/קבלה וחשבונית זיכוי שייכות לעוסק מורשה. כשעוסק פטור עובר למעמד מורשה, הסדרות של עוסק פטור נסגרות ונפתחות סדרות חדשות <sup><a href="#src-1">[1]</a></sup>.</p>
 <h2 id="מה-כתוב-בקבלה-של-עוסק-פטור">מה כתוב בקבלה של עוסק פטור</h2>
-<p>על המסמכים של עוסק פטור מופיעים הכיתוב "עוסק פטור" ומספר הזהות <sup><a href="#src-1">[1]</a></sup>. מעבר לזה, הקבלה מציגה את פרטי העסק, את מספר המסמך מהסדרה שלו, את התאריך, את פרטי הלקוח, את הסכום ואת אמצעי התשלום. [TO CHECK] רשימת השדות המלאה לקבלה לפי ההוראות לניהול פנקסים.</p>
+<p>על המסמכים של עוסק פטור מופיעים הכיתוב "עוסק פטור" ומספר הזהות <sup><a href="#src-1">[1]</a></sup>. סעיף 5(א) להוראות ניהול פנקסי חשבונות מפרט מה מופיע בקבלה <sup><a href="#src-4">[4]</a></sup>: מספר סידורי, שם העסק ומספר הזהות או מספר העוסק, התאריך, שם המשלם וכתובתו, הסכום שהתקבל, מהות התשלום, וחתימת מקבל התשלום, אלא אם הקבלה נשלחה כמסמך ממוחשב. בעסקה קמעונית במזומן אפשר לוותר על שם המשלם וכתובתו, ועל הכתובת כשהיא לא ידועה. בתשלום בשיק מוסיפים את מספר השיק, הבנק, הסניף ומועד הפירעון <sup><a href="#src-4">[4]</a></sup>.</p>
 <p>כמה כללים שחלים על כל מסמך <sup><a href="#src-1">[1]</a></sup>:</p>
 <ul><li><b>שפה.</b> הרשומות נכתבות בעברית או בערבית (הוראה 21). אפשר לצרף אנגלית לצד העברית.</li><li><b>מטבע.</b> הסכומים נרשמים בשקלים. מסמך במטבע חוץ מציג גם את המטבע ואת הסכום במטבע החוץ (הוראה 22).</li><li><b>מקור והעתק.</b> המקור מופק פעם אחת. כל עותק אחר מסומן כהעתק.</li></ul>
 <h2 id="מספור-סדרה-אחת-בלי-חורים">מספור: סדרה אחת בלי חורים</h2>
@@ -396,7 +402,7 @@ section[id] { scroll-margin-top: 64px; }
       <h2 id="faq">שאלות ותשובות</h2>
       <dl class="faq"><dt>האם עוסק פטור יכול להפיק חשבונית מס?</dt><dd>לא. עוסק פטור לא גובה מע&quot;מ ולא מפיק חשבוניות מס. המסמך שמתעד תשלום הוא קבלה.</dd><dt>מה ההבדל בין דרישת תשלום לקבלה?</dt><dd>דרישת תשלום מבקשת כסף ואינה מסמך הנהלת חשבונות. קבלה מתעדת כסף שהתקבל, והיא ההכנסה.</dd><dt>אפשר לשלוח קבלה במייל?</dt><dd>כן, בתנאים. צריך הסכמה של הלקוח, חתימה אלקטרונית מאובטחת על הקובץ והודעה לפקיד השומה לפני המסמך הדיגיטלי הראשון.</dd><dt>מה עושים כשטועים בקבלה?</dt><dd>לא עורכים אותה. מבטלים אותה או מפיקים מסמך זיכוי, והמקור נשמר.</dd></dl>
       <h2 id="sources">מקורות</h2>
-      <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener" target="_blank">https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system</a></li><li id="src-3"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md</a></li></ol>
+      <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system" rel="noopener" target="_blank">https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system</a></li><li id="src-3"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md</a></li><li id="src-4"><a href="https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29" rel="noopener" target="_blank">https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29</a></li></ol>
     </div>
   </section>
 </main>

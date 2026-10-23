@@ -523,7 +523,7 @@ OPTIONS_EN = r'''  <section id="options">
             <li>We create every account for you, with your own emails</li>
             <li>Tax Authority: your own ITA API app, or the connection through MTN</li>
             <li>Handed over working, with full control to you</li>
-            <li>No subscription. Paid invoicing software costs ₪700 to ₪1,200 a year</li>
+            <li>No subscription. A mid-tier plan of paid invoicing software costs about ₪350 to ₪900 a year, before VAT</li>
           </ul>
           <a class="btn btn-ghost" href="#setup-form">Book a call</a>
         </div>
@@ -605,7 +605,7 @@ OPTIONS_HE = r'''  <section id="options">
             <li>אנחנו פותחים עבורך את כל החשבונות, עם כתובות המייל שלך</li>
             <li>רשות המסים: אפליקציית API משלך, או חיבור דרך MTN</li>
             <li>נמסרת לך פועלת, עם שליטה מלאה בידיך</li>
-            <li>בלי מנוי. תוכנת חשבוניות בתשלום עולה ₪700 עד ₪1,200 בשנה</li>
+            <li>בלי מנוי. תוכנית אמצעית בתוכנת חשבוניות בתשלום עולה בערך ₪350 עד ₪900 בשנה, לפני מע"מ</li>
           </ul>
           <a class="btn btn-ghost" href="#setup-form">לתיאום שיחה</a>
         </div>

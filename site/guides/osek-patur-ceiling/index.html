@@ -145,6 +145,12 @@ h2 { font-size: clamp(26px, 3.6vw, 36px); line-height: 1.2; letter-spacing: -.02
 .steps { list-style: none; counter-reset: step; padding: 0; margin: 0 auto 36px; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 .step { counter-increment: step; }
+.path-h { max-width: 980px; margin: 8px auto 18px; font-size: 19px; font-weight: 650; }
+.table-scroll { overflow-x: auto; max-width: 980px; margin: 0 auto; }
+table.compare { min-width: 640px; }
+table.compare td, table.compare th { padding-inline: 10px; }
+table.compare th[scope=row] { color: var(--text); font-size: 14.5px; text-transform: none; letter-spacing: 0; font-weight: 650; }
+table.compare td:nth-child(3), table.compare thead th:nth-child(3) { background: var(--blue-soft); }
 .step::before { content: counter(step); width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
 .step h3 { margin: 0 0 6px; font-size: 17px; font-weight: 650; }
 .step p { margin: 0; color: var(--text-dim); font-size: 15px; }
@@ -367,7 +373,7 @@ section[id] { scroll-margin-top: 64px; }
       <p>עוסק פטור הוא עסק שהמחזור השנתי שלו נשאר מתחת לתקרה שקובע החוק. התקרה לשנת 2026 היא ₪122,833 <sup><a href="#src-1">[1]</a></sup>. היא מתעדכנת כל שנה לפי המדד, והנתון לשנה הבאה מתפרסם בדרך כלל בסביבות ינואר <sup><a href="#src-1">[1]</a></sup>.</p>
 <p>המדריך מסביר איך עוקבים אחרי המחזור לאורך השנה, ומה קורה ביום שהוא עובר את התקרה.</p>
 <h2 id="מה-נספר-במחזור">מה נספר במחזור</h2>
-<p>המחזור הוא סכום העסקאות, לא הרווח. לפי הסיכום במקורות משניים, הבדיקה מסתכלת על המחזור הצפוי ולא רק על הכסף שכבר התקבל <sup><a href="#src-1">[1]</a></sup>. [TO CHECK] נוסח הוראת החוק עצמה, כי המקורות המשניים לא אומתו מול הנוסח הראשי.</p>
+<p>המחזור הוא סכום העסקאות, לא הרווח. סעיף 1 לחוק מע"מ קובע את התקרה כמחזור עסקאות לשנה <sup><a href="#src-3">[3]</a></sup>. תקנות מע"מ (רישום) קובעות איך מודדים אותו: עסק פעיל לפי שנת המס הקודמת, ועסק חדש לפי הסכום המשוער לשנה הבאה, כאילו פעל בכל אותה שנה <sup><a href="#src-4">[4]</a></sup>.</p>
 <p>לכן לא מספיק לסכם קבלות. דרישת תשלום שעוד פתוחה היא כסף שצפוי להיכנס, וכדאי לראות אותה כבר עכשיו.</p>
 <h2 id="איך-עוקבים-לאורך-השנה">איך עוקבים לאורך השנה</h2>
 <p>מעקב טוב בנוי משלושה מספרים:</p>
@@ -377,7 +383,7 @@ section[id] { scroll-margin-top: 64px; }
 <h2 id="מה-קורה-כשעוברים-את-התקרה">מה קורה כשעוברים את התקרה</h2>
 <p>לפי הסיכום במקורות משניים <sup><a href="#src-1">[1]</a></sup>:</p>
 <ul><li><b>המעבר לא אוטומטי ולא בתאריך קבוע.</b> הוא קורה כשהמחזור עובר את התקרה.</li><li><b>מע"מ חל מרגע החריגה.</b> עסקאות קודמות נשארות פטורות.</li><li><b>הודעה למשרד מע"מ תוך 15 יום מהאירוע</b>, לפי תקנה 8(א) לתקנות מס ערך מוסף (רישום) <sup><a href="#src-2">[2]</a></sup>.</li></ul>
-<p>[TO CHECK] האם העסקה שבה עוברים את התקרה חייבת במע"מ במלואה, או רק החלק שמעל התקרה. זו שאלה פתוחה גם במסמך המקור <sup><a href="#src-1">[1]</a></sup>.</p>
+<p>החוק והתקנות לא קובעים אם העסקה שבה עוברים את התקרה חייבת במע"מ במלואה, או רק החלק שמעל התקרה. כדאי לשאול את רואה החשבון לפני שמוציאים את המסמך הזה. סעיף 63 לחוק מע"מ קובע מתי שינוי סיווג נכנס לתוקף: כעבור 30 יום לאחר החודש שבו ניתנה ההודעה, או במועד אחר שקבע המנהל <sup><a href="#src-3">[3]</a></sup>.</p>
 <p>אחרי המעבר העסק מפיק חשבוניות מס, גובה מע"מ ומגיש דוחות מע"מ. דרישות תשלום פתוחות שהופקו לפני המעבר מתומחרות מחדש עם מע"מ <sup><a href="#src-1">[1]</a></sup>.</p>
 <h2 id="מה-עושים-לפני-שמגיעים-לשם">מה עושים לפני שמגיעים לשם</h2>
 <ul><li><b>בודקים מוקדם.</b> כשהמרווח קטן, מתכננים יחד עם רואה החשבון את מועד המעבר.</li><li><b>שמים לב לדרישות פתוחות.</b> עסקה גדולה אחת יכולה להעביר את התקרה.</li><li><b>שומרים תיעוד.</b> כדאי לרשום כל התראה והחלטה, כדי לדעת בדיעבד מתי בדיוק עברתם את התקרה.</li><li><b>מתכוננים לחשבוניות מס.</b> אחרי המעבר, חשבונית מס מעל הסף צריכה מספר הקצאה מרשות המסים <sup><a href="#src-1">[1]</a></sup>. החיבור לרשות לוקח זמן.</li></ul>
@@ -395,7 +401,7 @@ section[id] { scroll-margin-top: 64px; }
       <h2 id="faq">שאלות ותשובות</h2>
       <dl class="faq"><dt>מה התקרה השנה?</dt><dd>₪122,833 לשנת 2026. התקרה מתעדכנת כל שנה.</dd><dt>עוברים למורשה באחד בינואר?</dt><dd>לא. המעבר קורה כשהמחזור עובר את התקרה, לא בתאריך קבוע.</dd><dt>הבדיקה היא לפי כסף שהתקבל?</dt><dd>לא רק. הבדיקה מסתכלת על המחזור הצפוי, לא רק על הכסף שכבר נכנס.</dd><dt>תוך כמה זמן מודיעים למע&quot;מ?</dt><dd>תוך 15 יום מהאירוע, לפי תקנה 8(א) לתקנות רישום במע&quot;מ, כפי שמסכמים מקורות משניים.</dd><dt>מה שיעור המע&quot;מ אחרי המעבר?</dt><dd>18%, השיעור שחל מ-1.1.2025.</dd></dl>
       <h2 id="sources">מקורות</h2>
-      <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.btl.gov.il/Laws1/02_0022_100001.pdf" rel="noopener" target="_blank">https://www.btl.gov.il/Laws1/02_0022_100001.pdf</a></li></ol>
+      <ol class="sources"><li id="src-1"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-2"><a href="https://www.btl.gov.il/Laws1/02_0022_100001.pdf" rel="noopener" target="_blank">https://www.btl.gov.il/Laws1/02_0022_100001.pdf</a></li><li id="src-3"><a href="https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3" rel="noopener" target="_blank">https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3</a></li><li id="src-4"><a href="https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3_%28%D7%A8%D7%99%D7%A9%D7%95%D7%9D%29" rel="noopener" target="_blank">https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3_%28%D7%A8%D7%99%D7%A9%D7%95%D7%9D%29</a></li></ol>
     </div>
   </section>
 </main>
