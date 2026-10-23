@@ -90,4 +90,15 @@
 3. [https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md)
 4. [https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29](https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29)
 
+## עוד מדריכים
+
+- [תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה](https://open-ledger.dev/guides/osek-patur-ceiling/)
+- [חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה](https://open-ledger.dev/guides/invoice-types-income/)
+- [מספר הקצאה: מה זה, מתי חובה ואיך מקבלים אותו אוטומטית](https://open-ledger.dev/guides/allocation-number/)
+- [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)
+- [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
+- [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
+- [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
+- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+
 Source: https://open-ledger.dev/guides/osek-patur-invoice/

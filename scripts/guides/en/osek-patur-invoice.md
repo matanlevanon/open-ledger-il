@@ -2,6 +2,8 @@
 title: "Invoices for an עוסק פטור: which documents you may issue and what they say"
 description: An עוסק פטור issues no tax invoices. Which documents it does issue, what they must show, and how to number, correct and send them digitally.
 published: true
+nav: "Invoices for an עוסק פטור"
+order: 1
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md

@@ -91,4 +91,15 @@ Yes. A voluntary request is allowed for any amount.
 3. [https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md)
 4. [https://secapp.taxes.gov.il/em-hkz-hsb-intr](https://secapp.taxes.gov.il/em-hkz-hsb-intr)
 
+## More guides
+
+- [Invoices for an עוסק פטור: which documents you may issue and what they say](https://open-ledger.dev/en/guides/osek-patur-invoice/)
+- [The עוסק פטור ceiling: how to track it and what happens when you cross it](https://open-ledger.dev/en/guides/osek-patur-ceiling/)
+- [Pro forma, payment request and receipt: the difference, and what counts as income](https://open-ledger.dev/en/guides/invoice-types-income/)
+- [Software registered with the Tax Authority: what it means and how to check](https://open-ledger.dev/en/guides/registered-software/)
+- [The unified file (מבנה אחיד): what it is and when your accountant needs it](https://open-ledger.dev/en/guides/unified-file/)
+- [Israeli invoicing software prices compared (2026)](https://open-ledger.dev/en/guides/invoicing-software-prices/)
+- [An open-source alternative to paid invoicing software: a plain comparison](https://open-ledger.dev/en/guides/open-source-invoicing/)
+- [Bookkeeping on your own cloud: what Cloudflare is, and why it costs little](https://open-ledger.dev/en/guides/own-cloud-bookkeeping/)
+
 Source: https://open-ledger.dev/en/guides/allocation-number/

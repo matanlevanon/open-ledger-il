@@ -2,6 +2,8 @@
 title: "The unified file (מבנה אחיד): what it is and when your accountant needs it"
 description: What the Israel Tax Authority unified file is, what is inside it, and when your accountant or the Tax Authority asks your software for one.
 published: true
+nav: "The unified file"
+order: 6
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/src/modules/exports/unified-file/build.ts

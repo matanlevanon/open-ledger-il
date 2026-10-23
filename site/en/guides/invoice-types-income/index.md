@@ -93,4 +93,15 @@ No. Quotes and payment requests are not counted in income reports, since they ar
 1. [https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md)
 2. [https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md)
 
+## More guides
+
+- [Invoices for an עוסק פטור: which documents you may issue and what they say](https://open-ledger.dev/en/guides/osek-patur-invoice/)
+- [The עוסק פטור ceiling: how to track it and what happens when you cross it](https://open-ledger.dev/en/guides/osek-patur-ceiling/)
+- [Allocation numbers: what they are, when you need one, and how to get one automatically](https://open-ledger.dev/en/guides/allocation-number/)
+- [Software registered with the Tax Authority: what it means and how to check](https://open-ledger.dev/en/guides/registered-software/)
+- [The unified file (מבנה אחיד): what it is and when your accountant needs it](https://open-ledger.dev/en/guides/unified-file/)
+- [Israeli invoicing software prices compared (2026)](https://open-ledger.dev/en/guides/invoicing-software-prices/)
+- [An open-source alternative to paid invoicing software: a plain comparison](https://open-ledger.dev/en/guides/open-source-invoicing/)
+- [Bookkeeping on your own cloud: what Cloudflare is, and why it costs little](https://open-ledger.dev/en/guides/own-cloud-bookkeeping/)
+
 Source: https://open-ledger.dev/en/guides/invoice-types-income/

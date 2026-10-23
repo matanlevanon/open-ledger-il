@@ -109,4 +109,15 @@ None of the vendors splits its plans by עוסק פטור and עוסק מורש�
 6. [https://invoiceonline.co.il/%D7%9E%D7%97%D7%99%D7%A8%D7%95%D7%9F/](https://invoiceonline.co.il/%D7%9E%D7%97%D7%99%D7%A8%D7%95%D7%9F/)
 7. [https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
 
+## More guides
+
+- [Invoices for an עוסק פטור: which documents you may issue and what they say](https://open-ledger.dev/en/guides/osek-patur-invoice/)
+- [The עוסק פטור ceiling: how to track it and what happens when you cross it](https://open-ledger.dev/en/guides/osek-patur-ceiling/)
+- [Pro forma, payment request and receipt: the difference, and what counts as income](https://open-ledger.dev/en/guides/invoice-types-income/)
+- [Allocation numbers: what they are, when you need one, and how to get one automatically](https://open-ledger.dev/en/guides/allocation-number/)
+- [Software registered with the Tax Authority: what it means and how to check](https://open-ledger.dev/en/guides/registered-software/)
+- [The unified file (מבנה אחיד): what it is and when your accountant needs it](https://open-ledger.dev/en/guides/unified-file/)
+- [An open-source alternative to paid invoicing software: a plain comparison](https://open-ledger.dev/en/guides/open-source-invoicing/)
+- [Bookkeeping on your own cloud: what Cloudflare is, and why it costs little](https://open-ledger.dev/en/guides/own-cloud-bookkeeping/)
+
 Source: https://open-ledger.dev/en/guides/invoicing-software-prices/

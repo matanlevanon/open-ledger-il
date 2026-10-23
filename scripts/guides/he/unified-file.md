@@ -2,6 +2,8 @@
 title: מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו
 description: מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.
 published: true
+nav: "קובץ במבנה אחיד"
+order: 6
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/src/modules/exports/unified-file/build.ts

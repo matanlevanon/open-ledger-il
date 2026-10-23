@@ -109,4 +109,15 @@ Open Ledger IL רשומה ברשות המסים, תעודה 281801. היא מו�
 6. [https://invoiceonline.co.il/%D7%9E%D7%97%D7%99%D7%A8%D7%95%D7%9F/](https://invoiceonline.co.il/%D7%9E%D7%97%D7%99%D7%A8%D7%95%D7%9F/)
 7. [https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system](https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system)
 
+## עוד מדריכים
+
+- [חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם](https://open-ledger.dev/guides/osek-patur-invoice/)
+- [תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה](https://open-ledger.dev/guides/osek-patur-ceiling/)
+- [חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה](https://open-ledger.dev/guides/invoice-types-income/)
+- [מספר הקצאה: מה זה, מתי חובה ואיך מקבלים אותו אוטומטית](https://open-ledger.dev/guides/allocation-number/)
+- [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)
+- [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
+- [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
+- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+
 Source: https://open-ledger.dev/guides/invoicing-software-prices/

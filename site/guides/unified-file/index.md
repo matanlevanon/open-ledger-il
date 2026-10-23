@@ -93,4 +93,15 @@ Open Ledger IL מפיקה קובץ במבנה אחיד גרסה 1.31 לכל תק
 6. [https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29](https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29)
 7. [https://ey.co.il/-/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA-%D7%97%D7%93%D7%A9%D7%95%D7%AA-%D7%9C%D7%A9%D7%99%D7%93%D7%95%D7%A8-%D7%A7%D7%95%D7%91%D7%A5-%D7%91%D7%9E%D7%91%D7%A0%D7%94-%D7%90%D7%97%D7%99%D7%93-%D7%94%D7%97/](https://ey.co.il/-/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA-%D7%97%D7%93%D7%A9%D7%95%D7%AA-%D7%9C%D7%A9%D7%99%D7%93%D7%95%D7%A8-%D7%A7%D7%95%D7%91%D7%A5-%D7%91%D7%9E%D7%91%D7%A0%D7%94-%D7%90%D7%97%D7%99%D7%93-%D7%94%D7%97/)
 
+## עוד מדריכים
+
+- [חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם](https://open-ledger.dev/guides/osek-patur-invoice/)
+- [תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה](https://open-ledger.dev/guides/osek-patur-ceiling/)
+- [חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה](https://open-ledger.dev/guides/invoice-types-income/)
+- [מספר הקצאה: מה זה, מתי חובה ואיך מקבלים אותו אוטומטית](https://open-ledger.dev/guides/allocation-number/)
+- [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)
+- [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
+- [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
+- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+
 Source: https://open-ledger.dev/guides/unified-file/

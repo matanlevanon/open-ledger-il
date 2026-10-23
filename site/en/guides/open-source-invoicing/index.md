@@ -98,4 +98,15 @@ Yes. There is a step-by-step deploy guide, and you can also ask someone to set t
 4. [https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md)
 5. [https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md)
 
+## More guides
+
+- [Invoices for an עוסק פטור: which documents you may issue and what they say](https://open-ledger.dev/en/guides/osek-patur-invoice/)
+- [The עוסק פטור ceiling: how to track it and what happens when you cross it](https://open-ledger.dev/en/guides/osek-patur-ceiling/)
+- [Pro forma, payment request and receipt: the difference, and what counts as income](https://open-ledger.dev/en/guides/invoice-types-income/)
+- [Allocation numbers: what they are, when you need one, and how to get one automatically](https://open-ledger.dev/en/guides/allocation-number/)
+- [Software registered with the Tax Authority: what it means and how to check](https://open-ledger.dev/en/guides/registered-software/)
+- [The unified file (מבנה אחיד): what it is and when your accountant needs it](https://open-ledger.dev/en/guides/unified-file/)
+- [Israeli invoicing software prices compared (2026)](https://open-ledger.dev/en/guides/invoicing-software-prices/)
+- [Bookkeeping on your own cloud: what Cloudflare is, and why it costs little](https://open-ledger.dev/en/guides/own-cloud-bookkeeping/)
+
 Source: https://open-ledger.dev/en/guides/open-source-invoicing/

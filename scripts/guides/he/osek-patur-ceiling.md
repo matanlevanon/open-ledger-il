@@ -2,6 +2,8 @@
 title: תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה
 description: מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.
 published: true
+nav: "תקרת עוסק פטור"
+order: 2
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md

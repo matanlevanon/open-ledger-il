@@ -2,6 +2,8 @@
 title: "Bookkeeping on your own cloud: what Cloudflare is, and why it costs little"
 description: What it means to run your bookkeeping in your own cloud account, what Cloudflare Workers is, what costs money and what stays free.
 published: true
+nav: "Books on your own cloud"
+order: 9
 updated: 2026-10-14
 sources:
   - https://developers.cloudflare.com/workers/platform/pricing/

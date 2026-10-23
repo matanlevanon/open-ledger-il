@@ -2,6 +2,8 @@
 title: "The עוסק פטור ceiling: how to track it and what happens when you cross it"
 description: What the עוסק פטור turnover ceiling is, how to track it through the year, and what happens the day your turnover goes past it.
 published: true
+nav: "The עוסק פטור ceiling"
+order: 2
 updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md

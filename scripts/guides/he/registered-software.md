@@ -2,6 +2,8 @@
 title: תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים
 description: מי חייב לרשום תוכנה להנהלת חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
 published: true
+nav: "תוכנה רשומה"
+order: 5
 updated: 2026-10-14
 sources:
   - https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system

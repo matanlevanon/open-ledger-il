@@ -866,7 +866,7 @@ def build_demo(lang):
 
 def build_guides_index(lang, guides):
     page = base_page(lang, 'guides')
-    published = [g for g in guides if g['lang'] == lang and g['published']]
+    published = sorted((g for g in guides if g['lang'] == lang and g['published']), key=lambda g: (g['order'], g['title']))
     if published:
         items = ''.join(f'<li><a href="{g["path"]}">{E(g["title"])}</a><p>{E(g["desc"])}</p></li>' for g in published)
         body = f'<ul class="guide-list">{items}</ul>'
@@ -1019,9 +1019,18 @@ def build_guide(g, guides):
     faq = ''.join(f'<dt>{E(item["q"])}</dt><dd>{E(item["a"])}</dd>' for item in g['faq'] if isinstance(item, dict))
     sources = ''.join(f'<li id="src-{i + 1}"><a href="{E(s)}" rel="noopener">{E(s)}</a></li>' for i, s in enumerate(g['sources']))
     updated = f'{u["guide_updated"]} {g["updated"]}'
+    # Side menu of the other guides in this language, as on the help pages. A draft lists the
+    # published guides only, plus itself so the current page stays marked.
+    topics = sorted((x for x in guides if x['lang'] == lang and (x['published'] or x['slug'] == g['slug'])), key=lambda x: (x['order'], x['title']))
+    nav_items = ''.join(f'<li><a href="{x["path"]}"' + (' aria-current="page"' if x['slug'] == g['slug'] else '') + f'>{E(x["nav"])}</a></li>' for x in topics)
+    side = f'<nav class="help-nav" aria-label="{E(u["guide_topics"])}"><p>{E(u["guide_topics"])}</p><ol>{nav_items}</ol></nav>'
+    more = ''.join(f'<li><a href="{x["path"]}">{E(x["title"])}</a></li>' for x in topics if x['slug'] != g['slug'])
+    more_html = f'<div class="help-more"><h2 id="more">{E(u["guide_more"])}</h2><ul>{more}</ul></div>' if more else ''
     main = page_intro(page, E(g['desc'])) + f'''
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    {side}
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">{E(updated)}</p>
       {md.to_html(g['body'])}
       <div class="guide-cta">
@@ -1032,6 +1041,8 @@ def build_guide(g, guides):
       <dl class="faq">{faq}</dl>
       <h2 id="sources">{E(u['guide_sources'])}</h2>
       <ol class="sources">{sources}</ol>
+      {more_html}
+    </div>
     </div>
   </section>'''
     return page, main, ''

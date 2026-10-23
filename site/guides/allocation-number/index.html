@@ -367,7 +367,9 @@ section[id] { scroll-margin-top: 64px; }
     <p class="lead">מתי חשבונית מס צריכה מספר הקצאה מרשות המסים, מה קורה בלעדיו, ואיך תוכנה מחוברת מבקשת אותו לבד בזמן ההפקה.</p>
   </div>
   <section class="plain">
-    <div class="wrap prose">
+    <div class="wrap help-wrap">
+    <nav class="help-nav" aria-label="מדריכים"><p>מדריכים</p><ol><li><a href="/guides/osek-patur-invoice/">חשבוניות לעוסק פטור</a></li><li><a href="/guides/osek-patur-ceiling/">תקרת עוסק פטור</a></li><li><a href="/guides/invoice-types-income/">חשבון עסקה, דרישה וקבלה</a></li><li><a href="/guides/allocation-number/" aria-current="page">מספרי הקצאה</a></li><li><a href="/guides/registered-software/">תוכנה רשומה</a></li><li><a href="/guides/unified-file/">קובץ במבנה אחיד</a></li><li><a href="/guides/invoicing-software-prices/">השוואת מחירי תוכנות</a></li><li><a href="/guides/open-source-invoicing/">חלופה בקוד פתוח</a></li><li><a href="/guides/own-cloud-bookkeeping/">הנהלת חשבונות בענן שלך</a></li></ol></nav>
+    <div class="prose">
       <p class="shot-cap" style="text-align:start">עודכן 2026-10-14</p>
       <p>מספר הקצאה הוא מספר שרשות המסים נותנת לחשבונית מס מסוימת, לפני שהיא יוצאת ללקוח. המספר מודפס על החשבונית, והלקוח צריך אותו כדי לנכות את מס התשומות שבה. המודל נקרא "חשבוניות ישראל" <sup><a href="#src-1">[1]</a></sup>.</p>
 <p>המדריך מסביר מתי המספר חובה, מה קורה כשאין אותו, ואיך תוכנה מחוברת מבקשת אותו בלי שתצטרכו להיכנס לאתר הרשות.</p>
@@ -401,6 +403,8 @@ section[id] { scroll-margin-top: 64px; }
       <dl class="faq"><dt>האם עוסק פטור צריך מספר הקצאה?</dt><dd>לא. עוסק פטור לא מפיק חשבוניות מס, ולכן כל מה שהוא מפיק נמצא מחוץ לחובה.</dd><dt>הסף נבדק לפי חשבונית או לפי חודש?</dt><dd>לפי חשבונית. כל חשבונית מעל הסף צריכה מספר משלה, גם אם הלקוח מקבל כמה חשבוניות בחודש.</dd><dt>מה קורה אם רשות המסים מסרבת לתת מספר?</dt><dd>יש ארבע אפשרויות: לבטל את החשבונית, להמשיך בלי מספר עם הערה מודגשת, לעבור לחיוב עצמי בהסכמת הלקוח, או לבקש שימוע.</dd><dt>אפשר לבקש מספר גם לחשבונית קטנה?</dt><dd>כן. בקשה מרצון מותרת בכל סכום.</dd></dl>
       <h2 id="sources">מקורות</h2>
       <ol class="sources"><li id="src-1"><a href="https://www.gov.il/he/service/request-assignment-number-for-tax-invoice" rel="noopener" target="_blank">https://www.gov.il/he/service/request-assignment-number-for-tax-invoice</a></li><li id="src-2"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/israel-invoices-api.md</a></li><li id="src-3"><a href="https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md" rel="noopener" target="_blank">https://github.com/matanlevanon/open-ledger-il/blob/main/docs/legal-requirements.md</a></li><li id="src-4"><a href="https://secapp.taxes.gov.il/em-hkz-hsb-intr" rel="noopener" target="_blank">https://secapp.taxes.gov.il/em-hkz-hsb-intr</a></li></ol>
+      <div class="help-more"><h2 id="more">עוד מדריכים</h2><ul><li><a href="/guides/osek-patur-invoice/">חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם</a></li><li><a href="/guides/osek-patur-ceiling/">תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה</a></li><li><a href="/guides/invoice-types-income/">חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה</a></li><li><a href="/guides/registered-software/">תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים</a></li><li><a href="/guides/unified-file/">מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו</a></li><li><a href="/guides/invoicing-software-prices/">מחירי תוכנות חשבוניות בישראל, השוואה (2026)</a></li><li><a href="/guides/open-source-invoicing/">חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית</a></li><li><a href="/guides/own-cloud-bookkeeping/">הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול</a></li></ul></div>
+    </div>
     </div>
   </section>
 </main>
