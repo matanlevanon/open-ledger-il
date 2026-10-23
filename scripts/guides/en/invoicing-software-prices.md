@@ -12,6 +12,8 @@ sources:
   - https://invoiceonline.co.il/%D7%9E%D7%97%D7%99%D7%A8%D7%95%D7%9F/
   - https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system
 faq:
+  - q: How hard is it to move from my current invoicing software?
+    a: Four steps. Upload the client list as a CSV, upload the PDFs of past documents so AI reads and files them, set each series to continue from your last number, and keep the old system's unified file for 7 years.
   - q: Is there a free invoicing option in Israel?
     a: SUMIT has a free plan with 10 actions a month. Open Ledger IL is free from source, with no document limit, and runs in your own Cloudflare account.
   - q: Which plans include an API?
@@ -77,6 +79,17 @@ With subscription software, your documents sit on the vendor's servers, and gett
 ## When a subscription is the better choice
 
 A subscription fits when you want phone support, card clearing in the same tool, or an accountant who already works in that system. It also fits if you do not want a Cloudflare account of your own. Open Ledger IL fits when you want the books in your own account, no yearly fee, and an API without paying for a higher tier.
+
+## Moving from your current software
+
+Switching does not mean starting over. The move takes four steps, and the old software can stay open until you finish:
+
+1. **Bring your clients.** Export the client list from your current software as a CSV file. In **Import**, upload it and match its columns to the Ledger's fields. Any system that exports a CSV works.
+2. **Bring your past documents.** Download the PDFs of the receipts and invoices you issued, and upload them in **Import**, many at a time. AI reads each one: type, number, date, client and amount. You check the fields and file them. They keep their original PDF and number, stay outside the Ledger's own number series, and count in each client's balance.
+3. **Continue the numbering.** Set the starting number of each document series to the next number after your last document in the old software, so the series has no gap and no repeat.
+4. **Keep the old books.** Before you close the old account, download its unified file (מבנה אחיד) and the PDFs, and keep them. The law asks you to keep books for 7 years, including the years before the move.
+
+Expenses start fresh in the Ledger: forward receipts by email or upload them, and each one is read for you. Reading past documents and expenses needs a Gemini or Anthropic API key. Without one, you type the fields by hand. With the ₪699 setup, we do the move with you.
 
 ## How Open Ledger IL compares
 
