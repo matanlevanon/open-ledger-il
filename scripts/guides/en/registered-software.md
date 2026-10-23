@@ -8,6 +8,7 @@ sources:
   - https://www.gov.il/he/service/itc-software-registry-for-computerized-accounting-systems
   - {{repo}}/blob/main/docs/legal-requirements.md
   - {{repo}}/blob/main/docs/israel-invoices-api.md
+  - https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29
 faq:
   - q: I use software I wrote for my own business. Must I register it?
     a: No, as long as it runs for your business only. The duty covers software meant for sale, for rent or for others to use.
@@ -41,13 +42,13 @@ So registration is a condition for offering software to others. It is not an app
 
 ## Versions
 
-A certificate is issued for a specific version of the software [2]. When the producer releases new versions, it adds them to the registration as it files them [3]. [TO CHECK] The Tax Authority procedure for adding a new version to an existing certificate, and how long it takes to appear in the registry.
+A certificate is issued for a specific version of the software [2]. Under appendix 5 to instruction 36 of the bookkeeping instructions, a program that was changed is not the same software, except for updates to amounts [5]. So each new version needs its own approval. The Tax Authority's online service has a request to add a new version to registered software [1]. The Tax Authority answers within 90 days, usually sooner when the file is complete [1].
 
 ## How to check that software is registered
 
 1. **Ask the producer for the certificate number.** A producer of registered software knows it, and usually publishes it.
 2. **Check the validity.** The certificate states the dates it is valid between [2].
-3. **Check the Tax Authority registry.** The Tax Authority keeps a registry of software registered for computerized accounting systems [2]. [TO CHECK] How to search the registry by software name or certificate number.
+3. **Check the Tax Authority registry.** The Tax Authority keeps a registry of software registered for computerized accounting systems [2]. In [the registry search](https://secapp.taxes.gov.il/mm-find-tochna/main/rashi) you search by software name, by the name of the software house, or by its entity number. It does not search by certificate number. You can show valid certificates only, and the "תוקף אישור" field shows when each one ends.
 4. **Check the version.** If the version you use is newer than the one on the certificate, ask the producer whether it has been added.
 
 ## Software registration and the Tax Authority connection are two things

@@ -84,4 +84,4 @@ A few questions help you decide:
 
 ## How Open Ledger IL does it
 
-Open Ledger IL is close to the third approach: the source is public under the FSL-1.1 licence, free for your own business, and runs in your own Cloudflare account. Each version becomes Apache 2.0 open source two years after release. It is registered with the Tax Authority, certificate 281801. It locks final documents, numbers them without gaps, asks for allocation numbers, backs up every quarter and produces a unified file. Install it yourself with the deploy guide, or ask for it to be set up for you.
+Open Ledger IL is close to the third approach: the source is public under the FSL-1.1 licence, free for your own business, and runs in your own Cloudflare account. Each version becomes Apache 2.0 open source two years after release. It is registered with the Tax Authority, certificate 281801. It locks final documents, numbers them without gaps, asks for allocation numbers, backs up every quarter and produces a unified file. Run it free from source with the deploy guide, install it yourself with the ₪99 connected installer, or have it set up for you.

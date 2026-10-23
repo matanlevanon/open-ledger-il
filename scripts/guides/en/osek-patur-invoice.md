@@ -7,6 +7,7 @@ sources:
   - {{repo}}/blob/main/docs/legal-requirements.md
   - https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system
   - {{repo}}/blob/main/docs/israel-invoices-api.md
+  - https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29
 faq:
   - q: Can an עוסק פטור issue a tax invoice?
     a: No. An עוסק פטור charges no VAT and issues no tax invoices. The document that records a payment is a receipt.
@@ -34,7 +35,7 @@ Tax invoices, tax invoice/receipts and credit invoices belong to an עוסק מ�
 
 ## What a receipt from an עוסק פטור shows
 
-The documents of an עוסק פטור carry the words "עוסק פטור" and the ID number [1]. Beyond that, the receipt shows the business details, the document number from its series, the date, the client details, the amount and the payment method. [TO CHECK] The full list of receipt fields under the bookkeeping instructions.
+The documents of an עוסק פטור carry the words "עוסק פטור" and the ID number [1]. Section 5(a) of the bookkeeping instructions lists what a receipt shows [4]: a sequential number, the business name and its ID or dealer number, the date, the payer's name and address, the amount received, what the payment is for, and the signature of the person who received it, unless the receipt is sent as a computerized document. The payer's name and address can be left out on a retail cash sale, and the address when you do not know it. For a cheque, add its number, bank, branch and due date [4].
 
 A few rules apply to every document [1]:
 

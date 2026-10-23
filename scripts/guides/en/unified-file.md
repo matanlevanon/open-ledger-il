@@ -8,6 +8,9 @@ sources:
   - {{repo}}/blob/main/src/modules/exports/unified-file/records.ts
   - {{repo}}/blob/main/docs/legal-requirements.md
   - https://www.gov.il/he/service/registration-software-designed-managing-computerized-accounting-system
+  - https://www.gov.il/BlobFolder/service/registration-software-designed-managing-computerized-accounting-system/he/Service_Pages_Income_tax_horaot-131.pdf
+  - https://he.wikisource.org/wiki/%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%9E%D7%A1_%D7%94%D7%9B%D7%A0%D7%A1%D7%94_%28%D7%A0%D7%99%D7%94%D7%95%D7%9C_%D7%A4%D7%A0%D7%A7%D7%A1%D7%99_%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%95%D7%AA%29
+  - https://ey.co.il/-/%D7%94%D7%A0%D7%97%D7%99%D7%95%D7%AA-%D7%97%D7%93%D7%A9%D7%95%D7%AA-%D7%9C%D7%A9%D7%99%D7%93%D7%95%D7%A8-%D7%A7%D7%95%D7%91%D7%A5-%D7%91%D7%9E%D7%91%D7%A0%D7%94-%D7%90%D7%97%D7%99%D7%93-%D7%94%D7%97/
 faq:
   - q: What is in the file?
     a: Two text files. INI.TXT with the business, the software and a summary of the records, and BKMVDATA.TXT with the documents, their lines and payments.
@@ -50,13 +53,13 @@ Each field in a record has a fixed width, set by a table in the specification [2
 The file covers a period. Every numbered document of a type that has a code in appendix 1 of the specification goes in, by document date [1]:
 
 - Tax invoices, tax invoice/receipts, receipts and credit invoices go in.
-- [TO CHECK] Whether a pro forma (חשבון עסקה) goes in. The requirements document in the repository [3] and the export code [1] disagree.
+- The code table in the file specification gives code 300 to "חשבונית/חשבונית עסקה" [5]. It does not say whether a pro forma that is only a demand for payment must go in. [TO CHECK] The requirements document in the repository [3] and the export code [1] still disagree on this.
 - A cancelled document goes in too, marked in a dedicated field [1].
 - Quotes and payment requests stay out, since they have no code in the appendix [1].
 
 ## When your accountant needs the file
 
-[TO CHECK] The cases in which the Tax Authority or an accountant may ask for the file, and where that duty sits in the bookkeeping instructions or the computerized-system rules.
+Software that must be registered has to be able to produce these files, as the director instructs, under appendix 5 to instruction 36 of the bookkeeping instructions [6]. There is no fixed list of cases in the instructions. In practice, the Tax Authority asks for the unified file when it opens an audit of the books [7].
 
 What can be said without an outside source: the file is meant to be read by someone who does not use your software. An accountant on other software can load your documents from it. An audit can check the series, the amounts and the cancelled documents from it.
 
@@ -72,7 +75,7 @@ Compare the summary with the income report for the same period before you hand t
 
 ## The link to software registration
 
-INI.TXT has fields that describe the software that produced the file, among them its Tax Authority registration number [1]. Software not yet registered prints zeros there [1]. [TO CHECK] Whether producing a unified file is a condition of software registration.
+INI.TXT has fields that describe the software that produced the file, among them its Tax Authority registration number [1]. Software not yet registered prints zeros there [1]. Producing the file is a condition of registration: the Tax Authority requires a module that produces unified files, a declaration that it exists, and a passing report from its file-review simulator [4].
 
 ## How Open Ledger IL does it
 

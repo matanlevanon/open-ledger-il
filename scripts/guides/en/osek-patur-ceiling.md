@@ -6,6 +6,8 @@ updated: 2026-10-14
 sources:
   - {{repo}}/blob/main/docs/legal-requirements.md
   - https://www.btl.gov.il/Laws1/02_0022_100001.pdf
+  - https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3
+  - https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%9E%D7%A1_%D7%A2%D7%A8%D7%9A_%D7%9E%D7%95%D7%A1%D7%A3_%28%D7%A8%D7%99%D7%A9%D7%95%D7%9D%29
 faq:
   - q: What is the ceiling this year?
     a: "{{patur_ceiling}} for {{patur_ceiling_year}}. The ceiling is updated every year."
@@ -25,7 +27,7 @@ This guide covers how to track turnover through the year, and what happens the d
 
 ## What counts as turnover
 
-Turnover is the total of your transactions, not your profit. As secondary sources summarise it, the test looks at expected turnover, not only money already received [1]. [TO CHECK] The wording of the law itself, since the secondary sources were not checked against the primary text.
+Turnover is the total of your transactions, not your profit. Section 1 of the VAT Law sets the ceiling as turnover per year [3]. The VAT registration regulations say how to measure it: a running business looks at the past tax year, and a new business uses its estimate for the coming year, as if it worked the whole year [4].
 
 So adding up receipts is not enough. A payment request that is still open is money you expect, and it belongs in the picture now.
 
@@ -49,7 +51,7 @@ As secondary sources summarise it [1]:
 - **VAT applies from the moment you cross.** Earlier transactions stay exempt.
 - **You tell the VAT office within 15 days of the event**, under regulation 8(a) of the VAT (registration) regulations [2].
 
-[TO CHECK] Whether the transaction that crosses the ceiling carries VAT in full, or only the part above the ceiling. The source document leaves this open too [1].
+The law and the regulations do not say whether the transaction that crosses the ceiling carries VAT in full, or only the part above it. Ask your accountant before you issue that document. Section 63 of the VAT Law sets when a change of classification takes effect: 30 days after the month in which you gave notice, or another date the director sets [3].
 
 After the switch, the business issues tax invoices, charges VAT and files VAT reports. Open payment requests issued before the switch are re-priced with VAT [1].
 
