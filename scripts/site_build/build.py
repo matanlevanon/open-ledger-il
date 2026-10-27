@@ -1372,8 +1372,14 @@ def main():
         for lang, name in (('en', 'index.html'), ('he', 'he.html')):
             (ROOT / 'docs' / name).write_text(pages_redirect(lang), encoding='utf-8', newline='\n')
     REPORTS.mkdir(exist_ok=True)
-    og = [dict(file=f'og/{p["lang"]}-{p["og"]}.png', title=p['h1'] or PAGES[p['lang']]['home']['title'].split(':')[0],
-               kicker=p['title'], lang=p['lang']) for p in pages]
+    # The card shows the page heading and its description. The home page has no plain h1, so its card
+    # uses the tagline after the brand in the home title.
+    def tagline(lang):
+        t = PAGES[lang]['home']['title'].split(':', 1)[-1].strip()
+        return t[:1].upper() + t[1:]
+
+    og = [dict(file=f'og/{p["lang"]}-{p["og"]}.png', title=p['h1'] or tagline(p['lang']),
+               kicker=p['desc'], lang=p['lang']) for p in pages]
     (REPORTS / 'og-pages.json').write_text(json.dumps(og, ensure_ascii=False, indent=1), encoding='utf-8')
     report = [dict(file=g['file'], path=g['path'], words=g['words'], todo=g['todo'], published=g['published']) for g in guides]
     (REPORTS / 'guides.json').write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding='utf-8')
