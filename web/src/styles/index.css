@@ -48,6 +48,15 @@ body {
   html {
     font-size: 17px;
     -webkit-text-size-adjust: 100%;
+    /* The browser's own pinch and double-tap zoom are off. src/lib/contentZoom.ts zooms the
+       content instead, and the top bar and bottom menu keep their size. */
+    touch-action: pan-x pan-y;
+  }
+
+  .content-zoom {
+    zoom: var(--content-zoom, 1);
+    min-width: 0;
+    overflow-wrap: break-word;
   }
 
   input:not([type='checkbox']):not([type='radio']):not([type='file']),

@@ -79,7 +79,7 @@ export function AppShell({ children, loadMe = fetchMe }: AppShellProps) {
       <div className="flex min-w-0 flex-1 flex-col">
         <DemoBanner />
         <TopBar me={me} error={error} onMenu={() => setDrawerOpen(true)} />
-        <main ref={mainRef} className="flex-1 px-4 pb-6 pt-5 md:px-8 md:py-6">
+        <main ref={mainRef} className="content-zoom flex-1 px-4 pb-6 pt-5 md:px-8 md:py-6">
           {showSetup ? <SetupScreen missing={missing} onSaved={checkSetup} /> : children}
         </main>
         {/* Bottom padding on phones keeps the footer clear of the tab bar. */}
