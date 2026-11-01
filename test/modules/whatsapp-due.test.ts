@@ -48,7 +48,7 @@ beforeAll(async () => {
   contractId = (await first<{ id: number }>(env.DB, "SELECT id FROM contracts WHERE title = 'Retainer'"))!.id;
   await run(
     env.DB,
-    "UPDATE contracts SET status = 'sent', sent_at = '2026-10-09T07:00:00.000Z', expires_at = '2026-10-23T07:00:00.000Z', sent_pdf_r2_key = 'k', sent_pdf_sha256 = 's' WHERE id = ?",
+    "UPDATE contracts SET status = 'sent', sent_at = '2026-10-09T07:00:00.000Z', expires_at = '2099-10-23T07:00:00.000Z', sent_pdf_r2_key = 'k', sent_pdf_sha256 = 's' WHERE id = ?",
     contractId,
   );
 
