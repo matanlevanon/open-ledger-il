@@ -204,7 +204,8 @@ function OpenItemAction({ item }: { item: OpenItem }) {
   );
 }
 
-function OverdueCard({ data }: { data: NonNullable<DashboardData['cards']['overdue']> }) {
+/** Also on the phone home page (/quick), in a collapsible card. */
+export function OverdueCard({ data }: { data: NonNullable<DashboardData['cards']['overdue']> }) {
   const t = useT();
   const { locale } = usePreferences();
   const issuing = useIssuing();

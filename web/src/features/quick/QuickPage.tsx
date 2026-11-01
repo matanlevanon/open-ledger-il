@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIssuing } from '../../app/issuing';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePreferences } from '../../app/preferences';
+import { type DashboardData, fetchDashboard } from '../../api/dashboard';
+import { OverdueCard } from '../dashboard/DashboardPage';
 import { useT } from '../../i18n';
 import { CREATE_NEW_LABEL_KEYS } from '../../layout/nav';
 import { usePendingApprovals } from '../documents/Recurring';
@@ -190,6 +192,8 @@ export function QuickPage() {
         </Card>
       )}
 
+      <OpenItems />
+
       <Card title={t('quick.activity.title')}>
         <ErrorNote error={activity.error} />
         {!activity.data && !activity.error && <p className="text-sm text-muted">{t('documents.loading')}</p>}
@@ -285,5 +289,56 @@ function ActivityRow({ item, types }: { item: ActivityItem; types: DocType[] }) 
         </span>
       </Link>
     </li>
+  );
+}
+
+const OPEN_KEY = 'mtn-ledger-quick-open-items';
+
+/**
+ * The Dashboard's "Overdue and open" card, also on the phone home page. It folds, and the page
+ * remembers whether it was open.
+ */
+export function OpenItems({ load = () => fetchDashboard({ cards: ['overdue'] }) }: { load?: () => Promise<DashboardData> }) {
+  const t = useT();
+  const open = useLoad(load, []);
+  const [expanded, setExpanded] = useState(() => {
+    try {
+      return localStorage.getItem(OPEN_KEY) !== 'closed';
+    } catch {
+      return true;
+    }
+  });
+  const data = open.data?.cards.overdue;
+  if (!open.error && open.data && !data) return null;
+
+  function toggle(next: boolean) {
+    setExpanded(next);
+    try {
+      localStorage.setItem(OPEN_KEY, next ? 'open' : 'closed');
+    } catch {
+      // Private mode: the card still folds, it just is not remembered.
+    }
+  }
+
+  const count = data?.items.length ?? 0;
+  return (
+    <section className="rounded-card border border-line bg-canvas shadow-card">
+      <details open={expanded} onToggle={(e) => toggle((e.currentTarget as HTMLDetailsElement).open)}>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 md:p-6 [&::-webkit-details-marker]:hidden">
+          <h2 className="text-lg font-semibold text-ink">
+            {t('dash.card.overdue')}
+            {data && count > 0 && <span className="ms-2 rounded-full bg-surface px-2 py-0.5 align-middle text-sm font-semibold text-muted">{count}</span>}
+          </h2>
+          <span aria-hidden="true" className={`text-muted transition-transform ${expanded ? 'rotate-180' : ''}`}>
+            ▾
+          </span>
+        </summary>
+        <div className="px-4 pb-4 md:px-6 md:pb-6">
+          <ErrorNote error={open.error} />
+          {!data && !open.error && <p className="text-sm text-muted">{t('documents.loading')}</p>}
+          {data && <OverdueCard data={data} />}
+        </div>
+      </details>
+    </section>
   );
 }
