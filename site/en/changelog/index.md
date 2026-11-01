@@ -4,6 +4,10 @@ Every release, newest first. The current version is 1.8.0.
 
 ## Unreleased
 
+### Screens
+
+- Phones: a two-finger pinch zooms the content from 100% to 180%. Text wraps to the screen, so nothing scrolls sideways. The top bar and the bottom menu keep their size, the browser's own page zoom is off, and each phone remembers its level.
+
 ## 1.8.0 (2026-11-01)
 
 ### Screens
