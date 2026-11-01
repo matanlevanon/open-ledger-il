@@ -195,11 +195,17 @@ def img(rel, alt, width=None, height=None, lazy=True, priority=False, cls=''):
 # ---------------------------------------------------------------------------------------------
 
 def og_image(page):
+    # The card's content hash goes in the address, so Facebook, LinkedIn and WhatsApp fetch a
+    # changed card instead of the copy they cached under the same address.
+    def versioned(r):
+        digest = hashlib.sha256((OUT / 'assets' / r).read_bytes()).hexdigest()[:10]
+        return absolute(f'/assets/{r}?v={digest}')
+
     rel = f'og/{page["lang"]}-{page["og"]}.png'
     if ASSETS.exists(rel):
-        return absolute(f'/assets/{rel}')
+        return versioned(rel)
     if ASSETS.exists('og/default.png'):
-        return absolute('/assets/og/default.png')
+        return versioned('og/default.png')
     return absolute(ASSETS.url(shot(page['lang'], 'dashboard.png')))
 
 

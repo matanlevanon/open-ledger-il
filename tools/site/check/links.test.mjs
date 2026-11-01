@@ -81,7 +81,7 @@ test('every page has one h1, a canonical to itself, and a title and description 
     const desc = /<meta name="description" content="([^"]*)">/.exec(p.html)[1].replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#x27;/g, "'");
     assert.ok(title.length < 60, `${p.path}: title ${title.length}`);
     assert.ok(desc.length < 155, `${p.path}: description ${desc.length}`);
-    assert.match(p.html, /<meta property="og:image" content="https:\/\/[^"]+\.png">/, `${p.path}: og:image`);
+    assert.match(p.html, /<meta property="og:image" content="https:\/\/[^"?]+\.png\?v=[0-9a-f]{10}">/, `${p.path}: og:image`);
   }
 });
 
