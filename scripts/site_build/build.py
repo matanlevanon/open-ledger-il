@@ -9,7 +9,7 @@ caches for a year (tools/site/src/index.js).
 import hashlib, html, json, os, re, shutil, sys
 
 from . import md, to_md
-from .config import (CERTIFICATE, CLONE, CONFIG, DEMO_URL, DEPLOY, ITA_REG, ITA_REGISTRY, OUT, REPO, ROOT,
+from .config import (CLONE, CONFIG, DEMO_URL, DEPLOY, ITA_REG, ITA_REGISTRY, OUT, REPO, ROOT,
                      SETUP, SHOP_LIVE, SHOP_URL, SITE_URL, CONTACT_ENDPOINT, FINANCY_URL, LICENSE, VERSION,
                     TURNSTILE_SITE_KEY)
 
@@ -1137,11 +1137,11 @@ def jsonld(page):
             items.append({'@type': 'ListItem', 'position': i + 1, 'name': label, 'item': absolute(path) if path else url})
         blocks.append({'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': items})
     if page['key'] == 'registration':
-        about = ('Israel Tax Authority software registration certificate 281801 for Open Ledger IL (חשבונאות פתוחה), '
-                 'software for a computerized accounting system, issued for version 1.1.0, valid from 7 Oct 2026 to 31 Oct 2028.')
+        about = ('Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system. '
+                 'Each version gets its own registration certificate. Check the registration in the Tax Authority registry.')
         if lang == 'he':
-            about = ('תעודת רישום תוכנה 281801 של רשות המסים עבור Open Ledger IL (חשבונאות פתוחה), תוכנה לניהול מערכת חשבונות ממוחשבת, '
-                     'הונפקה למהדורה 1.1.0, בתוקף מ-7.10.2026 עד 31.10.2028.')
+            about = ('Open Ledger IL (חשבונאות פתוחה) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת. '
+                     'כל מהדורה מקבלת תעודת רישום משלה. אפשר לבדוק את הרישום במאגר של רשות המסים.')
         blocks.append({'@context': 'https://schema.org', '@type': 'WebPage', 'name': page['title'], 'url': url, 'inLanguage': lang,
                        'description': about, 'isPartOf': {'@id': SITE_ID}, 'publisher': {'@id': ORG_ID}})
     if page['key'] == 'pricing' and pricing_faq(lang):

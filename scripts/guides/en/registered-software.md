@@ -71,6 +71,6 @@ Registration is a starting point. Also ask:
 
 ## How Open Ledger IL does it
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028 [2]. The certificate was issued for version 1.1.0, and new versions are added to it as they are filed. You can check it in the Tax Authority's registry of registered software [2].
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, [2]. Each version gets its own registration certificate, so the producer files every new version for approval. You can check the registration in the Tax Authority's registry of registered software [2].
 
 The code is open, so you can check for yourself how the system locks, numbers and keeps documents.

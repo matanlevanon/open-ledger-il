@@ -19,8 +19,8 @@ PAGES = {
             desc='Run Open Ledger IL free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. No subscription.',
             h1='Pricing and setup options', crumb='Pricing'),
         'registration': dict(
-            title='Open Ledger IL: Tax Authority certificate 281801',
-            desc='Open Ledger IL is registered with the Israel Tax Authority as accounting software, certificate 281801, valid to 31 Oct 2028. Check the registry.',
+            title='Open Ledger IL: registered with the Israel Tax Authority',
+            desc='Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system. Check it in the Tax Authority registry.',
             h1='Registered with the Israel Tax Authority', crumb='Registration'),
         'demo': dict(
             title='Open Ledger IL live demo: try it in your browser',
@@ -57,8 +57,8 @@ PAGES = {
             desc='הפעלת Open Ledger IL בחינם מקוד המקור, התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99, או הקמה עבורך ב-₪699. תשלום אחד, בלי מנוי.',
             h1='מחירים ואפשרויות התקנה', crumb='מחירים'),
         'registration': dict(
-            title='Open Ledger IL רשומה ברשות המסים: תעודה 281801',
-            desc='Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודה 281801, בתוקף עד 31.10.2028. אפשר לבדוק במאגר של רשות המסים.',
+            title='Open Ledger IL רשומה ברשות המסים',
+            desc='Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת. אפשר לבדוק את הרישום במאגר של רשות המסים.',
             h1='רשומה ברשות המסים', crumb='רישום'),
         'demo': dict(
             title='הדגמה חיה של Open Ledger IL: נסו בדפדפן',
@@ -150,7 +150,7 @@ UI = {
         license_gnu='The FSL on fsl.software',
         key_facts_h='Key facts',
         facts=[
-            'Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.',
+            'Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system.',
             'It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.',
             'It is free for your own business under the FSL-1.1 licence.',
             'Having it set up for you costs ₪699, once, with no subscription. That is a launch price, 30% off the regular ₪999, for a limited time.',
@@ -158,7 +158,7 @@ UI = {
             'It requests allocation numbers (מספרי הקצאה) from the Tax Authority for the tax invoices that need them.',
         ],
         fact_shop='The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.',
-        llms_intro='Open Ledger IL (חשבונאות פתוחה) is source-available invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority under certificate 281801. It is free for your own business under the FSL-1.1 licence, or set up for you for ₪699 once.',
+        llms_intro='Open Ledger IL (חשבונאות פתוחה) is source-available invoicing and bookkeeping software for Israeli businesses: עוסק פטור, עוסק מורשה and companies. It issues quotes, payment requests, receipts and tax invoices with gapless numbering and signed PDFs, requests Tax Authority allocation numbers, reads expenses with Claude, and produces reports and the unified file (מבנה אחיד) for the accountant. It runs on the owner’s own Cloudflare account. It is registered with the Israel Tax Authority as software for a computerized accounting system. It is free for your own business under the FSL-1.1 licence, or set up for you for ₪699 once.',
         llms_intro_shop=' The connected installer costs ₪99 once, a launch price, 50% off the regular ₪199.',
         draft='Draft',
     ),
@@ -223,7 +223,7 @@ UI = {
         license_gnu='רישיון FSL באתר fsl.software',
         key_facts_h='עובדות עיקריות',
         facts=[
-            'Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.',
+            'Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת.',
             'היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.',
             'היא חינמית לעסק שלכם, ברישיון FSL-1.1.',
             'הקמה עבורך עולה ₪699, חד פעמי, בלי מנוי. זה מחיר השקה, 30% הנחה מהמחיר הרגיל של ₪999, לזמן מוגבל.',

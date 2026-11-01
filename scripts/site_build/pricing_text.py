@@ -33,7 +33,7 @@ PRICING = {
             ('What does the ₪99 installer add to the free version?', 'Two things. A Windows installer that sets everything up in your Cloudflare account, and the Tax Authority connection through MTN’s approved app, so you do not register an ITA API app of your own. The software is the same.'),
             ('Which option fits an עוסק פטור?', 'Any of them. A פטור business issues receipts, not tax invoices, so it does not need allocation numbers. The ₪99 installer is the quickest way to start without technical work.'),
             ('Who holds my data?', 'You do. Every option creates the database and the files in your own Cloudflare account. MTN does not hold your data.'),
-            ('Is the software registered with the Tax Authority?', 'Yes. Open Ledger IL is registered as software for a computerized accounting system, under certificate 281801.'),
+            ('Is the software registered with the Tax Authority?', 'Yes. Open Ledger IL is registered as software for a computerized accounting system. You can check it in the Tax Authority registry.'),
         ],
     ),
     'he': dict(
@@ -65,7 +65,7 @@ PRICING = {
             ('מה תוכנת ההתקנה ב-₪99 מוסיפה על הגרסה החינמית?', 'שני דברים. תוכנת התקנה לווינדוס שמקימה הכול בחשבון Cloudflare שלך, וחיבור לרשות המסים דרך האפליקציה המאושרת של MTN, כך שלא צריך לרשום אפליקציית API משלך. התוכנה עצמה זהה.'),
             ('איזו אפשרות מתאימה לעוסק פטור?', 'כל אחת מהן. עוסק פטור מוציא קבלות ולא חשבוניות מס, ולכן לא צריך מספרי הקצאה. תוכנת ההתקנה ב-₪99 היא הדרך המהירה להתחיל בלי עבודה טכנית.'),
             ('מי מחזיק את המידע שלי?', 'אתה. בכל אפשרות מסד הנתונים והקבצים נוצרים בחשבון Cloudflare שלך. MTN לא מחזיקה את המידע שלך.'),
-            ('התוכנה רשומה ברשות המסים?', 'כן. Open Ledger IL רשומה כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.'),
+            ('התוכנה רשומה ברשות המסים?', 'כן. Open Ledger IL רשומה כתוכנה לניהול מערכת חשבונות ממוחשבת. אפשר לבדוק את הרישום במאגר של רשות המסים.'),
         ],
     ),
 }

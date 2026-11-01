@@ -57,7 +57,7 @@ The software is the same in all three. What changes is who installs it and how i
 
 ## Key facts
 
-- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
+- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
 - It is free for your own business under the FSL-1.1 licence.
 - The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
@@ -145,6 +145,6 @@ You do. Every option creates the database and the files in your own Cloudflare a
 
 **Is the software registered with the Tax Authority?**
 
-Yes. Open Ledger IL is registered as software for a computerized accounting system, under certificate 281801.
+Yes. Open Ledger IL is registered as software for a computerized accounting system. You can check it in the Tax Authority registry.
 
 Source: https://open-ledger.dev/en/pricing/

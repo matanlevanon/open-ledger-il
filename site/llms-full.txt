@@ -76,7 +76,7 @@ API חשבוניות ישראל v2, עם תור ניסיונות חוזרים.
 
 ## עובדות עיקריות
 
-- Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
+- Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת.
 - היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
 - היא חינמית לעסק שלכם, ברישיון FSL-1.1.
 - תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
@@ -355,7 +355,7 @@ Source: https://open-ledger.dev/features/
 
 ## עובדות עיקריות
 
-- Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
+- Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת.
 - היא רצה בחשבון Cloudflare של בעל העסק, והנתונים נשארים במסד הנתונים שלו.
 - היא חינמית לעסק שלכם, ברישיון FSL-1.1.
 - תוכנת ההתקנה המחוברת, שמריצים לבד, עולה ₪99, חד פעמי. זה מחיר השקה, 50% הנחה מהמחיר הרגיל של ₪199, לזמן מוגבל.
@@ -443,7 +443,7 @@ Workers Paid ומגבלות ידועות
 
 **התוכנה רשומה ברשות המסים?**
 
-כן. Open Ledger IL רשומה כתוכנה לניהול מערכת חשבונות ממוחשבת, בתעודה 281801.
+כן. Open Ledger IL רשומה כתוכנה לניהול מערכת חשבונות ממוחשבת. אפשר לבדוק את הרישום במאגר של רשות המסים.
 
 Source: https://open-ledger.dev/pricing/
 
@@ -452,7 +452,7 @@ Source: https://open-ledger.dev/pricing/
 
 # רשומה ברשות המסים
 
-חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.8.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
+חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת. כל מהדורה מקבלת תעודת רישום משלה, וכל מהדורה חדשה מוגשת לאישור. המהדורה הנוכחית היא 1.8.0. [2]
 
 רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
 
@@ -913,7 +913,7 @@ P&L, client ledgers, the unified file and an accountant login.
 
 ## Key facts
 
-- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
+- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
 - It is free for your own business under the FSL-1.1 licence.
 - The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
@@ -1192,7 +1192,7 @@ The software is the same in all three. What changes is who installs it and how i
 
 ## Key facts
 
-- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system, under certificate 281801.
+- Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system.
 - It runs on the owner’s own Cloudflare account, and the data stays in the owner’s own database.
 - It is free for your own business under the FSL-1.1 licence.
 - The connected installer, which you run yourself, costs ₪99, once. That is a launch price, 50% off the regular ₪199, for a limited time.
@@ -1280,7 +1280,7 @@ You do. Every option creates the database and the files in your own Cloudflare a
 
 **Is the software registered with the Tax Authority?**
 
-Yes. Open Ledger IL is registered as software for a computerized accounting system, under certificate 281801.
+Yes. Open Ledger IL is registered as software for a computerized accounting system. You can check it in the Tax Authority registry.
 
 Source: https://open-ledger.dev/en/pricing/
 
@@ -1289,7 +1289,7 @@ Source: https://open-ledger.dev/en/pricing/
 
 # Registered with the Israel Tax Authority
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.8.0, and new versions are added to the certificate as they are filed. [2]
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system. Each version gets its own registration certificate, and every new version is filed for approval. The current version is 1.8.0. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
 
@@ -1967,7 +1967,7 @@ Open Ledger IL רצה על התוכניות החינמיות של Cloudflare. ע
 
 ## איך Open Ledger IL משתווה
 
-Open Ledger IL רשומה ברשות המסים, תעודה 281801. היא מוציאה את כל סוגי המסמכים, מבקשת מספרי הקצאה ומפיקה קובץ במבנה אחיד. אפשר להפעיל אותה בחינם מקוד המקור, להתקין לבד עם תוכנת ההתקנה המחוברת ב-₪99, או לקבל אותה מוקמת ב-₪699, פעם אחת. ראו את [דף המחירים](https://open-ledger.dev/pricing/).
+Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת. היא מוציאה את כל סוגי המסמכים, מבקשת מספרי הקצאה ומפיקה קובץ במבנה אחיד. אפשר להפעיל אותה בחינם מקוד המקור, להתקין לבד עם תוכנת ההתקנה המחוברת ב-₪99, או לקבל אותה מוקמת ב-₪699, פעם אחת. ראו את [דף המחירים](https://open-ledger.dev/pricing/).
 
 [נסו את ההדגמה](https://demo.open-ledger.dev) [למחירים ולאפשרויות ההתקנה](https://open-ledger.dev/pricing/)
 
@@ -2089,7 +2089,7 @@ Source: https://open-ledger.dev/guides/invoicing-software-prices/
 
 ## איך Open Ledger IL עושה את זה
 
-Open Ledger IL קרובה לגישה השלישית: קוד המקור גלוי ברישיון FSL-1.1, חינמי לעסק שלכם, ורץ בחשבון Cloudflare שלכם. כל גרסה הופכת לקוד פתוח ברישיון Apache 2.0 שנתיים אחרי שהיא יוצאת. היא רשומה ברשות המסים, תעודה 281801, נועלת מסמכים סופיים, ממספרת בלי חורים, מבקשת מספרי הקצאה, מגבה כל רבעון ומפיקה קובץ במבנה אחיד. מפעילים בחינם מקוד המקור לפי מדריך הפריסה, מתקינים לבד עם תוכנת ההתקנה המחוברת ב-₪99, או מבקשים הקמה עבורכם.
+Open Ledger IL קרובה לגישה השלישית: קוד המקור גלוי ברישיון FSL-1.1, חינמי לעסק שלכם, ורץ בחשבון Cloudflare שלכם. כל גרסה הופכת לקוד פתוח ברישיון Apache 2.0 שנתיים אחרי שהיא יוצאת. היא רשומה ברשות המסים, נועלת מסמכים סופיים, ממספרת בלי חורים, מבקשת מספרי הקצאה, מגבה כל רבעון ומפיקה קובץ במבנה אחיד. מפעילים בחינם מקוד המקור לפי מדריך הפריסה, מתקינים לבד עם תוכנת ההתקנה המחוברת ב-₪99, או מבקשים הקמה עבורכם.
 
 [נסו את ההדגמה](https://demo.open-ledger.dev) [למחירים ולאפשרויות ההתקנה](https://open-ledger.dev/pricing/)
 
@@ -2522,7 +2522,7 @@ Source: https://open-ledger.dev/guides/own-cloud-bookkeeping/
 
 ## איך Open Ledger IL עושה את זה
 
-Open Ledger IL (חשבונאות פתוחה) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028 [2]. התעודה הונפקה למהדורה 1.1.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. אפשר לבדוק את הרישום במאגר התוכנות הרשומות של רשות המסים [2].
+Open Ledger IL (חשבונאות פתוחה) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, [2]. כל מהדורה מקבלת תעודת רישום משלה, ולכן היצרן מגיש כל מהדורה חדשה לאישור. אפשר לבדוק את הרישום במאגר התוכנות הרשומות של רשות המסים [2].
 
 קוד המקור גלוי, כך שאפשר לבדוק בעצמכם איך המערכת נועלת מסמכים, ממספרת אותם ושומרת אותם.
 
@@ -2976,7 +2976,7 @@ Expenses start fresh in the Ledger: forward receipts by email or upload them, an
 
 ## How Open Ledger IL compares
 
-Open Ledger IL is registered with the Tax Authority, certificate 281801. It issues every document type, asks for allocation numbers, and produces the unified file. Run it free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. See the [pricing page](https://open-ledger.dev/en/pricing/).
+Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system. It issues every document type, asks for allocation numbers, and produces the unified file. Run it free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. See the [pricing page](https://open-ledger.dev/en/pricing/).
 
 [Try the live demo](https://demo.open-ledger.dev) [See pricing and setup](https://open-ledger.dev/en/pricing/)
 
@@ -3098,7 +3098,7 @@ A few questions help you decide:
 
 ## How Open Ledger IL does it
 
-Open Ledger IL is close to the third approach: the source is public under the FSL-1.1 licence, free for your own business, and runs in your own Cloudflare account. Each version becomes Apache 2.0 open source two years after release. It is registered with the Tax Authority, certificate 281801. It locks final documents, numbers them without gaps, asks for allocation numbers, backs up every quarter and produces a unified file. Run it free from source with the deploy guide, install it yourself with the ₪99 connected installer, or have it set up for you.
+Open Ledger IL is close to the third approach: the source is public under the FSL-1.1 licence, free for your own business, and runs in your own Cloudflare account. Each version becomes Apache 2.0 open source two years after release. It is registered with the Israel Tax Authority. It locks final documents, numbers them without gaps, asks for allocation numbers, backs up every quarter and produces a unified file. Run it free from source with the deploy guide, install it yourself with the ₪99 connected installer, or have it set up for you.
 
 [Try the live demo](https://demo.open-ledger.dev) [See pricing and setup](https://open-ledger.dev/en/pricing/)
 
@@ -3529,7 +3529,7 @@ Registration is a starting point. Also ask:
 
 ## How Open Ledger IL does it
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028 [2]. The certificate was issued for version 1.1.0, and new versions are added to it as they are filed. You can check it in the Tax Authority's registry of registered software [2].
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, [2]. Each version gets its own registration certificate, so the producer files every new version for approval. You can check the registration in the Tax Authority's registry of registered software [2].
 
 The code is open, so you can check for yourself how the system locks, numbers and keeps documents.
 

@@ -213,7 +213,7 @@ EN = dict(
     ],
     reg_title='Do you need to register the software with the Tax Authority?',
     reg_p=[
-        'Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is ' + VERSION + ', and new versions are added to the certificate as they are filed.',
+        'Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system. Each version gets its own registration certificate, and every new version is filed for approval. The current version is ' + VERSION + '.',
         'The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included.',
         'You deploy your own copy and run it for your own business only. You do not sell it, rent it or run it for anyone else, so that registration does not apply to you. Run it for another business, for example your clients\u2019 books, and you register first.',
         'Prefer to stay on your current system? Keep issuing invoices and receipts there and turn issuing off in Settings > Issuing. The Ledger then issues no documents, and you use it to import them, track clients, file expenses and run reports.',
@@ -452,7 +452,7 @@ HE = dict(
     ],
     reg_title='צריך לרשום את התוכנה ברשות המסים?',
     reg_p=[
-        'חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא ' + VERSION + ', ומהדורות חדשות נוספות לתעודה עם הגשתן.',
+        'חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת. כל מהדורה מקבלת תעודת רישום משלה, וכל מהדורה חדשה מוגשת לאישור. המהדורה הנוכחית היא ' + VERSION + '.',
         'רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם.',
         'אתה פורס עותק משלך ומריץ אותו לעסק שלך בלבד. אתה לא מוכר, לא משכיר ולא מריץ אותו בשביל אחרים, ולכן חובת הרישום הזאת לא חלה עליך. אם תריץ אותו לעסק אחר, למשל ספרים של לקוחות, תרשום אותו קודם.',
         'מעדיף להישאר במערכת הנוכחית? המשך להפיק בה חשבוניות וקבלות, וכבה את הפקת המסמכים בהגדרות > הפקת מסמכים. המערכת לא תפיק מסמכים, ותשתמש בה לייבוא המסמכים, לניהול לקוחות, להוצאות ולדוחות.',

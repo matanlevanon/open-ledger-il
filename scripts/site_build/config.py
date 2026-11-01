@@ -50,4 +50,3 @@ ITA_REG = 'https://www.gov.il/he/service/registration-software-designed-managing
 CLONE = f'git clone {REPO_URL}.git'
 # The version shown on the site comes from package.json, so a release bump updates it.
 VERSION = json.loads((ROOT / 'package.json').read_text(encoding='utf-8'))['version']
-CERTIFICATE = '281801'

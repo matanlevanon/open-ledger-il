@@ -42,7 +42,7 @@ h1{font-size:${p.title.length > 34 ? 60 : 72}px;line-height:1.12;margin:0;font-w
 </style></head><body>
 <div class="top">${logo}<span>Open Ledger IL</span></div>
 <div><h1>${esc(p.title)}</h1><div class="kicker">${esc(p.kicker)}</div></div>
-<div class="foot"><b>${rtl ? 'רשומה ברשות המסים · תעודה 281801' : 'Registered with the Israel Tax Authority · certificate 281801'}</b><span>${esc(host)}</span></div>
+<div class="foot"><b>${rtl ? 'רשומה ברשות המסים' : 'Registered with the Israel Tax Authority'}</b><span>${esc(host)}</span></div>
 </body></html>`;
 }
 

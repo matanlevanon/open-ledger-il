@@ -95,4 +95,4 @@ Expenses start fresh in the Ledger: forward receipts by email or upload them, an
 
 ## How Open Ledger IL compares
 
-Open Ledger IL is registered with the Tax Authority, certificate 281801. It issues every document type, asks for allocation numbers, and produces the unified file. Run it free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. See the [pricing page](/en/pricing/).
+Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system. It issues every document type, asks for allocation numbers, and produces the unified file. Run it free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. See the [pricing page](/en/pricing/).

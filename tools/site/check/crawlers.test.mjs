@@ -35,7 +35,8 @@ test('robots.txt allows every crawler and points at the sitemap', () => {
 
 test('llms.txt has a title, a summary with the certificate and prices, and links to published pages only', () => {
   assert.match(llms, /^# Open Ledger IL\n\n> /);
-  assert.match(llms, /281801/);
+  assert.match(llms, /registered with the Israel Tax Authority/);
+  assert.ok(!/28180\d/.test(llms), 'no certificate number, each version has its own');
   assert.match(llms, /₪699/);
   for (const p of all) {
     const url = `(${SITE_URL}${p.path})`;
@@ -64,7 +65,8 @@ test('home and pricing carry the key facts block', () => {
   for (const path of ['/', '/en/', '/pricing/', '/en/pricing/']) {
     const p = all.find((x) => x.path === path);
     assert.ok(p.html.includes('id="key-facts"'), `${path}: key facts`);
-    assert.match(p.html, /281801/);
+    assert.match(p.html, /Tax Authority|רשות המסים/);
+    assert.ok(!/28180\d/.test(p.html), `${path}: no certificate number`);
     assert.match(p.html, /FSL-1\.1/);
   }
 });

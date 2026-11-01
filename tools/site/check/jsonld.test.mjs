@@ -94,7 +94,7 @@ test('the pricing page carries an FAQPage when the shop is live', () => {
 test('the registration page describes the certificate in a WebPage', () => {
   for (const path of ['/registration/', '/en/registration/']) {
     const page = blocks(all.find((x) => x.path === path).html).find((b) => b['@type'] === 'WebPage');
-    assert.match(page.description, /281801/);
-    assert.match(page.description, /1\.1\.0/);
+    assert.match(page.description, /Tax Authority|רשות המסים/);
+    assert.ok(!/28180\d/.test(page.description), `${path}: no certificate number`);
   }
 });
