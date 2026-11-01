@@ -18,6 +18,18 @@ export const reports = {
   'unified.typesTitle': 'Documents by type (section 2.6)',
   'unified.print': 'Print',
   'unified.error': 'Could not create the unified file.',
+  'unified.send.title': 'Send to the Tax Authority',
+  'unified.send.help': 'From 1.1.2027 registered software sends the unified file to the Tax Authority through its API. Send uploads INI.TXT and BKMVDATA.TXT for the dates above. Check status shows whether the Tax Authority took the files. The Tax Authority sandbox takes only a small PDF, so a sandbox send uploads a test PDF in place of the files.',
+  'unified.send.button': 'Send to the Tax Authority',
+  'unified.send.check': 'Check status',
+  'unified.send.sandbox': 'Sandbox test',
+  'unified.send.col.sent': 'Sent',
+  'unified.send.col.period': 'Period',
+  'unified.send.status.uploaded': 'Uploaded, waiting',
+  'unified.send.status.approved': 'Approved',
+  'unified.send.status.rejected': 'Rejected',
+  'unified.send.status.failed': 'Not sent',
+  'unified.send.error': 'The send failed.',
   'reports.title': 'Reports',
 
   // Tabs

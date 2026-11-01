@@ -16,6 +16,18 @@ export const reports: Record<keyof typeof en, string> = {
   'unified.typesTitle': 'פירוט לפי סוג מסמך (סעיף 2.6)',
   'unified.print': 'הדפסה',
   'unified.error': 'לא ניתן להפיק את הקובץ במבנה אחיד.',
+  'unified.send.title': 'שידור לרשות המסים',
+  'unified.send.help': 'מ-1.1.2027 תוכנה רשומה משדרת את הקובץ במבנה אחיד לרשות המסים דרך ה-API שלה. שידור מעלה את INI.TXT ואת BKMVDATA.TXT לתאריכים שלמעלה. בדיקת סטטוס מראה אם הרשות קיבלה את הקבצים. סביבת הניסוי של הרשות מקבלת רק PDF קטן, ולכן שידור בסביבת הניסוי מעלה PDF לבדיקה במקום הקבצים.',
+  'unified.send.button': 'שידור לרשות המסים',
+  'unified.send.check': 'בדיקת סטטוס',
+  'unified.send.sandbox': 'בדיקה בסביבת הניסוי',
+  'unified.send.col.sent': 'שודר',
+  'unified.send.col.period': 'תקופה',
+  'unified.send.status.uploaded': 'הועלה, ממתין',
+  'unified.send.status.approved': 'אושר',
+  'unified.send.status.rejected': 'נדחה',
+  'unified.send.status.failed': 'לא שודר',
+  'unified.send.error': 'השידור נכשל.',
   'reports.title': 'דוחות',
 
   // Tabs

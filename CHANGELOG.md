@@ -7,6 +7,17 @@
   nothing scrolls sideways. The top bar and the bottom menu keep their size, the browser's own page
   zoom is off, and each phone remembers its level.
 
+### Tax Authority
+- Unified file: **Send to the Tax Authority** uploads the INI and BKMVDATA files through the Tax
+  Authority's upload API (GetUrlsForUploadingFiles, then a resumable upload of each file).
+  **Check status** asks for each file's status: Uploaded, Approved or Rejected. Every send is
+  listed on the Unified file page. The Tax Authority requires this API from 1.1.2027.
+- Sandbox: the Tax Authority's test environment accepts only a small PDF, so the Ledger uploads a
+  one-page test PDF in place of each file and marks the row as a test.
+
+### Database
+- Migration 4400: `unified_file_transmissions`.
+
 ## 1.8.0 (2026-11-01)
 
 ### Screens

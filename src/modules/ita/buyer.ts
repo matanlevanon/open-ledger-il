@@ -36,7 +36,7 @@ function client(env: ItaEnv, io: ClockAndFetch, businessId: number) {
 }
 
 /** R24: the buyer is the current business. Business 1 reads the secrets, another its own tax id. */
-async function buyerVatNumber(env: ItaEnv, businessId: number): Promise<string> {
+export async function buyerVatNumber(env: ItaEnv, businessId: number): Promise<string> {
   if (businessId === 1) return itaIdentity(env).vatNumber;
   const row = await env.DB.prepare('SELECT tax_id FROM businesses WHERE id = ?').bind(businessId).first<{ tax_id: string | null }>();
   const vat = (row?.tax_id ?? '').trim();

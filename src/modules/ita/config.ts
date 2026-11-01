@@ -49,6 +49,23 @@ export const ITA_PATHS = {
 export type ItaPath = (typeof ITA_PATHS)[keyof typeof ITA_PATHS];
 
 /**
+ * Unified file transmission (תוספת 1 למסמך הוראות להפקת קובץ במבנה אחיד, version 1.0 of 3.2026).
+ * Required from 1.1.2027 (notice of 16.7.2026). The links service sits on openapi in production
+ * and on ita-api in the sandbox. The status service is on ita-api in both. Full addresses, as the
+ * spec gives them.
+ */
+export const ITA_UNIFIED_FILE_URLS: Record<ItaEnvironment, { links: string; status: string }> = {
+  sandbox: {
+    links: 'https://ita-api.taxes.gov.il/shaam/tsandbox/UniStructFileUploadLinksApi/v1/UploadingFile/GetUrlsForUploadingFiles',
+    status: 'https://ita-api.taxes.gov.il/shaam/tsandbox/FilesStatusApi/v1/Files/get-file-status',
+  },
+  production: {
+    links: 'https://openapi.taxes.gov.il/shaam/production/UniStructFileUploadLinksApi/v1/UploadingFile/GetUrlsForUploadingFiles',
+    status: 'https://ita-api.taxes.gov.il/shaam/production/FilesStatusApi/v1/Files/get-file-status',
+  },
+};
+
+/**
  * The OAuth2 scope for the invoice services. SHAAM's notice of 21.10.2026: from 01.11.2026 the
  * token call names the service family. Invoices, Multi-invoices, InvoiceDecisionApi and
  * invoice-information all use invoices_scope. The old literal "scope" works until that date only.

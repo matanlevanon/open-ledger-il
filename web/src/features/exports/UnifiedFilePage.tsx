@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ApiError } from '../../api/client';
 import { useT } from '../../i18n';
 import { Card, ErrorNote, PageTitle, btnPrimary, btnSecondary, input, label } from '../documents/ui';
+import { TransmitCard } from './TransmitCard';
 
 /**
  * Unified file (מבנה אחיד), instructions 1.31. One step from the main menu (section 2.1 ב).
@@ -172,6 +173,8 @@ export function UnifiedFilePage() {
           </ul>
         )}
       </Card>
+
+      <TransmitCard from={from} to={to} drive={drive} />
 
       {s && typesTotal && (
         <>

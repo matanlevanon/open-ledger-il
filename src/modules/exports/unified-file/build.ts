@@ -237,6 +237,9 @@ export interface OpenFormatSummary {
 export interface UnifiedFileResult {
   iniText: string;
   bkmvdata: string;
+  /** INI.TXT and BKMVDATA.TXT as written to the zip (ISO-8859-8), for the Tax Authority upload. */
+  iniBytes: Uint8Array;
+  bkmvBytes: Uint8Array;
   zip: Uint8Array;
   report: ValidationReport;
   summary: OpenFormatSummary;
@@ -743,7 +746,7 @@ export async function buildUnifiedFile(env: Env, from: string, to: string, optio
     layoutStatus: 'verified',
   };
 
-  return { iniText, bkmvdata, zip, report, summary };
+  return { iniText, bkmvdata, iniBytes: ini.bytes, bkmvBytes: data.bytes, zip, report, summary };
 }
 
 /** The business the file is for, shown in the export dialog before a run (appendix 4). */
