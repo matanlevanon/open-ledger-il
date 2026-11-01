@@ -32,7 +32,7 @@ export function StatusChip({ state, overdue = false }: { state: string; overdue?
   );
 }
 
-export function Card({ title, children, actions }: { title?: string; children: ReactNode; actions?: ReactNode }) {
+export function Card({ title, children, actions }: { title?: ReactNode; children: ReactNode; actions?: ReactNode }) {
   return (
     <section className="rounded-card border border-line bg-canvas p-4 shadow-card md:p-6">
       {(title || actions) && (

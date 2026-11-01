@@ -57,9 +57,19 @@ function eventText(t: ReturnType<typeof useT>, e: DocEvent): string {
 
 function Step({ n, title, children }: { n: number; title: string; children: ReactNode }) {
   return (
-    <li className="relative ps-10">
-      <span className="absolute start-0 top-0 flex h-7 w-7 items-center justify-center rounded-full bg-band text-sm font-semibold text-brand">{n}</span>
-      <Card title={title}>{children}</Card>
+    // On a phone the number sits in the card title, so the card uses the full width.
+    <li className="relative md:ps-10">
+      <span className="absolute start-0 top-0 hidden h-7 w-7 items-center justify-center rounded-full bg-band text-sm font-semibold text-brand md:flex">{n}</span>
+      <Card
+        title={
+          <>
+            <span aria-hidden="true" className="me-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-band align-middle text-sm font-semibold text-brand md:hidden">{n}</span>
+            {title}
+          </>
+        }
+      >
+        {children}
+      </Card>
     </li>
   );
 }
@@ -321,7 +331,7 @@ export function DocumentPage() {
       {demoLocked && !isDraft && <DemoReadOnlyNote text={t('demo.readOnlyDocument')} />}
       <ErrorNote error={actionError} />
 
-      <ol className="space-y-4" aria-label={t('documents.page.timelineLabel')}>
+      <ol className="space-y-3 md:space-y-4" aria-label={t('documents.page.timelineLabel')}>
         <Step n={stepCreate} title={t('documents.page.stepCreate')}>
           <Summary view={data} />
           {live && isDraft && (
@@ -556,13 +566,34 @@ function Summary({ view }: { view: DocView }) {
           ? t('documents.page.rateIndicative')
           : t('documents.page.rateBankOfIsrael');
   return (
-    <div className="space-y-3 text-sm">
+    <div className="space-y-2 text-sm md:space-y-3">
       <p>
         {t('documents.page.datedOn', { date: d.date })}
         {d.due_date && t('documents.page.dueSuffix', { dueDate: d.due_date })}
       </p>
       {view.lines.length > 0 && (
-        <table className="w-full">
+        // Phones: one compact row per line, so the Send step is close to the top.
+        <ul className="divide-y divide-line border-y border-line md:hidden">
+          {view.lines.map((l) => (
+            <li key={l.id} className="flex items-baseline justify-between gap-3 py-2">
+              <span className="min-w-0">
+                {l.description_en}
+                {l.description_he && (
+                  <span dir="rtl" className="block text-xs text-muted">
+                    {l.description_he}
+                  </span>
+                )}
+                <span className="ltr-nums block text-xs text-muted tabular-nums">
+                  {formatMilli(l.quantity_milli)} × {money(l.unit_price_minor, d.currency)}
+                </span>
+              </span>
+              <span className="ltr-nums shrink-0 font-medium tabular-nums">{money(l.line_total_minor, d.currency)}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {view.lines.length > 0 && (
+        <table className="hidden w-full md:table" data-no-stack>
           <thead className="bg-band text-start text-xs uppercase text-muted">
             <tr>
               <th className="px-2 py-1">{t('documents.page.colItem')}</th>

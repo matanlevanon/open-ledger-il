@@ -161,3 +161,47 @@ body {
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------------------------------------
+   The pressed button while its action runs (src/lib/pressedButton.ts): a spinner before the
+   label and a soft pulse, so the person sees the send, save or approve is under way.
+   --------------------------------------------------------------------------------------------- */
+button[data-pressed]:disabled {
+  position: relative;
+  cursor: progress;
+  opacity: 0.85 !important;
+  animation: pressed-pulse 1.2s ease-in-out infinite;
+}
+
+button[data-pressed]:disabled::before {
+  content: '';
+  display: inline-block;
+  vertical-align: -0.15em;
+  margin-inline-end: 0.4em;
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 9999px;
+  animation: pressed-spin 0.7s linear infinite;
+}
+
+@keyframes pressed-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pressed-pulse {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button[data-pressed]:disabled,
+  button[data-pressed]:disabled::before {
+    animation: none;
+  }
+}
