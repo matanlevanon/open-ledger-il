@@ -1,13 +1,25 @@
 # Changelog
 
-Every release, newest first. The current version is 1.7.1.
+Every release, newest first. The current version is 1.8.0.
 
 ## Unreleased
+
+## 1.8.0 (2026-11-01)
+
+### Screens
+
+- The button you press shows a spinner and a soft pulse while its action runs, for example Send or Approve and send. The other buttons stay greyed out as before.
+- Document page on a phone: the step number sits in the card title, the cards use the full width, and each document line is one compact row, so the Send step is closer to the top.
+- Quick (the phone home page) shows the Dashboard's Overdue and open card too, between Issue a document and Recent activity. It folds, shows how many items are open, and remembers whether it was folded.
 
 ### Clients
 
 - A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
 - The sidebar's client list has a Group dropdown too. It filters both Active and Not active, and the sidebar and the Clients page remember the last group (and Show inactive) per browser.
+
+### Database
+
+- Migration 4300: `clients.group`.
 
 ## 1.7.1 (2026-10-21)
 

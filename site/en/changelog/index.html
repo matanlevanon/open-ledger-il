@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Open Ledger IL changelog: what changed in each version</title>
-<meta name="description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.1.">
+<meta name="description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.8.0.">
 <link rel="canonical" href="https://open-ledger.dev/en/changelog/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/changelog/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/changelog/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/en/changelog/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="Open Ledger IL changelog: what changed in each version">
-<meta property="og:description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.1.">
+<meta property="og:description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.8.0.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://open-ledger.dev/en/changelog/">
 <meta property="og:image" content="https://open-ledger.dev/assets/og/en-changelog.png">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Open Ledger IL changelog: what changed in each version">
-<meta name="twitter:description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.7.1.">
+<meta name="twitter:description" content="Every Open Ledger IL release and what changed in it, newest first. The current version is 1.8.0.">
 <meta name="twitter:image" content="https://open-ledger.dev/assets/og/en-changelog.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-latin.964dfe7c.woff2" as="font" type="font/woff2" crossorigin>
@@ -362,12 +362,17 @@ section[id] { scroll-margin-top: 64px; }
   <div class="wrap page">
     <nav class="crumbs" aria-label="Breadcrumbs"><ol><li><a href="/en/">Home</a></li><li aria-current="page">Changelog</li></ol></nav>
     <h1>Changelog</h1>
-    <p class="lead">Every release, newest first. The current version is 1.7.1.</p>
+    <p class="lead">Every release, newest first. The current version is 1.8.0.</p>
   </div>
   <section class="plain">
     <div class="wrap"><div class="prose changelog" lang="en"><h2 id="unreleased">Unreleased</h2>
+<h2 id="1-8-0-2026-11-01">1.8.0 (2026-11-01)</h2>
+<h3 id="screens">Screens</h3>
+<ul><li>The button you press shows a spinner and a soft pulse while its action runs, for example Send or Approve and send. The other buttons stay greyed out as before.</li><li>Document page on a phone: the step number sits in the card title, the cards use the full width, and each document line is one compact row, so the Send step is closer to the top.</li><li>Quick (the phone home page) shows the Dashboard's Overdue and open card too, between Issue a document and Recent activity. It folds, shows how many items are open, and remembers whether it was folded.</li></ul>
 <h3 id="clients">Clients</h3>
 <ul><li>A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP <code>list_clients</code> filters by group and returns it.</li><li>The sidebar's client list has a Group dropdown too. It filters both Active and Not active, and the sidebar and the Clients page remember the last group (and Show inactive) per browser.</li></ul>
+<h3 id="database">Database</h3>
+<ul><li>Migration 4300: <code>clients.group</code>.</li></ul>
 <h2 id="1-7-1-2026-10-21">1.7.1 (2026-10-21)</h2>
 <h3 id="tax-authority-connection">Tax Authority connection</h3>
 <ul><li>The token call asks for <code>invoices_scope</code>, as SHAAM requires from 01.11.2026 (notice of 21.10.2026). Until 31.10.2026 a refresh the ITA refuses with the new scope is tried once more with the old <code>scope</code>, for a login made under it. From 01.11.2026 only the new scope is sent.</li><li>A refresh that needed the old scope writes <code>ita.legacy_scope</code> to the audit log, so the install connects to ITA again before 01.11.2026.</li><li>Login broker: asks for <code>invoices_scope</code>, passes an install's scope only while the ITA takes it, so an install that has not updated keeps working through the broker. The log shows the scope.</li></ul>

@@ -1,4 +1,4 @@
-**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.7.1
+**חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.8.0
 
 # חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, על תשתית שבבעלותך.
 
@@ -452,7 +452,7 @@ Source: https://open-ledger.dev/pricing/
 
 # רשומה ברשות המסים
 
-חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.7.1, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
+חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת, תעודת רישום 281801, בתוקף עד 31.10.2028. התעודה הונפקה למהדורה 1.1.0. המהדורה הנוכחית היא 1.8.0, ומהדורות חדשות נוספות לתעודה עם הגשתן. [2]
 
 רשות המסים מחייבת רישום תוכנה מיצרני תוכנות לניהול מערכת חשבונות המיועדות למכירה, להשכרה או לשימושם של אחרים, כולל שימוש בחינם. [1]
 
@@ -551,16 +551,28 @@ Source: https://open-ledger.dev/help/
 
 # יומן שינויים
 
-כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.7.1.
+כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.0.
 
 יומן השינויים נכתב באנגלית.
 
 ## Unreleased
 
+## 1.8.0 (2026-11-01)
+
+### Screens
+
+- The button you press shows a spinner and a soft pulse while its action runs, for example Send or Approve and send. The other buttons stay greyed out as before.
+- Document page on a phone: the step number sits in the card title, the cards use the full width, and each document line is one compact row, so the Send step is closer to the top.
+- Quick (the phone home page) shows the Dashboard's Overdue and open card too, between Issue a document and Recent activity. It folds, shows how many items are open, and remembers whether it was folded.
+
 ### Clients
 
 - A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
 - The sidebar's client list has a Group dropdown too. It filters both Active and Not active, and the sidebar and the Clients page remember the last group (and Show inactive) per browser.
+
+### Database
+
+- Migration 4300: `clients.group`.
 
 ## 1.7.1 (2026-10-21)
 
@@ -823,7 +835,7 @@ Source: https://open-ledger.dev/license/
 
 ---
 
-**Free** · Source available · Registered with the Israel Tax Authority · v1.7.1
+**Free** · Source available · Registered with the Israel Tax Authority · v1.8.0
 
 # Invoices, receipts and books for an Israeli business, on infrastructure you own.
 
@@ -1277,7 +1289,7 @@ Source: https://open-ledger.dev/en/pricing/
 
 # Registered with the Israel Tax Authority
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.7.1, and new versions are added to the certificate as they are filed. [2]
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system, registration certificate 281801, valid to 31 Oct 2028. The certificate was issued for version 1.1.0. The current version is 1.8.0, and new versions are added to the certificate as they are filed. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
 
@@ -1376,14 +1388,26 @@ Source: https://open-ledger.dev/en/help/
 
 # Changelog
 
-Every release, newest first. The current version is 1.7.1.
+Every release, newest first. The current version is 1.8.0.
 
 ## Unreleased
+
+## 1.8.0 (2026-11-01)
+
+### Screens
+
+- The button you press shows a spinner and a soft pulse while its action runs, for example Send or Approve and send. The other buttons stay greyed out as before.
+- Document page on a phone: the step number sits in the card title, the cards use the full width, and each document line is one compact row, so the Send step is closer to the top.
+- Quick (the phone home page) shows the Dashboard's Overdue and open card too, between Issue a document and Recent activity. It folds, shows how many items are open, and remembers whether it was folded.
 
 ### Clients
 
 - A client can have a group, a label for sorting the client list. The Clients page filters by group (all, no group, each group with its count) next to Show inactive, and shows the group as a badge. Groups change nothing on documents. MCP `list_clients` filters by group and returns it.
 - The sidebar's client list has a Group dropdown too. It filters both Active and Not active, and the sidebar and the Clients page remember the last group (and Show inactive) per browser.
+
+### Database
+
+- Migration 4300: `clients.group`.
 
 ## 1.7.1 (2026-10-21)
 
