@@ -250,6 +250,7 @@ async function token(env, request) {
 const ITA_TARGETS = { openapi: 'https://openapi.taxes.gov.il', 'ita-api': 'https://ita-api.taxes.gov.il' };
 const ITA_PATH_RE = /^\/ita\/(openapi|ita-api)(\/shaam\/(?:tsandbox|production)\/[A-Za-z0-9._~\-/]+)$/;
 const ITA_PASS_HEADERS = ['authorization', 'content-type', 'accept'];
+export const UNIFIED_FILE_PATH_RE = /^\/shaam\/(?:tsandbox|production)\/(?:UniStructFileUploadLinksApi|FilesStatusApi)\//;
 const LICENCE_TTL_MS = 10 * 60_000;
 const MAX_ITA_BODY = 1_000_000;
 
@@ -302,6 +303,13 @@ async function itaProxy(env, request, url) {
   for (const h of ITA_PASS_HEADERS) {
     const v = request.headers.get(h);
     if (v) headers.set(h, v);
+  }
+  // The unified file services (UniStructFileUploadLinksApi, FilesStatusApi) refuse a valid user
+  // token with 401 "Cannot pass the security checks" unless the gateway also gets the app's id.
+  // The invoice services never asked for it, so it goes on these two only.
+  if (UNIFIED_FILE_PATH_RE.test(m[2])) {
+    const creds = credentials(env, m[2].includes('/tsandbox/') ? 'sandbox' : 'production');
+    if (creds) headers.set('X-IBM-Client-Id', creds.id);
   }
   let body;
   if (request.method === 'POST') {
