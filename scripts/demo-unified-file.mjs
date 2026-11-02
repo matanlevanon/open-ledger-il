@@ -5,6 +5,8 @@
 // Usage (from the repository root):
 //   node scripts/demo-unified-file.mjs --vat 123456782 --name "עסק לדוגמה"
 // Optional: --registration 12345678 once the Tax Authority has issued a registration number.
+// Optional: --producer "שם בית התוכנה", the software house's name on its Tax Authority file and on
+// the registration forms (field 1010, shown as שם יצרן התוכנה in the checker).
 //
 // Writes demo/output/: the zip, INI.TXT and BKMVDATA.TXT ready to upload to the checker, and the
 // section 5.4 and 2.6 printouts as HTML pages to print or save as PDF.
@@ -27,6 +29,7 @@ const env = {
   DEMO_VAT: (arg('vat') ?? '').replace(/\D/g, ''),
   DEMO_NAME_HE: arg('name') ?? '',
   DEMO_REGISTRATION_NUMBER: (arg('registration') ?? '').replace(/\D/g, ''),
+  DEMO_PRODUCER_NAME: (arg('producer') ?? '').trim(),
 };
 
 console.log('Issuing the demo year and building the file. This takes about a minute...');

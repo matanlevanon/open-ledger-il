@@ -20,6 +20,8 @@ export default defineConfig(async () => {
             DEMO_VAT: process.env.DEMO_VAT ?? '',
             DEMO_NAME_HE: process.env.DEMO_NAME_HE ?? '',
             SOFTWARE_REGISTRATION_NUMBER: process.env.DEMO_REGISTRATION_NUMBER ?? '',
+            // The software house's name as the Tax Authority has it (field 1010). Empty falls back to wrangler.toml.
+            ...(process.env.DEMO_PRODUCER_NAME ? { SOFTWARE_PRODUCER_NAME: process.env.DEMO_PRODUCER_NAME } : {}),
           },
           d1Databases: { SCRATCH_DB: 'mtn-ledger-scratch-demo' },
         },
