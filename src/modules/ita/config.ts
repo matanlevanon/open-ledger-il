@@ -76,10 +76,30 @@ export const ITA_LEGACY_SCOPE = 'scope';
 /** The first day the ITA accepts only the new scope (Israel time). */
 export const ITA_SCOPE_CUTOVER = '2026-11-01';
 
-/** The scopes to try, in order, on a given day. The old one only before the cutover. */
-export function itaScopes(now: Date): string[] {
+/**
+ * invoices_scope plus the general scope. A token with invoices_scope alone covers the invoice
+ * services only: the unified file upload (UniStructFileUploadLinksApi, FilesStatusApi) refuses it
+ * with 401 "Cannot pass the security checks". The ITA consent page then lists חשבוניות ישראל only.
+ */
+export const ITA_SCOPE_WITH_GENERAL = `${ITA_SCOPE} ${ITA_LEGACY_SCOPE}`;
+
+/**
+ * The scope this install asks for at sign-in. ITA_SCOPES="invoices_scope scope" adds the general
+ * scope, for the unified file upload. Anything else, or nothing, keeps invoices_scope alone.
+ */
+export function itaRequestScope(env: { ITA_SCOPES?: string }): string {
+  const asked = (env.ITA_SCOPES ?? '').trim().split(/\s+/).join(' ');
+  return asked === ITA_SCOPE_WITH_GENERAL ? ITA_SCOPE_WITH_GENERAL : ITA_SCOPE;
+}
+
+/**
+ * The scopes to try, in order, on a given day: the one this install asks for, then invoices_scope
+ * (a refresh token issued under invoices_scope alone can't widen), then the old one before the cutover.
+ */
+export function itaScopes(now: Date, requested: string = ITA_SCOPE): string[] {
   const israelDay = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
-  return israelDay < ITA_SCOPE_CUTOVER ? [ITA_SCOPE, ITA_LEGACY_SCOPE] : [ITA_SCOPE];
+  const list = israelDay < ITA_SCOPE_CUTOVER ? [requested, ITA_SCOPE, ITA_LEGACY_SCOPE] : [requested, ITA_SCOPE];
+  return [...new Set(list)];
 }
 
 /** ITA web app for manual allocation requests (fallback) and the hearing request portal. */
@@ -96,6 +116,8 @@ export interface ItaEnv extends Env {
   ITA_CLIENT_ID_PRODUCTION?: string;
   ITA_CLIENT_SECRET_PRODUCTION?: string;
   ITA_TOKEN_KEY?: string;
+  /** Optional. "invoices_scope scope" asks for the general scope too, for the unified file upload. */
+  ITA_SCOPES?: string;
   /** The business VAT number (עוסק מורשה). Defaults to OWNER_TAX_ID, which is the same number for an individual. */
   ITA_VAT_NUMBER?: string;
   SLACK_WEBHOOK_URL?: string;

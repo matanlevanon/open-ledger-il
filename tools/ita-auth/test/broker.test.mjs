@@ -58,3 +58,7 @@ await tokScope(null); ok(lastItaBody.get('scope') === 'invoices_scope', 'no scop
 await tokScope('invoices_scope'); ok(lastItaBody.get('scope') === 'invoices_scope', 'invoices_scope passes through');
 await tokScope('scope'); ok(lastItaBody.get('scope') === (scopesFor(new Date()).includes('scope') ? 'scope' : 'invoices_scope'), 'the old scope passes only before 01.11.2026');
 await tokScope('anything'); ok(lastItaBody.get('scope') === 'invoices_scope', 'an unknown scope becomes invoices_scope');
+// The unified file upload needs the general scope too. An install asks for it with ITA_SCOPES.
+await tokScope('invoices_scope%20scope'); ok(lastItaBody.get('scope') === 'invoices_scope scope', 'invoices_scope plus scope passes through');
+r = await call(`/authorize?client=${a.name}&environment=production&state=s&scope=invoices_scope%20scope`); ok(new URL(r.headers.get('Location')).searchParams.get('scope') === 'invoices_scope scope', 'authorize asks for both scopes when the install does');
+r = await call(`/authorize?client=${a.name}&environment=production&state=s&scope=admin`); ok(new URL(r.headers.get('Location')).searchParams.get('scope') === 'invoices_scope', 'authorize ignores any other scope');

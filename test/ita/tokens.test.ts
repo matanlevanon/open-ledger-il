@@ -135,6 +135,26 @@ describe('ITA OAuth2 tokens', () => {
     expect(mock.tokenScopes.filter((s) => s === 'scope')).toHaveLength(0);
   });
 
+  it('ITA_SCOPES adds the general scope for the unified file upload, and a refresh falls back', async () => {
+    const both = 'invoices_scope scope';
+    const { service, mock, clock } = await setupIta({ envOverrides: { ITA_SCOPES: both }, connect: false });
+    mock.scopes = ['invoices_scope', both];
+    const url = new URL(service.tokens.authorizeUrl('s', 'https://x/cb'));
+    expect(url.searchParams.get('scope')).toBe(both);
+    await service.tokens.exchangeCode(mock.issueCode('tsandbox'), 'https://ledger.test/api/ita/callback', null);
+    expect(mock.tokenScopes.at(-1)).toBe(both);
+    // A refresh token issued under invoices_scope alone can't widen: the refresh falls back to it.
+    mock.scopes = ['invoices_scope'];
+    clock.advance(11 * MIN);
+    expect(await service.tokens.accessToken()).toMatch(/^at-/);
+    expect(mock.tokenScopes.slice(-2)).toEqual([both, 'invoices_scope']);
+  });
+
+  it('ITA_SCOPES with anything else keeps invoices_scope alone', async () => {
+    const { service } = await setupIta({ envOverrides: { ITA_SCOPES: 'scope admin' }, connect: false });
+    expect(new URL(service.tokens.authorizeUrl('s', 'https://x/cb')).searchParams.get('scope')).toBe('invoices_scope');
+  });
+
   it('a token that no longer decrypts asks for a new login', async () => {
     const { mock, deps, env: ienv } = await setupIta();
     const otherKey = btoa(String.fromCharCode(...Array.from({ length: 32 }, () => 7)));

@@ -59,6 +59,9 @@ const LEGACY_SCOPE = 'scope';
 const SCOPE_CUTOVER = '2026-11-01';
 const israelDay = (now) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
 export const scopesFor = (now) => (israelDay(now) < SCOPE_CUTOVER ? [SCOPE, LEGACY_SCOPE] : [SCOPE]);
+// invoices_scope plus the general scope, for the unified file upload. An install asks for it with
+// ITA_SCOPES. invoices_scope alone covers the invoice services only.
+export const SCOPE_WITH_GENERAL = `${SCOPE} ${LEGACY_SCOPE}`;
 const STATE_TTL_MS = 15 * 60_000;
 const RELAY_HOSTS = { 'openapi.taxes.gov.il': 'openapi', 'ita-api.taxes.gov.il': 'ita-api' };
 
@@ -166,10 +169,11 @@ async function authorize(env, url) {
   const target = new URL(ITA[environment].authorize);
   target.searchParams.set('response_type', 'code');
   target.searchParams.set('client_id', creds.id);
-  target.searchParams.set('scope', SCOPE);
+  const scope = url.searchParams.get('scope') === SCOPE_WITH_GENERAL ? SCOPE_WITH_GENERAL : SCOPE;
+  target.searchParams.set('scope', scope);
   target.searchParams.set('redirect_uri', `${publicUrl(env, url)}/callback`);
   target.searchParams.set('state', signed);
-  console.log(`authorize client=${client.name} env=${environment}`);
+  console.log(`authorize client=${client.name} env=${environment} scope=${scope}`);
   return Response.redirect(target.toString(), 302);
 }
 
@@ -202,7 +206,7 @@ async function token(env, request) {
   const grant = form.get('grant_type') ?? '';
   // The install's scope when it is one the ITA takes today, else the new one. An older install still
   // sends "scope": it keeps working until 01.11.2026 and gets the new scope from then on.
-  const allowed = scopesFor(new Date());
+  const allowed = [...scopesFor(new Date()), SCOPE_WITH_GENERAL];
   const scope = allowed.includes(form.get('scope') ?? '') ? form.get('scope') : SCOPE;
   let body;
   if (grant === 'authorization_code' && form.get('code')) {
