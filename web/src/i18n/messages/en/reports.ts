@@ -30,6 +30,10 @@ export const reports = {
   'unified.send.status.rejected': 'Rejected',
   'unified.send.status.failed': 'Not sent',
   'unified.send.error': 'The send failed.',
+  'unified.send.err.reconnect': 'Connect to the Tax Authority again on the Tax Authority page, then send.',
+  'unified.send.err.unavailable': 'The Tax Authority is not answering. Try again in a few minutes.',
+  'unified.send.err.manual': 'This Ledger has no Tax Authority connection.',
+  'unified.send.err.demo': 'The demo does not send files to the Tax Authority.',
   'reports.title': 'Reports',
 
   // Tabs

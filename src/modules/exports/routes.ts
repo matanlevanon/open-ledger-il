@@ -111,7 +111,7 @@ export function exportsRoutes(): Hono<AppEnv> {
   const io = { fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, init), now: () => new Date() };
 
   const transmitError = (c: Context<AppEnv>, err: unknown) => {
-    if (err instanceof ItaReconnectError) return c.json({ error: 'reconnect', message: 'Connect to the Tax Authority again in Settings, then send.' }, 409);
+    if (err instanceof ItaReconnectError) return c.json({ error: 'reconnect', message: 'Connect to the Tax Authority again on the Tax Authority page, then send.' }, 409);
     if (err instanceof ItaUnavailableError) return c.json({ error: 'unavailable', message: err.message }, 503);
     if (err instanceof TransmitError) return c.json({ error: 'refused', message: err.message, code: err.code }, 422);
     throw err;
@@ -124,6 +124,12 @@ export function exportsRoutes(): Hono<AppEnv> {
     const { from, to } = dateRange(c);
     const businessId = businessIdOf(c);
     const tokens = new ItaTokenStore(env, io, businessId);
+    // No Tax Authority login, or one that needs a new sign-in: say so before anything is recorded.
+    try {
+      await tokens.accessToken();
+    } catch (err) {
+      return transmitError(c, err);
+    }
     const caseNumber = await buyerVatNumber(env, businessId);
     const result = await buildUnifiedFile(c.env, from, to, { drive: drive(c), businessId });
     await logRun(c, 'unified_file', result.report, { mainId: result.summary.mainId, path: result.summary.path, transmit: true });
@@ -157,7 +163,8 @@ export function exportsRoutes(): Hono<AppEnv> {
       );
       await audit(c, 'exports.unified_file.transmit', 'unified_file_transmission', String(lastRowId), { from, to, environment: tokens.environment, test });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'The send failed.';
+      // A short code the screen translates, or the Tax Authority's own words for a refusal.
+      const message = err instanceof ItaReconnectError ? 'reconnect' : err instanceof ItaUnavailableError ? 'unavailable' : err instanceof Error ? err.message : 'The send failed.';
       await run(c.env.DB, "UPDATE unified_file_transmissions SET error = ?, ini_status = 'Failed', bkm_status = 'Failed' WHERE id = ?", message, lastRowId);
       return transmitError(c, err);
     }

@@ -29,7 +29,7 @@ async function call(url: string, method = 'GET'): Promise<Record<string, unknown
   if (!res.ok) {
     const err = body?.error;
     const message = typeof body?.message === 'string' ? body.message : typeof err === 'object' && err && 'message' in err ? String((err as { message: unknown }).message) : null;
-    throw new Error(message ?? `HTTP ${res.status}`);
+    throw Object.assign(new Error(message ?? `HTTP ${res.status}`), { code: typeof err === 'string' ? err : null });
   }
   return body ?? {};
 }
@@ -39,6 +39,16 @@ const STATUS_KEYS: Record<string, 'unified.send.status.uploaded' | 'unified.send
   Approved: 'unified.send.status.approved',
   Rejected: 'unified.send.status.rejected',
   Failed: 'unified.send.status.failed',
+};
+
+type ErrorKey = 'unified.send.err.reconnect' | 'unified.send.err.unavailable' | 'unified.send.err.manual' | 'unified.send.err.demo';
+
+/** The Ledger's own refusals, by code. The Tax Authority's refusals show in its own words. */
+const ERROR_KEYS: Record<string, ErrorKey> = {
+  reconnect: 'unified.send.err.reconnect',
+  unavailable: 'unified.send.err.unavailable',
+  manual: 'unified.send.err.manual',
+  demo: 'unified.send.err.demo',
 };
 
 export function TransmitCard({ from, to, drive }: { from: string; to: string; drive: string }) {
@@ -65,7 +75,8 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
     try {
       await call(url, 'POST');
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('unified.send.error'));
+      const code = (e as { code?: string | null })?.code;
+      setError(code && ERROR_KEYS[code] ? t(ERROR_KEYS[code]!) : e instanceof Error ? e.message : t('unified.send.error'));
     } finally {
       await load();
       setBusy(false);
@@ -112,7 +123,7 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
                 <td className="px-2 py-1">{status(r.ini_status)}</td>
                 <td className="px-2 py-1">
                   {status(r.bkm_status)}
-                  {(r.status_description || r.error) && <span className="block text-xs text-danger">{r.status_description ?? r.error}</span>}
+                  {(r.status_description || r.error) && <span className="block text-xs text-danger">{r.status_description ?? (r.error && ERROR_KEYS[r.error] ? t(ERROR_KEYS[r.error]!) : r.error)}</span>}
                 </td>
                 <td className="px-2 py-1 text-end">
                   {r.ini_file_id && (

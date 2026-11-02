@@ -28,6 +28,10 @@ export const reports: Record<keyof typeof en, string> = {
   'unified.send.status.rejected': 'נדחה',
   'unified.send.status.failed': 'לא שודר',
   'unified.send.error': 'השידור נכשל.',
+  'unified.send.err.reconnect': 'צריך להתחבר שוב לרשות המסים בעמוד רשות המסים, ואז לשדר.',
+  'unified.send.err.unavailable': 'רשות המסים לא עונה. נסו שוב בעוד כמה דקות.',
+  'unified.send.err.manual': 'ללדג\'ר הזה אין חיבור לרשות המסים.',
+  'unified.send.err.demo': 'הדמו לא משדר קבצים לרשות המסים.',
   'reports.title': 'דוחות',
 
   // Tabs
