@@ -76,6 +76,14 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
     void load();
   }, [load]);
 
+  // The sign-in comes back here with ?connected=1 or ?error=<code>. Say what happened, then clean the address.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('error');
+    if (code) setError(t('unified.send.login.failed', { code }));
+    if (code || params.get('connected')) window.history.replaceState(null, '', window.location.pathname);
+  }, [t]);
+
   async function act(url: string) {
     setBusy(true);
     setError(null);

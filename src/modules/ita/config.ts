@@ -48,8 +48,9 @@ export const ITA_FILE_URLS: Record<ItaEnvironment, ItaUrls> = {
   },
   production: {
     authorize: 'https://openapi.taxes.gov.il/shaam/production/dailytoken/oauth2/authorize',
-    // The portal lists only openapi for the production token of UniStructFileUploadLinksApi (3.11.2026).
-    token: 'https://openapi.taxes.gov.il/shaam/production/dailytoken/oauth2/token',
+    // ita-api, as FilesStatusApi lists for the same dailytoken provider. The openapi production token
+    // address times out from the Israeli relay (8.10.2026 and again 3.11.2026, HTTP 502).
+    token: 'https://ita-api.taxes.gov.il/shaam/production/dailytoken/oauth2/token',
     api: 'https://ita-api.taxes.gov.il/shaam/production/',
   },
 };
