@@ -94,6 +94,9 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
 
   return (
     <Card title={t('unified.send.title')}>
+      <p className="mb-2 text-sm text-ink">
+        {t('unified.step.forPeriod', { from: `${from.slice(8, 10)}/${from.slice(5, 7)}/${from.slice(0, 4)}`, to: `${to.slice(8, 10)}/${to.slice(5, 7)}/${to.slice(0, 4)}` })}
+      </p>
       <p className="text-sm text-muted">{t('unified.send.help')}</p>
       <ErrorNote error={error} />
       {login?.available && (

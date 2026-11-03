@@ -126,24 +126,15 @@ export function UnifiedFilePage() {
     <section aria-labelledby="page-title" className="mx-auto flex max-w-4xl flex-col gap-4">
       <PageTitle subtitle={t('unified.subtitle')}>{t('unified.title')}</PageTitle>
 
-      <Card title={t('unified.dialogTitle')}>
+      {/* Three steps: the period both actions use, the local files, the send. */}
+      <Card title={t('unified.step.period')}>
         {biz && (
           <p className="mb-4 text-sm text-ink">
             {t('unified.business')}: <span className="font-semibold">{biz.name || '-'}</span> · <span dir="ltr">{biz.vatNumber}</span>
           </p>
         )}
         {biz && biz.warnings.length > 0 && <ErrorNote error={biz.warnings.join(' ')} />}
-        <div className="grid gap-4 sm:grid-cols-3">
-          <label className="flex flex-col gap-1">
-            <span className={label}>{t('unified.drive')}</span>
-            <select className={input} value={drive} onChange={(e) => setDrive(e.target.value)}>
-              {DRIVES.map((d) => (
-                <option key={d} value={d}>
-                  {d}:
-                </option>
-              ))}
-            </select>
-          </label>
+        <div className="grid gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-1">
             <span className={label}>{t('unified.from')}</span>
             <input type="date" className={input} value={from} onChange={(e) => setFrom(e.target.value)} />
@@ -153,6 +144,21 @@ export function UnifiedFilePage() {
             <input type="date" className={input} value={to} onChange={(e) => setTo(e.target.value)} />
           </label>
         </div>
+        <p className="mt-3 text-sm text-muted">{t('unified.step.periodHelp')}</p>
+      </Card>
+
+      <Card title={t('unified.dialogTitle')}>
+        <p className="mb-3 text-sm text-ink">{t('unified.step.forPeriod', { from: ddmmyyyy(from), to: ddmmyyyy(to) })}</p>
+        <label className="flex max-w-xs flex-col gap-1">
+          <span className={label}>{t('unified.drive')}</span>
+          <select className={input} value={drive} onChange={(e) => setDrive(e.target.value)}>
+            {DRIVES.map((d) => (
+              <option key={d} value={d}>
+                {d}:
+              </option>
+            ))}
+          </select>
+        </label>
         <p className="mt-3 text-sm text-muted">{t('unified.help')}</p>
         <ErrorNote error={error} />
         <div className="mt-4 flex flex-wrap gap-2">
