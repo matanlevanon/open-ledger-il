@@ -34,6 +34,28 @@ export const ITA_URLS: Record<ItaEnvironment, ItaUrls> = {
   },
 };
 
+/**
+ * The unified file services (UniStructFileUploadLinksApi, FilesStatusApi) take a token from a
+ * separate OAuth provider, dailytoken, with their own scopes. The developer portal lists them under
+ * each API's Security section (checked 3.11.2026). A longtimetoken invoice token is refused with
+ * 401 "Cannot pass the security checks", whatever its scope.
+ */
+export const ITA_FILE_URLS: Record<ItaEnvironment, ItaUrls> = {
+  sandbox: {
+    authorize: 'https://openapi.taxes.gov.il/shaam/tsandbox/dailytoken/oauth2/authorize',
+    token: 'https://ita-api.taxes.gov.il/shaam/tsandbox/dailytoken/oauth2/token',
+    api: 'https://ita-api.taxes.gov.il/shaam/tsandbox/',
+  },
+  production: {
+    authorize: 'https://openapi.taxes.gov.il/shaam/production/dailytoken/oauth2/authorize',
+    token: 'https://ita-api.taxes.gov.il/shaam/production/dailytoken/oauth2/token',
+    api: 'https://ita-api.taxes.gov.il/shaam/production/',
+  },
+};
+
+/** Both unified file services in one sign-in: the upload links and the file status. */
+export const ITA_FILE_SCOPE = 'UniStructFileUploadLinks_scope FilesStatus_scope';
+
 /** API paths, appended to `ITA_URLS[env].api`. */
 export const ITA_PATHS = {
   approval: 'Invoices/v2/Approval',

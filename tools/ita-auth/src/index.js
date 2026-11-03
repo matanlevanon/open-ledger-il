@@ -52,6 +52,22 @@ const ITA = {
     token: 'https://ita-api.taxes.gov.il/shaam/production/longtimetoken/oauth2/token',
   },
 };
+// The unified file services take a token from a separate provider, dailytoken, with their own
+// scopes (developer portal, Security section of UniStructFileUploadLinksApi and FilesStatusApi).
+// An install asks for it with provider=dailytoken. Any other value means the invoice login.
+const DAILY = {
+  sandbox: {
+    authorize: 'https://openapi.taxes.gov.il/shaam/tsandbox/dailytoken/oauth2/authorize',
+    token: 'https://ita-api.taxes.gov.il/shaam/tsandbox/dailytoken/oauth2/token',
+  },
+  production: {
+    authorize: 'https://openapi.taxes.gov.il/shaam/production/dailytoken/oauth2/authorize',
+    token: 'https://ita-api.taxes.gov.il/shaam/production/dailytoken/oauth2/token',
+  },
+};
+export const FILE_SCOPE = 'UniStructFileUploadLinks_scope FilesStatus_scope';
+export const loginFor = (provider) => (provider === 'dailytoken' ? { urls: DAILY, scope: FILE_SCOPE, name: 'dailytoken' } : { urls: ITA, scope: null, name: 'longtimetoken' });
+
 // SHAAM's notice of 21.10.2026: from 01.11.2026 the invoice services take invoices_scope. Until then
 // a refresh refused with the new scope (400) is tried once more with the old literal "scope".
 const SCOPE = 'invoices_scope';
@@ -163,13 +179,14 @@ async function authorize(env, url) {
   if (!creds) return fail(400, 'Unknown environment, or no ITA app set up for it.');
   if (!state || state.length > 200) return fail(400, 'Missing or oversized state.');
   const signed = await signState(env, { c: client.name, e: environment, s: state, x: Date.now() + STATE_TTL_MS });
-  const target = new URL(ITA[environment].authorize);
+  const login = loginFor(url.searchParams.get('provider'));
+  const target = new URL(login.urls[environment].authorize);
   target.searchParams.set('response_type', 'code');
   target.searchParams.set('client_id', creds.id);
-  target.searchParams.set('scope', SCOPE);
+  target.searchParams.set('scope', login.scope ?? SCOPE);
   target.searchParams.set('redirect_uri', `${publicUrl(env, url)}/callback`);
   target.searchParams.set('state', signed);
-  console.log(`authorize client=${client.name} env=${environment}`);
+  console.log(`authorize client=${client.name} env=${environment} login=${login.name}`);
   return Response.redirect(target.toString(), 302);
 }
 
@@ -202,8 +219,9 @@ async function token(env, request) {
   const grant = form.get('grant_type') ?? '';
   // The install's scope when it is one the ITA takes today, else the new one. An older install still
   // sends "scope": it keeps working until 01.11.2026 and gets the new scope from then on.
+  const login = loginFor(form.get('provider'));
   const allowed = scopesFor(new Date());
-  const scope = allowed.includes(form.get('scope') ?? '') ? form.get('scope') : SCOPE;
+  const scope = login.scope ?? (allowed.includes(form.get('scope') ?? '') ? form.get('scope') : SCOPE);
   let body;
   if (grant === 'authorization_code' && form.get('code')) {
     body = { grant_type: grant, code: form.get('code'), redirect_uri: `${publicUrl(env, request.url)}/callback`, scope };
@@ -217,7 +235,7 @@ async function token(env, request) {
   const started = Date.now();
   let res;
   try {
-    res = await itaFetch(env)(ITA[environment].token, {
+    res = await itaFetch(env)(login.urls[environment].token, {
       method: 'POST',
       headers: {
         Authorization: `Basic ${btoa(`${creds.id}:${creds.secret}`)}`,
@@ -232,7 +250,7 @@ async function token(env, request) {
     return fail(502, 'The ITA token address did not answer.');
   }
   const text = await res.text();
-  console.log(`token client=${client.name} env=${environment} grant=${grant} scope=${scope} ${res.status} ${Date.now() - started}ms`);
+  console.log(`token client=${client.name} env=${environment} login=${login.name} grant=${grant} scope=${scope} ${res.status} ${Date.now() - started}ms`);
   return new Response(text, {
     status: res.status,
     headers: { 'Content-Type': res.headers.get('Content-Type') ?? 'application/json', 'Cache-Control': 'no-store' },

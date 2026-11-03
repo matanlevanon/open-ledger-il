@@ -2,7 +2,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { createHash, generateKeyPairSync, sign } from 'node:crypto';
-import broker, { scopesFor } from '../src/index.js';
+import broker, { FILE_SCOPE, scopesFor } from '../src/index.js';
 const sq = new DatabaseSync(':memory:'); for (const f of ['0001_clients.sql', '0002_licences.sql']) sq.exec(readFileSync(new URL(`../migrations/${f}`, import.meta.url), 'utf8'));
 const stmt = (sql, args = []) => ({
   bind: (...a) => stmt(sql, a),
@@ -17,7 +17,8 @@ const b64u = (b) => Buffer.from(b).toString('base64url');
 const jwt = (email, aud = 'AUD') => { const h = b64u(JSON.stringify({ alg: 'RS256', kid: 'k1' })); const p = b64u(JSON.stringify({ aud: [aud], email, exp: Date.now() / 1000 + 600 })); return `${h}.${p}.${b64u(sign('sha256', Buffer.from(`${h}.${p}`), privateKey))}`; };
 let itaCalls = 0;
 let lastItaBody = null;
-globalThis.fetch = async (u, init) => { u = String(u); if (u.endsWith('/cdn-cgi/access/certs')) return new Response(JSON.stringify({ keys: [jwk] })); itaCalls++; lastItaBody = new URLSearchParams(String(init?.body ?? '')); return new Response('{"access_token":"x"}', { status: 200, headers: { 'Content-Type': 'application/json' } }); };
+let lastItaUrl = null;
+globalThis.fetch = async (u, init) => { u = String(u); if (u.endsWith('/cdn-cgi/access/certs')) return new Response(JSON.stringify({ keys: [jwk] })); itaCalls++; lastItaUrl = u; lastItaBody = new URLSearchParams(String(init?.body ?? '')); return new Response('{"access_token":"x"}', { status: 200, headers: { 'Content-Type': 'application/json' } }); };
 const env = { DB, PUBLIC_URL: 'https://ita-auth.example.com', STATE_SECRET: 'x'.repeat(40), REGISTER_SECRET: 's'.repeat(44), ACCESS_TEAM_DOMAIN: 'https://team.cloudflareaccess.com', ACCESS_AUD: 'AUD', ADMIN_EMAILS: 'boss@example.com', ITA_CLIENT_ID_PRODUCTION: 'id', ITA_CLIENT_SECRET_PRODUCTION: 'sec' };
 const call = (path, init = {}) => broker.fetch(new Request(`https://ita-auth.example.com${path}`, init), env);
 const ok = (c, m) => { console.log(`${c ? 'PASS' : 'FAIL'} ${m}`); if (!c) process.exitCode = 1; };
@@ -58,3 +59,8 @@ await tokScope(null); ok(lastItaBody.get('scope') === 'invoices_scope', 'no scop
 await tokScope('invoices_scope'); ok(lastItaBody.get('scope') === 'invoices_scope', 'invoices_scope passes through');
 await tokScope('scope'); ok(lastItaBody.get('scope') === (scopesFor(new Date()).includes('scope') ? 'scope' : 'invoices_scope'), 'the old scope passes only before 01.11.2026');
 await tokScope('anything'); ok(lastItaBody.get('scope') === 'invoices_scope', 'an unknown scope becomes invoices_scope');
+// R47: the unified file services sign in through dailytoken, with their own scopes.
+r = await call(`/authorize?client=${a.name}&environment=production&state=s&provider=dailytoken`); { const loc = new URL(r.headers.get('Location')); ok(loc.pathname === '/shaam/production/dailytoken/oauth2/authorize' && loc.searchParams.get('scope') === FILE_SCOPE, 'authorize with provider=dailytoken goes to dailytoken with the file scopes'); }
+r = await call(`/authorize?client=${a.name}&environment=production&state=s&provider=other`); ok(new URL(r.headers.get('Location')).pathname.includes('/longtimetoken/'), 'any other provider keeps the invoice login');
+await call('/token', { method: 'POST', headers: { 'X-Ita-Broker-Client': a.name, 'X-Ita-Broker-Key': a2.key }, body: 'grant_type=refresh_token&refresh_token=r&environment=production&provider=dailytoken&scope=invoices_scope' }); ok(lastItaUrl.endsWith('/shaam/production/dailytoken/oauth2/token') && lastItaBody.get('scope') === FILE_SCOPE, 'token with provider=dailytoken goes to dailytoken with the file scopes, whatever scope the install sends');
+await tokScope('invoices_scope'); ok(lastItaUrl.endsWith('/longtimetoken/oauth2/token'), 'the invoice token stays on longtimetoken');

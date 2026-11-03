@@ -56,6 +56,8 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
   const [rows, setRows] = useState<Transmission[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // The separate Tax Authority login the unified file services take (dailytoken).
+  const [login, setLogin] = useState<{ available: boolean; connected?: boolean; until?: string | null } | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -63,6 +65,11 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
       setRows((body.transmissions as Transmission[]) ?? []);
     } catch {
       setRows([]);
+    }
+    try {
+      setLogin((await call('/api/exports/unified-file/connection')) as { available: boolean; connected?: boolean; until?: string | null });
+    } catch {
+      setLogin(null);
     }
   }, []);
   useEffect(() => {
@@ -89,6 +96,18 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
     <Card title={t('unified.send.title')}>
       <p className="text-sm text-muted">{t('unified.send.help')}</p>
       <ErrorNote error={error} />
+      {login?.available && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+          <span className={login.connected ? 'text-ink' : 'text-muted'}>
+            {login.connected && login.until
+              ? t('unified.send.login.until', { until: new Date(login.until).toLocaleString('he-IL', { dateStyle: 'short', timeStyle: 'short' }) })
+              : t('unified.send.login.none')}
+          </span>
+          <a className={btnSecondary} href="/api/ita/connect?purpose=unified_file">
+            {login.connected ? t('unified.send.login.again') : t('unified.send.login.button')}
+          </a>
+        </div>
+      )}
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           type="button"

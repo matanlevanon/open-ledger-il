@@ -1,6 +1,6 @@
 import { first, run } from '../../core/db';
 import { ConfigError, ValidationError } from '../../core/errors';
-import { type ItaEnv, type ItaEnvironment, ITA_SCOPE, ITA_URLS, itaBroker, itaScopes, itaCredentials, itaEnvironment, relayedFetch } from './config';
+import { type ItaEnv, type ItaEnvironment, type ItaUrls, ITA_FILE_SCOPE, ITA_FILE_URLS, ITA_SCOPE, ITA_URLS, itaBroker, itaScopes, itaCredentials, itaEnvironment, relayedFetch } from './config';
 import { decryptToken, encryptToken, importTokenKey } from './crypto';
 import { ItaReconnectError, ItaUnavailableError } from './errors';
 
@@ -58,20 +58,37 @@ function addMs(date: Date, ms: number): string {
   return new Date(date.getTime() + ms).toISOString();
 }
 
+/**
+ * Which ITA login: the invoice services (longtimetoken, invoices_scope), or the unified file
+ * services (dailytoken, their own scopes). Each has its own table, addresses and scope.
+ */
+export type ItaLogin = 'invoices' | 'unified_file';
+
 export class ItaTokenStore {
   readonly environment: ItaEnvironment;
+  private readonly table: 'ita_tokens' | 'ita_file_tokens';
+  private readonly urls: ItaUrls;
 
   constructor(
     private readonly env: ItaEnv,
     private readonly io: ClockAndFetch,
     /** R24 B6: each business keeps its own ITA login. Business 1 is the login that existed before. */
     readonly businessId: number = 1,
+    readonly login: ItaLogin = 'invoices',
   ) {
     this.environment = itaEnvironment(env);
+    this.table = login === 'unified_file' ? 'ita_file_tokens' : 'ita_tokens';
+    this.urls = (login === 'unified_file' ? ITA_FILE_URLS : ITA_URLS)[this.environment];
+  }
+
+  /** The scope this login asks for. */
+  private get scope(): string {
+    return this.login === 'unified_file' ? ITA_FILE_SCOPE : ITA_SCOPE;
   }
 
   /** Encryption context. Business 1 keeps the one its stored tokens were sealed with. */
   private aad(kind: 'access' | 'refresh'): string {
+    if (this.login === 'unified_file') return `${this.environment}:file:b${this.businessId}:${kind}`;
     return this.businessId === 1 ? `${this.environment}:${kind}` : `${this.environment}:b${this.businessId}:${kind}`;
   }
 
@@ -81,7 +98,7 @@ export class ItaTokenStore {
 
   /** The row for the current environment only. */
   private row(): Promise<TokenRow | null> {
-    return first<TokenRow>(this.db, 'SELECT * FROM ita_tokens WHERE environment = ? AND business_id = ?', this.environment, this.businessId);
+    return first<TokenRow>(this.db, `SELECT * FROM ${this.table} WHERE environment = ? AND business_id = ?`, this.environment, this.businessId);
   }
 
   private key() {
@@ -110,13 +127,14 @@ export class ItaTokenStore {
       url.searchParams.set('client', broker.client);
       url.searchParams.set('environment', this.environment);
       url.searchParams.set('state', state);
+      if (this.login === 'unified_file') url.searchParams.set('provider', 'dailytoken');
       return url.toString();
     }
     const { clientId } = itaCredentials(this.env);
-    const url = new URL(ITA_URLS[this.environment].authorize);
+    const url = new URL(this.urls.authorize);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('client_id', clientId);
-    url.searchParams.set('scope', ITA_SCOPE);
+    url.searchParams.set('scope', this.scope);
     url.searchParams.set('redirect_uri', redirectUri);
     url.searchParams.set('state', state);
     return url.toString();
@@ -137,11 +155,11 @@ export class ItaTokenStore {
             'Content-Type': 'application/x-www-form-urlencoded',
             Accept: 'application/json',
           },
-          body: new URLSearchParams({ ...body, environment: this.environment }).toString(),
+          body: new URLSearchParams({ ...body, environment: this.environment, ...(this.login === 'unified_file' ? { provider: 'dailytoken' } : {}) }).toString(),
         });
       } else {
         const { clientId, clientSecret } = itaCredentials(this.env);
-        res = await relayedFetch(this.env, this.io.fetch)(ITA_URLS[this.environment].token, {
+        res = await relayedFetch(this.env, this.io.fetch)(this.urls.token, {
           method: 'POST',
           headers: {
             Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
@@ -179,16 +197,18 @@ export class ItaTokenStore {
     return parts.length ? `: ${parts.join(' / ')}` : '';
   }
 
-  private static parse(json: unknown): TokenResponse | null {
+  /** `refreshOptional`: the unified file login (dailytoken) may come without a refresh token. */
+  private static parse(json: unknown, refreshOptional = false): TokenResponse | null {
     if (!json || typeof json !== 'object') return null;
     const o = json as Record<string, unknown>;
-    if (typeof o.access_token !== 'string' || typeof o.refresh_token !== 'string') return null;
+    if (typeof o.access_token !== 'string') return null;
+    if (typeof o.refresh_token !== 'string' && !(refreshOptional && o.refresh_token === undefined)) return null;
     const expiresIn = Number(o.expires_in);
     const refreshIn = o.refresh_token_expires_in === undefined ? undefined : Number(o.refresh_token_expires_in);
     if (!Number.isFinite(expiresIn) || expiresIn <= 0) return null;
     return {
       access_token: o.access_token,
-      refresh_token: o.refresh_token,
+      refresh_token: typeof o.refresh_token === 'string' ? o.refresh_token : '',
       expires_in: expiresIn,
       refresh_token_expires_in: refreshIn !== undefined && Number.isFinite(refreshIn) ? refreshIn : undefined,
     };
@@ -201,10 +221,10 @@ export class ItaTokenStore {
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUri,
-      scope: ITA_SCOPE,
+      scope: this.scope,
     });
     if (status >= 500) throw new ItaUnavailableError(`The ITA login service is not answering (HTTP ${status}${ItaTokenStore.errorText(json)}).`);
-    const tokens = ItaTokenStore.parse(json);
+    const tokens = ItaTokenStore.parse(json, this.login === 'unified_file');
     if (status !== 200 || !tokens) {
       const why = status === 200 ? ': the reply had no usable tokens' : ItaTokenStore.errorText(json);
       throw new ItaReconnectError(`The ITA refused the login (HTTP ${status}${why}). Connect again.`);
@@ -212,19 +232,20 @@ export class ItaTokenStore {
 
     const now = this.io.now();
     const key = await this.key();
-    const refreshMs = (tokens.refresh_token_expires_in ?? 90 * 86_400) * 1000;
-    const refreshEnc = await encryptToken(key, tokens.refresh_token, this.aad('refresh'));
+    // No refresh token (the unified file login may send none): the login lasts as long as the access token.
+    const refreshMs = tokens.refresh_token ? (tokens.refresh_token_expires_in ?? 90 * 86_400) * 1000 : tokens.expires_in * 1000;
+    const refreshEnc = tokens.refresh_token ? await encryptToken(key, tokens.refresh_token, this.aad('refresh')) : '';
     const accessEnc = await encryptToken(key, tokens.access_token, this.aad('access'));
     await run(
       this.db,
-      `INSERT INTO ita_tokens (environment, refresh_token_enc, refresh_expires_at, access_token_enc, access_expires_at,
+      `INSERT INTO ${this.table} (environment, refresh_token_enc, refresh_expires_at, access_token_enc, access_expires_at,
          login_at, relogin_due_at, last_refresh_at, rotation, status, status_reason, reminder_sent_at, connected_by, updated_at, business_id)
        VALUES (?, ?, ?, ?, ?, ?, ?, NULL, 0, 'active', NULL, NULL, ?, ?, ?)
        ON CONFLICT (business_id, environment) DO UPDATE SET
          refresh_token_enc = excluded.refresh_token_enc, refresh_expires_at = excluded.refresh_expires_at,
          access_token_enc = excluded.access_token_enc, access_expires_at = excluded.access_expires_at,
          login_at = excluded.login_at, relogin_due_at = excluded.relogin_due_at, last_refresh_at = NULL,
-         rotation = ita_tokens.rotation + 1, status = 'active', status_reason = NULL, reminder_sent_at = NULL,
+         rotation = ${this.table}.rotation + 1, status = 'active', status_reason = NULL, reminder_sent_at = NULL,
          connected_by = excluded.connected_by, updated_at = excluded.updated_at`,
       this.environment,
       refreshEnc,
@@ -264,6 +285,10 @@ export class ItaTokenStore {
       await this.markReconnect('The ITA login expired after 90 days.');
       throw new ItaReconnectError('The ITA login expired. Connect again.');
     }
+    if (!row.refresh_token_enc) {
+      await this.markReconnect('The Tax Authority login for sending the unified file has ended. Sign in again to send.');
+      throw new ItaReconnectError('Sign in to the Tax Authority again to send.');
+    }
     const key = await this.key();
     const refreshToken = await this.open(key, row.refresh_token_enc, 'refresh');
     // The ITA developer guide sends client_id and client_secret in the refresh body as well as
@@ -275,7 +300,7 @@ export class ItaTokenStore {
     let status = 0;
     let json: unknown = null;
     let used = ITA_SCOPE;
-    for (const scope of itaScopes(now)) {
+    for (const scope of this.login === 'unified_file' ? [this.scope] : itaScopes(now)) {
       used = scope;
       ({ status, json } = await this.postToken({ grant_type: 'refresh_token', refresh_token: refreshToken, scope, ...credentials }));
       if (status !== 400) break;
@@ -293,7 +318,7 @@ export class ItaTokenStore {
       );
     }
     if (status >= 500) throw new ItaUnavailableError('The ITA login service is not answering.');
-    const tokens = ItaTokenStore.parse(json);
+    const tokens = ItaTokenStore.parse(json, this.login === 'unified_file');
     if (status !== 200 || !tokens) {
       const latest = await this.row();
       if (latest && latest.rotation !== row.rotation && latest.status === 'active' && latest.access_token_enc) {
@@ -308,10 +333,10 @@ export class ItaTokenStore {
       : row.refresh_expires_at;
     await run(
       this.db,
-      `UPDATE ita_tokens SET refresh_token_enc = ?, refresh_expires_at = ?, access_token_enc = ?, access_expires_at = ?,
+      `UPDATE ${this.table} SET refresh_token_enc = ?, refresh_expires_at = ?, access_token_enc = ?, access_expires_at = ?,
          last_refresh_at = ?, rotation = rotation + 1, updated_at = ?
        WHERE environment = ? AND business_id = ? AND rotation = ?`,
-      await encryptToken(key, tokens.refresh_token, this.aad('refresh')),
+      tokens.refresh_token ? await encryptToken(key, tokens.refresh_token, this.aad('refresh')) : '',
       // The re-login date stays tied to the interactive login.
       refreshExpires < row.relogin_due_at ? refreshExpires : row.relogin_due_at,
       await encryptToken(key, tokens.access_token, this.aad('access')),
@@ -328,7 +353,7 @@ export class ItaTokenStore {
   async markReconnect(reason: string): Promise<void> {
     await run(
       this.db,
-      `UPDATE ita_tokens SET status = 'reconnect_required', status_reason = ?, access_token_enc = NULL,
+      `UPDATE ${this.table} SET status = 'reconnect_required', status_reason = ?, access_token_enc = NULL,
          access_expires_at = NULL, updated_at = ? WHERE environment = ? AND business_id = ?`,
       reason,
       this.io.now().toISOString(),
@@ -340,7 +365,7 @@ export class ItaTokenStore {
   async markReminderSent(): Promise<void> {
     await run(
       this.db,
-      'UPDATE ita_tokens SET reminder_sent_at = ?, updated_at = ? WHERE environment = ? AND business_id = ?',
+      `UPDATE ${this.table} SET reminder_sent_at = ?, updated_at = ? WHERE environment = ? AND business_id = ?`,
       this.io.now().toISOString(),
       this.io.now().toISOString(),
       this.environment,

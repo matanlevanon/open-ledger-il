@@ -14,9 +14,17 @@
   listed on the Unified file page. The Tax Authority requires this API from 1.1.2027.
 - Sandbox: the Tax Authority's test environment accepts only a small PDF, so the Ledger uploads a
   one-page test PDF in place of each file and marks the row as a test.
+- Sending has its own Tax Authority sign-in. The unified file services take a token from a separate
+  provider (dailytoken) with their own scopes, UniStructFileUploadLinks_scope and FilesStatus_scope,
+  as the developer portal lists them. The card shows whether you are signed in for sending and until
+  when, with a Sign in to send button. The invoice sign-in is untouched. The login broker passes
+  `provider=dailytoken` on to the right addresses.
+- A send without that sign-in stops before it records anything. The card's own errors show in the
+  screen's language.
 
 ### Database
 - Migration 4400: `unified_file_transmissions`.
+- Migration 4401: `ita_file_tokens`, and `ita_oauth_states.purpose`.
 
 ## 1.8.0 (2026-11-01)
 

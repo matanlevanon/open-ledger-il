@@ -96,6 +96,10 @@ export class MockIta {
   scopes = ['invoices_scope'];
   /** The scope of every token call, in order. */
   readonly tokenScopes: string[] = [];
+  /** The token address of each token call: longtimetoken (invoices) or dailytoken (unified file). */
+  readonly tokenPaths: string[] = [];
+  /** When set, token replies carry no refresh token (the unified file login may send none). */
+  noRefresh = false;
   private forced: { status: number; body?: unknown }[] = [];
   private codes = new Map<string, Env>();
   private refresh = new Map<string, { env: Env; expires: number }>();
@@ -151,7 +155,10 @@ export class MockIta {
     const env = match[1] as Env;
     const path = match[2]!;
     const body = typeof init?.body === 'string' ? init.body : '';
-    if (path === 'longtimetoken/oauth2/token') return this.token(env, init?.headers, body);
+    if (path === 'longtimetoken/oauth2/token' || path === 'dailytoken/oauth2/token') {
+      this.tokenPaths.push(path);
+      return this.token(env, init?.headers, body);
+    }
 
     const res = this.api(env, path, init?.headers, body);
     this.calls.push({ path, env, body: body ? JSON.parse(body) : null, status: res.status });
@@ -196,6 +203,7 @@ export class MockIta {
     const refreshUntil = refreshExpires ?? this.now() + 7_776_000_000;
     this.access.set(access, { env, expires: this.now() + 601_000 });
     this.refresh.set(refresh, { env, expires: refreshUntil });
+    if (this.noRefresh) return { token_type: 'Bearer', access_token: access, expires_in: 601 };
     return {
       token_type: 'Bearer',
       access_token: access,

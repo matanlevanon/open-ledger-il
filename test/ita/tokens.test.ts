@@ -1,7 +1,8 @@
 import { env } from 'cloudflare:workers';
 import { describe, expect, it } from 'vitest';
 import { first } from '../../src/core/db';
-import { ITA_PATHS } from '../../src/modules/ita/config';
+import { ITA_FILE_SCOPE, ITA_PATHS } from '../../src/modules/ita/config';
+import { ItaTokenStore } from '../../src/modules/ita/tokens';
 import { ItaReconnectError } from '../../src/modules/ita/errors';
 import { setupIta } from './helpers';
 
@@ -133,6 +134,39 @@ describe('ITA OAuth2 tokens', () => {
     await expect(service.tokens.accessToken()).rejects.toBeInstanceOf(ItaReconnectError);
     expect(mock.tokenScopes.at(-1)).toBe('invoices_scope');
     expect(mock.tokenScopes.filter((s) => s === 'scope')).toHaveLength(0);
+  });
+
+  it('R47: the unified file login uses dailytoken and its own scopes, apart from the invoice login', async () => {
+    const { service, mock, deps, env: ienv, clock } = await setupIta();
+    const file = new ItaTokenStore(ienv, deps, 1, 'unified_file');
+    const url = new URL(file.authorizeUrl('s', 'https://x/cb'));
+    expect(url.pathname).toBe('/shaam/tsandbox/dailytoken/oauth2/authorize');
+    expect(url.searchParams.get('scope')).toBe(ITA_FILE_SCOPE);
+    expect((await file.status()).status).toBe('not_connected');
+    mock.scopes = ['invoices_scope', ITA_FILE_SCOPE];
+    await file.exchangeCode(mock.issueCode('tsandbox'), 'https://ledger.test/api/ita/callback', null);
+    expect(mock.tokenPaths.at(-1)).toBe('dailytoken/oauth2/token');
+    expect(mock.tokenScopes.at(-1)).toBe(ITA_FILE_SCOPE);
+    expect(await first(env.DB, 'SELECT 1 FROM ita_file_tokens WHERE environment = ?', 'sandbox')).not.toBeNull();
+    // A refresh of the file login stays on dailytoken and its scope.
+    clock.advance(11 * MIN);
+    expect(await file.accessToken()).toMatch(/^at-/);
+    expect(mock.tokenPaths.at(-1)).toBe('dailytoken/oauth2/token');
+    expect(mock.tokenScopes.at(-1)).toBe(ITA_FILE_SCOPE);
+    // The invoice login is untouched.
+    expect((await service.tokens.status()).connected).toBe(true);
+  });
+
+  it('R47: a unified file login with no refresh token ends with its access token', async () => {
+    const { mock, deps, env: ienv, clock } = await setupIta();
+    const file = new ItaTokenStore(ienv, deps, 1, 'unified_file');
+    mock.scopes = ['invoices_scope', ITA_FILE_SCOPE];
+    mock.noRefresh = true;
+    await file.exchangeCode(mock.issueCode('tsandbox'), 'https://ledger.test/api/ita/callback', null);
+    expect(await file.accessToken()).toMatch(/^at-/);
+    clock.advance(11 * MIN);
+    await expect(file.accessToken()).rejects.toBeInstanceOf(ItaReconnectError);
+    expect((await file.status()).status).toBe('reconnect_required');
   });
 
   it('a token that no longer decrypts asks for a new login', async () => {

@@ -14,6 +14,7 @@ import { randomToken } from './crypto';
 import { allocationGate } from './gate';
 import { RELOGIN_BANNER_DAY } from './jobs';
 import { type ItaDeps, ItaAllocationService, REFUSAL_CHOICES, type RefusalChoice } from './service';
+import { ItaTokenStore } from './tokens';
 
 /** Tax invoice types that need an allocation number above the threshold (spec table 2.5). 332 only on request. */
 export const ALLOCATION_DOC_TYPES = ['305', '310', '320', '340', '345'] as const;
@@ -194,24 +195,30 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     }
   });
 
-  /** Starts the ITA login. The browser follows the redirect to the ITA. */
+  /**
+   * Starts the ITA login. The browser follows the redirect to the ITA. `?purpose=unified_file`
+   * starts the separate login the unified file services take (dailytoken, R47).
+   */
   app.get('/connect', async (c) => {
-    if (demoVisitor(c)) return c.redirect('/ita?connected=1', 302);
+    const purpose = c.req.query('purpose') === 'unified_file' ? 'unified_file' : 'invoices';
+    if (demoVisitor(c)) return c.redirect(purpose === 'unified_file' ? '/unified-file' : '/ita?connected=1', 302);
     const s = service(c);
+    const tokens = purpose === 'unified_file' ? new ItaTokenStore(env(c), deps, s.businessId, 'unified_file') : s.tokens;
     const state = randomToken();
     const redirectUri = `${new URL(c.req.url).origin}/api/ita/callback`;
-    const url = s.tokens.authorizeUrl(state, redirectUri);
+    const url = tokens.authorizeUrl(state, redirectUri);
     await run(
       c.env.DB,
-      'INSERT INTO ita_oauth_states (state, environment, redirect_uri, user_id, expires_at, business_id) VALUES (?, ?, ?, ?, ?, ?)',
+      'INSERT INTO ita_oauth_states (state, environment, redirect_uri, user_id, expires_at, business_id, purpose) VALUES (?, ?, ?, ?, ?, ?, ?)',
       state,
-      s.tokens.environment,
+      tokens.environment,
       redirectUri,
       c.get('user').id,
       new Date(deps.now().getTime() + STATE_TTL_MS).toISOString(),
       s.businessId,
+      purpose,
     );
-    await audit(c, 'ita.connect.start', 'ita', s.tokens.environment);
+    await audit(c, 'ita.connect.start', 'ita', tokens.environment, { purpose });
     return c.redirect(url, 302);
   });
 
@@ -220,12 +227,13 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
     if (demoVisitor(c)) return c.redirect('/ita?connected=1', 302);
     const state = c.req.query('state') ?? '';
     const code = c.req.query('code') ?? '';
-    const back = (result: string) => c.redirect(`/ita?${result}`, 302);
-    const saved = await first<{ environment: string; redirect_uri: string; expires_at: string; business_id: number }>(
+    const saved = await first<{ environment: string; redirect_uri: string; expires_at: string; business_id: number; purpose: string }>(
       c.env.DB,
-      'SELECT environment, redirect_uri, expires_at, business_id FROM ita_oauth_states WHERE state = ?',
+      'SELECT environment, redirect_uri, expires_at, business_id, purpose FROM ita_oauth_states WHERE state = ?',
       state,
     );
+    const forFile = saved?.purpose === 'unified_file';
+    const back = (result: string) => c.redirect(`${forFile ? '/unified-file' : '/ita'}?${result}`, 302);
     if (saved) await run(c.env.DB, 'DELETE FROM ita_oauth_states WHERE state = ?', state);
     // R24 B6: the state, not the request, names the business. The token goes to that business only,
     // and only when the person signing in is its owner.
@@ -241,7 +249,8 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
       return back('error=denied');
     }
     try {
-      await s.tokens.exchangeCode(code, saved.redirect_uri, c.get('user').id);
+      const tokens = forFile ? new ItaTokenStore(env(c), deps, businessId, 'unified_file') : s.tokens;
+      await tokens.exchangeCode(code, saved.redirect_uri, c.get('user').id);
     } catch (err) {
       const from = origin(env(c), c.req.raw);
       await audit(c, 'ita.connect.failed', 'ita', s.tokens.environment, {
@@ -252,7 +261,7 @@ export function itaRoutes(deps: ItaDeps): Hono<AppEnv> {
       if (err instanceof Error && 'code' in err && typeof err.code === 'string') return back(`error=${encodeURIComponent(err.code)}`);
       throw err;
     }
-    await audit(c, 'ita.connect.done', 'ita', s.tokens.environment);
+    await audit(c, 'ita.connect.done', 'ita', s.tokens.environment, { purpose: saved.purpose });
     return back('connected=1');
   });
 

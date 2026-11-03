@@ -21,8 +21,11 @@ From 1.1.2027 the Tax Authority takes the unified file (INI and BKMVDATA) throug
 
 1. In the Tax Authority developer portal, subscribe the app to **UniStructFileUploadLinks_Product**
    and **FilesStatus_Product**, in the sandbox and in production.
-2. Connect the Tax Authority for the business (above).
-3. Open **Reports > Unified file**, pick the period and press **Send to the Tax Authority**.
+2. Open **Reports > Unified file** and press **Sign in to send**. This is a second Tax Authority
+   sign-in, separate from the one for invoice numbers: the unified file services take a token from
+   the `dailytoken` provider with the scopes `UniStructFileUploadLinks_scope` and
+   `FilesStatus_scope`. The card shows until when the sign-in lasts.
+3. Pick the period and press **Send to the Tax Authority**.
 4. Press **Check status** later. Each file shows Uploaded, then Approved or Rejected.
 
 The sandbox accepts only a PDF of up to 1MB, so on `ITA_ENV=sandbox` the Ledger uploads a one-page

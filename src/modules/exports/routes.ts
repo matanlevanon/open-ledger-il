@@ -111,7 +111,7 @@ export function exportsRoutes(): Hono<AppEnv> {
   const io = { fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, init), now: () => new Date() };
 
   const transmitError = (c: Context<AppEnv>, err: unknown) => {
-    if (err instanceof ItaReconnectError) return c.json({ error: 'reconnect', message: 'Connect to the Tax Authority again on the Tax Authority page, then send.' }, 409);
+    if (err instanceof ItaReconnectError) return c.json({ error: 'reconnect', message: 'Sign in to the Tax Authority for sending the unified file, then send.' }, 409);
     if (err instanceof ItaUnavailableError) return c.json({ error: 'unavailable', message: err.message }, 503);
     if (err instanceof TransmitError) return c.json({ error: 'refused', message: err.message, code: err.code }, 422);
     throw err;
@@ -123,7 +123,7 @@ export function exportsRoutes(): Hono<AppEnv> {
     if (itaManualMode(env)) return c.json({ error: 'manual', message: 'This Ledger has no Tax Authority connection. Set one up in Settings first.' }, 409);
     const { from, to } = dateRange(c);
     const businessId = businessIdOf(c);
-    const tokens = new ItaTokenStore(env, io, businessId);
+    const tokens = new ItaTokenStore(env, io, businessId, 'unified_file');
     // No Tax Authority login, or one that needs a new sign-in: say so before anything is recorded.
     try {
       await tokens.accessToken();
@@ -171,6 +171,15 @@ export function exportsRoutes(): Hono<AppEnv> {
     return c.json({ transmission: await first(c.env.DB, 'SELECT * FROM unified_file_transmissions WHERE id = ?', lastRowId) });
   });
 
+  // The separate Tax Authority login the unified file services take (dailytoken). Its state for the card.
+  r.get('/unified-file/connection', requireFeature('ita'), async (c) => {
+    const env = c.env as ItaEnv;
+    if (isDemo(env) || itaManualMode(env)) return c.json({ available: false });
+    const status = await new ItaTokenStore(env, io, businessIdOf(c), 'unified_file').status();
+    const live = status.connected && !!status.relogin_due_at && status.relogin_due_at > new Date().toISOString();
+    return c.json({ available: true, environment: status.environment, connected: live, login_at: status.login_at, until: live ? status.relogin_due_at : null });
+  });
+
   r.get('/unified-file/transmissions', requireFeature('unified_file'), async (c) =>
     c.json({ transmissions: await all(c.env.DB, 'SELECT * FROM unified_file_transmissions WHERE business_id = ? ORDER BY id DESC LIMIT 20', businessIdOf(c)) }),
   );
@@ -185,7 +194,7 @@ export function exportsRoutes(): Hono<AppEnv> {
     );
     if (!row) return c.json({ error: 'not_found', message: 'No such send.' }, 404);
     if (!row.ini_file_id || !row.bkm_file_id) return c.json({ error: 'not_sent', message: 'This send did not reach the Tax Authority.' }, 409);
-    const tokens = new ItaTokenStore(env, io, businessIdOf(c));
+    const tokens = new ItaTokenStore(env, io, businessIdOf(c), 'unified_file');
     if (tokens.environment !== row.environment) return c.json({ error: 'environment', message: `This send went to the ${row.environment} environment.` }, 409);
     try {
       const items = await new UnifiedFileUploader(env, tokens, io).status([row.ini_file_id, row.bkm_file_id]);
