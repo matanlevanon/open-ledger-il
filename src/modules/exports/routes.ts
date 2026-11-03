@@ -176,8 +176,17 @@ export function exportsRoutes(): Hono<AppEnv> {
     const env = c.env as ItaEnv;
     if (isDemo(env) || itaManualMode(env)) return c.json({ available: false });
     const status = await new ItaTokenStore(env, io, businessIdOf(c), 'unified_file').status();
-    const live = status.connected && !!status.relogin_due_at && status.relogin_due_at > new Date().toISOString();
-    return c.json({ available: true, environment: status.environment, connected: live, login_at: status.login_at, until: live ? status.relogin_due_at : null });
+    // The sign-in lasts as long as the later of the access token and the renewal token. In production
+    // (3.11.2026) the access token lived about 12 hours and the renewal token 2 hours.
+    const row = await first<{ access_expires_at: string | null }>(
+      c.env.DB,
+      'SELECT access_expires_at FROM ita_file_tokens WHERE environment = ? AND business_id = ?',
+      status.environment,
+      businessIdOf(c),
+    );
+    const ends = [status.relogin_due_at, row?.access_expires_at].filter((v): v is string => !!v).sort().at(-1) ?? null;
+    const live = status.connected && !!ends && ends > new Date().toISOString();
+    return c.json({ available: true, environment: status.environment, connected: live, login_at: status.login_at, until: live ? ends : null });
   });
 
   r.get('/unified-file/transmissions', requireFeature('unified_file'), async (c) =>
