@@ -2,7 +2,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { createHash, generateKeyPairSync, sign } from 'node:crypto';
-import broker, { UNIFIED_FILE_PATH_RE, scopesFor } from '../src/index.js';
+import broker, { scopesFor } from '../src/index.js';
 const sq = new DatabaseSync(':memory:'); for (const f of ['0001_clients.sql', '0002_licences.sql']) sq.exec(readFileSync(new URL(`../migrations/${f}`, import.meta.url), 'utf8'));
 const stmt = (sql, args = []) => ({
   bind: (...a) => stmt(sql, a),
@@ -58,9 +58,3 @@ await tokScope(null); ok(lastItaBody.get('scope') === 'invoices_scope', 'no scop
 await tokScope('invoices_scope'); ok(lastItaBody.get('scope') === 'invoices_scope', 'invoices_scope passes through');
 await tokScope('scope'); ok(lastItaBody.get('scope') === (scopesFor(new Date()).includes('scope') ? 'scope' : 'invoices_scope'), 'the old scope passes only before 01.11.2026');
 await tokScope('anything'); ok(lastItaBody.get('scope') === 'invoices_scope', 'an unknown scope becomes invoices_scope');
-// The unified file upload needs the general scope too. An install asks for it with ITA_SCOPES.
-await tokScope('invoices_scope%20scope'); ok(lastItaBody.get('scope') === 'invoices_scope scope', 'invoices_scope plus scope passes through');
-r = await call(`/authorize?client=${a.name}&environment=production&state=s&scope=invoices_scope%20scope`); ok(new URL(r.headers.get('Location')).searchParams.get('scope') === 'invoices_scope scope', 'authorize asks for both scopes when the install does');
-r = await call(`/authorize?client=${a.name}&environment=production&state=s&scope=admin`); ok(new URL(r.headers.get('Location')).searchParams.get('scope') === 'invoices_scope', 'authorize ignores any other scope');
-ok(UNIFIED_FILE_PATH_RE.test('/shaam/tsandbox/UniStructFileUploadLinksApi/v1/UploadingFile/GetUrlsForUploadingFiles') && UNIFIED_FILE_PATH_RE.test('/shaam/production/FilesStatusApi/v1/Files/get-file-status'), 'the unified file paths get the app id');
-ok(!UNIFIED_FILE_PATH_RE.test('/shaam/production/Invoices/v2/Approval'), 'the invoice paths do not');

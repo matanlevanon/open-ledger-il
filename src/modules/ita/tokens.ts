@@ -1,6 +1,6 @@
 import { first, run } from '../../core/db';
 import { ConfigError, ValidationError } from '../../core/errors';
-import { type ItaEnv, type ItaEnvironment, ITA_LEGACY_SCOPE, ITA_SCOPE, ITA_URLS, itaBroker, itaCredentials, itaEnvironment, itaRequestScope, itaScopes, relayedFetch } from './config';
+import { type ItaEnv, type ItaEnvironment, ITA_SCOPE, ITA_URLS, itaBroker, itaScopes, itaCredentials, itaEnvironment, relayedFetch } from './config';
 import { decryptToken, encryptToken, importTokenKey } from './crypto';
 import { ItaReconnectError, ItaUnavailableError } from './errors';
 
@@ -110,15 +110,13 @@ export class ItaTokenStore {
       url.searchParams.set('client', broker.client);
       url.searchParams.set('environment', this.environment);
       url.searchParams.set('state', state);
-      const scope = itaRequestScope(this.env);
-      if (scope !== ITA_SCOPE) url.searchParams.set('scope', scope);
       return url.toString();
     }
     const { clientId } = itaCredentials(this.env);
     const url = new URL(ITA_URLS[this.environment].authorize);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('client_id', clientId);
-    url.searchParams.set('scope', itaRequestScope(this.env));
+    url.searchParams.set('scope', ITA_SCOPE);
     url.searchParams.set('redirect_uri', redirectUri);
     url.searchParams.set('state', state);
     return url.toString();
@@ -203,7 +201,7 @@ export class ItaTokenStore {
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUri,
-      scope: itaRequestScope(this.env),
+      scope: ITA_SCOPE,
     });
     if (status >= 500) throw new ItaUnavailableError(`The ITA login service is not answering (HTTP ${status}${ItaTokenStore.errorText(json)}).`);
     const tokens = ItaTokenStore.parse(json);
@@ -277,14 +275,14 @@ export class ItaTokenStore {
     let status = 0;
     let json: unknown = null;
     let used = ITA_SCOPE;
-    for (const scope of itaScopes(now, itaRequestScope(this.env))) {
+    for (const scope of itaScopes(now)) {
       used = scope;
       ({ status, json } = await this.postToken({ grant_type: 'refresh_token', refresh_token: refreshToken, scope, ...credentials }));
       if (status !== 400) break;
     }
     // Before 01.11.2026 only: the ITA refused invoices_scope and took the old scope. Logged so it is
     // seen and fixed (a new login) before the old scope stops working.
-    if (status === 200 && used === ITA_LEGACY_SCOPE) {
+    if (status === 200 && used !== ITA_SCOPE) {
       console.warn(`ita refresh env=${this.environment} business=${this.businessId} took the old scope "${used}" after invoices_scope was refused`);
       await run(
         this.db,

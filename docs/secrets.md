@@ -42,7 +42,6 @@ Sandbox and production ITA credentials sit under separate names. `ITA_ENV` picks
 |---|---|---|
 | `ENVIRONMENT` | `production` | Set to `development` in `.dev.vars`. The dev sign-in bypass is refused in production |
 | `ITA_ENV` | `sandbox` | `sandbox` or `production` |
-| `ITA_SCOPES` | empty | Optional. `invoices_scope scope` asks for the general scope too, which the unified file upload needs. Empty keeps `invoices_scope` alone |
 | `ACCESS_TEAM_DOMAIN` | empty | `https://<team>.cloudflareaccess.com`. Empty refuses every sign-in |
 | `ACCESS_AUD` | empty | Audience tag of the Access application |
 | `OWNER_EMAIL` | empty | First sign-in of this email creates the owner row while no owner exists |

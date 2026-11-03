@@ -27,9 +27,4 @@ From 1.1.2027 the Tax Authority takes the unified file (INI and BKMVDATA) throug
 
 The sandbox accepts only a PDF of up to 1MB, so on `ITA_ENV=sandbox` the Ledger uploads a one-page
 test PDF in place of each file. That checks the sign-in, the links and the upload, not the file.
-The upload service needs the general scope as well as invoices_scope. Add the variable
-`ITA_SCOPES` with the value `invoices_scope scope` to the Worker (Settings > Variables and
-secrets), then connect the Tax Authority again. The consent page then lists more than
-חשבוניות ישראל.
-
 Files over 32MB go up in chunks, as the spec asks. Demo businesses and manual-allocation mode can't send.

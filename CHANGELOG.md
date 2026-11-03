@@ -14,12 +14,6 @@
   listed on the Unified file page. The Tax Authority requires this API from 1.1.2027.
 - Sandbox: the Tax Authority's test environment accepts only a small PDF, so the Ledger uploads a
   one-page test PDF in place of each file and marks the row as a test.
-- A token with invoices_scope alone covers the invoice services only, and the upload service refuses
-  it (401). The variable `ITA_SCOPES` set to `invoices_scope scope` makes the sign-in ask for the
-  general scope too. The login broker passes it on. A refresh token issued under invoices_scope
-  alone falls back to it. Without the variable nothing changes.
-- A send without a Tax Authority sign-in stops before it records anything. The Ledger's own errors
-  on this card show in the screen's language and point to the Tax Authority page.
 
 ### Database
 - Migration 4400: `unified_file_transmissions`.
