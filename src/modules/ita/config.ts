@@ -48,7 +48,8 @@ export const ITA_FILE_URLS: Record<ItaEnvironment, ItaUrls> = {
   },
   production: {
     authorize: 'https://openapi.taxes.gov.il/shaam/production/dailytoken/oauth2/authorize',
-    token: 'https://ita-api.taxes.gov.il/shaam/production/dailytoken/oauth2/token',
+    // The portal lists only openapi for the production token of UniStructFileUploadLinksApi (3.11.2026).
+    token: 'https://openapi.taxes.gov.il/shaam/production/dailytoken/oauth2/token',
     api: 'https://ita-api.taxes.gov.il/shaam/production/',
   },
 };

@@ -62,7 +62,8 @@ const DAILY = {
   },
   production: {
     authorize: 'https://openapi.taxes.gov.il/shaam/production/dailytoken/oauth2/authorize',
-    token: 'https://ita-api.taxes.gov.il/shaam/production/dailytoken/oauth2/token',
+    // The portal lists only openapi for the production token of UniStructFileUploadLinksApi (3.11.2026).
+    token: 'https://openapi.taxes.gov.il/shaam/production/dailytoken/oauth2/token',
   },
 };
 export const FILE_SCOPE = 'UniStructFileUploadLinks_scope FilesStatus_scope';

@@ -142,7 +142,9 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
                 <td className="px-2 py-1">{status(r.ini_status)}</td>
                 <td className="px-2 py-1">
                   {status(r.bkm_status)}
-                  {(r.status_description || r.error) && <span className="block text-xs text-danger">{r.status_description ?? (r.error && ERROR_KEYS[r.error] ? t(ERROR_KEYS[r.error]!) : r.error)}</span>}
+                  {/* The Tax Authority's description in grey. Red only for a send that failed. */}
+                  {r.status_description && <span className="block text-xs text-muted">{r.status_description}</span>}
+                  {r.error && <span className="block text-xs text-danger">{ERROR_KEYS[r.error] ? t(ERROR_KEYS[r.error]!) : r.error}</span>}
                 </td>
                 <td className="px-2 py-1 text-end">
                   {r.ini_file_id && (
