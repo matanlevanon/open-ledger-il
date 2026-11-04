@@ -30,6 +30,8 @@ export const reports: Record<keyof typeof en, string> = {
   'unified.send.status.approved': 'אושר',
   'unified.send.status.rejected': 'נדחה',
   'unified.send.status.failed': 'לא שודר',
+  'unified.send.status.notRequired': 'לא נדרש',
+  'unified.send.notRequired': 'רשות המסים לא דרשה מהעסק את הקובץ במבנה אחיד, ולכן אין מה לשדר כרגע. כשתגיע דרישה, שדרו שוב.',
   'unified.send.error': 'השידור נכשל.',
   'unified.send.err.reconnect': 'צריך להתחבר לרשות המסים בכפתור התחברות לשידור, ואז לשדר.',
   'unified.send.login.failed': 'ההתחברות לרשות המסים לא הושלמה ({code}). נסו שוב בכפתור התחברות לשידור.',

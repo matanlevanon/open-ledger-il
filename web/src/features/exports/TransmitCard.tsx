@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useT } from '../../i18n';
 import { Card, ErrorNote, btnPrimary, btnSecondary } from '../documents/ui';
+import { showDate, showDateTime } from '../../lib/dates';
 
 /**
  * R47: send the unified file to the Tax Authority (תוספת 1, 3.2026, required from 1.1.2027), and
@@ -34,12 +35,19 @@ async function call(url: string, method = 'GET'): Promise<Record<string, unknown
   return body ?? {};
 }
 
-const STATUS_KEYS: Record<string, 'unified.send.status.uploaded' | 'unified.send.status.approved' | 'unified.send.status.rejected' | 'unified.send.status.failed'> = {
+const STATUS_KEYS: Record<
+  string,
+  'unified.send.status.uploaded' | 'unified.send.status.approved' | 'unified.send.status.rejected' | 'unified.send.status.failed' | 'unified.send.status.notRequired'
+> = {
+  NotRequired: 'unified.send.status.notRequired',
   Uploaded: 'unified.send.status.uploaded',
   Approved: 'unified.send.status.approved',
   Rejected: 'unified.send.status.rejected',
   Failed: 'unified.send.status.failed',
 };
+
+/** The Tax Authority's answer for a business it has not asked for the file. Shown in green, not as an error. */
+const NOT_REQUIRED = /no requirement/i;
 
 type ErrorKey = 'unified.send.err.reconnect' | 'unified.send.err.unavailable' | 'unified.send.err.manual' | 'unified.send.err.demo';
 
@@ -56,6 +64,7 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
   const [rows, setRows] = useState<Transmission[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   // The separate Tax Authority login the unified file services take (dailytoken).
   const [login, setLogin] = useState<{ available: boolean; connected?: boolean; until?: string | null } | null>(null);
 
@@ -87,8 +96,10 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
   async function act(url: string) {
     setBusy(true);
     setError(null);
+    setNotice(null);
     try {
-      await call(url, 'POST');
+      const body = await call(url, 'POST');
+      if (body.notice === 'not_required') setNotice(t('unified.send.notRequired'));
     } catch (e) {
       const code = (e as { code?: string | null })?.code;
       setError(code && ERROR_KEYS[code] ? t(ERROR_KEYS[code]!) : e instanceof Error ? e.message : t('unified.send.error'));
@@ -107,11 +118,16 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
       </p>
       <p className="text-sm text-muted">{t('unified.send.help')}</p>
       <ErrorNote error={error} />
+      {notice && (
+        <p role="status" className="my-3 rounded-md border border-success px-3 py-2 text-sm text-success">
+          {notice}
+        </p>
+      )}
       {login?.available && (
         <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
           <span className={login.connected ? 'text-ink' : 'text-muted'}>
             {login.connected && login.until
-              ? t('unified.send.login.until', { until: new Date(login.until).toLocaleString('he-IL', { dateStyle: 'short', timeStyle: 'short' }) })
+              ? t('unified.send.login.until', { until: showDateTime(login.until) })
               : t('unified.send.login.none')}
           </span>
           <a className={btnSecondary} href="/api/ita/connect?purpose=unified_file" data-busy-on-click>
@@ -144,18 +160,24 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
             {rows.map((r) => (
               <tr key={r.id} className="border-t border-line align-top">
                 <td className="px-2 py-1">
-                  <span className="ltr-nums">{r.created_at.slice(0, 16).replace('T', ' ')}</span>
+                  <span className="ltr-nums">{showDateTime(r.created_at)}</span>
                   {r.environment === 'sandbox' && <span className="block text-xs text-muted">{t('unified.send.sandbox')}</span>}
                 </td>
                 <td className="ltr-nums px-2 py-1">
-                  {r.period_from} – {r.period_to}
+                  {showDate(r.period_from)} – {showDate(r.period_to)}
                 </td>
-                <td className="px-2 py-1">{status(r.ini_status)}</td>
+                <td className="px-2 py-1">{status(NOT_REQUIRED.test(r.error ?? '') ? 'NotRequired' : r.ini_status)}</td>
                 <td className="px-2 py-1">
-                  {status(r.bkm_status)}
+                  {status(NOT_REQUIRED.test(r.error ?? '') ? 'NotRequired' : r.bkm_status)}
                   {/* The Tax Authority's description in grey. Red only for a send that failed. */}
-                  {r.status_description && <span className="block text-xs text-muted">{r.status_description}</span>}
-                  {r.error && <span className="block text-xs text-danger">{ERROR_KEYS[r.error] ? t(ERROR_KEYS[r.error]!) : r.error}</span>}
+                  {r.status_description && (
+                    <span className={`block text-xs ${NOT_REQUIRED.test(r.status_description) ? 'text-success' : 'text-muted'}`}>{r.status_description}</span>
+                  )}
+                  {r.error && (
+                    <span className={`block text-xs ${NOT_REQUIRED.test(r.error) ? 'text-success' : 'text-danger'}`}>
+                      {ERROR_KEYS[r.error] ? t(ERROR_KEYS[r.error]!) : r.error}
+                    </span>
+                  )}
                 </td>
                 <td className="px-2 py-1 text-end">
                   {r.ini_file_id && (

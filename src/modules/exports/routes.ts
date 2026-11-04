@@ -110,6 +110,8 @@ export function exportsRoutes(): Hono<AppEnv> {
   // so a sandbox send uploads a test PDF in place of the two files and says so.
   const io = { fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, init), now: () => new Date() };
 
+  const NOT_REQUIRED = /no requirement/i;
+
   const transmitError = (c: Context<AppEnv>, err: unknown) => {
     if (err instanceof ItaReconnectError) return c.json({ error: 'reconnect', message: 'Sign in to the Tax Authority for sending the unified file, then send.' }, 409);
     if (err instanceof ItaUnavailableError) return c.json({ error: 'unavailable', message: err.message }, 503);
@@ -163,6 +165,17 @@ export function exportsRoutes(): Hono<AppEnv> {
       );
       await audit(c, 'exports.unified_file.transmit', 'unified_file_transmission', String(lastRowId), { from, to, environment: tokens.environment, test });
     } catch (err) {
+      // The Tax Authority asks for the file only from some businesses. Its answer for one it has not
+      // asked is not a failure: "There is no requirement for a uniform structure file for this case number".
+      if (err instanceof TransmitError && NOT_REQUIRED.test(err.message)) {
+        await run(
+          c.env.DB,
+          "UPDATE unified_file_transmissions SET status_description = ?, ini_status = 'NotRequired', bkm_status = 'NotRequired' WHERE id = ?",
+          err.message,
+          lastRowId,
+        );
+        return c.json({ notice: 'not_required', message: err.message });
+      }
       // A short code the screen translates, or the Tax Authority's own words for a refusal.
       const message = err instanceof ItaReconnectError ? 'reconnect' : err instanceof ItaUnavailableError ? 'unavailable' : err instanceof Error ? err.message : 'The send failed.';
       await run(c.env.DB, "UPDATE unified_file_transmissions SET error = ?, ini_status = 'Failed', bkm_status = 'Failed' WHERE id = ?", message, lastRowId);

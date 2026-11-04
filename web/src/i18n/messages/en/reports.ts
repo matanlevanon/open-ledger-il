@@ -32,6 +32,8 @@ export const reports = {
   'unified.send.status.approved': 'Approved',
   'unified.send.status.rejected': 'Rejected',
   'unified.send.status.failed': 'Not sent',
+  'unified.send.status.notRequired': 'Not requested',
+  'unified.send.notRequired': 'The Tax Authority has not asked this business for the unified file, so there is nothing to send now. When it asks, send again.',
   'unified.send.error': 'The send failed.',
   'unified.send.err.reconnect': 'Sign in to the Tax Authority with Sign in to send, then send.',
   'unified.send.login.failed': 'The Tax Authority sign-in did not finish ({code}). Try Sign in to send again.',
