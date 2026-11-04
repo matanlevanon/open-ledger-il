@@ -44,7 +44,7 @@ export function TopBar({ me, error, onMenu }: TopBarProps) {
   const [uploaded, setUploaded] = useState(true);
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line bg-band px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:static md:gap-4 md:px-8 md:py-3">
+    <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line bg-band px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:gap-4 md:px-8 md:py-3">
       <button
         type="button"
         className="grid h-11 w-11 place-items-center rounded-md text-sm text-ink hover:bg-canvas md:hidden"
