@@ -27,6 +27,7 @@ export function ImportCounts({ summary }: { summary: ImportSummary }) {
         source: t(SOURCE_KEYS[summary.source]),
         seen: summary.filesSeen,
         created: summary.created,
+        completed: summary.completed ?? 0,
         duplicate: summary.skippedDuplicate,
         notExpense: summary.skippedNotExpense,
         self: summary.skippedIssuedBySelf,
@@ -50,6 +51,16 @@ export function ImportSummaryView({ summary }: { summary: ImportSummary }) {
             <span key={status} className="me-3 inline-block">
               <span dir="rtl">{status}</span> <span className="ltr-nums">{count}</span>
             </span>
+          ))}
+        </p>
+      )}
+      {(summary.completedIds ?? []).length > 0 && (
+        <p>
+          {t('expenses.import.completedList')}{' '}
+          {(summary.completedIds ?? []).map((id) => (
+            <Link key={id} to={`/expenses/${id}`} className="me-3 inline-block text-brand hover:underline">
+              {t('expenses.import.matchedExpense', { id })}
+            </Link>
           ))}
         </p>
       )}

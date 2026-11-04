@@ -14,7 +14,10 @@ import type { ExpenseStatus, ExtractedExpense } from './types';
 /**
  * R20: one month of expenses from Google Drive. The monthly index sheet is the source of truth
  * when it exists. Without it, every file in the month folder goes through AI extraction for
- * review. Both paths skip anything already in the ledger and never change an existing expense.
+ * review. Both paths skip anything already in the ledger. On the sheet path, a row that matches
+ * an expense fills it in: an unreviewed one (status new, for example a receipt forwarded to the
+ * inbox) takes the sheet's values and is filed, and a filed one with empty fields gets only those
+ * fields. A filed expense with full data, and a duplicate or set-aside one, is never changed.
  */
 
 const DAILY_SYNC_SETTING_KEY = 'expenses.drive_daily_sync';
@@ -427,6 +430,143 @@ async function insertExpense(db: D1Database, e: NewExpense, actor: AuditActor): 
   return lastRowId;
 }
 
+interface ExistingExpense {
+  status: ExpenseStatus;
+  supplier_id: number | null;
+  category_id: number | null;
+  document_number: string | null;
+  document_date: string | null;
+  document_type: string | null;
+  amount_minor: number;
+  amount_ils_minor: number | null;
+  is_fixed: number | null;
+}
+
+const blank = (v: string | null) => v === null || v.trim() === '';
+
+/**
+ * A filed expense is complete when it has a supplier, category, date, type, amount, ILS amount and
+ * fixed flag. A missing document number alone does not count: many receipts have none.
+ */
+export function missingFields(e: Omit<ExistingExpense, 'status'>): boolean {
+  return (
+    e.supplier_id === null ||
+    e.category_id === null ||
+    blank(e.document_date) ||
+    blank(e.document_type) ||
+    e.amount_minor === 0 ||
+    e.amount_ils_minor === null ||
+    e.is_fixed === null
+  );
+}
+
+/**
+ * Fills only the empty fields of a filed expense from its sheet row. A zero amount takes the
+ * sheet's currency, amount, VAT and ILS conversion together, so the figures stay consistent.
+ */
+async function fillMissing(
+  db: D1Database,
+  id: number,
+  e: Omit<NewExpense, 'fileId' | 'status' | 'readStatus'>,
+  reason: SkipReason,
+  actor: AuditActor,
+): Promise<void> {
+  const noAmount = 'amount_minor = 0';
+  await transaction(db, [
+    stmt(
+      db,
+      `UPDATE expenses SET
+         supplier_id = COALESCE(supplier_id, ?),
+         category_id = COALESCE(category_id, ?, (SELECT default_category_id FROM suppliers WHERE id = COALESCE(supplier_id, ?))),
+         document_number = CASE WHEN document_number IS NULL OR trim(document_number) = '' THEN ? ELSE document_number END,
+         document_date = CASE WHEN document_date IS NULL OR trim(document_date) = '' THEN ? ELSE document_date END,
+         document_type = CASE WHEN document_type IS NULL OR trim(document_type) = '' THEN ? ELSE document_type END,
+         vat_amount_minor = CASE WHEN ${noAmount} THEN ? ELSE vat_amount_minor END,
+         amount_ils_minor = CASE WHEN ${noAmount} OR (amount_ils_minor IS NULL AND currency = ? AND amount_minor = ?) THEN ? ELSE amount_ils_minor END,
+         fx_rate = CASE WHEN ${noAmount} OR (amount_ils_minor IS NULL AND currency = ? AND amount_minor = ?) THEN ? ELSE fx_rate END,
+         fx_rate_date = CASE WHEN ${noAmount} OR (amount_ils_minor IS NULL AND currency = ? AND amount_minor = ?) THEN ? ELSE fx_rate_date END,
+         fx_source = CASE WHEN ${noAmount} OR (amount_ils_minor IS NULL AND currency = ? AND amount_minor = ?) THEN ? ELSE fx_source END,
+         currency = CASE WHEN ${noAmount} THEN ? ELSE currency END,
+         amount_minor = CASE WHEN ${noAmount} THEN ? ELSE amount_minor END,
+         is_fixed = COALESCE(is_fixed, ?),
+         notes = CASE WHEN notes IS NULL OR trim(notes) = '' THEN ? ELSE notes END,
+         updated_at = ?
+       WHERE id = ? AND status = 'filed'`,
+      e.supplierId,
+      e.categoryId,
+      e.supplierId,
+      e.documentNumber,
+      e.documentDate,
+      e.documentType,
+      e.vatAmountMinor,
+      ...([e.ils.amountIlsMinor, e.ils.fxRate, e.ils.fxRateDate, e.ils.fxSource] as const).flatMap((v) => [e.currency, e.amountMinor, v]),
+      e.currency,
+      e.amountMinor,
+      e.isFixed === null ? null : e.isFixed ? 1 : 0,
+      e.notes,
+      nowIso(),
+      id,
+    ),
+    auditStatement(db, actor, 'expense.update', 'expense', id, { source: 'drive_import', filledFromSheet: true, matchedBy: reason }),
+  ]);
+}
+
+/**
+ * Fills an unreviewed expense from its index sheet row and files it. The file stays. Notes already
+ * on the expense are kept above the sheet's, and what the reader extracted is kept under `previous`.
+ */
+async function completeExpense(
+  db: D1Database,
+  id: number,
+  e: Omit<NewExpense, 'fileId' | 'status' | 'readStatus'>,
+  reason: SkipReason,
+  actor: AuditActor,
+): Promise<void> {
+  const old = await first<{ notes: string | null; extracted_json: string | null }>(
+    db,
+    'SELECT notes, extracted_json FROM expenses WHERE id = ?',
+    id,
+  );
+  let previous: unknown = null;
+  try {
+    previous = old?.extracted_json ? JSON.parse(old.extracted_json) : null;
+  } catch {
+    previous = old?.extracted_json ?? null;
+  }
+  const notes = [old?.notes, e.notes].filter((n): n is string => !!n && n.trim() !== '').join('\n') || null;
+  await transaction(db, [
+    stmt(
+      db,
+      `UPDATE expenses SET
+         supplier_id = ?, category_id = COALESCE(?, category_id, (SELECT default_category_id FROM suppliers WHERE id = ?)),
+         status = 'filed', status_reason = NULL, duplicate_of_id = NULL,
+         document_number = ?, document_date = ?, document_type = ?, currency = ?, amount_minor = ?, vat_amount_minor = ?,
+         amount_ils_minor = ?, fx_rate = ?, fx_rate_date = ?, fx_source = ?, is_fixed = ?, notes = ?, extracted_json = ?,
+         read_status = 'manual', read_error = NULL, updated_at = ?
+       WHERE id = ? AND status = 'new'`,
+      e.supplierId,
+      e.categoryId,
+      e.supplierId,
+      e.documentNumber,
+      e.documentDate,
+      e.documentType,
+      e.currency,
+      e.amountMinor,
+      e.vatAmountMinor,
+      e.ils.amountIlsMinor,
+      e.ils.fxRate,
+      e.ils.fxRateDate,
+      e.ils.fxSource,
+      e.isFixed === null ? null : e.isFixed ? 1 : 0,
+      notes,
+      JSON.stringify({ ...(e.sourceJson as object), previous }),
+      nowIso(),
+      id,
+    ),
+    auditStatement(db, actor, 'expense.update', 'expense', id, { status: 'filed', source: 'drive_import', completedFromSheet: true, matchedBy: reason }),
+  ]);
+}
+
 // ---------------------------------------------------------------------------
 // One month
 // ---------------------------------------------------------------------------
@@ -443,6 +583,8 @@ export interface ImportSummary {
   finishedAt: string;
   filesSeen: number;
   created: number;
+  /** Matched expenses a sheet row filled in (unreviewed ones also filed), instead of skipping them. */
+  completed: number;
   skippedDuplicate: number;
   skippedNotExpense: number;
   skippedIssuedBySelf: number;
@@ -450,6 +592,7 @@ export interface ImportSummary {
   /** Sheet rows by status, for example { "הוצאה": 12, "לא הוצאה": 2 }. Empty on the folder path. */
   statusCounts: Record<string, number>;
   createdIds: number[];
+  completedIds: number[];
   skips: ImportSkip[];
   errorList: { ref: string; message: string }[];
 }
@@ -487,11 +630,6 @@ async function importSheetRow(
   const c = row.cells;
   const ref = `Row ${row.rowNumber}: ${c.supplier}${c.documentNumber ? ` ${c.documentNumber}` : ''}`;
   const driveFileId = driveFileIdFromUrl(c.link);
-  if (driveFileId) {
-    const hit = await matchByDriveFile(env.DB, driveFileId, actorBiz(actor));
-    if (hit) return skip(summary, ref, hit);
-  }
-
   if (!c.supplier) throw new ValidationError('The row has no supplier.');
   const currencyCode = (c.currency || HOME_CURRENCY).toUpperCase();
   if (!isCurrency(currencyCode)) throw new ValidationError(`Unsupported currency "${c.currency}".`);
@@ -503,20 +641,63 @@ async function importSheetRow(
   const vatAmountMinor = vatText ? parseMajor(vatText, currency) : 0;
   const taxId = c.supplierTaxId || null;
   const documentNumber = c.documentNumber || null;
-
   const supplierIds = await matchingSupplierIds(env.DB, c.supplier, taxId, actorBiz(actor));
-  const byNumber = await matchBySupplierNumber(env.DB, supplierIds, documentNumber);
-  if (byNumber) return skip(summary, ref, byNumber);
   const ils = await convertToIls(deps.fx, currency, date, amountMinor);
+  const fields = (): Omit<NewExpense, 'fileId' | 'supplierId' | 'categoryId' | 'status' | 'readStatus'> => ({
+    documentNumber,
+    documentDate: date,
+    documentType: c.documentType || null,
+    currency,
+    amountMinor,
+    vatAmountMinor,
+    ils,
+    isFixed: /^(קבוע|fixed|yes)$/i.test(c.fixed) ? true : /^(לא קבוע|not fixed|no)$/i.test(c.fixed) ? false : null,
+    notes: sheetNotes(row, currency),
+    sourceJson: { source: 'index_sheet', row: row.rowNumber, ...c },
+  });
+
+  // Unreviewed match: the sheet's values, filed. Filed match with empty fields: those fields only.
+  // Filed with full data, or marked duplicate, not an expense or returned: a skip.
+  const settle = async (match: Match): Promise<void> => {
+    if (match.expenseId !== null) {
+      const existing = await first<ExistingExpense>(
+        env.DB,
+        `SELECT status, supplier_id, category_id, document_number, document_date, document_type, amount_minor,
+                amount_ils_minor, is_fixed
+         FROM expenses WHERE id = ? AND business_id = ?`,
+        match.expenseId,
+        actorBiz(actor),
+      );
+      const mode = existing?.status === 'new' ? 'file' : existing?.status === 'filed' && missingFields(existing) ? 'fill' : null;
+      if (mode) {
+        const supplierId = await supplierFor(env.DB, supplierIds, c.supplier, taxId, currency, actor);
+        const categoryId = await categoryFor(env.DB, c.category, actor);
+        const values = { ...fields(), supplierId, categoryId };
+        if (mode === 'file') await completeExpense(env.DB, match.expenseId, values, match.reason, actor);
+        else await fillMissing(env.DB, match.expenseId, values, match.reason, actor);
+        summary.completed += 1;
+        summary.completedIds.push(match.expenseId);
+        return;
+      }
+    }
+    skip(summary, ref, match);
+  };
+
+  if (driveFileId) {
+    const hit = await matchByDriveFile(env.DB, driveFileId, actorBiz(actor));
+    if (hit) return settle(hit);
+  }
+  const byNumber = await matchBySupplierNumber(env.DB, supplierIds, documentNumber);
+  if (byNumber) return settle(byNumber);
   const byTotal = await matchBySupplierDateTotal(env.DB, supplierIds, date, ils.amountIlsMinor, documentNumber);
-  if (byTotal) return skip(summary, ref, byTotal);
+  if (byTotal) return settle(byTotal);
 
   let file: { meta: DriveFile; bytes: ArrayBuffer; sha256: string } | null = null;
   if (driveFileId) {
     const bytes = await deps.drive.downloadFile(driveFileId);
     const sha256 = await sha256Hex(bytes);
     const byHash = await matchByHash(env.DB, sha256, actorBiz(actor));
-    if (byHash) return skip(summary, ref, byHash);
+    if (byHash) return settle(byHash);
     const meta = folderFiles.get(driveFileId) ?? {
       id: driveFileId,
       name: `${date}_${c.supplier.replace(/[^\p{L}\p{N}]+/gu, '-')}_${documentNumber ?? driveFileId}.pdf`,
@@ -531,23 +712,7 @@ async function importSheetRow(
   const fileId = file ? await storeDriveFile(env, file.meta, file.bytes, file.sha256, actor) : null;
   const id = await insertExpense(
     env.DB,
-    {
-      fileId,
-      supplierId,
-      categoryId,
-      status: 'filed',
-      documentNumber,
-      documentDate: date,
-      documentType: c.documentType || null,
-      currency,
-      amountMinor,
-      vatAmountMinor,
-      ils,
-      isFixed: /^(קבוע|fixed|yes)$/i.test(c.fixed) ? true : /^(לא קבוע|not fixed|no)$/i.test(c.fixed) ? false : null,
-      notes: sheetNotes(row, currency),
-      sourceJson: { source: 'index_sheet', row: row.rowNumber, ...c },
-      readStatus: 'manual',
-    },
+    { ...fields(), fileId, supplierId, categoryId, status: 'filed', readStatus: 'manual' },
     actor,
   );
   summary.created += 1;
@@ -682,12 +847,14 @@ export async function importMonth(env: Env, deps: Deps, yearMonth: string, trigg
     startedAt: nowIso(),
     filesSeen: 0,
     created: 0,
+    completed: 0,
     skippedDuplicate: 0,
     skippedNotExpense: 0,
     skippedIssuedBySelf: 0,
     errors: 0,
     statusCounts: {},
     createdIds: [],
+    completedIds: [],
     skips: [],
     errorList: [],
   };
@@ -699,7 +866,14 @@ export async function importMonth(env: Env, deps: Deps, yearMonth: string, trigg
     summary.errorList.push({ ref: yearMonth, message: describe(err) });
   }
   const finishedAt = nowIso();
-  const details = { statusCounts: summary.statusCounts, createdIds: summary.createdIds, skips: summary.skips, errorList: summary.errorList };
+  const details = {
+    statusCounts: summary.statusCounts,
+    createdIds: summary.createdIds,
+    completed: summary.completed,
+    completedIds: summary.completedIds,
+    skips: summary.skips,
+    errorList: summary.errorList,
+  };
   const { lastRowId } = await run(
     env.DB,
     `INSERT INTO drive_import_runs (
@@ -725,6 +899,7 @@ export async function importMonth(env: Env, deps: Deps, yearMonth: string, trigg
     trigger,
     source: summary.source,
     created: summary.created,
+    completed: summary.completed,
     errors: summary.errors,
   });
   return { ...summary, runId: lastRowId, finishedAt };
@@ -827,7 +1002,7 @@ export async function checkDriveFolder(drive: DriveSource, folderId: string | nu
 export async function listImportRuns(db: D1Database, businessId: number, limit = 20): Promise<ImportSummary[]> {
   const rows = await all<RunRow>(db, 'SELECT * FROM drive_import_runs WHERE business_id = ? ORDER BY id DESC LIMIT ?', businessId, limit);
   return rows.map((r) => {
-    const d = JSON.parse(r.details_json) as Pick<ImportSummary, 'statusCounts' | 'createdIds' | 'skips' | 'errorList'>;
+    const d = JSON.parse(r.details_json) as Partial<Pick<ImportSummary, 'statusCounts' | 'createdIds' | 'completed' | 'completedIds' | 'skips' | 'errorList'>>;
     return {
       runId: r.id,
       yearMonth: r.year_month,
@@ -837,12 +1012,14 @@ export async function listImportRuns(db: D1Database, businessId: number, limit =
       finishedAt: r.finished_at,
       filesSeen: r.files_seen,
       created: r.created,
+      completed: d.completed ?? 0,
       skippedDuplicate: r.skipped_duplicate,
       skippedNotExpense: r.skipped_not_expense,
       skippedIssuedBySelf: r.skipped_issued_by_self,
       errors: r.errors,
       statusCounts: d.statusCounts ?? {},
       createdIds: d.createdIds ?? [],
+      completedIds: d.completedIds ?? [],
       skips: d.skips ?? [],
       errorList: d.errorList ?? [],
     };

@@ -233,7 +233,7 @@ describe('R20: import from the index sheet', () => {
     expect(after!.n).toBe(before!.n);
   });
 
-  it('skips expenses already uploaded by hand: same supplier and number, same file, or same supplier, date and ILS total', async () => {
+  it('skips expenses already filed with full data: same supplier and number, same file, or same supplier, date and ILS total', async () => {
     const extractor = new FakeExtractor({
       'gpuhost.pdf': { supplierName: 'Gpuhost', documentNumber: 'GH-0928', date: '2026-06-12', currency: 'USD', amount: '10', vatAmount: null },
       'modelco.pdf': { supplierName: 'Modelco', documentNumber: null, date: '2026-06-10', currency: 'USD', amount: '45', vatAmount: null },
@@ -246,7 +246,13 @@ describe('R20: import from the index sheet', () => {
     };
     const gpuhost = await upload('gpuhost.pdf', 'gpuhost receipt, scanned');
     const modelco = await upload('modelco.pdf', 'modelco invoice, scanned');
-    const chatly = await upload('chatly.pdf', 'chatly receipt bytes');
+    const chatlyNew = await upload('chatly.pdf', 'chatly receipt bytes');
+    // Filed with every field set, so the sheet has nothing to add.
+    const software = await env.DB.prepare("SELECT id FROM expense_categories WHERE key = 'software'").first<{ id: number }>();
+    await env.DB.prepare(
+      "UPDATE expenses SET status = 'filed', category_id = ?, is_fixed = 1, document_type = 'Receipt' WHERE id IN (?, ?, ?)",
+    ).bind(software!.id, gpuhost.id, modelco.id, chatlyNew.id).run();
+    const [gpuhostFiled, chatly] = [await expense(gpuhost.id), await expense(chatlyNew.id)];
 
     const drive = new FakeDriveSource(
       {
@@ -277,8 +283,74 @@ describe('R20: import from the index sheet', () => {
       { ref: 'Row 3: Modelco, PBC MC-0003', reason: 'supplier_date_total', expenseId: modelco.id },
       { ref: 'Row 4: Chatly Limited CH-9', reason: 'file_hash', expenseId: chatly.id },
     ]);
-    // Never changes an existing expense.
-    expect(await expense(gpuhost.id)).toEqual(gpuhost);
+    // Never changes a filed expense with full data.
+    expect(await expense(gpuhost.id)).toEqual(gpuhostFiled);
+  });
+
+  it('fills a matched expense from the sheet: an unreviewed one is filed with the sheet values, a filed one gets only its empty fields', async () => {
+    const extractor = new FakeExtractor({
+      'tokenly.pdf': { supplierName: 'Tokenly, PBC', documentNumber: 'TK-0007', date: '2026-02-09', currency: 'ILS', amount: '90', vatAmount: null },
+      'voiceco.pdf': { supplierName: '', documentNumber: null, date: null, currency: 'ILS', amount: '0', vatAmount: null },
+      'dupe.pdf': { supplierName: 'Tokenly, PBC', documentNumber: 'TK-0008', date: '2026-02-10', currency: 'ILS', amount: '5', vatAmount: null },
+    } satisfies Record<string, ExtractedExpense>);
+    const app = buildApp({ extractor, fx: deps(new FakeDriveSource()).fx });
+    const upload = async (name: string, content: string) => {
+      const res = await call(app, '/upload', { method: 'POST', body: uploadForm(bytesFrom(content), name, 'application/pdf') });
+      return ((await res.json()) as { expense: ExpenseRow }).expense;
+    };
+    const tokenly = await upload('tokenly.pdf', 'tokenly invoice, from the inbox');
+    const voiceco = await upload('voiceco.pdf', 'voiceco invoice bytes');
+    const dupe = await upload('dupe.pdf', 'tokenly second receipt');
+    // Voiceco was filed by hand with only a note, the amount still empty.
+    await env.DB.prepare("UPDATE expenses SET status = 'filed', notes = 'Typed by hand' WHERE id = ?").bind(voiceco.id).run();
+    await env.DB.prepare("UPDATE expenses SET status = 'duplicate', duplicate_of_id = ? WHERE id = ?").bind(tokenly.id, dupe.id).run();
+    const dupeBefore = await expense(dupe.id);
+
+    const drive = new FakeDriveSource(
+      { 'folder-2026-02': [{ file: pdf('feb-voiceco', '2026-02-17_voiceco.pdf'), bytes: bytesFrom('voiceco invoice bytes') }] },
+      { [`${ROOT}/2026-02`]: 'folder-2026-02' },
+      {
+        [`${ROOT}/2026-02`]: {
+          id: 'sheet-2026-02',
+          rows: [
+            HEADER,
+            row({
+              status: 'הוצאה', date: '2026-02-09', supplier: 'Tokenly, PBC', type: 'חשבונית', total: '100', currency: 'ILS',
+              category: 'תוכנה ומנויים', fixed: 'קבוע', number: 'TK-0007', link: gmailLink, notes: 'Max plan',
+            }),
+            row({
+              status: 'הוצאה', date: '2026-02-17', supplier: 'Voiceco Inc.', type: 'חשבונית', total: '3.09', currency: 'ILS',
+              category: 'תוכנה ומנויים', fixed: 'חדש', number: 'VC-0001', link: driveLink('feb-voiceco'), notes: 'Starter',
+            }),
+            row({ status: 'הוצאה', date: '2026-02-10', supplier: 'Tokenly, PBC', total: '5', currency: 'ILS', number: 'TK-0008', link: gmailLink }),
+          ],
+        },
+      },
+    );
+    const summary = await importMonth(env, deps(drive), '2026-02', 'manual', SYSTEM_ACTOR);
+
+    expect(summary.created).toBe(0);
+    expect(summary.completed).toBe(2);
+    expect(summary.completedIds).toEqual([tokenly.id, voiceco.id]);
+    expect(summary.skips).toEqual([{ ref: 'Row 4: Tokenly, PBC TK-0008', reason: 'supplier_number', expenseId: dupe.id }]);
+
+    // Unreviewed: the sheet wins and the expense is filed.
+    const t1 = await expense(tokenly.id);
+    expect(t1).toMatchObject({ status: 'filed', amount_minor: 10000, amount_ils_minor: 10000, document_type: 'חשבונית', is_fixed: 1, read_status: 'manual' });
+    expect(t1.category_id).not.toBeNull();
+    expect(t1.notes).toContain('Max plan');
+    expect(JSON.parse(t1.extracted_json!)).toMatchObject({ source: 'index_sheet', previous: { documentNumber: 'TK-0007', amount: '90' } });
+    expect(t1.file_id).toBe(tokenly.file_id);
+
+    // Filed with gaps: only the empty fields are set, the hand-typed note stays.
+    const v1 = await expense(voiceco.id);
+    expect(v1).toMatchObject({ status: 'filed', document_number: 'VC-0001', amount_minor: 309, amount_ils_minor: 309, notes: 'Typed by hand' });
+    expect(v1.supplier_id).not.toBeNull();
+
+    // Marked duplicate by a person: untouched.
+    expect(await expense(dupe.id)).toEqual(dupeBefore);
+    const run = await env.DB.prepare('SELECT details_json FROM drive_import_runs WHERE id = ?').bind(summary.runId).first<{ details_json: string }>();
+    expect(JSON.parse(run!.details_json)).toMatchObject({ completed: 2, completedIds: [tokenly.id, voiceco.id] });
   });
 
   it('records a row it cannot read as an error and carries on', async () => {

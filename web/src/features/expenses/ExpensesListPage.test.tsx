@@ -96,7 +96,7 @@ describe('ExpensesListPage', () => {
     );
     fireEvent.change(screen.getByLabelText('Month to import'), { target: { value: '2026-08' } });
     fireEvent.click(screen.getByRole('button', { name: 'Import month' }));
-    expect(await screen.findByText(/2026-08 from the index sheet: 3 seen, 1 created, 1 skipped as duplicate/)).toBeInTheDocument();
+    expect(await screen.findByText(/2026-08 from the index sheet: 3 seen, 1 created, 0 filled in from the sheet, 1 skipped as duplicate/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Expense 1' })).toHaveAttribute('href', '/expenses/1');
     const importCall = fetchMock.mock.calls.find(([url]) => String(url).includes('/import/month')) as unknown as [string, RequestInit];
     expect(JSON.parse(String(importCall[1].body))).toEqual({ yearMonth: '2026-08' });

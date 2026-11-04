@@ -70,7 +70,12 @@ When it asks for the value, paste the whole content of the JSON file, from the f
 - The AI is Anthropic or Gemini, whichever you set up (`AI_PROVIDER` and its key, see `docs/deploy.md`). Settings > Expenses shows which one. With no key, a file is not read and the run lists it as an error to enter by hand.
 - It never reads the `_to_be_deleted` folder.
 - It skips anything already in the ledger, uploads included: the same Drive file, the same file content, or the same supplier and document number. A row with the same supplier, date and total in shekels is flagged and not created.
-- It never changes or deletes an expense that is already there.
+- A row that matches an expense still waiting for review, for example a receipt forwarded to the
+  email inbox, fills that expense with the row's values and files it. A row that matches a filed
+  expense with empty fields (no supplier, category, date, type, amount, shekel amount or fixed
+  flag) fills only those fields. The result lists both as filled in from the sheet.
+- It never changes a filed expense with full data, or one marked duplicate, not an expense or
+  returned. It never deletes an expense.
 
 ## Without a service account
 

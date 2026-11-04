@@ -28,6 +28,13 @@
 - Dates on screen read day/month/year (04/11/2026), and times use a 24-hour clock in Israel time,
   in both interface languages.
 - The top bar stays in view when you scroll on a desktop, as it already did on phones.
+
+### Expenses
+- Drive import: a sheet row that matches an expense still waiting for review (for example a receipt
+  forwarded to the inbox) fills it with the sheet's values and files it, instead of skipping it as a
+  duplicate. A match that is filed but has empty fields gets only those fields. A filed expense with
+  full data, and one marked duplicate, not an expense or returned, is still skipped untouched. The
+  result line counts these as filled in from the sheet and links each one.
 - The Tax Authority sign-in buttons show a spinner while the Tax Authority's page loads, and a
   second click does nothing.
 - Phones: a two-finger pinch zooms the content from 100% to 180%. Text wraps to the screen, so

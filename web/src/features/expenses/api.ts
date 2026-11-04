@@ -172,12 +172,15 @@ export interface ImportSummary {
   finishedAt: string;
   filesSeen: number;
   created: number;
+  /** Matched expenses filled in from the sheet. Missing on runs logged before this existed. */
+  completed?: number;
   skippedDuplicate: number;
   skippedNotExpense: number;
   skippedIssuedBySelf: number;
   errors: number;
   statusCounts: Record<string, number>;
   createdIds: number[];
+  completedIds?: number[];
   skips: { ref: string; reason: ImportSkipReason; expenseId: number | null }[];
   errorList: { ref: string; message: string }[];
 }
