@@ -11,6 +11,7 @@ import { METHOD_LABEL_KEYS, clientName, formatMilli, formatMinor, money, parseMi
 import { ChequeBankFields } from './ChequeBankFields';
 import { DocTypeExplainer } from './DocTypeExplainer';
 import { Card, ErrorNote, Loading, PageTitle, StatusChip, btn, btnDanger, btnPrimary, btnSecondary, errorText, input, label, useLoad } from './ui';
+import { showDate, showDateTime } from '../../lib/dates';
 
 // R18 task 10: 300 is the one proforma type now (merged with PF's behaviour); PF is disabled for
 // new documents, so it offers no "convert to" button of its own any more (an already-finalized
@@ -370,7 +371,7 @@ export function DocumentPage() {
             ) : (
               <ul className="text-sm">
                 {sentEvents.map((e) => (
-                  <li key={e.id}>{t('documents.page.sentByOn', { channel: String(e.details?.channel ?? 'other'), date: e.at.slice(0, 10) })}</li>
+                  <li key={e.id}>{t('documents.page.sentByOn', { channel: String(e.details?.channel ?? 'other'), date: showDate(e.at) })}</li>
                 ))}
               </ul>
             )}
@@ -544,7 +545,7 @@ export function DocumentPage() {
           {data.events.map((e) => (
             <li key={e.id} className="flex justify-between gap-3">
               <span>{eventText(t, e)}</span>
-              <span className="ltr-nums text-muted tabular-nums">{e.at.slice(0, 16).replace('T', ' ')}</span>
+              <span className="ltr-nums text-muted tabular-nums">{showDateTime(e.at)}</span>
             </li>
           ))}
         </ul>

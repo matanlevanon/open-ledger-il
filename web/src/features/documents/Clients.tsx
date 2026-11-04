@@ -34,6 +34,7 @@ import { LedgerView } from './Ledger';
 import { type BusinessList, fetchBusinesses } from '../../api/businesses';
 import { apiSend } from './api';
 import { Card, ErrorNote, Loading, PageTitle, btnPrimary, btnSecondary, errorText, input, label, useLoad } from './ui';
+import { showDate } from '../../lib/dates';
 
 function todayDate(): string {
   return new Date().toISOString().slice(0, 10);
@@ -651,7 +652,7 @@ export function ClientPage() {
               <dt className="text-muted">{t('clients.page.digitalDocumentsLabel')}</dt>
               <dd>
                 {t(CONSENT_STATUS_LABEL_KEYS[data.consent.status])}
-                {data.consent.at && ` ${t('clients.page.consentOnDate', { date: data.consent.at.slice(0, 10) })}`}
+                {data.consent.at && ` ${t('clients.page.consentOnDate', { date: showDate(data.consent.at) })}`}
                 {consentMethodLabelKey(data.consent.method, data.consent.source) && ` (${t(consentMethodLabelKey(data.consent.method, data.consent.source)!)})`}
               </dd>
             </dl>

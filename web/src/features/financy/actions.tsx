@@ -6,6 +6,7 @@ import { Dialog } from '../../components/Dialog';
 import { type MessageKey, useT } from '../../i18n';
 import { btnSecondary, input } from '../documents/ui';
 import { type BankTransaction, type MatchCandidate, type RowStatus, financyApi, formatMinor } from './api';
+import { showDate } from '../../lib/dates';
 
 /**
  * R42: what the Financy Dashboard and Expenses > Bank activity share, so both screens act the
@@ -161,7 +162,7 @@ export function MatchPicker({ tx, onClose, onMatched, onError }: { tx: BankTrans
       }
     >
       <p className="mb-2 text-sm text-muted" dir="auto">
-        {tx.merchant ?? tx.description} <span className="ltr-nums">{formatMinor(tx.amountMinor, tx.currency)}</span> <span className="ltr-nums">{tx.date}</span>
+        {tx.merchant ?? tx.description} <span className="ltr-nums">{formatMinor(tx.amountMinor, tx.currency)}</span> <span className="ltr-nums">{showDate(tx.date)}</span>
       </p>
       <label className="sr-only" htmlFor={`match-q-${tx.id}`}>
         {t('financy.pick.search')}
@@ -179,7 +180,7 @@ export function MatchPicker({ tx, onClose, onMatched, onError }: { tx: BankTrans
                 <button type="button" className="flex w-full items-center justify-between gap-3 px-1 py-2 text-start text-sm hover:bg-canvas" onClick={() => void pick(c)}>
                   <span dir="auto">
                     {c.label}
-                    {c.date && <span className="ltr-nums ms-2 text-xs text-muted">{c.date}</span>}
+                    {c.date && <span className="ltr-nums ms-2 text-xs text-muted">{showDate(c.date)}</span>}
                   </span>
                   <span className="ltr-nums font-semibold">{formatMinor(c.amountMinor, c.currency)}</span>
                 </button>

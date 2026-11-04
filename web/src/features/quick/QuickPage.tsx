@@ -14,6 +14,7 @@ import { STATUS_LABEL_KEYS } from '../expenses/format';
 import { type ActivityItem, activityApi, uploadReceipt } from './api';
 import { receiptName, shrinkForUpload } from './image';
 import { dropPending, isNetworkFailure, pendingReceipts, queueReceipt, toFile } from './queue';
+import { showDate } from '../../lib/dates';
 
 /**
  * Phone home (/quick): add an expense from the camera or the gallery, issue a document, and see
@@ -253,10 +254,7 @@ function ActivityRow({ item, types }: { item: ActivityItem; types: DocType[] }) 
       : t('quick.activity.draft', { typeName })
     : (item.name ?? t('quick.activity.expense'));
   const who = isDoc ? ((locale === 'he' ? item.nameHe : null) ?? item.name) : t('quick.activity.expense');
-  const when = new Date(item.at);
-  const whenText = Number.isNaN(when.getTime())
-    ? item.at.slice(0, 10)
-    : when.toLocaleDateString(locale === 'he' ? 'he-IL' : 'en-GB', { day: 'numeric', month: 'short' });
+  const whenText = showDate(item.at);
   return (
     <li>
       <Link to={isDoc ? `/income/documents/${item.id}` : `/expenses/${item.id}`} className="flex items-center gap-3 px-1 py-3 active:bg-surface">

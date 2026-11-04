@@ -6,11 +6,11 @@ import { useT } from '../../i18n';
 import { btnPrimary, btnSecondary, ErrorNote, errorText, Loading, useLoad } from '../documents/ui';
 import { contractsApi, type ContractStatus, type ContractSummary } from './api';
 import { ExternalContractForm } from './ExternalContractForm';
+import { showDate } from '../../lib/dates';
 
-/** "12 Oct" in the interface language. */
-export function shortDate(iso: string | null, locale: 'en' | 'he'): string {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString(locale === 'he' ? 'he-IL' : 'en-GB', { day: 'numeric', month: 'short' });
+/** Day/month/year, the same in both interface languages (lib/dates). */
+export function shortDate(iso: string | null, _locale: 'en' | 'he'): string {
+  return showDate(iso);
 }
 
 const CHIP: Record<ContractStatus, string> = {

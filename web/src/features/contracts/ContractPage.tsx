@@ -8,9 +8,11 @@ import { btnDanger, btnPrimary, btnSecondary, Card, ErrorNote, errorText, input,
 import { contractsApi, type ContractOverview, type ExternalRecord } from './api';
 import { ContractChip } from './ClientContracts';
 import { BackLink, contractParent } from '../../components/BackLink';
+import { showDate, showDateTime } from '../../lib/dates';
 
 function eventTime(iso: string, locale: 'en' | 'he'): string {
-  return new Date(iso).toLocaleString(locale === 'he' ? 'he-IL' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  void locale;
+  return showDateTime(iso);
 }
 
 /** A short device name from a user agent: "iPhone Safari", "Windows Chrome". */
@@ -269,7 +271,7 @@ export function ContractPage() {
 
       {c.status === 'signed' && !external && <p className="mb-3 text-sm text-muted">{t('contracts.detail.signedNote')}</p>}
       {c.status === 'declined' && c.declineReason && <p className="mb-3 text-sm text-danger">{t('contracts.detail.declined', { reason: c.declineReason })}</p>}
-      {open && c.expiresAt && <p className="mb-3 text-sm text-muted">{t('contracts.detail.expires', { date: c.expiresAt.slice(0, 10) })}</p>}
+      {open && c.expiresAt && <p className="mb-3 text-sm text-muted">{t('contracts.detail.expires', { date: showDate(c.expiresAt) })}</p>}
 
       {external && c.external ? <ExternalOverview x={c.external} /> : c.overview && <Overview o={c.overview} status={c.status} locale={locale} />}
 

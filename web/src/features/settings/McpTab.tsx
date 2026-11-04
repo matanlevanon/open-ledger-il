@@ -7,6 +7,7 @@ import { useT } from '../../i18n';
 import { apiSend } from '../documents/api';
 import { btnPrimary, btnSecondary, label } from '../documents/ui';
 import { ApiSection } from './ApiSection';
+import { showDate } from '../../lib/dates';
 
 /**
  * R34: Settings > MCP. The address, the token state, Make a new token, and MCP on or off. A new
@@ -51,7 +52,7 @@ function download(name: string, obj: unknown) {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-const day = (iso: string) => iso.slice(0, 10);
+const day = (iso: string) => showDate(iso);
 
 export function McpTab() {
   const t = useT();

@@ -3,6 +3,7 @@ import { apiGet } from '../../api/client';
 import { usePreferences } from '../../app/preferences';
 import { type MessageKey, useT } from '../../i18n';
 import { Card, ErrorNote, Loading, useLoad } from './ui';
+import { showDate } from '../../lib/dates';
 
 /** R28: one row of reminder_log, as the client page shows it. */
 export interface ReminderLogItem {
@@ -48,7 +49,7 @@ export function ClientReminders({ clientId }: { clientId: number }) {
         <ul className="flex flex-col gap-1 text-sm" data-testid="client-reminders">
           {data.reminders.map((r) => (
             <li key={r.id}>
-              <span className="ltr-nums text-muted">{new Date(r.at).toLocaleDateString(locale === 'he' ? 'he-IL' : 'en-GB', { day: 'numeric', month: 'short' })}</span> ·{' '}
+              <span className="ltr-nums text-muted">{showDate(r.at)}</span> ·{' '}
               <Link to={r.targetKind === 'contract' ? `/contracts/${r.targetId}` : `/income/documents/${r.targetId}`} className="text-accent-2 hover:underline">
                 <bdi>{r.label ?? `#${r.targetId}`}</bdi>
               </Link>{' '}

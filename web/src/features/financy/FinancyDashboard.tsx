@@ -9,6 +9,7 @@ import { AXIS, GRID, MoneyTooltip, OTHER_COLOR, SERIES, compactIls, useMonthLabe
 import { type BankTransaction, type CategoryRow, type FinancyDashboardData, financyApi, shortTime } from './api';
 import { RowActions, StatusCell } from './actions';
 import { categoryLabel } from './categories';
+import { showDate } from '../../lib/dates';
 
 /**
  * R42: Dashboard > Financy Dashboard. Built like Financy's own dashboard:
@@ -394,7 +395,7 @@ export function FinancyDashboard() {
                           {r.merchant ?? r.description ?? t('financy.dash.noDescription')}
                         </p>
                         <p className="text-xs text-muted">
-                          <span dir="auto">{categoryLabel(r.categoryMain, locale) ?? t('financy.dash.noCategory')}</span> · <span className="ltr-nums">{r.date}</span>
+                          <span dir="auto">{categoryLabel(r.categoryMain, locale) ?? t('financy.dash.noCategory')}</span> · <span className="ltr-nums">{showDate(r.date)}</span>
                         </p>
                       </div>
                     </div>

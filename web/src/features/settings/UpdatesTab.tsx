@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import { ApiError, type UpdateCheck, type UpdatesInfo, checkUpdatesNow, fetchUpdates } from './api';
+import { showDateTime } from '../../lib/dates';
 
 /** Settings > Updates: the running version, the last check, and a Check for updates button. */
 export function UpdatesTab() {
@@ -57,7 +58,7 @@ export function UpdatesTab() {
 
 function Result({ last }: { last: UpdateCheck }) {
   const t = useT();
-  const when = new Date(last.checkedAt).toLocaleString();
+  const when = showDateTime(last.checkedAt);
   return (
     <div className="flex flex-col gap-1">
       {last.status === 'update_available' && (

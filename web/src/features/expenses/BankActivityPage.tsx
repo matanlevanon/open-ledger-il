@@ -7,6 +7,7 @@ import { type MessageKey, useT } from '../../i18n';
 import { type ActivityFilter, type BankAccount, type BankTransaction, type Flow, type MatchStatus, financyApi, formatMinor } from '../financy/api';
 import { RowActions, StatusCell } from '../financy/actions';
 import { categoryText } from '../financy/categories';
+import { showDate } from '../../lib/dates';
 
 /**
  * R40: Expenses > Bank activity, the full list of what Financy pulled. R42: the same status column
@@ -168,7 +169,7 @@ export function BankActivityPage() {
                 <tbody>
                   {rows.map((r) => (
                     <tr key={r.id} data-testid={`bank-row-${r.id}`} className="border-t border-line align-top">
-                      <td className="ltr-nums px-3 py-2">{r.date}</td>
+                      <td className="ltr-nums px-3 py-2">{showDate(r.date)}</td>
                       <td className="px-3 py-2">
                         <span className="block text-ink" dir="auto">
                           {r.merchant ?? r.description ?? t('expenses.common.dash')}

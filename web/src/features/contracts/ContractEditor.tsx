@@ -19,6 +19,7 @@ import {
   type SendResult,
   type Service,
 } from './api';
+import { showDate } from '../../lib/dates';
 
 const CURRENCIES = ['ILS', 'USD', 'EUR', 'GBP'];
 
@@ -391,7 +392,7 @@ export function ContractEditor() {
         <Card>
           {sent.emailed && <p className="text-sm">{t('contracts.sent.emailed', { email: signer.email })}</p>}
           <p className="mt-2 break-all text-sm text-muted ltr-nums">{sent.url}</p>
-          <p className="mt-1 text-sm text-muted">{t('contracts.detail.expires', { date: sent.expiresAt.slice(0, 10) })}</p>
+          <p className="mt-1 text-sm text-muted">{t('contracts.detail.expires', { date: showDate(sent.expiresAt) })}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button type="button" className={btnSecondary} onClick={() => void navigator.clipboard?.writeText(sent.url).then(() => setNote(t('contracts.sent.copied')))}>
               {t('contracts.sent.copy')}

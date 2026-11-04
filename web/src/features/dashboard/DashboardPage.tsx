@@ -40,6 +40,7 @@ import {
   useIsRtl,
   useMonthLabel,
 } from './charts';
+import { showDate } from '../../lib/dates';
 
 /**
  * R21 dashboard, modelled on Wave's dashboard and SUMIT's "תקציר מנהלים". Cards render in the
@@ -754,7 +755,7 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
       ))}
       {(data?.contracts?.expiring ?? []).map((c) => (
         <p key={`e${c.id}`} data-testid="contract-expiring" className="mt-4 rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink">
-          {t('dashboard.contractExpiring', { title: c.title, date: c.expiresAt.slice(0, 10) })}{' '}
+          {t('dashboard.contractExpiring', { title: c.title, date: showDate(c.expiresAt) })}{' '}
           <Link to={`/contracts/${c.id}`} className="font-semibold text-accent-2 hover:underline">
             {t('dashboard.contractOpen')}
           </Link>

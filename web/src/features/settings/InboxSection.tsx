@@ -7,6 +7,7 @@ import type { MessageKey } from '../../i18n';
 import { useT } from '../../i18n';
 import { apiSend } from '../documents/api';
 import { btnPrimary, btnSecondary, input, label } from '../documents/ui';
+import { showDate } from '../../lib/dates';
 
 /**
  * R35: Settings > Expenses > Email inbox. The address, the switch, who may forward, the Gmail
@@ -43,7 +44,7 @@ const OUTCOME_KEYS: Record<InboxOutcome, MessageKey> = {
   off: 'settings.inbox.outcome.off',
 };
 
-const day = (iso: string) => iso.slice(0, 10);
+const day = (iso: string) => showDate(iso);
 
 export function InboxSection() {
   const t = useT();

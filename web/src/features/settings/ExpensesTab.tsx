@@ -17,6 +17,7 @@ import { ImportCounts } from '../expenses/ImportSummaryView';
 import { ApiError } from './api';
 import { FinancySection } from './FinancySection';
 import { InboxSection } from './InboxSection';
+import { showDateTime } from '../../lib/dates';
 
 /** R20: the Drive root folder, the daily sync switch, and the log of every import run. Owner only. */
 export function ExpensesTab() {
@@ -242,7 +243,7 @@ export function ExpensesTab() {
             <tbody>
               {settings.runs.map((r) => (
                 <tr key={r.runId} className="border-t border-line align-top">
-                  <td className="ltr-nums py-2 pe-3">{r.finishedAt.slice(0, 16).replace('T', ' ')}</td>
+                  <td className="ltr-nums py-2 pe-3">{showDateTime(r.finishedAt)}</td>
                   <td className="pe-3">{r.trigger === 'daily' ? t('settings.expenses.triggerDaily') : t('settings.expenses.triggerManual')}</td>
                   <td className="py-2">
                     <ImportCounts summary={r} />

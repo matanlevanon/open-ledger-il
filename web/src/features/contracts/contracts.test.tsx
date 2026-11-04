@@ -129,7 +129,7 @@ describe('R25 Screen A, client contracts tab', () => {
     routes['POST /api/contracts/8/remind'] = () => ({ url: 'u', whatsappUrl: 'w', expiresAt: '2026-10-15', emailed: true, sha256: '' });
     wrap(<ClientContracts clientId={7} canCreate />);
     expect(await screen.findByText('2 contracts')).toBeInTheDocument();
-    expect(screen.getByText('Signed 13 Oct')).toBeInTheDocument();
+    expect(screen.getByText('Signed 13/10/2026')).toBeInTheDocument();
     expect(screen.getByText('Viewed, not signed')).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'New contract or work order' })).toHaveAttribute('href', '/contracts/new?clientId=7');
     fireEvent.click(screen.getByRole('button', { name: 'Remind' }));

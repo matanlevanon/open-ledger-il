@@ -8,6 +8,7 @@ import { clientName, money, totalsText } from './format';
 import { ImportedDocuments, type ImportedKind } from './ImportedDocuments';
 import { SortHeader, type SortState, useSort } from './sort';
 import { Card, ErrorNote, Loading, PageTitle, StatusChip, btnPrimary, useLoad } from './ui';
+import { showDate } from '../../lib/dates';
 
 /** Which imported past documents belong on a list, by the list's type codes. */
 function importedKindsFor(types: string): ImportedKind[] {
@@ -162,7 +163,7 @@ function Rows({ items, defaultSort = null }: { items: DocListItem[]; defaultSort
               <td className="px-3 py-2">
                 <StatusChip state={d.state} overdue={d.overdue} />
               </td>
-              <td className="ltr-nums px-3 py-2 tabular-nums">{d.date}</td>
+              <td className="ltr-nums px-3 py-2 tabular-nums">{showDate(d.date)}</td>
               <td className="px-3 py-2">
                 <Link to={`/income/documents/${d.id}`} className="text-brand hover:underline">
                   {d.display_number ?? t('documents.page.draftFallbackTitle', { typeName: d.type_name_en })}

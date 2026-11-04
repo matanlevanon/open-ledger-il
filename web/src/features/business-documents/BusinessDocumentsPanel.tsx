@@ -18,6 +18,7 @@ import {
   storePrefill,
   uploadDocument,
 } from './api';
+import { showDate } from '../../lib/dates';
 
 export interface BusinessDocumentsApi {
   load: typeof fetchDocuments;
@@ -115,7 +116,7 @@ export function BusinessDocumentsPanel({ api = DEFAULT_API, onUseDetails }: Prop
                   <span className="ltr-nums text-muted">
                     {t('bdocs.dates', { issue: d.issueDate ?? '-', until: d.validUntil ?? '-' })}
                   </span>
-                  <span className="text-xs text-muted">{t('bdocs.uploaded', { who: d.uploadedBy ?? '-', when: d.uploadedAt.slice(0, 10) })}</span>
+                  <span className="text-xs text-muted">{t('bdocs.uploaded', { who: d.uploadedBy ?? '-', when: showDate(d.uploadedAt) })}</span>
                   <span className="ms-auto flex flex-wrap gap-2">
                     <a className={btnSecondary} href={fileUrl(d.id)} target="_blank" rel="noreferrer">
                       {t('bdocs.view')}
@@ -165,7 +166,7 @@ export function BusinessDocumentsPanel({ api = DEFAULT_API, onUseDetails }: Prop
                 <li key={l.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-2 text-sm">
                   <span className="text-ink">{l.fileName}</span>
                   <span className="text-muted">{t(`bdocs.channel.${l.channel}` as MessageKey)}{l.sentTo ? ` ${l.sentTo}` : ''}</span>
-                  <span className="ltr-nums text-muted">{t('bdocs.linkExpires', { date: l.expiresAt.slice(0, 10) })}</span>
+                  <span className="ltr-nums text-muted">{t('bdocs.linkExpires', { date: showDate(l.expiresAt) })}</span>
                   <span className="text-xs text-muted">{t('bdocs.opened', { count: String(l.openCount) })}</span>
                   <button
                     type="button"

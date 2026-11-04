@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useT } from '../../i18n';
 import { ApiError, fetchAccessLog, type AccessLogEntry } from './api';
+import { showDateTime } from '../../lib/dates';
 
 export function AccessLogTab() {
   const [entries, setEntries] = useState<AccessLogEntry[] | null>(null);
@@ -45,7 +46,7 @@ export function AccessLogTab() {
         <tbody>
           {entries.map((entry) => (
             <tr key={entry.id} className="border-t border-line">
-              <td className="py-2 ltr-nums">{entry.at}</td>
+              <td className="py-2 ltr-nums">{showDateTime(entry.at)}</td>
               <td>{entry.userEmail ?? t('access.log.systemFallback')}</td>
               <td>{entry.action}</td>
               <td>{[entry.entity, entry.entityId].filter(Boolean).join(' ')}</td>

@@ -89,7 +89,7 @@ describe('Settings > MCP', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Make the token' }));
     expect(await screen.findByTestId('mcp-token')).toHaveTextContent(TOKEN);
     expect(screen.getByText('Shown once. Copy it now. If you lose it, make a new one.')).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByTestId('mcp-state')).toHaveTextContent('Token made here on 2026-10-16 by owner@example.com, ends in …DEFG. Not used yet.'));
+    await waitFor(() => expect(screen.getByTestId('mcp-state')).toHaveTextContent('Token made here on 16/10/2026 by owner@example.com, ends in …DEFG. Not used yet.'));
     const copies = screen.getAllByRole('button', { name: 'Copy' });
     fireEvent.click(copies[1]!);
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(TOKEN));
@@ -140,7 +140,7 @@ describe('Settings > MCP', () => {
   it('shows the last used date of a Ledger token', async () => {
     state = { ...state, token: { state: 'ledger', last4: 'WXYZ', createdAt: '2026-10-01T09:00:00.000Z', createdBy: 'a@b.co', lastUsedAt: '2026-10-15T08:00:00.000Z' } };
     renderTab();
-    expect(await screen.findByTestId('mcp-state')).toHaveTextContent('Token made here on 2026-10-01 by a@b.co, ends in …WXYZ. Last used 2026-10-15.');
+    expect(await screen.findByTestId('mcp-state')).toHaveTextContent('Token made here on 01/10/2026 by a@b.co, ends in …WXYZ. Last used 15/10/2026.');
   });
 
   describe('R41: the API section', () => {

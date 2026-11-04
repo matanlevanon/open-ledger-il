@@ -7,6 +7,7 @@ import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import { apiSend } from '../documents/api';
 import { btnDanger, btnPrimary, btnSecondary, input, label } from '../documents/ui';
+import { showDate } from '../../lib/dates';
 
 /**
  * R41: Settings > MCP and API, the API half. The address, the Business ID, the keys, Create key
@@ -35,7 +36,7 @@ export const apiKeysApi = {
   revoke: (id: number) => apiSend<{ revoked: boolean }>('DELETE', `/settings/api-keys/${id}`),
 };
 
-const day = (iso: string | null) => (iso ? iso.slice(0, 10) : null);
+const day = (iso: string | null) => (iso ? showDate(iso) : null);
 
 export function ApiSection() {
   const t = useT();

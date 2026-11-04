@@ -22,6 +22,7 @@ import { ErrorNote, Loading, useLoad } from '../documents/ui';
 import { CatalogReport, linkPath } from './CatalogReport';
 import { FILTER_KEYS, REPORT_ENTRIES, REPORT_GROUPS, type ReportEntry, reportEntry } from './catalog';
 import { type Period, PeriodControl, todayIsrael, usePeriod } from './period';
+import { showDate } from '../../lib/dates';
 
 /**
  * R21 reports: a left list grouped like SUMIT (Clients, Income, Expenses, Tax). The selected
@@ -59,7 +60,7 @@ function IncomePanel({ from, to }: { from: string; to: string }) {
       </div>
       <DataTable
         columns={[
-          { key: 'date', header: t('reports.income.colDate'), render: (r) => <span className="ltr-nums">{r.date}</span> },
+          { key: 'date', header: t('reports.income.colDate'), render: (r) => <span className="ltr-nums">{showDate(r.date)}</span> },
           {
             key: 'type',
             header: t('reports.income.colType'),
@@ -248,7 +249,7 @@ function ClientStatementPanel({ from, to, clientId }: { from: string; to: string
               <tbody>
                 {c.ledger.entries.map((e, i) => (
                   <tr key={`${e.document_id}-${e.kind}-${i}`} className="border-t border-line">
-                    <td className="ltr-nums px-2 py-1">{e.date}</td>
+                    <td className="ltr-nums px-2 py-1">{showDate(e.date)}</td>
                     <td className="px-2 py-1">
                       <Link to={`/income/documents/${e.document_id}`} className="text-accent-2 hover:underline">
                         {`${e.type_name_en} ${e.display_number ?? ''}`.trim()}

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { HelpTip } from '../../components/HelpTip';
 import { useT, type MessageKey } from '../../i18n';
 import { CONNECT_URL, type AllocationItem, type ItaApi, type Overview, type RefusalChoice, httpItaApi } from './api';
+import { showDate, showDateTime } from '../../lib/dates';
 
 const CHOICES: { choice: RefusalChoice; labelKey: MessageKey; hintKey: MessageKey }[] = [
   { choice: 'cancel', labelKey: 'ita.choice.cancel.label', hintKey: 'ita.choice.cancel.hint' },
@@ -27,7 +28,7 @@ function docLabel(item: { type: string; number: number | null; id: number }, t: 
 }
 
 function when(iso: string | null, t: T): string {
-  return iso ? new Date(iso).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : t('ita.notScheduled');
+  return iso ? showDateTime(iso) : t('ita.notScheduled');
 }
 
 const STATUS_TEXT_KEYS: Record<string, MessageKey> = {
@@ -257,7 +258,7 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
                 <tr key={d.id} className="border-t border-line">
                   <td className="py-1">{docLabel(d, t)}</td>
                   <td>{d.client_name ?? ''}</td>
-                  <td className="ltr-nums">{d.date}</td>
+                  <td className="ltr-nums">{showDate(d.date)}</td>
                   <td className="ltr-nums text-end">{money(d.subtotal_minor)}</td>
                   <td>{d.decision === 'continue' ? t('ita.withoutNumbers.issuedWithoutNumber') : d.status.replace(/_/g, ' ')}</td>
                 </tr>
@@ -329,7 +330,7 @@ function webAppDetails(d: NonNullable<AllocationItem['document']>, businessVat: 
     `מספר עוסק של הלקוח: ${d.customer_vat_number ?? ''}`,
     `שם הלקוח: ${d.customer_name ?? ''}`,
     `מספר מסמך: ${d.number ?? ''}`,
-    `תאריך: ${d.date}`,
+    `תאריך: ${showDate(d.date)}`,
     `סכום לפני מע"מ: ${money(d.payment_amount_minor)}`,
     `מע"מ: ${money(d.vat_amount_minor)}`,
     `סכום כולל מע"מ: ${money(d.total_minor)}`,
