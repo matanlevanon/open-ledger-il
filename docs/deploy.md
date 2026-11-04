@@ -62,21 +62,21 @@ next UTC day. The fix is upgrading to Workers Paid (10 hours a month included).
 
 ## 4. Set up Cloudflare Access
 
-**Cloudflare dashboard**, in **Zero Trust**, under **Protect & connect** in the left menu (or go to [dash.cloudflare.com/?to=/:account/access/apps](https://dash.cloudflare.com/?to=/:account/access/apps)).
+**Cloudflare dashboard**, in **Zero Trust**, under **Protect & connect** in the left menu (or go to [dash.cloudflare.com/?to=/:account/one/access-controls/apps](https://dash.cloudflare.com/?to=/:account/one/access-controls/apps)).
 
 1. Go to **Access controls** > **Applications**.
-2. Select **Add an application** > **Self-hosted**.
-3. Name it "Open Ledger IL". Under **Application domain**, add the public hostname:
+2. Select **Create new application** > **Self-hosted and private** > **Continue with Self-hosted and private**.
+3. Under **Destinations** > **Public hostnames**, add the public hostname. At the bottom, under **Details**, set **Name** to "Open Ledger IL". The hostname:
    `ledger.example.com`.
-4. Add a policy: **Allow**, rule type **Emails**, values = your own email and any accountant's
+4. Under **Access policies**, click **Create new policy**: **Allow**, rule type **Emails**, values = your own email and any accountant's
    email who should sign in. Start with just the owner email. Add an accountant's email later
    from this same screen when you actually invite one. Their `users` row still needs to exist in
    the app too, from **Access** > **Users** in Open Ledger IL itself, or the owner-bootstrap flow
    below for the first sign-in.
-5. Save the application.
+5. Click **Create**.
 6. On the application's **Overview**, copy its **Application Audience (AUD) Tag**. Your **team
-   domain** is shown in **Zero Trust** > **Settings** > **Custom Pages** (or **Zero Trust** >
-   **Settings** > **General**) as `https://<your-team-name>.cloudflareaccess.com`. You need both
+   domain** is shown in **Zero Trust** > **Settings** > **Team domain** (also on **Zero Trust** >
+   **Overview**, under **Account details**) as `https://<your-team-name>.cloudflareaccess.com`. You need both
    values in step 5 below.
 
 The domain `ledger.example.com` does not need to exist yet. You are about to create it as a
@@ -92,7 +92,7 @@ Clients open two links without a Cloudflare Access session: the consent page and
 share link, both under `/api/sending/public/` (`src/modules/sending/public-paths.ts`). With Access
 on the whole domain, clients hit a sign-in wall. Add a second, more specific application:
 
-1. **Add an application** > **Self-hosted**. Name it "Open Ledger IL public links".
+1. **Create new application** > **Self-hosted and private** > **Continue with Self-hosted and private**. Name it "Open Ledger IL public links".
 2. Domain `ledger.example.com`, path `api/sending/public`.
 3. Policy: name "Public client links", action **Bypass**, include **Everyone**. Save.
 

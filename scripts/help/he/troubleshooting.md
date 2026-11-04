@@ -19,6 +19,8 @@ order: 15
 - **אין Zone Resources.** הוא מופיע רק אחרי שורת הרשאה מסוג Zone. בלי דומיין, מדלגים ומשתמשים בכתובת החינמית של workers.dev. ראו [יצירת ה-API token](/help/cloudflare-token/).
 - **Check token נכשל.** ההודעה אומרת איזו הרשאה חסרה. עורכים את הטוקן, מוסיפים את השורה, שומרים ובודקים שוב.
 - **Zero Trust או R2 מבקשים כרטיס.** שתי התוכניות החינמיות מבקשות אמצעי תשלום ולא מחייבות.
+- **Zero Trust לא מופיע בתפריט.** גוללים את התפריט השמאלי למטה עד **Protect & connect**. הדפים נפתחים תחת הכותרת **Cloudflare One**.
+- **Zero Trust מציג מדריכי Get started או Discover.** מדלגים עליהם. תוכנת ההתקנה מגדירה את הכניסה. Zero Trust פעיל כש-**Zero Trust > Overview** מציג **Team domain** תחת **Account details**.
 - **Purchase R2 Plan.** בתפריט השמאלי, **Storage & databases > R2 Object Storage**. לוחצים ומאשרים את התוכנית החינמית. 10GB הראשונים בחודש בחינם.
 
 ## מפתחות

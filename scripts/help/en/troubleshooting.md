@@ -19,6 +19,8 @@ order: 15
 - **Zone Resources is missing.** It shows up only after a Zone permission row. Without a domain, skip it and use the free workers.dev address. See [Create the Cloudflare API token](/en/help/cloudflare-token/).
 - **Check token fails.** The message names the missing permission. Edit the token, add the row, save, and check again.
 - **Zero Trust or R2 asks for a card.** Both free plans ask for a payment method and charge nothing.
+- **Zero Trust is not in the menu.** Scroll the left menu down to **Protect & connect**. The pages open under the title **Cloudflare One**.
+- **Zero Trust shows Get started or Discover guides.** Skip them. The installer sets up the sign-in. Zero Trust is on when **Zero Trust > Overview** shows a **Team domain** under **Account details**.
 - **Purchase R2 Plan.** In the left menu, **Storage & databases > R2 Object Storage**. Click it and confirm the free tier. The first 10 GB a month are free.
 
 ## Keys

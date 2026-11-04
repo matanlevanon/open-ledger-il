@@ -2,7 +2,7 @@
 
 Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
 
-Updated 2026-10-20
+Updated 2026-11-04
 
 ## The installer comes with your purchase
 
@@ -44,10 +44,21 @@ Click **Next**. The installer downloads the latest Ledger with your key and chec
 The Ledger runs in your own Cloudflare account. The installer shows three steps, in order.
 
 1. **No Cloudflare account yet?** Sign up at dash.cloudflare.com/sign-up with the business email and verify the email. Skip any offer to add a website.
-2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Do not create a bucket, the installer does that. Tick **I did it**.
+2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Nothing is charged. Do not create a bucket, the installer does that. Tick **I did it**.
 3. **Create the API token.** Follow [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/). This is the step where most people get stuck. Tick **I did it**.
 4. Paste the token and click **Check token**. Pick the account.
 5. Optional, on Windows: tick **Remember the token on this computer**. The next update fills it in. The token is stored encrypted for your Windows user, so anyone signed in as you on this PC could use it. Leave the box empty to paste the token each time.
+
+### Zero Trust and R2, step by step
+
+The clicks for step 2, in the Cloudflare dashboard:
+
+1. In the left menu, scroll down to **Protect & connect** and click **Zero Trust**. Cloudflare titles these pages **Cloudflare One**. The menu still says Zero Trust.
+2. A new account opens the setup screen first and asks for a team name. Use English letters, digits or hyphens, for example the business name. It becomes the sign-in address, `team-name.cloudflareaccess.com`. If the name is taken, add a digit.
+3. Pick the **Zero Trust Free** plan, $0 a month for up to 50 users, and add the card.
+4. Skip the **Get started** and **Discover** guides on the Overview page. The installer sets up the sign-in itself.
+5. Check: **Zero Trust > Overview** shows a **Team domain** ending in `.cloudflareaccess.com` under **Account details**, on the right. The same name is under **Zero Trust > Settings > Team domain**.
+6. R2: in the left menu, **Storage & databases > R2 Object Storage**. Click **Purchase R2 Plan** and confirm the free tier. R2 is on when the page shows the bucket list, even an empty one.
 
 ## 4. Domain or workers.dev
 

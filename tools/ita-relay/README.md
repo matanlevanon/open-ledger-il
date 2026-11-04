@@ -101,7 +101,7 @@ the Ledger only.
 
 ### 5. The Access application
 
-Zero Trust dashboard, Access, Applications, Add an application, Self-hosted:
+Zero Trust, Access controls, Applications, Create new application, Self-hosted and private:
 
 - Application name: ita-relay
 - Public hostname: the one from step 3

@@ -555,16 +555,24 @@ Source: https://open-ledger.dev/help/
 
 יומן השינויים נכתב באנגלית.
 
-## Unreleased
+## 1.8.0 (2026-11-01, updated 2026-11-04)
+
+### Tax Authority
+
+- Unified file: **Send to the Tax Authority** uploads the INI and BKMVDATA files through the Tax Authority's upload API (GetUrlsForUploadingFiles, then a resumable upload of each file). **Check status** asks for each file's status: Uploaded, Approved or Rejected. Every send is listed on the Unified file page. The Tax Authority requires this API from 1.1.2027.
+- Sending has its own Tax Authority sign-in. The unified file services take a token from a separate provider (dailytoken) with their own scopes, UniStructFileUploadLinks_scope and FilesStatus_scope, as the developer portal lists them. The card shows whether you are signed in for sending and until when (the later of the access and renewal token), with a Sign in to send button. The invoice sign-in is untouched. The login broker passes `provider=dailytoken` on to the right addresses.
+- Production: the sign-in token comes from ita-api, and the upload links from openapi, the only address that serves them in production. The status check uses ita-api.
+- When the Tax Authority has not asked the business for the file, its answer ("There is no requirement for a uniform structure file for this case number") shows in green as Not requested, not as an error.
+- Sandbox: the Tax Authority's test environment accepts only a small PDF, so the Ledger uploads a one-page test PDF in place of each file and marks the row as a test.
+- A send without that sign-in stops before it records anything. A sign-in that did not finish says so on the card. The card's own errors show in the screen's language.
 
 ### Screens
 
+- The Unified file page has three steps: 1. Period, 2. Create the files on your computer, 3. Send to the Tax Authority. Steps 2 and 3 show the period they use.
+- Dates on screen read day/month/year (04/11/2026), and times use a 24-hour clock in Israel time, in both interface languages.
+- The top bar stays in view when you scroll on a desktop, as it already did on phones.
+- The Tax Authority sign-in buttons show a spinner while the Tax Authority's page loads, and a second click does nothing.
 - Phones: a two-finger pinch zooms the content from 100% to 180%. Text wraps to the screen, so nothing scrolls sideways. The top bar and the bottom menu keep their size, the browser's own page zoom is off, and each phone remembers its level.
-
-## 1.8.0 (2026-11-01)
-
-### Screens
-
 - The button you press shows a spinner and a soft pulse while its action runs, for example Send or Approve and send. The other buttons stay greyed out as before.
 - Document page on a phone: the step number sits in the card title, the cards use the full width, and each document line is one compact row, so the Send step is closer to the top.
 - Quick (the phone home page) shows the Dashboard's Overdue and open card too, between Issue a document and Recent activity. It folds, shows how many items are open, and remembers whether it was folded.
@@ -577,6 +585,8 @@ Source: https://open-ledger.dev/help/
 ### Database
 
 - Migration 4300: `clients.group`.
+- Migration 4400: `unified_file_transmissions`.
+- Migration 4401: `ita_file_tokens`, and `ita_oauth_states.purpose`.
 
 ## 1.7.1 (2026-10-21)
 
@@ -1394,16 +1404,24 @@ Source: https://open-ledger.dev/en/help/
 
 Every release, newest first. The current version is 1.8.0.
 
-## Unreleased
+## 1.8.0 (2026-11-01, updated 2026-11-04)
+
+### Tax Authority
+
+- Unified file: **Send to the Tax Authority** uploads the INI and BKMVDATA files through the Tax Authority's upload API (GetUrlsForUploadingFiles, then a resumable upload of each file). **Check status** asks for each file's status: Uploaded, Approved or Rejected. Every send is listed on the Unified file page. The Tax Authority requires this API from 1.1.2027.
+- Sending has its own Tax Authority sign-in. The unified file services take a token from a separate provider (dailytoken) with their own scopes, UniStructFileUploadLinks_scope and FilesStatus_scope, as the developer portal lists them. The card shows whether you are signed in for sending and until when (the later of the access and renewal token), with a Sign in to send button. The invoice sign-in is untouched. The login broker passes `provider=dailytoken` on to the right addresses.
+- Production: the sign-in token comes from ita-api, and the upload links from openapi, the only address that serves them in production. The status check uses ita-api.
+- When the Tax Authority has not asked the business for the file, its answer ("There is no requirement for a uniform structure file for this case number") shows in green as Not requested, not as an error.
+- Sandbox: the Tax Authority's test environment accepts only a small PDF, so the Ledger uploads a one-page test PDF in place of each file and marks the row as a test.
+- A send without that sign-in stops before it records anything. A sign-in that did not finish says so on the card. The card's own errors show in the screen's language.
 
 ### Screens
 
+- The Unified file page has three steps: 1. Period, 2. Create the files on your computer, 3. Send to the Tax Authority. Steps 2 and 3 show the period they use.
+- Dates on screen read day/month/year (04/11/2026), and times use a 24-hour clock in Israel time, in both interface languages.
+- The top bar stays in view when you scroll on a desktop, as it already did on phones.
+- The Tax Authority sign-in buttons show a spinner while the Tax Authority's page loads, and a second click does nothing.
 - Phones: a two-finger pinch zooms the content from 100% to 180%. Text wraps to the screen, so nothing scrolls sideways. The top bar and the bottom menu keep their size, the browser's own page zoom is off, and each phone remembers its level.
-
-## 1.8.0 (2026-11-01)
-
-### Screens
-
 - The button you press shows a spinner and a soft pulse while its action runs, for example Send or Approve and send. The other buttons stay greyed out as before.
 - Document page on a phone: the step number sits in the card title, the cards use the full width, and each document line is one compact row, so the Send step is closer to the top.
 - Quick (the phone home page) shows the Dashboard's Overdue and open card too, between Issue a document and Recent activity. It folds, shows how many items are open, and remembers whether it was folded.
@@ -1416,6 +1434,8 @@ Every release, newest first. The current version is 1.8.0.
 ### Database
 
 - Migration 4300: `clients.group`.
+- Migration 4400: `unified_file_transmissions`.
+- Migration 4401: `ita_file_tokens`, and `ita_oauth_states.purpose`.
 
 ## 1.7.1 (2026-10-21)
 
@@ -4548,7 +4568,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 
 כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
 
-עודכן 2026-10-20
+עודכן 2026-11-04
 
 ## תוכנת ההתקנה מגיעה עם הרכישה
 
@@ -4590,10 +4610,21 @@ Source: https://open-ledger.dev/help/first-sign-in/
 הלדג'ר רץ בחשבון Cloudflare שלכם. תוכנת ההתקנה מציגה שלושה שלבים, לפי הסדר.
 
 1. **אין עדיין חשבון Cloudflare?** נרשמים ב-dash.cloudflare.com/sign-up עם המייל של העסק ומאשרים את המייל. מדלגים על ההצעה להוסיף אתר.
-2. **מפעילים Zero Trust ו-R2.** לוחצים **Show me how** בשלב הזה. שניהם חינמיים ושניהם מבקשים כרטיס. לא יוצרים bucket, תוכנת ההתקנה עושה את זה. מסמנים **I did it**.
+2. **מפעילים Zero Trust ו-R2.** לוחצים **Show me how** בשלב הזה. שניהם חינמיים ושניהם מבקשים כרטיס. שום דבר לא מחויב. לא יוצרים bucket, תוכנת ההתקנה עושה את זה. מסמנים **I did it**.
 3. **יוצרים API token.** לפי [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/). כאן רוב האנשים נתקעים. מסמנים **I did it**.
 4. מדביקים את הטוקן ולוחצים **Check token**. בוחרים את החשבון.
 5. לא חובה, ב-Windows: מסמנים **Remember the token on this computer**. בעדכון הבא הטוקן ממולא לבד. הוא שמור מוצפן למשתמש ה-Windows שלכם, כך שכל מי שנכנס למחשב כמוכם יכול להשתמש בו. בלי הסימון מדביקים את הטוקן בכל פעם.
+
+### Zero Trust ו-R2, צעד אחר צעד
+
+הלחיצות לשלב 2, בלוח הבקרה של Cloudflare:
+
+1. בתפריט השמאלי גוללים למטה לאזור **Protect & connect** ולוחצים **Zero Trust**. Cloudflare קוראת לדפים האלה **Cloudflare One**, ובתפריט עדיין כתוב Zero Trust.
+2. בחשבון חדש נפתח קודם מסך הגדרה שמבקש team name. כותבים באותיות באנגלית, ספרות או מקפים, למשל שם העסק. זו תהיה כתובת הכניסה, `team-name.cloudflareaccess.com`. אם השם תפוס, מוסיפים ספרה.
+3. בוחרים את התוכנית **Zero Trust Free**, ‏0$ בחודש עד 50 משתמשים, ומוסיפים כרטיס.
+4. מדלגים על המדריכים **Get started** ו-**Discover** בדף ה-Overview. תוכנת ההתקנה מגדירה את הכניסה לבד.
+5. בדיקה: ב-**Zero Trust > Overview**, תחת **Account details** מימין, מופיע **Team domain** שנגמר ב-`.cloudflareaccess.com`. אותו שם מופיע גם ב-**Zero Trust > Settings > Team domain**.
+6. R2: בתפריט השמאלי, **Storage & databases > R2 Object Storage**. לוחצים **Purchase R2 Plan** ומאשרים את התוכנית החינמית. R2 פעיל כשהדף מציג את רשימת ה-buckets, גם אם היא ריקה.
 
 ## 4. דומיין או workers.dev
 
@@ -4876,6 +4907,8 @@ Source: https://open-ledger.dev/help/tax-authority/
 - **אין Zone Resources.** הוא מופיע רק אחרי שורת הרשאה מסוג Zone. בלי דומיין, מדלגים ומשתמשים בכתובת החינמית של workers.dev. ראו [יצירת ה-API token](https://open-ledger.dev/help/cloudflare-token/).
 - **Check token נכשל.** ההודעה אומרת איזו הרשאה חסרה. עורכים את הטוקן, מוסיפים את השורה, שומרים ובודקים שוב.
 - **Zero Trust או R2 מבקשים כרטיס.** שתי התוכניות החינמיות מבקשות אמצעי תשלום ולא מחייבות.
+- **Zero Trust לא מופיע בתפריט.** גוללים את התפריט השמאלי למטה עד **Protect & connect**. הדפים נפתחים תחת הכותרת **Cloudflare One**.
+- **Zero Trust מציג מדריכי Get started או Discover.** מדלגים עליהם. תוכנת ההתקנה מגדירה את הכניסה. Zero Trust פעיל כש-**Zero Trust > Overview** מציג **Team domain** תחת **Account details**.
 - **Purchase R2 Plan.** בתפריט השמאלי, **Storage & databases > R2 Object Storage**. לוחצים ומאשרים את התוכנית החינמית. 10GB הראשונים בחודש בחינם.
 
 ## מפתחות
@@ -5900,7 +5933,7 @@ Source: https://open-ledger.dev/en/help/first-sign-in/
 
 Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
 
-Updated 2026-10-20
+Updated 2026-11-04
 
 ## The installer comes with your purchase
 
@@ -5942,10 +5975,21 @@ Click **Next**. The installer downloads the latest Ledger with your key and chec
 The Ledger runs in your own Cloudflare account. The installer shows three steps, in order.
 
 1. **No Cloudflare account yet?** Sign up at dash.cloudflare.com/sign-up with the business email and verify the email. Skip any offer to add a website.
-2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Do not create a bucket, the installer does that. Tick **I did it**.
+2. **Turn on Zero Trust and R2.** Click **Show me how** on that step. Both are free, and both ask for a card. Nothing is charged. Do not create a bucket, the installer does that. Tick **I did it**.
 3. **Create the API token.** Follow [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/). This is the step where most people get stuck. Tick **I did it**.
 4. Paste the token and click **Check token**. Pick the account.
 5. Optional, on Windows: tick **Remember the token on this computer**. The next update fills it in. The token is stored encrypted for your Windows user, so anyone signed in as you on this PC could use it. Leave the box empty to paste the token each time.
+
+### Zero Trust and R2, step by step
+
+The clicks for step 2, in the Cloudflare dashboard:
+
+1. In the left menu, scroll down to **Protect & connect** and click **Zero Trust**. Cloudflare titles these pages **Cloudflare One**. The menu still says Zero Trust.
+2. A new account opens the setup screen first and asks for a team name. Use English letters, digits or hyphens, for example the business name. It becomes the sign-in address, `team-name.cloudflareaccess.com`. If the name is taken, add a digit.
+3. Pick the **Zero Trust Free** plan, $0 a month for up to 50 users, and add the card.
+4. Skip the **Get started** and **Discover** guides on the Overview page. The installer sets up the sign-in itself.
+5. Check: **Zero Trust > Overview** shows a **Team domain** ending in `.cloudflareaccess.com` under **Account details**, on the right. The same name is under **Zero Trust > Settings > Team domain**.
+6. R2: in the left menu, **Storage & databases > R2 Object Storage**. Click **Purchase R2 Plan** and confirm the free tier. R2 is on when the page shows the bucket list, even an empty one.
 
 ## 4. Domain or workers.dev
 
@@ -6228,6 +6272,8 @@ Updated 2026-10-17
 - **Zone Resources is missing.** It shows up only after a Zone permission row. Without a domain, skip it and use the free workers.dev address. See [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/).
 - **Check token fails.** The message names the missing permission. Edit the token, add the row, save, and check again.
 - **Zero Trust or R2 asks for a card.** Both free plans ask for a payment method and charge nothing.
+- **Zero Trust is not in the menu.** Scroll the left menu down to **Protect & connect**. The pages open under the title **Cloudflare One**.
+- **Zero Trust shows Get started or Discover guides.** Skip them. The installer sets up the sign-in. Zero Trust is on when **Zero Trust > Overview** shows a **Team domain** under **Account details**.
 - **Purchase R2 Plan.** In the left menu, **Storage & databases > R2 Object Storage**. Click it and confirm the free tier. The first 10 GB a month are free.
 
 ## Keys

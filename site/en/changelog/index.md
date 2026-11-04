@@ -2,16 +2,24 @@
 
 Every release, newest first. The current version is 1.8.0.
 
-## Unreleased
+## 1.8.0 (2026-11-01, updated 2026-11-04)
+
+### Tax Authority
+
+- Unified file: **Send to the Tax Authority** uploads the INI and BKMVDATA files through the Tax Authority's upload API (GetUrlsForUploadingFiles, then a resumable upload of each file). **Check status** asks for each file's status: Uploaded, Approved or Rejected. Every send is listed on the Unified file page. The Tax Authority requires this API from 1.1.2027.
+- Sending has its own Tax Authority sign-in. The unified file services take a token from a separate provider (dailytoken) with their own scopes, UniStructFileUploadLinks_scope and FilesStatus_scope, as the developer portal lists them. The card shows whether you are signed in for sending and until when (the later of the access and renewal token), with a Sign in to send button. The invoice sign-in is untouched. The login broker passes `provider=dailytoken` on to the right addresses.
+- Production: the sign-in token comes from ita-api, and the upload links from openapi, the only address that serves them in production. The status check uses ita-api.
+- When the Tax Authority has not asked the business for the file, its answer ("There is no requirement for a uniform structure file for this case number") shows in green as Not requested, not as an error.
+- Sandbox: the Tax Authority's test environment accepts only a small PDF, so the Ledger uploads a one-page test PDF in place of each file and marks the row as a test.
+- A send without that sign-in stops before it records anything. A sign-in that did not finish says so on the card. The card's own errors show in the screen's language.
 
 ### Screens
 
+- The Unified file page has three steps: 1. Period, 2. Create the files on your computer, 3. Send to the Tax Authority. Steps 2 and 3 show the period they use.
+- Dates on screen read day/month/year (04/11/2026), and times use a 24-hour clock in Israel time, in both interface languages.
+- The top bar stays in view when you scroll on a desktop, as it already did on phones.
+- The Tax Authority sign-in buttons show a spinner while the Tax Authority's page loads, and a second click does nothing.
 - Phones: a two-finger pinch zooms the content from 100% to 180%. Text wraps to the screen, so nothing scrolls sideways. The top bar and the bottom menu keep their size, the browser's own page zoom is off, and each phone remembers its level.
-
-## 1.8.0 (2026-11-01)
-
-### Screens
-
 - The button you press shows a spinner and a soft pulse while its action runs, for example Send or Approve and send. The other buttons stay greyed out as before.
 - Document page on a phone: the step number sits in the card title, the cards use the full width, and each document line is one compact row, so the Send step is closer to the top.
 - Quick (the phone home page) shows the Dashboard's Overdue and open card too, between Issue a document and Recent activity. It folds, shows how many items are open, and remembers whether it was folded.
@@ -24,6 +32,8 @@ Every release, newest first. The current version is 1.8.0.
 ### Database
 
 - Migration 4300: `clients.group`.
+- Migration 4400: `unified_file_transmissions`.
+- Migration 4401: `ita_file_tokens`, and `ita_oauth_states.purpose`.
 
 ## 1.7.1 (2026-10-21)
 

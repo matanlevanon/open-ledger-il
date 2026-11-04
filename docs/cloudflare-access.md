@@ -8,14 +8,14 @@ you manage who has an account from the Accountant screen in the app itself.
 
 ## 1. Create the Access application
 
-1. Cloudflare dashboard > your account > Zero Trust (left menu, under Protect & connect) > Access controls > Applications > Add an application.
-2. Choose **Self-hosted**.
-3. Application name: `Open Ledger IL`.
+1. Cloudflare dashboard > your account > Zero Trust (left menu, under Protect & connect) > Access controls > Applications > **Create new application**.
+2. On the **Self-hosted and private** tab, click **Continue with Self-hosted and private**.
+3. Under **Details**, at the bottom of the page, **Name**: `Open Ledger IL`.
 4. Session duration: 24 hours. A session cookie expiring daily is enough. The app's own end-date
    check in `users.access_ends_on` is the real access-length control, not this setting.
-5. Application domain: `ledger.example.com`, the whole domain, no path restriction. The
+5. Under **Destinations** > **Public hostnames**: `ledger.example.com` as subdomain and domain, path empty, so Access covers the whole domain. The
    Worker itself decides which routes an accountant may call.
-6. Save. Copy the **Application Audience (AUD) tag** shown on the application's Overview tab.
+6. Click **Create**. Copy the **Application Audience (AUD) tag** shown on the application's Overview tab.
 
 ## 2. Note the team domain
 
@@ -24,7 +24,7 @@ Zero Trust > Settings > Team domain (also on Zero Trust > Overview, under Accoun
 
 ## 3. Add the policy
 
-On the application, tab **Policies** > Add a policy.
+On the application, under **Access policies**, click **Create new policy**.
 
 - Policy name: `Open Ledger IL sign-in`.
 - Action: **Allow**.
@@ -47,7 +47,7 @@ Clients open two links without a Cloudflare Access session: the consent page and
 share link, both under `/api/sending/public/` (`src/modules/sending/public-paths.ts`). With Access
 on the whole domain, clients hit a sign-in wall. Add a second, more specific application:
 
-1. **Add an application** > **Self-hosted**. Name it "Open Ledger IL public links".
+1. **Create new application** > **Self-hosted and private** > **Continue with Self-hosted and private**. Name it "Open Ledger IL public links".
 2. Domain `ledger.example.com`, path `api/sending/public`.
 3. Policy: name "Public client links", action **Bypass**, include **Everyone**. Save.
 
@@ -60,7 +60,7 @@ Financy, Make, Zapier, n8n and an accountant's software call the Ledger at `/v1`
 key from Settings > MCP and API. They have no Cloudflare sign-in. The installer adds this
 application on a new install and on an update. For a Ledger set up by hand:
 
-1. Cloudflare dashboard > **Zero Trust** > **Access controls** > **Applications** > **Add an application** > **Self-hosted**.
+1. Cloudflare dashboard > **Zero Trust** > **Access controls** > **Applications** > **Create new application** > **Self-hosted and private** > **Continue with Self-hosted and private**.
    Name it "Open Ledger IL API".
 2. Domain `ledger.example.com`, path `v1`.
 3. Policy: name "API", action **Bypass**, include **Everyone**. Save.
