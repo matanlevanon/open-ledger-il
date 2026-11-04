@@ -192,7 +192,7 @@ export function ItaScreen({ api = httpItaApi }: ItaScreenProps) {
                 <HelpTip label={t('ita.help.label')} text={t('ita.renewal.hint')} />
               </span>
             )}
-            <a href={CONNECT_URL} className="rounded-card bg-brand px-4 py-2 text-sm text-brand-ink">
+            <a href={CONNECT_URL} className="rounded-card bg-brand px-4 py-2 text-sm text-brand-ink" data-busy-on-click>
               {c.status === 'not_connected' ? t('ita.connection.connectToIta') : t('ita.connection.connectAgain')}
             </a>
           </div>

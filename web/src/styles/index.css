@@ -175,14 +175,20 @@ body {
    The pressed button while its action runs (src/lib/pressedButton.ts): a spinner before the
    label and a soft pulse, so the person sees the send, save or approve is under way.
    --------------------------------------------------------------------------------------------- */
-button[data-pressed]:disabled {
+button[data-pressed]:disabled,
+a[data-busy-on-click][data-pressed] {
   position: relative;
   cursor: progress;
   opacity: 0.85 !important;
   animation: pressed-pulse 1.2s ease-in-out infinite;
 }
 
-button[data-pressed]:disabled::before {
+a[data-busy-on-click][data-pressed] {
+  pointer-events: none;
+}
+
+button[data-pressed]:disabled::before,
+a[data-busy-on-click][data-pressed]::before {
   content: '';
   display: inline-block;
   vertical-align: -0.15em;
@@ -210,7 +216,9 @@ button[data-pressed]:disabled::before {
 
 @media (prefers-reduced-motion: reduce) {
   button[data-pressed]:disabled,
-  button[data-pressed]:disabled::before {
+  button[data-pressed]:disabled::before,
+  a[data-busy-on-click][data-pressed],
+  a[data-busy-on-click][data-pressed]::before {
     animation: none;
   }
 }

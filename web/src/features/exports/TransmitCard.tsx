@@ -114,7 +114,7 @@ export function TransmitCard({ from, to, drive }: { from: string; to: string; dr
               ? t('unified.send.login.until', { until: new Date(login.until).toLocaleString('he-IL', { dateStyle: 'short', timeStyle: 'short' }) })
               : t('unified.send.login.none')}
           </span>
-          <a className={btnSecondary} href="/api/ita/connect?purpose=unified_file">
+          <a className={btnSecondary} href="/api/ita/connect?purpose=unified_file" data-busy-on-click>
             {login.connected ? t('unified.send.login.again') : t('unified.send.login.button')}
           </a>
         </div>

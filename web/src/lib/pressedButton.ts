@@ -21,8 +21,33 @@ export function trackPressedButtons(doc: Document = document): () => void {
     current = null;
   }
 
+  /**
+   * A link marked `data-busy-on-click` that leaves the page through a slow server step (the Tax
+   * Authority sign-in, for example). It keeps its mark and stops further clicks until the page
+   * goes. Coming back with the browser's Back button clears it.
+   */
+  function onLinkClick(link: HTMLAnchorElement) {
+    if (link.hasAttribute('data-pressed')) return false;
+    link.setAttribute('data-pressed', '');
+    link.setAttribute('aria-busy', 'true');
+    return true;
+  }
+
+  function onPageShow() {
+    doc.querySelectorAll('a[data-busy-on-click][data-pressed]').forEach((a) => {
+      a.removeAttribute('data-pressed');
+      a.removeAttribute('aria-busy');
+    });
+  }
+
   function onClick(event: Event) {
     const target = event.target as Element | null;
+    const link = target?.closest?.('a[data-busy-on-click]') as HTMLAnchorElement | null;
+    if (link) {
+      // A second click while the first is under way does nothing.
+      if (!onLinkClick(link)) event.preventDefault();
+      return;
+    }
     const button = target?.closest?.('button');
     if (!button || button.disabled) return;
     clear();
@@ -43,8 +68,10 @@ export function trackPressedButtons(doc: Document = document): () => void {
   }
 
   doc.addEventListener('click', onClick, true);
+  doc.defaultView?.addEventListener('pageshow', onPageShow);
   return () => {
     doc.removeEventListener('click', onClick, true);
+    doc.defaultView?.removeEventListener('pageshow', onPageShow);
     clear();
   };
 }
