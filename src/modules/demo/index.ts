@@ -262,6 +262,12 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
       lead?.id ?? -1,
     );
     const wrong = (msg: string) => c.html(codePageHtml(lang, email, msg), 400);
+    // A second submit of a code that already worked: this browser holds the session now, so it goes in.
+    if (lead && !code) {
+      const open = await liveSession(c.env.DB, lead.id, now());
+      const session = open ? await sessionFromCookie(c.env.DB, c.req.header('Cookie'), now()) : null;
+      if (open && session && session.sessionKey === open.session_key) return new Response(null, { status: 303, headers: { Location: '/' } });
+    }
     if (!lead || !code) return wrong(lang === 'he' ? 'בקשו קוד חדש.' : 'Ask for a new code.');
     if (code.attempts >= 5 || code.expires_at <= now().toISOString()) return wrong(lang === 'he' ? 'הקוד פג. התחילו מחדש.' : 'The code expired. Start over.');
     if ((await sha256Hex(`${lead.id}:${String(raw.code ?? '').trim()}`)) !== code.code_hash) {

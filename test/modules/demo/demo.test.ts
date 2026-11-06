@@ -223,14 +223,16 @@ describe('the gate', () => {
     expect(await count('SELECT COUNT(*) AS n FROM demo_sessions WHERE lead_id = ?', lead.id)).toBe(0);
     const mail = gateMail.sent.filter((m) => m.to === 'fake@nowhere.test').at(-1)!;
     expect(mail.subject).toMatch(/^Your Open Ledger IL demo code: \d{6}$/);
+    expect(mail.fromName).toBe('Open Ledger IL');
 
     const code = lastCode('fake@nowhere.test');
     expect((await verify('fake@nowhere.test', code === '000000' ? '111111' : '000000')).status).toBe(400);
     const ok = await verify('fake@nowhere.test', code);
     expect(ok.status).toBe(303);
     expect(cookieOf(ok)).not.toBe('');
-    // A code works once.
+    // A code works once. The same browser sending it again (a double submit) goes in with its session.
     expect((await verify('fake@nowhere.test', code)).status).toBe(400);
+    expect((await verify('fake@nowhere.test', code, cookieOf(ok))).status).toBe(303);
     const after = (await first<any>(env.DB, "SELECT * FROM demo_leads WHERE email = 'fake@nowhere.test'"))!;
     expect(after.entered_at).not.toBeNull();
     expect(after.email_verified_at).not.toBeNull();

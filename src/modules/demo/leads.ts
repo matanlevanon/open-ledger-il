@@ -177,7 +177,8 @@ export async function sendGateCode(env: Env, mailer: Mailer, baseUrl: string, le
   const dir = he ? ' dir="rtl"' : '';
   await mailer.send({
     to: lead.email,
-    fromName: texts.sender,
+    // R48: the code comes from the product, e.g. "Open Ledger IL <demo@open-ledger.dev>".
+    fromName: texts.product,
     subject,
     html: `<!doctype html><html${dir}><body style="font-family:sans-serif;line-height:1.5"><p>${intro}</p><p style="font-size:28px;font-weight:700;letter-spacing:6px" dir="ltr">${code}</p><p>${valid}</p>${foot.html}</body></html>`,
     text: `${intro} ${code}\n${valid}\n${foot.text}`,

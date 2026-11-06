@@ -19,7 +19,7 @@ h1{font-size:24px;margin:0 0 6px}h2{font-size:18px;margin:20px 0 6px}.muted{colo
 label.f{display:block;font-size:13px;color:var(--muted);margin:14px 0 4px}
 input[type=text],input[type=email]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--canvas);color:var(--ink);font:inherit}
 .check{display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:14px}.check input{margin-top:4px;width:18px;height:18px;flex:none}
-button{width:100%;margin-top:16px;padding:12px;font:inherit;font-weight:600;border:0;border-radius:12px;background:var(--brand);color:#fff;cursor:pointer}
+button{width:100%;margin-top:16px;padding:12px;font:inherit;font-weight:600;border:0;border-radius:12px;background:var(--brand);color:#fff;cursor:pointer}button:disabled{opacity:.6;cursor:progress}
 a{color:var(--brand)}.err{color:var(--danger);font-size:14px;margin:10px 0 0}.links{text-align:center;margin-top:12px}
 .prose p,.prose li{font-size:15px}
 </style></head><body><main>${body}</main></body></html>`;
@@ -68,7 +68,7 @@ export function gatePageHtml(env: Env, lang: Lang, opts: { error?: string | null
     `<div class="card">
 <h1>${esc(t.title(texts.product))}</h1>
 <p class="muted">${esc(t.lead)}</p>
-<form method="post" action="/api/demo/enter">
+<form method="post" action="/api/demo/enter" onsubmit="var b=this.querySelector('button[type=submit]');if(b.disabled)return false;b.disabled=true">
 <input type="hidden" name="lang" value="${lang}">
 <label class="f" for="name">${esc(t.name)}</label><input type="text" id="name" name="name" required maxlength="200" autocomplete="name" placeholder="${esc(t.namePh)}" value="${esc(opts.name ?? '')}">
 <label class="f" for="email">${esc(t.email)}</label><input type="email" id="email" name="email" required maxlength="200" autocomplete="email" placeholder="${esc(t.emailPh)}" value="${esc(opts.email ?? '')}">
@@ -93,7 +93,7 @@ export function codePageHtml(lang: Lang, email: string, error?: string | null): 
     `<div class="card">
 <h1>${en ? 'Check your email' : 'בדקו את המייל'}</h1>
 <p class="muted">${en ? `We emailed a 6-digit code to ${esc(email)}. Type it to enter the demo.` : `שלחנו קוד בן 6 ספרות אל ${esc(email)}. הקלידו אותו כדי להיכנס להדגמה.`}</p>
-<form method="post" action="/api/demo/verify">
+<form method="post" action="/api/demo/verify" onsubmit="var b=this.querySelector('button[type=submit]');if(b.disabled)return false;b.disabled=true">
 <input type="hidden" name="lang" value="${lang}"><input type="hidden" name="email" value="${esc(email)}">
 <label class="f" for="code">${en ? 'Code' : 'קוד'}</label><input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required autofocus>
 ${error ? `<p class="err" role="alert">${esc(error)}</p>` : ''}
