@@ -29,6 +29,17 @@
   in both interface languages.
 - The top bar stays in view when you scroll on a desktop, as it already did on phones.
 
+### Demo
+- The demo gate emails a 6-digit code, and the demo opens when the visitor types it in. Fake
+  emails no longer get in, and a lead reaches the CRM only after its first entry. A code works for
+  10 minutes and 5 tries, and one address gets at most 5 codes an hour. This browser's live
+  session still opens straight away. Needs `MAIL_API_KEY` on the demo Worker. Without it the demo
+  opens at once, as before.
+- The sample set uses its fixed exchange rate for payments too, so building it never waits on the
+  Bank of Israel.
+- Database: migration 4402 adds the code's answers to `demo_codes`, and `email_verified_at` and
+  `entered_at` to `demo_leads`.
+
 ### Expenses
 - Drive import: a sheet row that matches an expense still waiting for review (for example a receipt
   forwarded to the inbox) fills it with the sheet's values and files it, instead of skipping it as a

@@ -206,6 +206,8 @@ async function addDocuments(deps: SampleDeps, owner: Owner, businessId: number, 
       await creditDocument(ctx, source, { mode: 'partial', amountMinor: d.amountMinor, date, reason: d.reason ?? null, finalize: true, backdateReason: BACKDATE });
       continue;
     }
+    // A fixed rate, so the sample set never waits on the Bank of Israel.
+    const rate = d.overrideRate ?? (d.currency && d.currency !== 'ILS' ? (d.currency === 'EUR' ? '4.000000' : '3.700000') : null);
     const input = draftInput.parse({
       type: d.type,
       clientId: clients.get(d.client ?? '') ?? null,
@@ -213,14 +215,14 @@ async function addDocuments(deps: SampleDeps, owner: Owner, businessId: number, 
       dueDate: d.dueDays ? dateAgo(now, d.daysAgo - d.dueDays) : null,
       currency: d.currency ?? 'ILS',
       lines: (d.lines ?? []).map((l) => ({ description: l.description, unitPriceMinor: l.unitPriceMinor, quantityMilli: 1000 })),
-      overrideRate: d.overrideRate ?? (d.currency && d.currency !== 'ILS' ? (d.currency === 'EUR' ? '4.000000' : '3.700000') : null),
+      overrideRate: rate,
     });
     const id = await createDraft(ctx, input);
     if (d.pay) {
       // A receipt's total follows its payments. A tax invoice receipt's follows its lines with VAT.
       const stored = (await first<{ total_minor: number }>(db, 'SELECT total_minor FROM documents WHERE id = ?', id))!.total_minor;
       const total = stored > 0 ? stored : (d.lines ?? []).reduce((sum, l) => sum + l.unitPriceMinor, 0);
-      await updateDraft(ctx, id, { payments: [{ method: d.pay as 'bank_transfer', paidOn: date, amountMinor: total, chequeCrossed: false }] });
+      await updateDraft(ctx, id, { payments: [{ method: d.pay as 'bank_transfer', paidOn: date, amountMinor: total, chequeCrossed: false }], ...(rate ? { overrideRate: rate } : {}) });
     }
     await finalize(ctx, id, { backdateReason: BACKDATE });
     if (d.cancel) await cancelDocument(ctx, id, d.cancel);

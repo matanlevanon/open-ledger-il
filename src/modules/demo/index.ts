@@ -11,7 +11,7 @@ import type { DocumentsModuleOptions } from '../documents';
 import { type Notifier, slackNotifier } from '../ita/notify';
 import { verifySendToken } from '../sending/tokens';
 import { demoTexts, isDemo } from './config';
-import { confirmConsent, forwardLeadEvents, queueLeadEvent, recordConsent, sendConfirmation, sendReopenCode, unsubscribeLead, upsertLead } from './leads';
+import { confirmConsent, forwardLeadEvents, type LeadRow, queueLeadEvent, recordConsent, sendConfirmation, sendGateCode, unsubscribeLead, upsertLead } from './leads';
 import { gateMailer, latestOutbox } from './outbox';
 import type { Mailer } from '../sending/mailer';
 import { codePageHtml, gatePageHtml, type Lang, messagePageHtml } from './pages';
@@ -43,6 +43,8 @@ const enterInput = z.object({
 });
 
 const CODE_TTL_MS = 10 * 60_000;
+/** R48: at most this many codes per email per hour, so the gate cannot be used to flood an inbox. */
+const CODES_PER_HOUR = 5;
 
 /** A visitor's live session for this lead, if one is still open. */
 async function liveSession(db: D1Database, leadId: number, now: Date) {
@@ -162,12 +164,46 @@ function sixDigits(): string {
  */
 export function createDemoModule(options: DemoOptions = {}): ModuleDef {
   const r = new Hono<AppEnv>();
-  const manual = declareManualAuth('demo gate: public, Turnstile, a daily entry cap and an email code for a second browser');
+  const manual = declareManualAuth('demo gate: public, Turnstile, a daily entry cap and a 6-digit email code before entry');
   const fetchFn = options.fetchFn ?? ((i: RequestInfo | URL, init?: RequestInit) => fetch(i, init));
   const notifier = (env: Env): Notifier => slackNotifier(env.SLACK_WEBHOOK_URL, fetchFn);
   const now = () => (options.now ? options.now() : new Date());
 
   r.use('*', demoOnly);
+
+  /**
+   * R48: lets a lead in. Records the consent answer, forwards the lead on its first entry, sends the
+   * confirmation when the box was ticked, then opens the demo: the lead's live session moves to
+   * this browser with its drafts, or a new visit opens.
+   */
+  const admit = async (c: Context<AppEnv>, lead: LeadRow, consentYes: boolean, lang: Lang): Promise<Response> => {
+    const { consent, changed } = await recordConsent(c.env, lead, consentYes, lang, ipOf(c));
+    if (!lead.entered_at) {
+      await run(c.env.DB, 'UPDATE demo_leads SET entered_at = ? WHERE id = ? AND entered_at IS NULL', nowIso(), lead.id);
+      await queueLeadEvent(c.env.DB, lead, 'lead', consent, c.env);
+    } else if (changed) await queueLeadEvent(c.env.DB, lead, 'consent', consent, c.env);
+    const mailer = (options.mailerFor ?? gateMailer)(c.env);
+    if (changed && consent.consent === 1 && mailer) {
+      try {
+        await sendConfirmation(c.env, mailer, baseUrl(c), lead, consent);
+      } catch (err) {
+        console.warn('demo_confirmation_not_sent', err instanceof Error ? err.message : 'unknown');
+      }
+    }
+    await forwardLeadEvents(c.env, fetchFn, 5);
+
+    const open = await liveSession(c.env.DB, lead.id, now());
+    if (open) {
+      const session = await sessionFromCookie(c.env.DB, c.req.header('Cookie'), now());
+      if (session && session.sessionKey === open.session_key) return new Response(null, { status: 303, headers: { Location: '/' } });
+      // The session moves to this browser: a new cookie, the same key and drafts. The old cookie stops working.
+      const token = newSessionToken();
+      await run(c.env.DB, 'UPDATE demo_sessions SET token_hash = ? WHERE token_hash = ?', await sha256Hex(token), open.token_hash);
+      return redirectWithSession(token);
+    }
+    const token = await openVisit(c.env, { documentsOptions: options.documentsOptions, notifier: notifier(c.env), now: now() }, lead.id);
+    return redirectWithSession(token, await firstBusiness(c.env.DB));
+  };
 
   r.post('/enter', manual, async (c) => {
     const raw = await formOf(c);
@@ -179,59 +215,62 @@ export function createDemoModule(options: DemoOptions = {}): ModuleDef {
       return c.html(gatePageHtml(c.env, lang, { error: lang === 'he' ? 'הבדיקה האוטומטית נכשלה. נסו שוב.' : 'The robot check failed. Try again.', name: input.name, email: input.email }), 400);
     }
     const lead = await upsertLead(c.env.DB, { name: input.name, email: input.email, ip: ipOf(c), userAgent: c.req.header('User-Agent') ?? null });
-    const { consent, changed } = await recordConsent(c.env, lead, input.consent === 'yes', lang, ipOf(c));
-    if (lead.visits === 1) await queueLeadEvent(c.env.DB, lead, 'lead', consent, c.env);
-    else if (changed) await queueLeadEvent(c.env.DB, lead, 'consent', consent, c.env);
+    const consentYes = input.consent === 'yes';
     const mailer = (options.mailerFor ?? gateMailer)(c.env);
-    if (changed && consent.consent === 1 && mailer) {
-      try {
-        await sendConfirmation(c.env, mailer, baseUrl(c), lead, consent);
-      } catch (err) {
-        console.warn('demo_confirmation_not_sent', err instanceof Error ? err.message : 'unknown');
-      }
-    }
-    await forwardLeadEvents(c.env, fetchFn, 5);
+    // Without email set up the gate cannot send a code, so the demo opens at once, as before R48.
+    if (!mailer) return admit(c, lead, consentYes, lang);
 
-    // A visitor with a live session: this browser goes straight back in. Another browser gets an
-    // email code and takes the session over, drafts included. Without email, a new visit opens.
-    const existing = await liveSession(c.env.DB, lead.id, now());
-    if (existing) {
-      const session = await sessionFromCookie(c.env.DB, c.req.header('Cookie'), now());
-      if (session && session.sessionKey === existing.session_key) return new Response(null, { status: 303, headers: { Location: '/' } });
-      if (mailer) {
-        const code = sixDigits();
-        await run(c.env.DB, 'INSERT INTO demo_codes (lead_id, code_hash, expires_at) VALUES (?, ?, ?)', lead.id, await sha256Hex(`${lead.id}:${code}`), new Date(now().getTime() + CODE_TTL_MS).toISOString());
-        await sendReopenCode(c.env, mailer, baseUrl(c), lead, code);
-        return c.html(codePageHtml(lang, lead.email));
-      }
+    // This browser already holds the lead's live session: straight back in, no code.
+    const open = await liveSession(c.env.DB, lead.id, now());
+    const session = open ? await sessionFromCookie(c.env.DB, c.req.header('Cookie'), now()) : null;
+    if (open && session && session.sessionKey === open.session_key) return new Response(null, { status: 303, headers: { Location: '/' } });
+
+    // R48: everyone else gets a 6-digit code by email. The demo opens when it is typed in.
+    const since = new Date(now().getTime() - 3_600_000).toISOString();
+    const recent = (await first<{ n: number }>(c.env.DB, 'SELECT COUNT(*) AS n FROM demo_codes WHERE lead_id = ? AND created_at > ?', lead.id, since))!.n;
+    if (recent >= CODES_PER_HOUR) {
+      return c.html(gatePageHtml(c.env, lang, { error: lang === 'he' ? 'נשלחו יותר מדי קודים לכתובת הזו. נסו שוב בעוד שעה.' : 'Too many codes went to this address. Try again in an hour.', name: input.name, email: input.email }), 429);
     }
-    const token = await openVisit(c.env, { documentsOptions: options.documentsOptions, notifier: notifier(c.env), now: now() }, lead.id);
-    return redirectWithSession(token, await firstBusiness(c.env.DB));
+    const code = sixDigits();
+    try {
+      await sendGateCode(c.env, mailer, baseUrl(c), lead, code, lang);
+    } catch (err) {
+      console.warn('demo_code_not_sent', err instanceof Error ? err.message : 'unknown');
+      return c.html(gatePageHtml(c.env, lang, { error: lang === 'he' ? 'לא הצלחנו לשלוח מייל לכתובת הזו. בדקו אותה ונסו שוב.' : 'We could not email this address. Check it and try again.', name: input.name, email: input.email }), 400);
+    }
+    await run(
+      c.env.DB,
+      'INSERT INTO demo_codes (lead_id, code_hash, expires_at, consent, lang, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+      lead.id,
+      await sha256Hex(`${lead.id}:${code}`),
+      new Date(now().getTime() + CODE_TTL_MS).toISOString(),
+      consentYes ? 1 : 0,
+      lang,
+      now().toISOString(),
+    );
+    return c.html(codePageHtml(lang, lead.email));
   });
 
   r.post('/verify', manual, async (c) => {
     const raw = await formOf(c);
     const lang: Lang = raw.lang === 'he' ? 'he' : 'en';
     const email = String(raw.email ?? '').trim().toLowerCase();
-    const lead = await first<{ id: number }>(c.env.DB, 'SELECT id FROM demo_leads WHERE email = ?', email);
-    const open = lead ? await liveSession(c.env.DB, lead.id, now()) : null;
-    const code = await first<{ id: number; code_hash: string; expires_at: string; attempts: number }>(
+    const lead = await first<LeadRow>(c.env.DB, 'SELECT * FROM demo_leads WHERE email = ?', email);
+    const code = await first<{ id: number; code_hash: string; expires_at: string; attempts: number; consent: number | null; lang: Lang | null }>(
       c.env.DB,
-      'SELECT id, code_hash, expires_at, attempts FROM demo_codes WHERE lead_id = ? AND used_at IS NULL ORDER BY id DESC LIMIT 1',
+      'SELECT id, code_hash, expires_at, attempts, consent, lang FROM demo_codes WHERE lead_id = ? AND used_at IS NULL ORDER BY id DESC LIMIT 1',
       lead?.id ?? -1,
     );
     const wrong = (msg: string) => c.html(codePageHtml(lang, email, msg), 400);
-    if (!lead || !open || !code) return wrong(lang === 'he' ? 'בקשו קוד חדש.' : 'Ask for a new code.');
+    if (!lead || !code) return wrong(lang === 'he' ? 'בקשו קוד חדש.' : 'Ask for a new code.');
     if (code.attempts >= 5 || code.expires_at <= now().toISOString()) return wrong(lang === 'he' ? 'הקוד פג. התחילו מחדש.' : 'The code expired. Start over.');
     if ((await sha256Hex(`${lead.id}:${String(raw.code ?? '').trim()}`)) !== code.code_hash) {
       await run(c.env.DB, 'UPDATE demo_codes SET attempts = attempts + 1 WHERE id = ?', code.id);
       return wrong(lang === 'he' ? 'הקוד שגוי.' : 'The code is not right.');
     }
     await run(c.env.DB, 'UPDATE demo_codes SET used_at = ? WHERE id = ?', nowIso(), code.id);
-    // The session moves to this browser: a new cookie, the same key and drafts. The old cookie stops working.
-    const token = newSessionToken();
-    await run(c.env.DB, 'UPDATE demo_sessions SET token_hash = ? WHERE token_hash = ?', await sha256Hex(token), open.token_hash);
-    return redirectWithSession(token);
+    await run(c.env.DB, 'UPDATE demo_leads SET email_verified_at = COALESCE(email_verified_at, ?) WHERE id = ?', nowIso(), lead.id);
+    return admit(c, lead, code.consent === 1, code.lang ?? lang);
   });
 
   r.get('/confirm/:token', manual, async (c) => {

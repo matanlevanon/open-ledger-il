@@ -36,6 +36,7 @@ const G = {
     enter: 'Enter the demo',
     privacy: 'Privacy notice',
     other: 'עברית',
+    codeHint: 'We email you a 6-digit code to enter.',
     noRealData: 'Do not enter real personal data in the demo.',
   },
   he: {
@@ -48,6 +49,7 @@ const G = {
     enter: 'כניסה להדגמה',
     privacy: 'הודעת פרטיות',
     other: 'English',
+    codeHint: 'נשלח אליכם במייל קוד בן 6 ספרות לכניסה.',
     noRealData: 'אל תזינו בהדגמה מידע אישי אמיתי.',
   },
 };
@@ -70,6 +72,7 @@ export function gatePageHtml(env: Env, lang: Lang, opts: { error?: string | null
 <input type="hidden" name="lang" value="${lang}">
 <label class="f" for="name">${esc(t.name)}</label><input type="text" id="name" name="name" required maxlength="200" autocomplete="name" placeholder="${esc(t.namePh)}" value="${esc(opts.name ?? '')}">
 <label class="f" for="email">${esc(t.email)}</label><input type="email" id="email" name="email" required maxlength="200" autocomplete="email" placeholder="${esc(t.emailPh)}" value="${esc(opts.email ?? '')}">
+${env.MAIL_API_KEY ? `<p class="muted" style="margin:6px 0 0">${esc(t.codeHint)}</p>` : ''}
 <label class="check"><input type="checkbox" name="consent" value="yes"><span>${esc(lang === 'he' ? texts.consentHe : texts.consentEn)}</span></label>
 ${turnstile}
 ${opts.error ? `<p class="err" role="alert">${esc(opts.error)}</p>` : ''}
@@ -88,15 +91,15 @@ export function codePageHtml(lang: Lang, email: string, error?: string | null): 
     lang,
     en ? 'Check your email' : 'בדקו את המייל',
     `<div class="card">
-<h1>${en ? 'Welcome back' : 'ברוכים השבים'}</h1>
-<p class="muted">${en ? `You opened the demo today already. We emailed a 6-digit code to ${esc(email)}. Type it to reopen your copy.` : `כבר פתחתם היום את ההדגמה. שלחנו קוד בן 6 ספרות אל ${esc(email)}. הקלידו אותו כדי לפתוח את העותק שלכם.`}</p>
+<h1>${en ? 'Check your email' : 'בדקו את המייל'}</h1>
+<p class="muted">${en ? `We emailed a 6-digit code to ${esc(email)}. Type it to enter the demo.` : `שלחנו קוד בן 6 ספרות אל ${esc(email)}. הקלידו אותו כדי להיכנס להדגמה.`}</p>
 <form method="post" action="/api/demo/verify">
 <input type="hidden" name="lang" value="${lang}"><input type="hidden" name="email" value="${esc(email)}">
-<label class="f" for="code">${en ? 'Code' : 'קוד'}</label><input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
+<label class="f" for="code">${en ? 'Code' : 'קוד'}</label><input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required autofocus>
 ${error ? `<p class="err" role="alert">${esc(error)}</p>` : ''}
-<button type="submit">${en ? 'Open my demo' : 'פתיחת ההדגמה שלי'}</button>
+<button type="submit">${en ? 'Enter the demo' : 'כניסה להדגמה'}</button>
 </form>
-<p class="muted links"><a href="/?lang=${lang}">${en ? 'Start over' : 'מההתחלה'}</a></p>
+<p class="muted links">${en ? 'No email? Check the spam folder, or' : 'לא הגיע מייל? בדקו בספאם, או'} <a href="/?lang=${lang}">${en ? 'start over for a new code' : 'התחילו מחדש לקוד חדש'}</a></p>
 </div>`,
   );
 }

@@ -80,10 +80,24 @@ async function call(path: string, init: RequestInit & { cookie?: string; busines
   return app.request(path, { ...init, headers }, e);
 }
 
-async function enter(name: string, email: string, opts: { consent?: boolean; cookie?: string } = {}) {
+/** The gate form alone. With email on, a new visitor gets the code page (200). */
+async function enterRaw(name: string, email: string, opts: { consent?: boolean; cookie?: string } = {}) {
   const form = new URLSearchParams({ name, email, lang: 'en', 'cf-turnstile-response': 'ok-token' });
   if (opts.consent) form.set('consent', 'yes');
   return call('/api/demo/enter', { method: 'POST', body: form.toString(), headers: { 'content-type': 'application/x-www-form-urlencoded', 'CF-Connecting-IP': '198.51.100.7', 'User-Agent': 'vitest browser' }, cookie: opts.cookie });
+}
+
+/** The latest code emailed to this address. */
+const lastCode = (email: string) => /(\d{6})/.exec(gateMail.sent.filter((m) => m.to === email).at(-1)!.text)![1]!;
+
+const verify = (email: string, code: string, cookie?: string) =>
+  call('/api/demo/verify', { method: 'POST', body: new URLSearchParams({ email, code, lang: 'en' }).toString(), headers: { 'content-type': 'application/x-www-form-urlencoded', 'CF-Connecting-IP': '198.51.100.7' }, cookie });
+
+/** R48: the whole way in: the gate form, then the emailed code when the gate asks for one. */
+async function enter(name: string, email: string, opts: { consent?: boolean; cookie?: string } = {}) {
+  const res = await enterRaw(name, email, opts);
+  if (res.status !== 200 || !mailOn) return res;
+  return verify(email, lastCode(email), opts.cookie);
 }
 
 const cookieOf = (res: Response) => /ledger_demo=[^;]+/.exec(res.headers.get('set-cookie') ?? '')?.[0] ?? '';
@@ -185,7 +199,7 @@ describe('the gate', () => {
     const sent = webhook.find((w) => w.body.email === 'avi@example.com')!;
     expect(sent.secret).toBe('lead-secret');
     expect(sent.body).toMatchObject({ event: 'lead', consent: 'yes', consentTextVersion: '2026-10-13' });
-    const mail = gateMail.sent.find((m) => m.to === 'avi@example.com')!;
+    const mail = gateMail.sent.find((m) => m.to === 'avi@example.com' && m.text.includes('/api/demo/confirm/'))!;
     expect(mail.text).toContain('/api/demo/confirm/');
     expect(mail.text).toContain('/api/demo/unsubscribe/');
     const res = await enter('Someone', 'someone@example.com');
@@ -195,8 +209,54 @@ describe('the gate', () => {
     expect(await (await call('/', { cookie: visitorA })).text()).not.toContain('Enter the demo');
   });
 
+  it('R48: asks a new visitor for an emailed code, and forwards the lead only after the right code', async () => {
+    const page = await enterRaw('Fake Person', 'fake@nowhere.test');
+    expect(page.status).toBe(200);
+    expect(page.headers.get('set-cookie') ?? '').not.toContain('ledger_demo=');
+    const html = await page.text();
+    expect(html).toContain('Check your email');
+    expect(html).toContain('fake@nowhere.test');
+    const lead = (await first<any>(env.DB, "SELECT * FROM demo_leads WHERE email = 'fake@nowhere.test'"))!;
+    expect(lead.entered_at).toBeNull();
+    expect(lead.email_verified_at).toBeNull();
+    expect(webhook.some((w) => w.body.email === 'fake@nowhere.test')).toBe(false);
+    expect(await count('SELECT COUNT(*) AS n FROM demo_sessions WHERE lead_id = ?', lead.id)).toBe(0);
+    const mail = gateMail.sent.filter((m) => m.to === 'fake@nowhere.test').at(-1)!;
+    expect(mail.subject).toMatch(/^Your Open Ledger IL demo code: \d{6}$/);
+
+    const code = lastCode('fake@nowhere.test');
+    expect((await verify('fake@nowhere.test', code === '000000' ? '111111' : '000000')).status).toBe(400);
+    const ok = await verify('fake@nowhere.test', code);
+    expect(ok.status).toBe(303);
+    expect(cookieOf(ok)).not.toBe('');
+    // A code works once.
+    expect((await verify('fake@nowhere.test', code)).status).toBe(400);
+    const after = (await first<any>(env.DB, "SELECT * FROM demo_leads WHERE email = 'fake@nowhere.test'"))!;
+    expect(after.entered_at).not.toBeNull();
+    expect(after.email_verified_at).not.toBeNull();
+    expect(webhook.filter((w) => w.body.email === 'fake@nowhere.test' && w.body.event === 'lead')).toHaveLength(1);
+  });
+
+  it('R48: sends at most 5 codes an hour to one address', async () => {
+    for (let i = 0; i < 5; i += 1) expect((await enterRaw('Flood', 'flood@example.com')).status).toBe(200);
+    const sixth = await enterRaw('Flood', 'flood@example.com');
+    expect(sixth.status).toBe(429);
+    expect(await sixth.text()).toContain('Too many codes');
+  });
+
+  it('R48: without email set up, the demo opens at once', async () => {
+    mailOn = false;
+    try {
+      const res = await enterRaw('No Mail', 'nomail@example.com');
+      expect(res.status).toBe(303);
+      expect(cookieOf(res)).not.toBe('');
+    } finally {
+      mailOn = true;
+    }
+  });
+
   it('confirms and unsubscribes through the signed links, and tells the webhook', async () => {
-    const mail = gateMail.sent.find((m) => m.to === 'avi@example.com')!;
+    const mail = gateMail.sent.find((m) => m.to === 'avi@example.com' && m.text.includes('/api/demo/confirm/'))!;
     const confirm = /https:\/\/sample\.test(\/api\/demo\/confirm\/\S+)/.exec(mail.text)![1]!;
     expect((await call(confirm)).status).toBe(200);
     const lead = (await first<any>(env.DB, "SELECT id FROM demo_leads WHERE email = 'avi@example.com'"))!;
@@ -237,10 +297,10 @@ describe('instant entry', () => {
   it('the same email reopens the same session: this browser at once, another after an email code', async () => {
     const keyA = (await json(await call('/api/me', { cookie: visitorA }))).user.demo.ownKey;
     expect((await enter('Dana Visitor', 'dana@example.com', { cookie: visitorA })).status).toBe(303);
-    const other = await enter('Dana Visitor', 'dana@example.com');
+    const other = await enterRaw('Dana Visitor', 'dana@example.com');
     expect(other.status).toBe(200);
-    expect(await other.text()).toContain('Welcome back');
-    const code = /(\d{6})/.exec(gateMail.sent[gateMail.sent.length - 1]!.text)![1]!;
+    expect(await other.text()).toContain('Check your email');
+    const code = lastCode('dana@example.com');
     const form = (c: string) => ({ method: 'POST', body: new URLSearchParams({ email: 'dana@example.com', code: c }).toString(), headers: { 'content-type': 'application/x-www-form-urlencoded' } });
     expect((await call('/api/demo/verify', form(code === '000000' ? '111111' : '000000'))).status).toBe(400);
     const ok = await call('/api/demo/verify', form(code));

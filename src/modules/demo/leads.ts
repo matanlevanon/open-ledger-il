@@ -23,6 +23,10 @@ export interface LeadRow {
   ip: string | null;
   user_agent: string | null;
   sandbox_id: number | null;
+  /** R48: when the visitor first typed a right email code. */
+  email_verified_at: string | null;
+  /** R48: when the lead first got into the demo. Null until then. */
+  entered_at: string | null;
   webhook_status: 'pending' | 'saved' | 'failed' | 'off';
 }
 
@@ -162,15 +166,21 @@ export async function sendConfirmation(env: Env, mailer: Mailer, baseUrl: string
   });
 }
 
-export async function sendReopenCode(env: Env, mailer: Mailer, baseUrl: string, lead: LeadRow, code: string): Promise<void> {
+/** R48: the 6-digit code that opens the demo, in the gate's language. */
+export async function sendGateCode(env: Env, mailer: Mailer, baseUrl: string, lead: LeadRow, code: string, lang: 'en' | 'he'): Promise<void> {
   const texts = demoTexts(env);
   const foot = await footer(env, baseUrl, lead.id);
+  const he = lang === 'he';
+  const subject = he ? `הקוד שלך להדגמה של ${texts.product}: ${code}` : `Your ${texts.product} demo code: ${code}`;
+  const intro = he ? 'הקוד שלך לכניסה להדגמה:' : 'Your code to enter the demo:';
+  const valid = he ? 'הקוד תקף ל-10 דקות. אם לא ביקשתם אותו, אפשר להתעלם מהמייל.' : 'It works for 10 minutes. If you did not ask for it, ignore this email.';
+  const dir = he ? ' dir="rtl"' : '';
   await mailer.send({
     to: lead.email,
     fromName: texts.sender,
-    subject: `Your code for the ${texts.product} demo`,
-    html: `<!doctype html><html><body style="font-family:sans-serif;line-height:1.5"><p>Your code to reopen your demo:</p><p style="font-size:24px;font-weight:700;letter-spacing:4px">${code}</p><p>It works for 10 minutes.</p>${foot.html}</body></html>`,
-    text: `Your code to reopen your demo: ${code}\nIt works for 10 minutes.\n${foot.text}`,
+    subject,
+    html: `<!doctype html><html${dir}><body style="font-family:sans-serif;line-height:1.5"><p>${intro}</p><p style="font-size:28px;font-weight:700;letter-spacing:6px" dir="ltr">${code}</p><p>${valid}</p>${foot.html}</body></html>`,
+    text: `${intro} ${code}\n${valid}\n${foot.text}`,
   });
 }
 

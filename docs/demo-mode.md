@@ -5,6 +5,7 @@ One Worker variable, `DEMO_MODE=1`, turns a Ledger into a public demo. It is the
 ## What a visitor gets
 
 1. **The gate.** The site root shows a form: name and email, required. One marketing box, optional and unticked. A Cloudflare Turnstile check, verified on the server. A privacy notice in English and Hebrew. Entering never depends on the box. A deep link without a session gets the gate too.
+   With email set up (`MAIL_API_KEY`), the gate then emails a 6-digit code and the demo opens when the visitor types it. The code works for 10 minutes and 5 tries, and one address gets at most 5 codes an hour. A lead goes to the webhook only on its first entry, so a made-up email never reaches the CRM. Without email set up, the demo opens at once.
 2. **Instant entry to the shared sample set.** Every visitor opens the same two sample businesses. Entry makes a synthetic visitor user, links it to both businesses and starts a session. Nothing is copied, so entry takes well under 2 seconds.
 3. **Read-only sample data.** A visitor cannot issue, cancel, credit, edit, delete, send, record a payment on, or change the settings of anything in the sample set. The server refuses it, with one guard for every route (`src/modules/demo/guard.ts`). The web app hides or disables those buttons and says why in one line: "Read-only in the demo."
 4. **Private drafts.** A visitor creates and edits document drafts and their lines, clients, contract drafts and expense uploads. Each row carries the session's key in `demo_session_id`. The sample set has NULL there. Every list, search, count and dashboard shows the sample set plus this session's rows. Another visitor never sees them. The dashboard and reports ignore drafts, as in any Ledger.
@@ -15,7 +16,7 @@ One Worker variable, `DEMO_MODE=1`, turns a Ledger into a public demo. It is the
    - A contract draft opens the real signing page in preview mode. The signer fills and draws, and Sign shows the signed PDF. Nothing is stored as signed.
    The sample set's signed documents and contracts stay viewable as they are.
 6. **Deleted on leave.** A session ends after 30 idle minutes. The sweep deletes it and everything tagged with it. Nothing is kept, and nothing is stored in the browser.
-7. **A second browser.** The same email with a live session opens straight away from the same browser. From another browser it needs a 6-digit email code (when email is set up), then the session moves there, drafts included.
+7. **A second browser.** The same email with a live session opens straight away from the same browser. From another browser the emailed code moves the session there, drafts included.
 
 ### How the scoping works
 
