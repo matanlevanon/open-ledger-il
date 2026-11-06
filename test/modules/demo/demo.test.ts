@@ -36,6 +36,8 @@ const fakeFetch: typeof fetch = async (input, init) => {
   const url = String(input instanceof Request ? input.url : input);
   if (url.startsWith('https://challenges.cloudflare.com/')) return Response.json({ success: turnstileOk });
   if (url.startsWith('https://leads.test/')) {
+    // The receiver refuses this one for good, as a CRM does a made-up email.
+    if (JSON.parse(String(init?.body)).email === 'refused@example.com') return Response.json({ ok: false, error: 'rejected' }, { status: 422 });
     webhook.push({ body: JSON.parse(String(init?.body)), secret: new Headers(init?.headers).get('X-Lead-Secret') });
     return Response.json({ ok: true });
   }
@@ -237,6 +239,13 @@ describe('the gate', () => {
     expect(after.entered_at).not.toBeNull();
     expect(after.email_verified_at).not.toBeNull();
     expect(webhook.filter((w) => w.body.email === 'fake@nowhere.test' && w.body.event === 'lead')).toHaveLength(1);
+  });
+
+  it('a lead the receiver refuses (422) is not retried, so it raises one alert', async () => {
+    expect((await enter('Refused', 'refused@example.com')).status).toBe(303);
+    const lead = (await first<any>(env.DB, "SELECT id FROM demo_leads WHERE email = 'refused@example.com'"))!;
+    const event = (await first<any>(env.DB, "SELECT status, attempts, last_error FROM demo_lead_events WHERE lead_id = ? AND event = 'lead'", lead.id))!;
+    expect(event).toMatchObject({ status: 'failed', attempts: 10, last_error: 'HTTP 422' });
   });
 
   it('R48: sends at most 5 codes an hour to one address', async () => {

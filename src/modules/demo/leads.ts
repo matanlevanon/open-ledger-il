@@ -120,16 +120,20 @@ export async function forwardLeadEvents(env: Env, fetchFn: typeof fetch, limit =
       continue;
     }
     let ok = false;
+    // A 400 or 422 means the receiver refused this event for good (the CRM rejects the email, say).
+    // It is not retried, so one bad lead raises one alert, not ten.
+    let refused = false;
     let error: string | null = null;
     try {
       const res = await fetchFn(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Lead-Secret': secret }, body: e.payload });
       ok = res.ok;
+      refused = res.status === 400 || res.status === 422;
       if (!ok) error = `HTTP ${res.status}`;
     } catch (err) {
       error = err instanceof Error ? err.message.slice(0, 200) : 'network error';
     }
     await transaction(db, [
-      stmt(db, 'UPDATE demo_lead_events SET status = ?, attempts = attempts + 1, last_error = ?, sent_at = ? WHERE id = ?', ok ? 'sent' : 'failed', error, ok ? nowIso() : null, e.id),
+      stmt(db, 'UPDATE demo_lead_events SET status = ?, attempts = CASE WHEN ? = 1 THEN 10 ELSE attempts + 1 END, last_error = ?, sent_at = ? WHERE id = ?', ok ? 'sent' : 'failed', refused ? 1 : 0, error, ok ? nowIso() : null, e.id),
       stmt(db, 'UPDATE demo_leads SET webhook_status = ? WHERE id = ?', ok ? 'saved' : 'failed', e.lead_id),
     ]);
     if (ok) sent++;
