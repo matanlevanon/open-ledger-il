@@ -16,7 +16,11 @@ export class BrowserRenderingPdfEngine implements PdfEngine {
     const browser = await launch(this.browser);
     try {
       const page = await browser.newPage();
-      await page.setContent(html, { waitUntil: 'networkidle0' });
+      // The HTML carries everything inline (fonts, logo, signature as data URIs), so the page needs
+      // no network. 'load' plus the fonts promise is enough. 'networkidle0' waited for network
+      // silence and timed out at 30 s on Browser Run (10 Nov 2026), so no PDF was made.
+      await page.setContent(html, { waitUntil: 'load', timeout: 20_000 });
+      await page.evaluate('document.fonts.ready.then(() => true)');
       const stream = await page.createPDFStream({ format: 'A4', printBackground: true });
       return await new Response(stream).arrayBuffer();
     } finally {
