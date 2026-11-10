@@ -11,6 +11,7 @@ import { BrowserRenderingPdfEngine, type PdfEngine } from './engine';
 import { renderDocument } from './render';
 import { resolveSigningIdentity } from './signing';
 import { assertClientCopyMayRelease, downloadFilename, hasStoredPdf, loadRenderDocument, r2Key, renderAndStore, renderDraftPdf } from './store';
+import type { Context as HonoContext } from 'hono';
 import type { RenderVariant } from './types';
 
 function parseVariant(value: string | undefined): RenderVariant {
@@ -125,6 +126,44 @@ routes.post('/documents/:id/download', requireFeature('issue_documents'), async 
   return c.json({ url: path, expiresAt });
 });
 
+/**
+ * R48: renders and stores the client and filed PDFs right after a document is finalized, so Send
+ * does not wait for the browser. Best effort: a failure is logged, and Send renders it again and
+ * says so if that fails too. A client copy that the allocation gate holds back is skipped here.
+ */
+export async function prerenderPdfs(env: Env, documentId: number, businessId: number, engine?: PdfEngine): Promise<void> {
+  if (!engine && !env.BROWSER) return;
+  const options = { ownerTaxId: env.OWNER_TAX_ID ?? null, files: env.FILES };
+  let signing;
+  try {
+    signing = await resolveSigningIdentity(env.DB, env, businessId, { require: true });
+  } catch (err) {
+    console.warn('pdf_prerender_skipped', documentId, err instanceof Error ? err.message : String(err));
+    return;
+  }
+  const renderer = engine ?? engineFor(env);
+  for (const variant of ['client', 'filed'] as const) {
+    try {
+      if (await hasStoredPdf(env.DB, documentId, variant)) continue;
+      await renderAndStore(env.DB, env.FILES, renderer, documentId, variant, options, signing);
+    } catch (err) {
+      console.warn('pdf_prerender_failed', documentId, variant, err instanceof Error ? err.message : String(err));
+    }
+  }
+}
+
+/** Runs `prerenderPdfs` after the response, on a Worker. Without an execution context (tests) it does nothing. */
+export function prerenderInBackground(c: HonoContext<AppEnv>, documentId: number): void {
+  if (!c.env.BROWSER) return;
+  let ctx: { waitUntil(p: Promise<unknown>): void };
+  try {
+    ctx = c.executionCtx;
+  } catch {
+    return;
+  }
+  ctx.waitUntil(prerenderPdfs(c.env, documentId, c.get('user').businessId));
+}
+
 export const pdfModule: ModuleDef = {
   name: 'pdf',
   basePath: '/pdf',
@@ -134,6 +173,6 @@ export const pdfModule: ModuleDef = {
 export { renderDocument } from './render';
 export { BrowserRenderingPdfEngine, FakePdfEngine, type PdfEngine } from './engine';
 export { assertSigningForSend, resolveSigningIdentity } from './signing';
-export { assertClientCopyMayRelease, hasStoredPdf, loadRenderDocument, r2Key, renderAndStore, renderDraftPdf, sha256Hex } from './store';
+export { assertClientCopyMayRelease, hasStoredPdf, loadRenderDocument, pdfForSend, r2Key, renderAndStore, renderDraftPdf, sha256Hex } from './store';
 export type { RenderAndStoreResult } from './store';
 export type { RenderClient, RenderDocument, RenderLine, RenderPayment, RenderVariant } from './types';

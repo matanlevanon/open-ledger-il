@@ -21,6 +21,12 @@
 - Dates on screen read day/month/year (04/11/2026), and times use a 24-hour clock in Israel time, in both interface languages.
 - The top bar stays in view when you scroll on a desktop, as it already did on phones.
 
+### PDFs
+
+- A document's client and filed PDFs are made right after it is issued, in the background. The first send attaches that original (מקור) at once, with no wait for the browser. Later sends make a new copy (העתק), as before.
+- When no PDF is stored, Send makes it then. If that fails, the screen says the PDF could not be created and nothing was sent.
+- The PDF is made when the page has loaded and its fonts are ready, not after network silence, which timed out on Cloudflare's browser.
+
 ### Demo
 
 - The demo gate emails a 6-digit code, and the demo opens when the visitor types it in. Fake emails no longer get in, and a lead reaches the CRM only after its first entry. A code works for 10 minutes and 5 tries, and one address gets at most 5 codes an hour. This browser's live session still opens straight away. Needs `MAIL_API_KEY` on the demo Worker. Without it the demo opens at once, as before.

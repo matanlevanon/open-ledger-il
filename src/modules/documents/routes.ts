@@ -33,6 +33,7 @@ import {
 import { listTypes } from './types';
 import { documentView, listDocuments } from './views';
 import { getDoc } from './repo';
+import { prerenderInBackground } from '../pdf';
 
 export type ServiceFactory = (env: Env) => Services;
 
@@ -90,6 +91,7 @@ export function documentRoutes(services: ServiceFactory): Hono<AppEnv> {
     const id = idParam(c);
     const input = finalizeInput.parse(await body(c));
     const outcome = await finalize(ctx(c), id, { backdateReason: input.backdateReason });
+    if (!outcome.alreadyFinal) prerenderInBackground(c, id);
     return c.json({ ...(await view(c, id)), already_final: outcome.alreadyFinal });
   });
 
@@ -102,6 +104,7 @@ export function documentRoutes(services: ServiceFactory): Hono<AppEnv> {
   r.post('/:id/record-payment', requireFeature('issue_documents'), async (c) => {
     const input = recordPaymentInput.parse(await body(c));
     const { receiptId } = await recordPayment(ctx(c), idParam(c), input);
+    if (input.finalize) prerenderInBackground(c, receiptId);
     return c.json(await view(c, receiptId), 201);
   });
 
@@ -125,6 +128,7 @@ export function documentRoutes(services: ServiceFactory): Hono<AppEnv> {
   r.post('/:id/credit', requireFeature('issue_documents'), async (c) => {
     const input = creditInput.parse(await body(c));
     const { creditId } = await creditDocument(ctx(c), idParam(c), input);
+    if (input.finalize) prerenderInBackground(c, creditId);
     return c.json(await view(c, creditId), 201);
   });
 

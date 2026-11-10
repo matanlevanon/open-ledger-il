@@ -260,6 +260,59 @@ export async function loadRenderDocument(
   };
 }
 
+/** The latest stored render of this variant, read back from R2. Null when none is stored or the object is gone. */
+async function latestStored(db: D1Database, files: R2Bucket, documentId: number, variant: RenderVariant): Promise<{ key: string; bytes: Uint8Array } | null> {
+  const row = await first<{ pdf_hashes: string | null }>(db, 'SELECT pdf_hashes FROM documents WHERE id = ?', documentId);
+  if (!row) throw new NotFoundError('Document', documentId);
+  const entry = parsePdfHashes(row.pdf_hashes).filter((h) => h.variant === variant && h.key).at(-1);
+  if (!entry?.key) return null;
+  const object = await files.get(entry.key);
+  return object ? { key: entry.key, bytes: new Uint8Array(await object.arrayBuffer()) } : null;
+}
+
+/**
+ * R48: the PDF a send attaches. Until the document is first sent, the stored copy is reused, so
+ * the original (מקור) rendered at finalize goes out with no wait. After a send, each send renders
+ * a new copy (העתק), as before. When there is nothing stored, it renders now. A render that fails
+ * for a reason other than the document's own rules becomes `pdf_not_created`, so the screen says
+ * the PDF was not made and nothing was sent.
+ */
+export async function pdfForSend(
+  db: D1Database,
+  files: R2Bucket,
+  engine: PdfEngine,
+  documentId: number,
+  variant: RenderVariant,
+  options: LoadRenderDocumentOptions,
+  signing: SigningIdentity | null = null,
+): Promise<{ key: string; bytes: Uint8Array }> {
+  const sent = await first<{ n: number }>(
+    db,
+    "SELECT COUNT(*) AS n FROM send_log WHERE document_id = ? AND status = 'sent' AND channel IN ('email', 'whatsapp')",
+    documentId,
+  );
+  if (!sent || sent.n === 0) {
+    const stored = await latestStored(db, files, documentId, variant);
+    if (stored) {
+      await assertClientCopyMayRelease(db, documentId, variant);
+      return stored;
+    }
+  }
+  try {
+    const rendered = await renderAndStore(db, files, engine, documentId, variant, options, signing);
+    return { key: rendered.key, bytes: rendered.bytes };
+  } catch (err) {
+    // The finalize render stored it at the same moment: use that one.
+    if (err instanceof ConflictError && err.code === 'pdf_hashes_conflict') {
+      const stored = await latestStored(db, files, documentId, variant);
+      if (stored) return stored;
+    }
+    if (err instanceof DomainError) throw err;
+    console.error('pdf_not_created', documentId, variant, err instanceof Error ? err.message : String(err));
+    throw new ConflictError('pdf_not_created', 'The PDF could not be created, so nothing was sent. Try again in a minute.');
+  }
+}
+
 /** Whether a copy of this variant was already rendered and stored in R2 (R16 task 4). */
 export async function hasStoredPdf(db: D1Database, documentId: number, variant: RenderVariant): Promise<boolean> {
   const row = await first<{ pdf_hashes: string | null }>(db, 'SELECT pdf_hashes FROM documents WHERE id = ?', documentId);

@@ -5,7 +5,7 @@ import type { Env } from '../../env';
 import { clientDisplayName } from '../clients/display';
 import { getDoc } from '../documents/repo';
 import { displayNumber } from '../documents/types';
-import { BrowserRenderingPdfEngine, type PdfEngine, assertSigningForSend, resolveSigningIdentity, renderAndStore } from '../pdf';
+import { BrowserRenderingPdfEngine, type PdfEngine, assertSigningForSend, pdfForSend, resolveSigningIdentity } from '../pdf';
 import { finalCc, splitCc } from './cc';
 import { isConsentGranted } from './consent';
 import type { Mailer } from './mailer';
@@ -126,8 +126,8 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
   const engine = deps.engine ?? engineFor(env);
   const signing = await resolveSigningIdentity(db, env, businessId, { require: true });
   const options = { ownerTaxId: env.OWNER_TAX_ID ?? null, files: env.FILES };
-  const clientPdf = await renderAndStore(db, files, engine, doc.id, 'client', options, signing);
-  await renderAndStore(db, files, engine, doc.id, 'filed', options, signing);
+  const clientPdf = await pdfForSend(db, files, engine, doc.id, 'client', options, signing);
+  await pdfForSend(db, files, engine, doc.id, 'filed', options, signing);
 
   const links = (await isDemand(db, doc.type)) ? await paymentLinkSettings(db, businessId) : { stripe: null, paypal: null };
   const number = displayNumber(doc.type, doc.number);

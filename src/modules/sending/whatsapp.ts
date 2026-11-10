@@ -4,7 +4,7 @@ import { ConfigError, ConsentRequiredError, ValidationError } from '../../core/e
 import type { Env } from '../../env';
 import { clientDisplayName } from '../clients/display';
 import { getDoc } from '../documents/repo';
-import { BrowserRenderingPdfEngine, type PdfEngine, assertSigningForSend, renderAndStore, resolveSigningIdentity } from '../pdf';
+import { BrowserRenderingPdfEngine, type PdfEngine, assertSigningForSend, pdfForSend, resolveSigningIdentity } from '../pdf';
 import { isConsentGranted } from './consent';
 import type { Mailer } from './mailer';
 import { shareDoc, signShareCode, whatsappMessage } from './share-page';
@@ -60,8 +60,8 @@ export async function createWhatsAppLink(deps: WhatsAppLinkDeps, documentId: num
   const engine = deps.engine ?? engineFor(env);
   const signing = await resolveSigningIdentity(db, env, businessId, { require: true });
   const options = { ownerTaxId: env.OWNER_TAX_ID ?? null, files: env.FILES };
-  await renderAndStore(db, files, engine, doc.id, 'client', options, signing);
-  await renderAndStore(db, files, engine, doc.id, 'filed', options, signing);
+  await pdfForSend(db, files, engine, doc.id, 'client', options, signing);
+  await pdfForSend(db, files, engine, doc.id, 'filed', options, signing);
 
   // A short link to a page with a preview (logo, document title, amount), and a greeting before it.
   const { code, exp } = await signShareCode(env, doc.id);

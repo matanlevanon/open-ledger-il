@@ -29,6 +29,15 @@
   in both interface languages.
 - The top bar stays in view when you scroll on a desktop, as it already did on phones.
 
+### PDFs
+- A document's client and filed PDFs are made right after it is issued, in the background. The
+  first send attaches that original (מקור) at once, with no wait for the browser. Later sends make a
+  new copy (העתק), as before.
+- When no PDF is stored, Send makes it then. If that fails, the screen says the PDF could not be
+  created and nothing was sent.
+- The PDF is made when the page has loaded and its fonts are ready, not after network silence,
+  which timed out on Cloudflare's browser.
+
 ### Demo
 - The demo gate emails a 6-digit code, and the demo opens when the visitor types it in. Fake
   emails no longer get in, and a lead reaches the CRM only after its first entry. A code works for
