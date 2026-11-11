@@ -92,3 +92,19 @@ describe('POST /mcp: protocol', () => {
     expect(body.error.code).toBe(-32602);
   });
 });
+
+describe('GET and DELETE /mcp: no event stream (Streamable HTTP)', () => {
+  for (const method of ['GET', 'DELETE']) {
+    it(`answers ${method} with a token with 405 and Allow: POST, never the web app`, async () => {
+      const res = await app.request('/mcp', { method, headers: { Authorization: `Bearer ${TOKEN}` } }, testEnv);
+      expect(res.status).toBe(405);
+      expect(res.headers.get('Allow')).toBe('POST');
+      expect(res.headers.get('Content-Type') ?? '').not.toContain('text/html');
+    });
+
+    it(`still refuses ${method} with no token`, async () => {
+      const res = await app.request('/mcp', { method }, testEnv);
+      expect(res.status).toBe(401);
+    });
+  }
+});

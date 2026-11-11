@@ -86,6 +86,12 @@ export function mcpRoutes(): Hono<AppEnv> {
     await next();
   });
 
+  // Streamable HTTP: a client opens GET /mcp for a server-sent event stream. This server has none,
+  // so it answers 405 as the spec says. Without this route the request fell through to the web app,
+  // which answered 200 with index.html, and the client reconnected in a loop (thousands of requests an hour).
+  app.get('/', (c) => c.body(null, 405, { Allow: 'POST' }));
+  app.delete('/', (c) => c.body(null, 405, { Allow: 'POST' }));
+
   app.post('/', async (c) => {
     const body: unknown = await c.req.json().catch(() => null);
     if (body === null || typeof body !== 'object') {
