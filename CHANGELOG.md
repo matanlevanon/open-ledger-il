@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+### Accounting firms
+- The firm edition, `LEDGER_EDITION=firm`: many client businesses in one Ledger, any business type
+  for any client. A tax id is unique across the businesses of one Ledger in both editions.
+- Ledger admins guard the Ledger-wide settings in the firm edition. Settings > Firm team gives firm
+  staff one grant for every client. The single edition behaves as before.
+- MCP tokens can belong to one business. Signed download links name their business. Cron jobs go
+  on past a failing business. Every email carries Reply-To with the business's own email.
+- A signing key per business, made in the browser or uploaded. The single edition still signs
+  with the Ledger's key for a business with no key of its own.
+- Export one business file by file, with a manifest of SHA-256 hashes. Move a client to its own
+  Ledger: continue the numbers from the manifest, import data.json, and mark the firm's copy as
+  moved out and read-only.
+- Expense categories per business, and the Clients page for the firm team.
+- Fix: the unified-file import's duplicate check is per business, so one file imports into a second
+  business.
+
 ## 1.8.0 (2026-11-01, updated 2026-11-04)
 
 ### MCP
