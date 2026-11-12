@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.8.1 (2026-11-12)
 
 ### Accounting firms
 - The firm edition, `LEDGER_EDITION=firm`: many client businesses in one Ledger, any business type

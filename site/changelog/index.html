@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>יומן שינויים של Open Ledger IL: מה חדש בכל גרסה</title>
-<meta name="description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.0.">
+<meta name="description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.1.">
 <link rel="canonical" href="https://open-ledger.dev/changelog/">
 <link rel="alternate" hreflang="he" href="https://open-ledger.dev/changelog/">
 <link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/changelog/">
@@ -12,7 +12,7 @@
 <link rel="alternate" type="text/markdown" href="/changelog/index.md">
 <meta property="og:site_name" content="Open Ledger IL">
 <meta property="og:title" content="יומן שינויים של Open Ledger IL: מה חדש בכל גרסה">
-<meta property="og:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.0.">
+<meta property="og:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.1.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://open-ledger.dev/changelog/">
 <meta property="og:image" content="https://open-ledger.dev/assets/og/he-changelog.png?v=c4e216e544">
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="יומן שינויים של Open Ledger IL: מה חדש בכל גרסה">
-<meta name="twitter:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.0.">
+<meta name="twitter:description" content="כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.1.">
 <meta name="twitter:image" content="https://open-ledger.dev/assets/og/he-changelog.png?v=c4e216e544">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/heebo-hebrew.7fec3b95.woff2" as="font" type="font/woff2" crossorigin>
@@ -362,10 +362,13 @@ section[id] { scroll-margin-top: 64px; }
   <div class="wrap page">
     <nav class="crumbs" aria-label="פירורי לחם"><ol><li><a href="/">דף הבית</a></li><li aria-current="page">יומן שינויים</li></ol></nav>
     <h1>יומן שינויים</h1>
-    <p class="lead">כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.0.</p>
+    <p class="lead">כל הגרסאות, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.1.</p>
   </div>
   <section class="plain">
-    <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="1-8-0-2026-11-01-updated-2026-11-04">1.8.0 (2026-11-01, updated 2026-11-04)</h2>
+    <div class="wrap"><p>יומן השינויים נכתב באנגלית.</p><div class="prose changelog" lang="en"><h2 id="1-8-1-2026-11-12">1.8.1 (2026-11-12)</h2>
+<h3 id="accounting-firms">Accounting firms</h3>
+<ul><li>The firm edition, <code>LEDGER_EDITION=firm</code>: many client businesses in one Ledger, any business type for any client. A tax id is unique across the businesses of one Ledger in both editions.</li><li>Ledger admins guard the Ledger-wide settings in the firm edition. Settings &gt; Firm team gives firm staff one grant for every client. The single edition behaves as before.</li><li>MCP tokens can belong to one business. Signed download links name their business. Cron jobs go on past a failing business. Every email carries Reply-To with the business's own email.</li><li>A signing key per business, made in the browser or uploaded. The single edition still signs with the Ledger's key for a business with no key of its own.</li><li>Export one business file by file, with a manifest of SHA-256 hashes. Move a client to its own Ledger: continue the numbers from the manifest, import data.json, and mark the firm's copy as moved out and read-only.</li><li>Expense categories per business, and the Clients page for the firm team.</li><li>Fix: the unified-file import's duplicate check is per business, so one file imports into a second business.</li></ul>
+<h2 id="1-8-0-2026-11-01-updated-2026-11-04">1.8.0 (2026-11-01, updated 2026-11-04)</h2>
 <h3 id="mcp">MCP</h3>
 <ul><li><code>GET /mcp</code> and <code>DELETE /mcp</code> answer 405 with <code>Allow: POST</code>. Before, they reached the web app and answered 200 with the page, so an MCP client that opens a GET event stream reconnected in a loop, thousands of requests an hour, and used up the free plan's 100,000 daily Worker requests.</li></ul>
 <h3 id="tax-authority">Tax Authority</h3>

@@ -1,6 +1,6 @@
 # Registered with the Israel Tax Authority
 
-Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system. Each version gets its own registration certificate, and every new version is filed for approval. The current version is 1.8.0. [2]
+Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system. Each version gets its own registration certificate, and every new version is filed for approval. The current version is 1.8.1. [2]
 
 The Israel Tax Authority requires software registration from producers of accounting software meant for sale, for rent or for use by others, free use included. [1]
 
