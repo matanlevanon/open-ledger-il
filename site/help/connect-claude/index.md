@@ -2,7 +2,7 @@
 
 נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
 
-עודכן 2026-10-20
+עודכן 2026-11-12
 
 לאפליקציות אחרות, כמו Financy, Make או Zapier, משתמשים ב-[API](https://open-ledger.dev/help/api/).
 
@@ -33,6 +33,12 @@
 ## Claude Code
 
 לוחצים **Download for Claude Code** במסך האחרון של תוכנת ההתקנה ושומרים את הקובץ בשם `.mcp.json` בתיקייה שבה עובדים. או מוסיפים שרת עם הכתובת והכותרת `Authorization: Bearer <token>`.
+
+## עסק אחד או כל העסקים
+
+כשיש יותר מעסק אחד, הלקוח שולח את הכותרת `X-Business-Id` עם מספר העסק. בלעדיה, הטוקן פועל על העסק הראשון.
+
+ב[מהדורת המשרד](https://open-ledger.dev/help/for-accounting-firms/), טוקן שבעלים של לקוח יוצרים ב**הגדרות > MCP** ניגש לעסק שלהם בלבד. עם מספר של עסק אחר הוא נדחה, כמו טוקן שגוי. טוקן שניגש לכל העסקים נוצר רק בידי מנהל לדג'ר. גם כיבוי MCP שמור למנהלים.
 
 ## הטוקן אבד
 
@@ -77,5 +83,6 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/connect-claude/

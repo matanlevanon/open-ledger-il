@@ -1,7 +1,7 @@
 ---
 title: Install Open Ledger IL step by step
 description: Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
-updated: 2026-11-04
+updated: 2026-11-12
 published: true
 nav: Install
 cta: buy
@@ -80,6 +80,7 @@ All optional. Each **?** button explains where to get the key.
 - **Expense reading:** pick Gemini or Anthropic and paste the key. A Gemini key from aistudio.google.com starts with `AQ.`, older ones with `AIza`.
 - **Email sending:** the Resend API key and the sender, written as `Business Name <billing@your-domain.co.il>`. See [Send documents by email](/en/help/email/).
 - **Slack alerts:** the webhook address.
+- **Accounting firm: manage many client businesses:** tick it to run your clients' books in one Ledger. The **?** names its two costs: Cloudflare Workers Paid, and Access seats above 50 users. See [For accounting firms](/en/help/for-accounting-firms/). An update keeps the edition the Ledger runs and shows it.
 
 Skip anything you do not have. You add it later, see [Add or change a key after the install](/en/help/keys-later/). On an update, keys already set say **Already set. Leave empty to keep it.**
 

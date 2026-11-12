@@ -1,7 +1,7 @@
 ---
 title: Connect Claude or another AI app (MCP)
 description: Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
-updated: 2026-10-20
+updated: 2026-11-12
 published: true
 nav: Connect Claude (MCP)
 order: 12
@@ -36,6 +36,12 @@ Give Claude a supplier invoice or receipt and say "add this as an expense". Clau
 ## Claude Code
 
 Click **Download for Claude Code** on the installer's last screen and save the file as `.mcp.json` in the folder you work in. Or add the server with the address and the header `Authorization: Bearer <token>`.
+
+## One business or every business
+
+With more than one business, the client sends the header `X-Business-Id` with the business number. Without it, the token acts on the first business.
+
+In the [firm edition](/en/help/for-accounting-firms/), a client owner's token in **Settings > MCP** reaches their own business only. With another business number it is refused, the same as a wrong token. A token that reaches every business is made by a Ledger admin only. Turning MCP off is for admins too.
 
 ## Lost the token
 

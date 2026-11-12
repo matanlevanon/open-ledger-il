@@ -18,5 +18,6 @@
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)ניהול הספרים של כל הלקוחות בלדג'ר אחד. מה משתנה במהדורת המשרד, מי ניגש למה, מפתחות חתימה, מעבר לקוח, תקופת שמירה ועלויות.
 
 Source: https://open-ledger.dev/help/

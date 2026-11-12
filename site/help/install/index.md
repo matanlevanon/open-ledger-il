@@ -2,7 +2,7 @@
 
 כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
 
-עודכן 2026-11-04
+עודכן 2026-11-12
 
 ## תוכנת ההתקנה מגיעה עם הרכישה
 
@@ -87,6 +87,7 @@
 - **קריאת הוצאות:** בוחרים Gemini או Anthropic ומדביקים את המפתח. מפתח Gemini מ-aistudio.google.com מתחיל ב-`AQ.`, מפתחות ישנים ב-`AIza`.
 - **שליחת מיילים:** מפתח ה-API של Resend והשולח, בצורה `Business Name <billing@your-domain.co.il>`. ראו [שליחת מסמכים במייל](https://open-ledger.dev/help/email/).
 - **התראות Slack:** כתובת ה-webhook.
+- **Accounting firm: manage many client businesses:** מסמנים כדי לנהל את הספרים של הלקוחות בלדג'ר אחד. ה-**?** מציין את שתי העלויות: Cloudflare Workers Paid, ומקומות ב-Access מעל 50 משתמשים. ראו [למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/). עדכון שומר את המהדורה שהלדג'ר מריץ ומציג אותה.
 
 מדלגים על מה שאין לכם. אפשר להוסיף אחר כך, ראו [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/). בעדכון, ליד מפתח שכבר הוגדר כתוב **Already set. Leave empty to keep it.**
 
@@ -125,5 +126,6 @@
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/install/

@@ -543,6 +543,7 @@ Source: https://open-ledger.dev/guides/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)הוספת מפתח Gemini, Anthropic, Resend, Slack או גוגל דרייב ללדג'ר דרך לוח הבקרה של Cloudflare, בלי להריץ שוב את ההתקנה.
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)איך בודקים אם יש גרסה חדשה של Open Ledger IL ומעדכנים עם תוכנת ההתקנה, ואיפה הלדג'ר שומר גיבויים.
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)פתרונות למקומות שבהם נתקעים: אזהרות Windows, הטוקן של Cloudflare, Zero Trust, מפתחות שנדחים, כניסה, הורדות ומייל.
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)ניהול הספרים של כל הלקוחות בלדג'ר אחד. מה משתנה במהדורת המשרד, מי ניגש למה, מפתחות חתימה, מעבר לקוח, תקופת שמירה ועלויות.
 
 Source: https://open-ledger.dev/help/
 
@@ -556,6 +557,10 @@ Source: https://open-ledger.dev/help/
 יומן השינויים נכתב באנגלית.
 
 ## 1.8.0 (2026-11-01, updated 2026-11-04)
+
+### MCP
+
+- `GET /mcp` and `DELETE /mcp` answer 405 with `Allow: POST`. Before, they reached the web app and answered 200 with the page, so an MCP client that opens a GET event stream reconnected in a loop, thousands of requests an hour, and used up the free plan's 100,000 daily Worker requests.
 
 ### Tax Authority
 
@@ -1410,6 +1415,7 @@ Step-by-step instructions, in the order you need them. Start at the top if this 
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)Run your clients' books in one Ledger. What the firm edition changes, who reaches what, signing keys, moving a client out, retention and the costs.
 
 Source: https://open-ledger.dev/en/help/
 
@@ -1421,6 +1427,10 @@ Source: https://open-ledger.dev/en/help/
 Every release, newest first. The current version is 1.8.0.
 
 ## 1.8.0 (2026-11-01, updated 2026-11-04)
+
+### MCP
+
+- `GET /mcp` and `DELETE /mcp` answer 405 with `Allow: POST`. Before, they reached the web app and answered 200 with the page, so an MCP client that opens a GET event stream reconnected in a loop, thousands of requests an hour, and used up the free plan's 100,000 daily Worker requests.
 
 ### Tax Authority
 
@@ -3865,6 +3875,7 @@ Source: https://open-ledger.dev/en/guides/unified-file/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/api/
 
@@ -3923,6 +3934,7 @@ Source: https://open-ledger.dev/help/api/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/before-you-start/
 
@@ -4003,6 +4015,7 @@ Source: https://open-ledger.dev/help/before-you-start/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/cloudflare-token/
 
@@ -4013,7 +4026,7 @@ Source: https://open-ledger.dev/help/cloudflare-token/
 
 נותנים ל-Claude Desktop או ל-Claude Code גישה ללדג'ר עם כתובת ה-MCP והטוקן, ומה עושים כשהטוקן אבד.
 
-עודכן 2026-10-20
+עודכן 2026-11-12
 
 לאפליקציות אחרות, כמו Financy, Make או Zapier, משתמשים ב-[API](https://open-ledger.dev/help/api/).
 
@@ -4044,6 +4057,12 @@ Source: https://open-ledger.dev/help/cloudflare-token/
 ## Claude Code
 
 לוחצים **Download for Claude Code** במסך האחרון של תוכנת ההתקנה ושומרים את הקובץ בשם `.mcp.json` בתיקייה שבה עובדים. או מוסיפים שרת עם הכתובת והכותרת `Authorization: Bearer <token>`.
+
+## עסק אחד או כל העסקים
+
+כשיש יותר מעסק אחד, הלקוח שולח את הכותרת `X-Business-Id` עם מספר העסק. בלעדיה, הטוקן פועל על העסק הראשון.
+
+ב[מהדורת המשרד](https://open-ledger.dev/help/for-accounting-firms/), טוקן שבעלים של לקוח יוצרים ב**הגדרות > MCP** ניגש לעסק שלהם בלבד. עם מספר של עסק אחר הוא נדחה, כמו טוקן שגוי. טוקן שניגש לכל העסקים נוצר רק בידי מנהל לדג'ר. גם כיבוי MCP שמור למנהלים.
 
 ## הטוקן אבד
 
@@ -4088,6 +4107,7 @@ Cloudflare לא מציג סוד שוב, אז יוצרים טוקן חדש. הי�
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/connect-claude/
 
@@ -4098,7 +4118,7 @@ Source: https://open-ledger.dev/help/connect-claude/
 
 הכללים למשלוח קבלות וחשבוניות במייל, לפי סעיף 18ב וחוק חתימה אלקטרונית, היכולת בלדג'ר שעונה על כל כלל, והצעד היחיד שנשאר לכם.
 
-עודכן 2026-10-17
+עודכן 2026-11-12
 
 קבלה או חשבונית שנשלחת במייל היא מסמך ממוחשב בעיני רשות המסים. סעיף 18ב להוראות מס הכנסה (ניהול פנקסי חשבונות), התשל"ג-1973, קובע את הכללים למשלוח שלה. בעמוד הזה כל כלל, היכולת בלדג'ר שעונה עליו, והצעד היחיד שרק אתם עושים.
 
@@ -4138,6 +4158,16 @@ Source: https://open-ledger.dev/help/connect-claude/
 המחיר: חתימה מאובטחת מביאה איתה את כלל התשלום של 18ב(ד). לחתימה מאושרת אין מגבלה כזו, אבל היא דורשת תעודה בתשלום מגורם מאשר. הלדג'ר חותם בחתימה מאובטחת בלבד.
 
 החוק מטיל עליכם, כבעלי המפתח, חובה לשמור עליו. הגנו על חשבון ה-Cloudflare באימות דו-שלבי, ואל תתנו לאף אחד אחר גישה לסודות של ה-Worker. אם אתם חושדים שמישהו השיג את המפתח, הודיעו ללקוחות שמסתמכים על המסמכים שלכם, והחליפו את המפתח ואת התעודה.
+
+## מפתח לכל עסק
+
+כל עסק בלדג'ר יכול לחתום במפתח ובתעודה משלו, כך שחברה חותמת בשם החברה ולא בשמכם. פותחים **הגדרות > חתימה > חתימה דיגיטלית** בתוך העסק.
+
+- **יצירת מפתח חדש** יוצרת בדפדפן מפתח של 3,072 ביט ותעודה ל-10 שנים. התעודה נושאת את שם העסק ואת מספר העוסק. רק המפתח והתעודה עוברים ללדג'ר, פעם אחת, מוצפנים בדרך. הלדג'ר שומר את המפתח מוצפן ולא מציג אותו שוב, בשום מסך, ייצוא או גיבוי.
+- **העלאת תעודה** מקבלת מפתח ותעודה בפורמט PEM, או קובץ ‎.p12 עם הסיסמה שלו. קובץ ה-‎.p12 נפתח בדפדפן. הלדג'ר בודק שהמפתח מתאים לתעודה ושהתעודה בתוקף היום. הוא מזהיר כשהתעודה נושאת שם של עסק אחר.
+- עסק שמוסיפים מקבל מפתח מיד. עסק בלי מפתח משלו חותם במפתח מתוכנת ההתקנה, כמו קודם. ב[מהדורת המשרד](https://open-ledger.dev/help/for-accounting-firms/) רק העסק הראשון עושה זאת, ולקוח בלי מפתח לא יכול לשלוח.
+- החלפת מפתח מבקשת להקליד את שם העסק. התעודה הקודמת נשארת ברשימה כמוחלפת. מסמכים שנחתמו בה נשארים תקפים.
+- 60 יום ו-14 יום לפני שתעודה פוקעת, הלדג'ר מוסיף משימה ללוח הבקרה.
 
 ## מה הלקוח רואה
 
@@ -4196,6 +4226,7 @@ Source: https://open-ledger.dev/help/connect-claude/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/digital-signature/
 
@@ -4252,6 +4283,7 @@ Source: https://open-ledger.dev/help/digital-signature/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/email/
 
@@ -4457,6 +4489,7 @@ Source: https://open-ledger.dev/help/email/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/expenses/
 
@@ -4520,6 +4553,7 @@ Source: https://open-ledger.dev/help/expenses/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/first-invoice/
 
@@ -4590,8 +4624,98 @@ Source: https://open-ledger.dev/help/first-invoice/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/first-sign-in/
+
+
+---
+
+# הלדג'ר למשרדי רואי חשבון
+
+ניהול הספרים של כל הלקוחות בלדג'ר אחד. מה משתנה במהדורת המשרד, מי ניגש למה, מפתחות חתימה, מעבר לקוח, תקופת שמירה ועלויות.
+
+עודכן 2026-11-12
+
+מהדורת המשרד מנהלת עסקי לקוחות רבים בלדג'ר אחד. לכל לקוח יש מספור, שרשרת hash, מפתח חתימה, קבצים ובעלים משלו. בעלים של שני לקוחות לא רואים זה את זה.
+
+הבחירה נעשית בתוכנת ההתקנה: בשלב **תוספות** מסמנים **Accounting firm: manage many client businesses**. הסימון קובע את משתנה ה-Worker `LEDGER_EDITION` ל-`firm`. **הגדרות > עדכונים** מציג את המהדורה.
+
+## מה משתנה במהדורת המשרד
+
+- **כל סוג עסק לכל לקוח.** לאדם יש תיק עוסק אחד, ולכן לדג'ר של אדם אחד מאפשר אחד. משרד מנהל לקוחות רבים, ולכן מוסיף כמה עוסקים פטורים, עוסקים מורשים וחברות שצריך.
+- **מספר עוסק פעם אחת בלדג'ר.** שני עסקים לא חולקים מספר עוסק, בשתי המהדורות.
+- **מנהלי לדג'ר.** ההגדרות של כל הלדג'ר שייכות למנהלים בלבד: הוספת עסק, שיעורי מע"מ, תקרות, שערי מטבע, גיבויים, בדיקת הרצף, עדכונים, ברירות המחדל של קטגוריות ההוצאה, תיבת הדואר ו-MCP פעיל או כבוי.
+- **צוות המשרד.** אנשי המשרד ניגשים לכל לקוח בהרשאה אחת.
+- **עמוד הלקוחות.** שורה לכל לקוח: מועד ותשלום מע"מ או ניצול התקרה, החיבור לרשות המסים, תוקף התעודה, דרישות תשלום פתוחות, הוצאות לבדיקה ופעילות אחרונה. נפתח ממחליף העסקים.
+
+## מי ניגש למה
+
+| אדם | ניגש ל | נקבע ב |
+| --- | --- | --- |
+| מנהל לדג'ר | כל עסק כבעלים, קיים ועתידי, וההגדרות של כל הלדג'ר | הגדרות > צוות המשרד |
+| איש צוות, עוזר | כל עסק: לקוחות, מסמכים, שליחה, הוצאות. בלי הגדרות | הגדרות > צוות המשרד |
+| איש צוות, רואה חשבון | כל עסק, קריאה בלבד, לפי המתגים שנקבעו | הגדרות > צוות המשרד |
+| בעלים של לקוח | העסק שלו בלבד | הגדרות > משתמשים, בתוך העסק |
+
+בעלים של לקוח רואים את צוות המשרד ברשימת המשתמשים כ-**צוות המשרד**, בלי אימייל. הם לא ניגשים ללקוח אחר, להגדרות של כל הלדג'ר או לטוקן MCP של כל הלדג'ר. הרשאה על עסק אחד גוברת על הרשאת המשרד באותו עסק.
+
+אימייל הבעלים מתוכנת ההתקנה הוא המנהל הראשון. בלדג'ר תמיד נשאר מנהל אחד: את האחרון אי אפשר להסיר.
+
+## מפתח חתימה לכל עסק
+
+כל לקוח חותם על המסמכים שלו בשמו. כשמוסיפים עסק, הלדג'ר יוצר את המפתח שלו בדפדפן מיד. לקוח בלי מפתח לא יכול לשלוח מסמכים, ולוח הבקרה שלו אומר זאת. ראו [חתימה דיגיטלית](https://open-ledger.dev/help/digital-signature/).
+
+## טוקנים של MCP
+
+בעלים של לקוח יוצרים טוקן לעסק שלהם בלבד. טוקן של כל הלדג'ר ניגש לכל העסקים, ורק מנהלים יוצרים אותו. ראו [חיבור Claude](https://open-ledger.dev/help/connect-claude/).
+
+## לקוח שעוזב
+
+לקוח שעובר ללדג'ר משלו לוקח איתו הכול:
+
+1. בלדג'ר של המשרד פותחים את הלקוח, ואז **הגדרות > עסקים > ייצוא**. כל קובץ נבנה בנפרד: `data.json`, קובץ אחיד ומסמכים לכל שנה, הוצאות עם קבלות, חוזים ו-`manifest.json` עם SHA-256 לכל קובץ. בלי מפתחות ובלי טוקנים.
+2. הלקוח מתקין לדג'ר משלו בתוכנת ההתקנה הרגילה.
+3. בלדג'ר החדש: **הגדרות > מספור > המשך מלדג'ר אחר** קורא את `manifest.json` וממשיך כל סדרה מהמספר הבא. **הגדרות > עסקים > ייבוא נתונים מלדג'ר אחר** קורא את `data.json`. עמוד הייבוא מקבל את הקובץ האחיד כהיסטוריה.
+4. בלדג'ר של המשרד, מנהל לוחץ **סימון כעבר** ומקליד את שם העסק. זה עובד רק אחרי ייצוא שכל קבציו נבנו.
+
+עסק שעבר הוא לקריאה בלבד: בלי טיוטות, מספרים, שליחה, תשלומים, פניות לרשות המסים, סנכרון בנק, מסמכים חוזרים או תזכורות. מחליף העסקים מציג אותו תחת **עברו ללדג'ר משלהם**.
+
+## תקופת שמירה
+
+שום דבר לא נמחק. הספרים של לקוח שעבר נשארים בלדג'ר של המשרד לתקופת השמירה של הוראה 25: 7 שנים מסוף שנת המס, או 6 שנים מהגשת הדוח, המאוחר מביניהם. אין כפתור מחיקה.
+
+## העלויות
+
+למהדורת המשרד שתי עלויות ב-Cloudflare:
+
+- **Workers Paid.** התוכנית החינמית נותנת 100,000 בקשות ביום ו-10 ms של CPU לבקשה. לקוחות רבים צריכים יותר, ולכן מהדורת המשרד צריכה Workers Paid.
+- **מקומות ב-Cloudflare Access.** Access חינמי עד 50 משתמשים. כל אדם שמתחבר תופס מקום: מנהלים, צוות המשרד ובעלים של לקוחות. מעל 50, Access בתשלום לכל מקום.
+
+אפשר גם לדג'ר לכל לקוח: לכל לקוח התקנה משלו. כל לדג'ר משתמש ב-5 מתוך 250 טריגרי ה-cron שחשבון Cloudflare בתשלום מאפשר, כלומר כ-50 לקוחות לחשבון, וכל אחד מתעדכן בנפרד.
+
+עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
+
+## עוד עזרה
+
+- [לפני ההתקנה: מה צריך להכין](https://open-ledger.dev/help/before-you-start/)
+- [התקנת Open Ledger IL צעד אחר צעד](https://open-ledger.dev/help/install/)
+- [יצירת ה-API token ב-Cloudflare](https://open-ledger.dev/help/cloudflare-token/)
+- [כניסה ראשונה והגדרות](https://open-ledger.dev/help/first-sign-in/)
+- [גישה לרואה חשבון או לעוזר](https://open-ledger.dev/help/users/)
+- [חיבור לרשות המסים למספרי הקצאה](https://open-ledger.dev/help/tax-authority/)
+- [מהצעת מחיר לקבלה: המסמכים הראשונים](https://open-ledger.dev/help/first-invoice/)
+- [חתימה דיגיטלית: מה רשות המסים דורשת ואיך הלדג'ר עומד בכל כלל](https://open-ledger.dev/help/digital-signature/)
+- [גבייה עם גרואו, קארדקום או סולק אחר](https://open-ledger.dev/help/payment-providers/)
+- [הכנסת הוצאות ללדג'ר](https://open-ledger.dev/help/expenses/)
+- [שליחת מסמכים במייל, בלי ספאם](https://open-ledger.dev/help/email/)
+- [חיבור Claude או אפליקציית AI אחרת (MCP)](https://open-ledger.dev/help/connect-claude/)
+- [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
+- [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
+- [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+
+Source: https://open-ledger.dev/help/for-accounting-firms/
 
 
 ---
@@ -4600,7 +4724,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 
 כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
 
-עודכן 2026-11-04
+עודכן 2026-11-12
 
 ## תוכנת ההתקנה מגיעה עם הרכישה
 
@@ -4685,6 +4809,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 - **קריאת הוצאות:** בוחרים Gemini או Anthropic ומדביקים את המפתח. מפתח Gemini מ-aistudio.google.com מתחיל ב-`AQ.`, מפתחות ישנים ב-`AIza`.
 - **שליחת מיילים:** מפתח ה-API של Resend והשולח, בצורה `Business Name <billing@your-domain.co.il>`. ראו [שליחת מסמכים במייל](https://open-ledger.dev/help/email/).
 - **התראות Slack:** כתובת ה-webhook.
+- **Accounting firm: manage many client businesses:** מסמנים כדי לנהל את הספרים של הלקוחות בלדג'ר אחד. ה-**?** מציין את שתי העלויות: Cloudflare Workers Paid, ומקומות ב-Access מעל 50 משתמשים. ראו [למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/). עדכון שומר את המהדורה שהלדג'ר מריץ ומציג אותה.
 
 מדלגים על מה שאין לכם. אפשר להוסיף אחר כך, ראו [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/). בעדכון, ליד מפתח שכבר הוגדר כתוב **Already set. Leave empty to keep it.**
 
@@ -4723,6 +4848,7 @@ Source: https://open-ledger.dev/help/first-sign-in/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/install/
 
@@ -4785,6 +4911,7 @@ Source: https://open-ledger.dev/help/install/
 - [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/keys-later/
 
@@ -4844,6 +4971,7 @@ Source: https://open-ledger.dev/help/keys-later/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/payment-providers/
 
@@ -4915,6 +5043,7 @@ Source: https://open-ledger.dev/help/payment-providers/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/tax-authority/
 
@@ -4984,6 +5113,7 @@ Source: https://open-ledger.dev/help/tax-authority/
 - [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/troubleshooting/
 
@@ -5037,6 +5167,7 @@ Source: https://open-ledger.dev/help/troubleshooting/
 - [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/updates-backups/
 
@@ -5047,7 +5178,7 @@ Source: https://open-ledger.dev/help/updates-backups/
 
 הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
 
-עודכן 2026-10-17
+עודכן 2026-11-12
 
 לכל אדם יש תפקיד בכל עסק.
 
@@ -5088,6 +5219,12 @@ Source: https://open-ledger.dev/help/updates-backups/
 1. בלדג'ר: **Accountant > Users**, לוחצים **Revoke** בשורה שלו.
 2. ב-Cloudflare Access: פותחים את אותה מדיניות, מוחקים את המייל מ-**Include > Emails** ולוחצים **Save policy**.
 
+## משרדי רואי חשבון: צוות המשרד
+
+ב[מהדורת המשרד](https://open-ledger.dev/help/for-accounting-firms/), מנהלי הלדג'ר פותחים **הגדרות > צוות המשרד**. מי שנוסף שם ניגש לכל עסק לקוח, קיים ועתידי, כעוזר או כרואה חשבון. מנהל הוא בעלים בכל עסק ובהגדרות של כל הלדג'ר. כל אדם עדיין תופס מקום אחד ב-Cloudflare Access, ולכן מוסיפים גם את האימייל שלו למדיניות ה-Access.
+
+בעלים של לקוח רואים את צוות המשרד ב**משתמשים** כ-**צוות המשרד**, בלי אימייל, ומשנים רק את הגישה לעסק שלהם.
+
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
 ## עוד עזרה
@@ -5107,6 +5244,7 @@ Source: https://open-ledger.dev/help/updates-backups/
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/users/
 
@@ -5230,6 +5368,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/api/
 
@@ -5288,6 +5427,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/before-you-start/
 
@@ -5368,6 +5508,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/cloudflare-token/
 
@@ -5378,7 +5519,7 @@ Source: https://open-ledger.dev/en/help/cloudflare-token/
 
 Give Claude Desktop or Claude Code access to your Ledger with the MCP address and token, and what to do when the token is lost.
 
-Updated 2026-10-20
+Updated 2026-11-12
 
 For other apps, such as Financy, Make or Zapier, use the [API](https://open-ledger.dev/en/help/api/).
 
@@ -5409,6 +5550,12 @@ Give Claude a supplier invoice or receipt and say "add this as an expense". Clau
 ## Claude Code
 
 Click **Download for Claude Code** on the installer's last screen and save the file as `.mcp.json` in the folder you work in. Or add the server with the address and the header `Authorization: Bearer <token>`.
+
+## One business or every business
+
+With more than one business, the client sends the header `X-Business-Id` with the business number. Without it, the token acts on the first business.
+
+In the [firm edition](https://open-ledger.dev/en/help/for-accounting-firms/), a client owner's token in **Settings > MCP** reaches their own business only. With another business number it is refused, the same as a wrong token. A token that reaches every business is made by a Ledger admin only. Turning MCP off is for admins too.
 
 ## Lost the token
 
@@ -5453,6 +5600,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/connect-claude/
 
@@ -5463,7 +5611,7 @@ Source: https://open-ledger.dev/en/help/connect-claude/
 
 The rules for emailing receipts and invoices under instruction 18ב, the Ledger feature behind each rule, and the one step left to you.
 
-Updated 2026-10-17
+Updated 2026-11-12
 
 An emailed receipt or invoice is a computerized document (מסמך ממוחשב) in the eyes of the Tax Authority. Instruction 18ב of the Income Tax bookkeeping instructions (הוראות מס הכנסה (ניהול פנקסי חשבונות), תשל"ג-1973) sets the rules for sending one. This page lists each rule, the Ledger feature behind each one, and the one step only you take.
 
@@ -5503,6 +5651,16 @@ Instruction 18ב accepts either a secured or a certified signature. The Ledger u
 The trade-off: a secured signature brings the payment rule of 18ב(ד). A certified signature has no such limit, but needs a paid certificate from a certifying authority. The Ledger signs with a secured signature only.
 
 The law also puts a duty on you as the key holder. Guard the key: protect your Cloudflare account with two-factor sign-in, and give no one else access to the Worker's secrets. If you think someone got hold of the key, tell the clients who rely on your documents, and replace the key and certificate.
+
+## A key per business
+
+Each business in your Ledger can sign with its own key and certificate, so a company signs as the company, not as you. Open **Settings > Signature > Digital signature** in that business.
+
+- **Create a new key** makes a 3,072-bit key and a 10-year certificate in your browser. The certificate names the business and its tax id. Only the key and the certificate go to your Ledger, once, encrypted on the way. The Ledger stores the key encrypted and never shows it again, in no screen, export or backup.
+- **Upload a certificate** takes a PEM key and certificate, or a .p12 file with its password. The .p12 file opens in your browser. The Ledger checks the key matches the certificate and the certificate is valid today. It warns when the certificate names another business.
+- A business you add gets its key right away. A business with no key of its own signs with the installer's key, as before. In the [firm edition](https://open-ledger.dev/en/help/for-accounting-firms/), only the first business does that, and a client with no key cannot send.
+- Replacing a key asks you to type the business name. The old certificate stays listed as retired. PDFs it signed stay valid.
+- 60 days and 14 days before a certificate ends, the Ledger adds a task to the dashboard.
 
 ## What your client sees
 
@@ -5561,6 +5719,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/digital-signature/
 
@@ -5617,6 +5776,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/email/
 
@@ -5822,6 +5982,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/expenses/
 
@@ -5885,6 +6046,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/first-invoice/
 
@@ -5955,8 +6117,98 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/first-sign-in/
+
+
+---
+
+# The Ledger for accounting firms
+
+Run your clients' books in one Ledger. What the firm edition changes, who reaches what, signing keys, moving a client out, retention and the costs.
+
+Updated 2026-11-12
+
+The firm edition runs many client businesses in one Ledger. Each client has its own numbers, hash chain, signing key, files and owner. The owners of two clients never see each other.
+
+You choose it in the installer: on the **Extras** step, tick **Accounting firm: manage many client businesses**. It sets the Worker variable `LEDGER_EDITION` to `firm`. **Settings > Updates** shows the edition.
+
+## What the firm edition changes
+
+- **Any business type for any client.** A person has one עוסק file, so a Ledger for one person allows one. A firm runs many clients, so it adds any number of עוסק פטור, עוסק מורשה and companies.
+- **A tax id once per Ledger.** Two businesses never share a tax id, in either edition.
+- **Ledger admins.** Ledger-wide settings belong to admins only: adding a business, VAT rates, ceilings, exchange rates, backups, the gap check, Updates, the expense category defaults, the email inbox and MCP on or off.
+- **The firm team.** Firm staff reach every client with one grant.
+- **The Clients page.** One row per client: VAT due or ceiling use, the Tax Authority login, the certificate end date, open payment requests, expenses to review and the last activity. Open it from the business switcher.
+
+## Who reaches what
+
+| Person | Reaches | Set in |
+| --- | --- | --- |
+| Ledger admin | Every business as owner, present and future, and the Ledger-wide settings | Settings > Firm team |
+| Firm staff, assistant | Every business: clients, documents, sending, expenses. No Settings | Settings > Firm team |
+| Firm staff, accountant | Every business, read only, with the feature switches you set | Settings > Firm team |
+| Client owner | Their own business only | Settings > Users, in that business |
+
+A client owner sees the firm team in their user list as **Firm team**, with no email. They cannot reach another client, the Ledger-wide settings, or a Ledger-wide MCP token. A grant on one business wins over the firm grant for that business.
+
+The installer's owner email becomes the first admin. A Ledger always keeps one admin: the last one cannot be removed.
+
+## One signing key per business
+
+Each client signs its documents under its own name. When you add a business, the Ledger makes its key in your browser right away. A client with no key cannot send documents, and its dashboard says so. See [Digital signature](https://open-ledger.dev/en/help/digital-signature/).
+
+## MCP tokens
+
+A client owner makes a token for their own business only. A Ledger-wide token reaches every business, and only admins make one. See [Connect Claude](https://open-ledger.dev/en/help/connect-claude/).
+
+## A client who leaves
+
+A client who moves to a Ledger of their own takes everything with them:
+
+1. In the firm's Ledger, open the client, then **Settings > Businesses > Export**. Each file builds on its own: `data.json`, the unified file and the documents of each year, expenses with receipts, contracts, and `manifest.json` with a SHA-256 of each file. No keys and no tokens.
+2. The client installs their own Ledger with the normal installer.
+3. In the new Ledger: **Settings > Numbering > Continue from another Ledger** reads `manifest.json` and continues each series from the next number. **Settings > Businesses > Import data from another Ledger** reads `data.json`. The Import page takes the unified file as history.
+4. Back in the firm's Ledger, an admin clicks **Mark as moved out** and types the business name. It works only after an export with every file built.
+
+A moved-out business is read-only: no drafts, numbers, sending, payments, Tax Authority calls, bank sync, recurring documents or reminders. The switcher lists it under **Moved out**.
+
+## Retention
+
+Nothing is ever deleted. The books of a moved-out client stay in the firm's Ledger for the retention period of instruction 25: 7 years from the end of the tax year, or 6 years from the return, the later. There is no delete button.
+
+## The costs
+
+The firm edition has two costs on Cloudflare:
+
+- **Workers Paid.** The free plan gives 100,000 requests a day and 10 ms of CPU per request. Many clients need more, so the firm edition needs Workers Paid.
+- **Cloudflare Access seats.** Access is free for 50 users. Each person who signs in is one seat: admins, firm staff and client owners. Above 50, Access is paid per seat.
+
+A Ledger per client is also possible: each client gets their own install. Each Ledger uses 5 of the 250 cron triggers a paid Cloudflare account allows, so about 50 clients per account, each updated on its own.
+
+Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
+
+## More help
+
+- [Before you install: what you need](https://open-ledger.dev/en/help/before-you-start/)
+- [Install Open Ledger IL step by step](https://open-ledger.dev/en/help/install/)
+- [Create the Cloudflare API token](https://open-ledger.dev/en/help/cloudflare-token/)
+- [First sign-in and setup](https://open-ledger.dev/en/help/first-sign-in/)
+- [Give your accountant or assistant access](https://open-ledger.dev/en/help/users/)
+- [Connect to the Tax Authority for allocation numbers](https://open-ledger.dev/en/help/tax-authority/)
+- [From quote to receipt: your first documents](https://open-ledger.dev/en/help/first-invoice/)
+- [Digital signatures: what the Tax Authority requires and how the Ledger meets each rule](https://open-ledger.dev/en/help/digital-signature/)
+- [Take payments with Grow, Cardcom or another provider](https://open-ledger.dev/en/help/payment-providers/)
+- [Get your expenses into the Ledger](https://open-ledger.dev/en/help/expenses/)
+- [Send documents by email, and keep them out of spam](https://open-ledger.dev/en/help/email/)
+- [Connect Claude or another AI app (MCP)](https://open-ledger.dev/en/help/connect-claude/)
+- [API for other apps](https://open-ledger.dev/en/help/api/)
+- [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
+- [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
+- [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+
+Source: https://open-ledger.dev/en/help/for-accounting-firms/
 
 
 ---
@@ -5965,7 +6217,7 @@ Source: https://open-ledger.dev/en/help/first-sign-in/
 
 Every screen of the Windows installer, from the licence key to the Ledger's address, with what to fill in and what to skip.
 
-Updated 2026-11-04
+Updated 2026-11-12
 
 ## The installer comes with your purchase
 
@@ -6050,6 +6302,7 @@ All optional. Each **?** button explains where to get the key.
 - **Expense reading:** pick Gemini or Anthropic and paste the key. A Gemini key from aistudio.google.com starts with `AQ.`, older ones with `AIza`.
 - **Email sending:** the Resend API key and the sender, written as `Business Name <billing@your-domain.co.il>`. See [Send documents by email](https://open-ledger.dev/en/help/email/).
 - **Slack alerts:** the webhook address.
+- **Accounting firm: manage many client businesses:** tick it to run your clients' books in one Ledger. The **?** names its two costs: Cloudflare Workers Paid, and Access seats above 50 users. See [For accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/). An update keeps the edition the Ledger runs and shows it.
 
 Skip anything you do not have. You add it later, see [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/). On an update, keys already set say **Already set. Leave empty to keep it.**
 
@@ -6088,6 +6341,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/install/
 
@@ -6150,6 +6404,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/keys-later/
 
@@ -6209,6 +6464,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/payment-providers/
 
@@ -6280,6 +6536,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/tax-authority/
 
@@ -6349,6 +6606,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/troubleshooting/
 
@@ -6402,6 +6660,7 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [API for other apps](https://open-ledger.dev/en/help/api/)
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/updates-backups/
 
@@ -6412,7 +6671,7 @@ Source: https://open-ledger.dev/en/help/updates-backups/
 
 Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
 
-Updated 2026-10-17
+Updated 2026-11-12
 
 Each person gets a role per business.
 
@@ -6453,6 +6712,12 @@ A business always keeps one owner. The only owner has no Remove button and its r
 1. In the Ledger: **Accountant > Users**, click **Revoke** on the row.
 2. In Cloudflare Access: open the same policy, remove the email from **Include > Emails** and click **Save policy**.
 
+## Accounting firms: the firm team
+
+In the [firm edition](https://open-ledger.dev/en/help/for-accounting-firms/), Ledger admins open **Settings > Firm team**. A person added there reaches every client business, present and future, as an assistant or an accountant. An admin owns every business and the Ledger-wide settings. Each person is still one Cloudflare Access seat, so add their email to the Access policy too.
+
+A client owner sees the firm team in **Users** as **Firm team**, with no email, and changes only the access to their own business.
+
 Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
 
 ## More help
@@ -6472,5 +6737,6 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/users/

@@ -63,5 +63,6 @@
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/tax-authority/

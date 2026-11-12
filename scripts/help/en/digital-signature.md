@@ -1,7 +1,7 @@
 ---
 title: Digital signatures: what the Tax Authority requires and how the Ledger meets each rule
 description: The rules for emailing receipts and invoices under instruction 18ב, the Ledger feature behind each rule, and the one step left to you.
-updated: 2026-10-17
+updated: 2026-11-12
 published: true
 nav: Digital signature
 order: 8
@@ -45,6 +45,16 @@ Instruction 18ב accepts either a secured or a certified signature. The Ledger u
 The trade-off: a secured signature brings the payment rule of 18ב(ד). A certified signature has no such limit, but needs a paid certificate from a certifying authority. The Ledger signs with a secured signature only.
 
 The law also puts a duty on you as the key holder. Guard the key: protect your Cloudflare account with two-factor sign-in, and give no one else access to the Worker's secrets. If you think someone got hold of the key, tell the clients who rely on your documents, and replace the key and certificate.
+
+## A key per business
+
+Each business in your Ledger can sign with its own key and certificate, so a company signs as the company, not as you. Open **Settings > Signature > Digital signature** in that business.
+
+- **Create a new key** makes a 3,072-bit key and a 10-year certificate in your browser. The certificate names the business and its tax id. Only the key and the certificate go to your Ledger, once, encrypted on the way. The Ledger stores the key encrypted and never shows it again, in no screen, export or backup.
+- **Upload a certificate** takes a PEM key and certificate, or a .p12 file with its password. The .p12 file opens in your browser. The Ledger checks the key matches the certificate and the certificate is valid today. It warns when the certificate names another business.
+- A business you add gets its key right away. A business with no key of its own signs with the installer's key, as before. In the [firm edition](/en/help/for-accounting-firms/), only the first business does that, and a client with no key cannot send.
+- Replacing a key asks you to type the business name. The old certificate stays listed as retired. PDFs it signed stay valid.
+- 60 days and 14 days before a certificate ends, the Ledger adds a task to the dashboard.
 
 ## What your client sees
 

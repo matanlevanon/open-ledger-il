@@ -50,5 +50,6 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/before-you-start/

@@ -1,7 +1,7 @@
 ---
 title: התקנת Open Ledger IL צעד אחר צעד
 description: כל מסך בתוכנת ההתקנה ל-Windows, ממפתח הרישיון ועד כתובת הלדג'ר, עם מה למלא ומה אפשר לדלג.
-updated: 2026-11-04
+updated: 2026-11-12
 published: true
 nav: התקנה
 cta: buy
@@ -80,6 +80,7 @@ order: 2
 - **קריאת הוצאות:** בוחרים Gemini או Anthropic ומדביקים את המפתח. מפתח Gemini מ-aistudio.google.com מתחיל ב-`AQ.`, מפתחות ישנים ב-`AIza`.
 - **שליחת מיילים:** מפתח ה-API של Resend והשולח, בצורה `Business Name <billing@your-domain.co.il>`. ראו [שליחת מסמכים במייל](/help/email/).
 - **התראות Slack:** כתובת ה-webhook.
+- **Accounting firm: manage many client businesses:** מסמנים כדי לנהל את הספרים של הלקוחות בלדג'ר אחד. ה-**?** מציין את שתי העלויות: Cloudflare Workers Paid, ומקומות ב-Access מעל 50 משתמשים. ראו [למשרדי רואי חשבון](/help/for-accounting-firms/). עדכון שומר את המהדורה שהלדג'ר מריץ ומציג אותה.
 
 מדלגים על מה שאין לכם. אפשר להוסיף אחר כך, ראו [הוספה או החלפה של מפתח אחרי ההתקנה](/help/keys-later/). בעדכון, ליד מפתח שכבר הוגדר כתוב **Already set. Leave empty to keep it.**
 

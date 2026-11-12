@@ -9,7 +9,7 @@
   </url>
   <url>
     <loc>https://open-ledger.dev/changelog/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-11</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/changelog/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/changelog/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/changelog/"/>
@@ -128,14 +128,14 @@
   </url>
   <url>
     <loc>https://open-ledger.dev/help/connect-claude/</loc>
-    <lastmod>2026-10-20</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/connect-claude/"/>
   </url>
   <url>
     <loc>https://open-ledger.dev/help/digital-signature/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/digital-signature/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/digital-signature/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/digital-signature/"/>
@@ -169,8 +169,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/first-sign-in/"/>
   </url>
   <url>
+    <loc>https://open-ledger.dev/help/for-accounting-firms/</loc>
+    <lastmod>2026-11-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/for-accounting-firms/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/for-accounting-firms/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/for-accounting-firms/"/>
+  </url>
+  <url>
     <loc>https://open-ledger.dev/help/install/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/install/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/install/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/install/"/>
@@ -212,7 +219,7 @@
   </url>
   <url>
     <loc>https://open-ledger.dev/help/users/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/users/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/users/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/users/"/>
@@ -247,7 +254,7 @@
   </url>
   <url>
     <loc>https://open-ledger.dev/en/changelog/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-11</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/changelog/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/changelog/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/changelog/"/>
@@ -366,14 +373,14 @@
   </url>
   <url>
     <loc>https://open-ledger.dev/en/help/connect-claude/</loc>
-    <lastmod>2026-10-20</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/connect-claude/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/connect-claude/"/>
   </url>
   <url>
     <loc>https://open-ledger.dev/en/help/digital-signature/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/digital-signature/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/digital-signature/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/digital-signature/"/>
@@ -407,8 +414,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/first-sign-in/"/>
   </url>
   <url>
+    <loc>https://open-ledger.dev/en/help/for-accounting-firms/</loc>
+    <lastmod>2026-11-12</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/for-accounting-firms/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/for-accounting-firms/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/for-accounting-firms/"/>
+  </url>
+  <url>
     <loc>https://open-ledger.dev/en/help/install/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/install/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/install/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/install/"/>
@@ -450,7 +464,7 @@
   </url>
   <url>
     <loc>https://open-ledger.dev/en/help/users/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://open-ledger.dev/en/help/users/"/>
     <xhtml:link rel="alternate" hreflang="he" href="https://open-ledger.dev/help/users/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://open-ledger.dev/help/users/"/>

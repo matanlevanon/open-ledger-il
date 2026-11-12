@@ -1,7 +1,7 @@
 ---
 title: Give your accountant or assistant access
 description: Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
-updated: 2026-10-17
+updated: 2026-11-12
 published: true
 nav: Accountant and team access
 order: 5
@@ -45,3 +45,9 @@ A business always keeps one owner. The only owner has no Remove button and its r
 
 1. In the Ledger: **Accountant > Users**, click **Revoke** on the row.
 2. In Cloudflare Access: open the same policy, remove the email from **Include > Emails** and click **Save policy**.
+
+## Accounting firms: the firm team
+
+In the [firm edition](/en/help/for-accounting-firms/), Ledger admins open **Settings > Firm team**. A person added there reaches every client business, present and future, as an assistant or an accountant. An admin owns every business and the Ledger-wide settings. Each person is still one Cloudflare Access seat, so add their email to the Access policy too.
+
+A client owner sees the firm team in **Users** as **Firm team**, with no email, and changes only the access to their own business.

@@ -6,6 +6,10 @@
 
 ## 1.8.0 (2026-11-01, updated 2026-11-04)
 
+### MCP
+
+- `GET /mcp` and `DELETE /mcp` answer 405 with `Allow: POST`. Before, they reached the web app and answered 200 with the page, so an MCP client that opens a GET event stream reconnected in a loop, thousands of requests an hour, and used up the free plan's 100,000 daily Worker requests.
+
 ### Tax Authority
 
 - Unified file: **Send to the Tax Authority** uploads the INI and BKMVDATA files through the Tax Authority's upload API (GetUrlsForUploadingFiles, then a resumable upload of each file). **Check status** asks for each file's status: Uploaded, Approved or Rejected. Every send is listed on the Unified file page. The Tax Authority requires this API from 1.1.2027.

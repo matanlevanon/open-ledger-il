@@ -2,7 +2,7 @@
 
 Add an accountant, an assistant or your second email to the Ledger, in the Ledger and in Cloudflare Access, and remove them again.
 
-Updated 2026-10-17
+Updated 2026-11-12
 
 Each person gets a role per business.
 
@@ -43,6 +43,12 @@ A business always keeps one owner. The only owner has no Remove button and its r
 1. In the Ledger: **Accountant > Users**, click **Revoke** on the row.
 2. In Cloudflare Access: open the same policy, remove the email from **Include > Emails** and click **Save policy**.
 
+## Accounting firms: the firm team
+
+In the [firm edition](https://open-ledger.dev/en/help/for-accounting-firms/), Ledger admins open **Settings > Firm team**. A person added there reaches every client business, present and future, as an assistant or an accountant. An admin owns every business and the Ledger-wide settings. Each person is still one Cloudflare Access seat, so add their email to the Access policy too.
+
+A client owner sees the firm team in **Users** as **Firm team**, with no email, and changes only the access to their own business.
+
 Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
 
 ## More help
@@ -62,5 +68,6 @@ Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pri
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/en/help/users/

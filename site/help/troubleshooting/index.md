@@ -61,5 +61,6 @@
 - [API לאפליקציות אחרות](https://open-ledger.dev/help/api/)
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/troubleshooting/

@@ -2,7 +2,7 @@
 
 הוספת רואה חשבון, עוזר או מייל נוסף שלכם ללדג'ר, בלדג'ר וב-Cloudflare Access, והסרה שלהם.
 
-עודכן 2026-10-17
+עודכן 2026-11-12
 
 לכל אדם יש תפקיד בכל עסק.
 
@@ -43,6 +43,12 @@
 1. בלדג'ר: **Accountant > Users**, לוחצים **Revoke** בשורה שלו.
 2. ב-Cloudflare Access: פותחים את אותה מדיניות, מוחקים את המייל מ-**Include > Emails** ולוחצים **Save policy**.
 
+## משרדי רואי חשבון: צוות המשרד
+
+ב[מהדורת המשרד](https://open-ledger.dev/help/for-accounting-firms/), מנהלי הלדג'ר פותחים **הגדרות > צוות המשרד**. מי שנוסף שם ניגש לכל עסק לקוח, קיים ועתידי, כעוזר או כרואה חשבון. מנהל הוא בעלים בכל עסק ובהגדרות של כל הלדג'ר. כל אדם עדיין תופס מקום אחד ב-Cloudflare Access, ולכן מוסיפים גם את האימייל שלו למדיניות ה-Access.
+
+בעלים של לקוח רואים את צוות המשרד ב**משתמשים** כ-**צוות המשרד**, בלי אימייל, ומשנים רק את הגישה לעסק שלהם.
+
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
 ## עוד עזרה
@@ -62,5 +68,6 @@
 - [הוספה או החלפה של מפתח אחרי ההתקנה](https://open-ledger.dev/help/keys-later/)
 - [עדכונים וגיבויים](https://open-ledger.dev/help/updates-backups/)
 - [בעיות נפוצות ואיך פותרים אותן](https://open-ledger.dev/help/troubleshooting/)
+- [הלדג'ר למשרדי רואי חשבון](https://open-ledger.dev/help/for-accounting-firms/)
 
 Source: https://open-ledger.dev/help/users/

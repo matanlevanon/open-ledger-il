@@ -18,5 +18,6 @@ Step-by-step instructions, in the order you need them. Start at the top if this 
 - [Add or change a key after the install](https://open-ledger.dev/en/help/keys-later/)Add the Gemini, Anthropic, Resend, Slack or Google Drive key to your Ledger in the Cloudflare dashboard, without running the installer again.
 - [Updates and backups](https://open-ledger.dev/en/help/updates-backups/)How to check for a new Open Ledger IL version and update with the installer, and where the Ledger keeps its backups.
 - [Common problems and how to fix them](https://open-ledger.dev/en/help/troubleshooting/)Fixes for the places people get stuck: Windows warnings, the Cloudflare token, Zero Trust, keys the installer refuses, sign-in, downloads and email.
+- [The Ledger for accounting firms](https://open-ledger.dev/en/help/for-accounting-firms/)Run your clients' books in one Ledger. What the firm edition changes, who reaches what, signing keys, moving a client out, retention and the costs.
 
 Source: https://open-ledger.dev/en/help/
