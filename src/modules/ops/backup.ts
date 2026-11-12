@@ -49,6 +49,8 @@ const CORE_TABLES = [
 ] as const;
 
 /** Tables owned by later-merging runs. Exported only when present, so an early deploy still backs up. */
+// R48: business_signing_keys is left out on purpose. A lost key is replaced by a new one in
+// Settings > Digital signature, and PDFs already signed stay valid. A backup never holds a key.
 const OPTIONAL_TABLES = ['expenses', 'expense_files', 'suppliers', 'expense_categories', 'allocation_records'] as const;
 
 export type BackupTables = Record<string, Record<string, unknown>[]>;

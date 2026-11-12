@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import { ApiError, fetchSignatureMode, setSignatureMode } from './api';
+import { DigitalSignatureCard } from './DigitalSignatureCard';
 import { ImageUpload } from './ImageUpload';
 
 export function SignatureTab() {
@@ -42,6 +43,7 @@ export function SignatureTab() {
 
   return (
     <div className="flex flex-col gap-6">
+      <DigitalSignatureCard />
       <ImageUpload path="/business/signature" title={t('settings.signature.imageTitle')} hint={t('settings.signature.imageHint')} />
       <div className="flex flex-col gap-3">
       <p className="text-sm text-muted">{t('settings.signature.description')}</p>

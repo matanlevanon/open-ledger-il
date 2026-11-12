@@ -15,6 +15,7 @@ import {
   fetchDashboard,
 } from '../../api/dashboard';
 import { usePreferences } from '../../app/preferences';
+import { NoSigningKeyBanner } from './NoSigningKeyBanner';
 import { WhatsAppDue } from './WhatsAppDue';
 import { FinancyDashboard } from '../financy/FinancyDashboard';
 import { receiptForImported } from '../documents/ImportedDocuments';
@@ -693,6 +694,7 @@ export function DashboardPage({ loadDashboard = fetchDashboard, today = todayIsr
           </Link>
         )}
       </div>
+      <NoSigningKeyBanner />
 
       {data?.financyTab && (
         <div role="tablist" aria-label={t('dashboard.tabs')} className="mt-4 flex gap-1 border-b border-line">

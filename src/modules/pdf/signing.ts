@@ -2,6 +2,9 @@ import { ConfigError, ConflictError } from '../../core/errors';
 import { signatureMode } from '../documents/settings';
 import type { SigningIdentity } from '../signing';
 import type { Env } from '../../env';
+import { FIRST_BUSINESS } from '../../core/business';
+import { ledgerEdition } from '../../core/edition';
+import { decryptActiveKey } from '../signing/keys';
 
 /**
  * Resolves the PAdES signing identity for `renderAndStore` (CLAUDE.md: every PDF that can leave
@@ -28,14 +31,29 @@ export async function assertSigningForSend(db: D1Database, businessId: number): 
   }
 }
 
+/**
+ * R48 task 3: whose key signs a business's PDFs.
+ * - The business's own active key (business_signing_keys), when it has one.
+ * - Else, single edition: the env secrets, for every business, exactly as before.
+ * - Else, firm edition: the env secrets for business 1 only. Another business with no key of its
+ *   own signs nothing, and `require: true` throws a ConfigError naming Settings > Digital signature.
+ */
 export async function resolveSigningIdentity(
   db: D1Database,
-  env: Pick<Env, 'SIGNING_KEY_PEM' | 'SIGNING_CERT_PEM'>,
+  env: Pick<Env, 'SIGNING_KEY_PEM' | 'SIGNING_CERT_PEM'> & Partial<Pick<Env, 'ITA_TOKEN_KEY' | 'LEDGER_EDITION'>>,
   businessId: number,
   options: { require?: boolean } = {},
 ): Promise<SigningIdentity | null> {
   const mode = await signatureMode(db, businessId);
   if (mode === 'none') return null;
+  const own = await decryptActiveKey(db, env, businessId);
+  if (own) return own;
+  if (ledgerEdition(env) === 'firm' && businessId !== FIRST_BUSINESS) {
+    if (options.require) {
+      throw new ConfigError('This business has no signing key yet. Create one in Settings > Digital signature.');
+    }
+    return null;
+  }
   const { SIGNING_KEY_PEM, SIGNING_CERT_PEM } = env;
   if (!SIGNING_KEY_PEM || !SIGNING_CERT_PEM) {
     if (options.require) {

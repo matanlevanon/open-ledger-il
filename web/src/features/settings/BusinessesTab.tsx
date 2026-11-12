@@ -6,6 +6,7 @@ import { type MessageKey, useT } from '../../i18n';
 import { btnPrimary, btnSecondary, input, label } from '../documents/ui';
 import { readCertificate, uploadDocument } from '../business-documents/api';
 import { TypedConfirm, confirmMatches } from './BusinessTypeSwitchDialog';
+import { createKeyInBrowser } from './DigitalSignatureCard';
 
 interface Props {
   /** Injected in tests. */
@@ -16,6 +17,8 @@ interface Props {
   storeCert?: typeof uploadDocument;
   /** Opens the Add business form at once (the switcher's Add a business). */
   startAdding?: boolean;
+  /** R48: makes the new business's signing key in this browser. Injected in tests. */
+  makeKey?: (name: string, taxId: string, businessId: number) => Promise<unknown>;
 }
 
 const EMPTY: NewBusinessInput = { entityType: 'company', nameEn: '', nameHe: '', taxId: '', addressEn: '', addressHe: '' };
@@ -25,7 +28,7 @@ const EMPTY: NewBusinessInput = { entityType: 'company', nameEn: '', nameHe: '',
  * first-run setup: type, names, tax ID and address, then Connect the Tax Authority for it. A
  * Ledger that already has an עוסק business offers a company only (B3), and says why.
  */
-export function BusinessesTab({ load = fetchBusinesses, create = createBusiness, startAdding = false, readCert = readCertificate, storeCert = uploadDocument }: Props) {
+export function BusinessesTab({ load = fetchBusinesses, create = createBusiness, startAdding = false, readCert = readCertificate, storeCert = uploadDocument, makeKey = createKeyInBrowser }: Props) {
   const t = useT();
   const [data, setData] = useState<BusinessList | null>(null);
   const [adding, setAdding] = useState(startAdding);
@@ -89,6 +92,9 @@ export function BusinessesTab({ load = fetchBusinesses, create = createBusiness,
         setCert(null);
         setCertNote(null);
       }
+      // R48: the new business gets its own signing key right away, made in this browser. A failure
+      // never undoes the business: Settings > Digital signature says "No signing key yet".
+      await makeKey(form.nameHe.trim() || form.nameEn.trim(), form.taxId.trim(), businessId).catch(() => undefined);
       setCreated(businessId);
       setAdding(false);
       setForm(EMPTY);

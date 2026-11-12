@@ -60,7 +60,7 @@ describe('R24 business switcher', () => {
 describe('R24 Settings > Businesses', () => {
   it('offers a company only when an עוסק business exists, says why, and needs the typed confirm', async () => {
     const create = vi.fn(async () => ({ businessId: 2 }));
-    wrap(<BusinessesTab load={async () => ONE} create={create} startAdding />);
+    wrap(<BusinessesTab makeKey={async () => undefined} load={async () => ONE} create={create} startAdding />);
     expect(await screen.findByTestId('one-osek-note')).toBeInTheDocument();
     expect(screen.getAllByRole('radio')).toHaveLength(1);
     fireEvent.change(screen.getByLabelText('Business name (English)'), { target: { value: 'Acme Ltd' } });
