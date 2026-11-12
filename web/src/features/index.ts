@@ -38,6 +38,9 @@ import { ContractsRoutes } from './contracts';
 
 import { AboutPage } from './about/AboutPage';
 
+// R48: the firm edition's Clients page.
+import { ClientsPage } from './firm/ClientsPage';
+
 export const featureRoutes: FeatureRoute[] = [
   ...documentsRoutes,
 
@@ -60,6 +63,8 @@ export const featureRoutes: FeatureRoute[] = [
   { path: '/ita', component: ItaScreen },
 
   { path: '/settings', component: SettingsPage },
+
+  { path: '/firm/clients', component: ClientsPage },
 
   // R24 Phase C: business documents for the assistant and the accountant (owners also have the Settings tab).
   { path: '/business-documents', component: BusinessDocumentsPage },

@@ -13,6 +13,7 @@ import { allowedNewBusinessTypes } from '../legal-mode/business-type';
 import { switchToMurshe } from '../legal-mode/service';
 import { isValidIsraeliId } from '../ops/israeli-id';
 import { hasCompleteExport } from '../business-export/service';
+import { isFirmStaff } from '../firm';
 import { createBrand, createBusiness, listBrands, listMyBusinesses, markMovedOut, updateBrand } from './service';
 
 export * from './service';
@@ -66,6 +67,8 @@ export function createBusinessesModule(documentsOptions: DocumentsModuleOptions 
       businesses: await listMyBusinesses(c.env.DB, c.get('user')),
       // B3: the types Add business offers. Only an owner adds one.
       addableTypes: isLedgerAdmin(c.get('user')) ? await allowedNewBusinessTypes(c.env.DB, ledgerEdition(c.env)) : [],
+      // R48 task 7: the Clients page, for the firm team in the firm edition.
+      clientsPage: ledgerEdition(c.env) === 'firm' && (await isFirmStaff(c.env.DB, c.get('user'))),
     }),
   );
 

@@ -19,6 +19,8 @@ export interface BusinessList {
   businesses: BusinessSummary[];
   /** The types Add business offers. Empty for anyone but an owner. */
   addableTypes: EntityType[];
+  /** R48: the firm team's Clients page is open to this person. */
+  clientsPage?: boolean;
 }
 
 export const fetchBusinesses = () => apiGet<BusinessList>('/businesses');

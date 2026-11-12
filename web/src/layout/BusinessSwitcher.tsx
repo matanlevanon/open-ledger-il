@@ -48,7 +48,7 @@ export function BusinessSwitcher({ load = fetchBusinesses, onSwitch = switchBusi
 
   if (!data) return null;
   const canAdd = data.addableTypes.length > 0;
-  if (data.businesses.length < 2 && !canAdd) return null;
+  if (data.businesses.length < 2 && !canAdd && !data.clientsPage) return null;
   const name = (b: BusinessList['businesses'][number]) => (locale === 'he' ? b.nameHe || b.nameEn : b.nameEn || b.nameHe) || `#${b.id}`;
   const current = data.businesses.find((b) => b.id === data.current);
   // R48: a firm with many clients. Above 8 businesses the list is sorted by name with the tax id
@@ -128,6 +128,19 @@ export function BusinessSwitcher({ load = fetchBusinesses, onSwitch = switchBusi
                 </button>
               ))}
             </div>
+          )}
+          {data.clientsPage && (
+            <button
+              role="menuitem"
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                navigate('/firm/clients');
+              }}
+              className="mt-1 w-full rounded border-t border-line px-3 py-2 text-start text-sm text-ink hover:bg-surface"
+            >
+              {t('firm.clients.title')}
+            </button>
           )}
           {canAdd && (
             <button
