@@ -1,6 +1,7 @@
 import { type AuditActor, actorBiz, auditStatement } from '../../core/audit';
 import type { AuthUser } from '../../core/auth';
 import { seriesIdFor } from '../../core/business';
+import type { Edition } from '../../core/edition';
 import { all, first, nowIso, stmt, transaction } from '../../core/db';
 import { ConflictError, ForbiddenError, NotFoundError } from '../../core/errors';
 import { type EntityType, allowedNewBusinessTypes } from '../legal-mode/business-type';
@@ -57,15 +58,23 @@ export interface NewBusinessInput {
  * the creator as its owner. A מורשה or a company then runs the `registered` switch, so it starts
  * VAT registered (src/modules/legal-mode). Nothing moves from another business.
  */
-export async function createBusiness(db: D1Database, actor: AuditActor, user: AuthUser, input: NewBusinessInput): Promise<number> {
+export async function createBusiness(
+  db: D1Database,
+  actor: AuditActor,
+  user: AuthUser,
+  input: NewBusinessInput,
+  edition: Edition = 'single',
+): Promise<number> {
   if (user.role !== 'owner') throw new ForbiddenError('Only an owner adds a business.');
-  const allowed = await allowedNewBusinessTypes(db);
+  const allowed = await allowedNewBusinessTypes(db, edition);
   if (!allowed.includes(input.entityType)) {
     throw new ConflictError(
       'one_osek_only',
       'A person has one עוסק file, פטור or מורשה. This Ledger already has one, so the new business is a company.',
     );
   }
+  const taxId = normalizeTaxId(input.taxId);
+  await assertTaxIdFree(db, taxId, null);
   const next = await first<{ id: number }>(db, 'SELECT COALESCE(MAX(id), 0) + 1 AS id FROM businesses');
   const id = next!.id;
   const base = await all<{ id: string; doc_type: string; name_en: string; name_he: string | null; legal_mode: string | null }>(
@@ -81,7 +90,7 @@ export async function createBusiness(db: D1Database, actor: AuditActor, user: Au
       id,
       input.nameEn,
       input.nameHe,
-      input.taxId,
+      taxId,
       input.addressEn,
       input.addressHe ?? null,
     ),
@@ -104,6 +113,29 @@ export async function createBusiness(db: D1Database, actor: AuditActor, user: Au
     auditStatement(db, created, 'business.create', 'business', id, { entityType: input.entityType }),
   ]);
   return id;
+}
+
+/** R48: a tax id as stored and compared: digits only, trimmed. */
+export function normalizeTaxId(value: string | null | undefined): string {
+  return (value ?? '').replace(/\D/g, '');
+}
+
+/**
+ * R48 task 2: a tax id is unique across the businesses of one Ledger, in every edition. Compared
+ * as digits only. An empty tax id is never a clash. 409 `tax_id_taken`.
+ */
+export async function assertTaxIdFree(db: D1Database, taxId: string | null | undefined, exceptBusinessId: number | null): Promise<void> {
+  const digits = normalizeTaxId(taxId);
+  if (!digits) return;
+  const clash = await first<{ id: number }>(
+    db,
+    `SELECT id FROM businesses
+      WHERE REPLACE(REPLACE(REPLACE(TRIM(COALESCE(tax_id, '')), '-', ''), ' ', ''), '.', '') = ? AND id IS NOT ?
+      LIMIT 1`,
+    digits,
+    exceptBusinessId,
+  );
+  if (clash) throw new ConflictError('tax_id_taken', 'Another business in this Ledger has this tax ID.');
 }
 
 // ---------------------------------------------------------------------------

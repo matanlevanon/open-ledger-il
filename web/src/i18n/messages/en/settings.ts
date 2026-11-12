@@ -601,4 +601,7 @@ export const settings = {
   'settings.firmTeam.error': 'Could not change the firm team.',
   'settings.firmTeam.accessNote': 'Also add each new email to your Cloudflare Access policy. Each person is one Access seat.',
   'settings.mcp.businessScope': 'This token reaches this business only. Your MCP client sends X-Business-Id: {id}, or no header.',
+  'settings.updates.editionSingle': 'Edition: one person or company.',
+  'settings.updates.editionFirm': 'Edition: accounting firm. It needs the Cloudflare Workers Paid plan, and Access seats above 50 users.',
+  'businesses.switcher.search': 'Search businesses',
 };

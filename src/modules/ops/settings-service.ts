@@ -1,3 +1,4 @@
+import { assertTaxIdFree, normalizeTaxId } from '../businesses/service';
 import type { AuditActor } from '../../core/audit';
 import { actorBiz, auditStatement } from '../../core/audit';
 import { readBusinessSetting, settingKey } from '../../core/business';
@@ -55,6 +56,10 @@ export async function updateBusinessProfile(
   patch: Record<string, unknown>,
 ): Promise<BusinessProfileRow> {
   const set = BUSINESS_COLUMNS.filter(([key]) => patch[key] !== undefined);
+  if (typeof patch.taxId === 'string') {
+    const current = await first<{ tax_id: string | null }>(db, 'SELECT tax_id FROM businesses WHERE id = ?', actorBiz(actor));
+    if (normalizeTaxId(current?.tax_id) !== normalizeTaxId(patch.taxId)) await assertTaxIdFree(db, patch.taxId, actorBiz(actor));
+  }
   if (set.length > 0) {
     await transaction(db, [
       stmt(

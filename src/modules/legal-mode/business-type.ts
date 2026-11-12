@@ -1,3 +1,4 @@
+import type { Edition } from '../../core/edition';
 import { all, first } from '../../core/db';
 import { convert } from '../../core/money';
 import type { Env } from '../../env';
@@ -64,7 +65,9 @@ export async function setupBusinessType(env: Env, businessId: number): Promise<E
  * companies. So a Ledger with an osek business already offers only a company. Not yet confirmed
  * by the accountant (docs/open-questions.md A16): change it here and nowhere else.
  */
-export async function allowedNewBusinessTypes(db: D1Database): Promise<EntityType[]> {
+export async function allowedNewBusinessTypes(db: D1Database, edition: Edition = 'single'): Promise<EntityType[]> {
+  // R48: an accounting firm runs many clients' עוסק files. The one-עוסק rule is for one person.
+  if (edition === 'firm') return ['osek_patur', 'osek_murshe', 'company'];
   const osek = await first<{ id: number }>(db, "SELECT id FROM businesses WHERE entity_type IN ('osek_patur', 'osek_murshe') LIMIT 1");
   return osek ? ['company'] : ['osek_patur', 'osek_murshe', 'company'];
 }

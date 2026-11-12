@@ -47,6 +47,7 @@ Sandbox and production ITA credentials sit under separate names. `ITA_ENV` picks
 | `OWNER_EMAIL` | empty | First sign-in of this email creates the owner row while no owner exists |
 | `DEV_AUTH_EMAIL` | unset | Local only. Signs in as this email without Access |
 | `PUBLIC_APP_URL` | empty | Origin used to build consent and share links in emails. Empty falls back to the request origin |
+| `LEDGER_EDITION` | empty (`single`) | R48. `firm` for an accounting firm that runs many client businesses: Ledger admins, the firm team, any business type for any client, business-bound MCP tokens. Needs Workers Paid. Empty or `single`: one person or company, as before. Set it in the Worker's variables (the public repo has no installer). Shown in Settings > Updates |
 
 ## Bindings
 

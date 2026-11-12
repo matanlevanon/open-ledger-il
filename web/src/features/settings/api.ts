@@ -151,6 +151,8 @@ export interface UpdatesInfo {
   current: string;
   repo: string | null;
   last: UpdateCheck | null;
+  /** R48: LEDGER_EDITION, read only. */
+  edition?: 'single' | 'firm';
 }
 
 export const fetchUpdates = () => apiGet<UpdatesInfo>('/updates');

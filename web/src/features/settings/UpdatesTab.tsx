@@ -43,6 +43,9 @@ export function UpdatesTab() {
       <h2 className="font-heading text-lg text-ink">{t('settings.updates.title')}</h2>
       <p className="text-xs text-muted">{t('settings.updates.hint')}</p>
       <p className="text-sm text-ink">{t('settings.updates.current', { version: info.current })}</p>
+      <p className="text-sm text-ink" data-testid="ledger-edition">
+        {info.edition === 'firm' ? t('settings.updates.editionFirm') : t('settings.updates.editionSingle')}
+      </p>
       <button
         type="button"
         disabled={checking}

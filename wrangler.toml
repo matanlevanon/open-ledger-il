@@ -37,6 +37,7 @@ AI_PROVIDER = ""                    # "anthropic" or "gemini": who reads uploade
 ANTHROPIC_MODEL = ""                # Empty uses the default in src/modules/ai. Set it when a model is retired.
 GEMINI_MODEL = ""                   # Empty uses the default in src/modules/ai. Set it when a model is retired.
 SETUP_BUSINESS_TYPE = ""            # Set by the installer only: osek_patur, osek_murshe or company. Preselects the first-run Business type step. Ignored once setup is done (R24).
+LEDGER_EDITION = ""                # R48: "firm" for an accounting firm with many client businesses (needs Workers Paid). Empty or "single": one person or company.
 UPDATE_REPO = ""                   # owner/name of the GitHub repo you deploy from. Settings > Updates and a monthly check compare against its latest release. Empty turns the check off.
 
 # Secrets. Set with `wrangler secret put <NAME>` or in the dashboard. Never commit a value.

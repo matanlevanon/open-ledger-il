@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { actorFrom, auditAs } from '../../core/audit';
 import { requireFeature, requireLedgerAdmin } from '../../core/auth';
+import { ledgerEdition } from '../../core/edition';
 import type { ModuleDef } from '../../core/module';
 import type { AppEnv, Env } from '../../env';
 import { APP_VERSION } from '../../version';
@@ -14,14 +15,14 @@ export function createUpdatesModule(fetcher?: typeof fetch): ModuleDef {
   r.use('*', requireLedgerAdmin());
 
   r.get('/', async (c) =>
-    c.json({ current: APP_VERSION, repo: updateRepo(c.env), last: await lastCheck(c.env.DB) }),
+    c.json({ current: APP_VERSION, repo: updateRepo(c.env), last: await lastCheck(c.env.DB), edition: ledgerEdition(c.env) }),
   );
 
   r.post('/check', async (c) => {
     const check = await checkForUpdate(c.env, fetcher ?? ((input, init) => fetch(input, init)));
     await saveCheck(c.env.DB, check);
     await auditAs(c.env.DB, actorFrom(c), 'updates.check', 'updates', null, { status: check.status, current: check.current, latest: check.latest });
-    return c.json({ current: APP_VERSION, repo: updateRepo(c.env), last: check });
+    return c.json({ current: APP_VERSION, repo: updateRepo(c.env), last: check, edition: ledgerEdition(c.env) });
   });
 
   return {

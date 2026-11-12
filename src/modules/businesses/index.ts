@@ -1,6 +1,7 @@
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
+import { ledgerEdition } from '../../core/edition';
 import { isLedgerAdmin, requireFeature, requireLedgerAdmin, requireRole } from '../../core/auth';
 import { businessIdOf } from '../../core/business';
 import { todayIsrael } from '../../core/db';
@@ -62,7 +63,7 @@ export function createBusinessesModule(documentsOptions: DocumentsModuleOptions 
       current: businessIdOf(c),
       businesses: await listMyBusinesses(c.env.DB, c.get('user')),
       // B3: the types Add business offers. Only an owner adds one.
-      addableTypes: isLedgerAdmin(c.get('user')) ? await allowedNewBusinessTypes(c.env.DB) : [],
+      addableTypes: isLedgerAdmin(c.get('user')) ? await allowedNewBusinessTypes(c.env.DB, ledgerEdition(c.env)) : [],
     }),
   );
 
@@ -73,7 +74,7 @@ export function createBusinessesModule(documentsOptions: DocumentsModuleOptions 
     const input = newBusinessInput.parse(await body(c));
     const user = c.get('user');
     const actor = actorFrom(c);
-    const id = await createBusiness(c.env.DB, actor, user, input);
+    const id = await createBusiness(c.env.DB, actor, user, input, ledgerEdition(c.env));
     if (input.entityType !== 'osek_patur') {
       await switchToMurshe(
         c.env,

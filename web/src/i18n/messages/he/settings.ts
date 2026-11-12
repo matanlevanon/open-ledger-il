@@ -599,4 +599,7 @@ export const settings: Record<keyof typeof en, string> = {
   'settings.firmTeam.error': 'לא ניתן לשנות את צוות המשרד.',
   'settings.firmTeam.accessNote': 'הוסיפו גם כל אימייל חדש למדיניות Cloudflare Access. כל אדם תופס מקום אחד ב-Access.',
   'settings.mcp.businessScope': 'הטוקן הזה ניגש לעסק הזה בלבד. לקוח ה-MCP שולח X-Business-Id: {id}, או בלי כותרת.',
+  'settings.updates.editionSingle': 'מהדורה: אדם אחד או חברה אחת.',
+  'settings.updates.editionFirm': 'מהדורה: משרד רואי חשבון. נדרשת תוכנית Workers Paid של Cloudflare, ומקומות Access מעל 50 משתמשים.',
+  'businesses.switcher.search': 'חיפוש עסקים',
 };
