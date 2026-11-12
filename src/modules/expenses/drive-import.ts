@@ -1,3 +1,4 @@
+import { businessCategories } from './categories';
 import { type AuditActor, auditAs, auditStatement, actorBiz } from '../../core/audit';
 import { readBusinessSetting, settingKey } from '../../core/business';
 import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
@@ -344,12 +345,9 @@ async function supplierFor(db: D1Database, ids: number[], name: string, taxId: s
 async function categoryFor(db: D1Database, name: string, actor: AuditActor): Promise<number | null> {
   const trimmed = name.trim();
   if (!trimmed) return null;
-  const found = await first<{ id: number }>(
-    db,
-    'SELECT id FROM expense_categories WHERE name_en = ? COLLATE NOCASE OR key = ? COLLATE NOCASE ORDER BY id LIMIT 1',
-    trimmed,
-    trimmed,
-  );
+  // R48 task 6: the business's own names first, then the defaults it has not hidden.
+  const lower = trimmed.toLowerCase();
+  const found = (await businessCategories(db, actorBiz(actor))).find((c) => c.name_en.toLowerCase() === lower || c.key.toLowerCase() === lower || (c.name_he ?? '') === trimmed);
   if (found) return found.id;
   const hash = await sha256Hex(new TextEncoder().encode(trimmed).buffer as ArrayBuffer);
   return (await service.createCategory(db, { key: `sheet_${hash.slice(0, 10)}`, nameEn: trimmed, sortOrder: 100 }, actor)).id;

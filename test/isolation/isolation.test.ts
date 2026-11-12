@@ -131,6 +131,7 @@ const PROBES: Record<string, Probe> = {
   'PATCH /expenses/:id/review': { id: 'expense' },
   'PATCH /expenses/categories/:id': ledger,
   'PATCH /expenses/suppliers/:id': { id: 'supplier' },
+  'PUT /expenses/business-categories/:key': { id: 'ownCategoryKey' },
   'POST /expenses/:id/read': { id: 'expense' },
   'POST /expenses/:id/status': { id: 'expense' },
   'POST /exports/unified-file/transmissions/:id/check': { id: 'transmission' },
@@ -205,6 +206,7 @@ const BODIES: Record<string, () => unknown> = {
   'POST /import/external-documents/:id/receipts': () => ({ documentId: B.finalDocument }),
   'POST /import/series/:id/start': () => ({ startNumber: 5, confirm: true }),
   'PUT /ops/series/:id/start-number': () => ({ startNumber: 5 }),
+  'PUT /expenses/business-categories/:key': () => ({ nameEn: 'Taken over' }),
 };
 
 /** Every (method, full path) the registry serves. */
@@ -315,6 +317,7 @@ beforeAll(async () => {
   const series = await first<{ id: string }>(env.DB, "SELECT id FROM series WHERE business_id = ? AND doc_type = '305'", b);
   B.series = series!.id;
   B.exportRun = (await ok(OWNER_B, b, 'POST', '/business-export/runs')).run.id;
+  B.ownCategoryKey = encodeURIComponent((await ok(OWNER_B, b, 'POST', '/expenses/business-categories', { nameEn: 'B only' })).categories.find((x: { own: number }) => x.own === 1).key);
   B.service = await ins("INSERT INTO items (name_en, business_id) VALUES ('B item', ?)", b).catch(() => 0);
 });
 

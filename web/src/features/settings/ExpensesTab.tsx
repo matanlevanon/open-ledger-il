@@ -15,6 +15,7 @@ import {
 } from '../expenses/api';
 import { ImportCounts } from '../expenses/ImportSummaryView';
 import { ApiError } from './api';
+import { ExpenseCategoriesSection } from './ExpenseCategoriesSection';
 import { FinancySection } from './FinancySection';
 import { InboxSection } from './InboxSection';
 import { showDateTime } from '../../lib/dates';
@@ -117,6 +118,10 @@ export function ExpensesTab() {
     <div className="flex flex-col">
       <div className={GROUP_FIRST}>
         <FinancySection demo={Boolean(demo)} />
+      </div>
+      {/* R48 task 6: this business's categories. */}
+      <div className={GROUP}>
+        <ExpenseCategoriesSection />
       </div>
       {!demo && (
         <div className={GROUP}>

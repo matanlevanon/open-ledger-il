@@ -224,11 +224,12 @@ interface ExpenseRow {
 async function expensesOfYear(db: D1Database, businessId: number, year: string): Promise<ExpenseRow[]> {
   return paged<ExpenseRow>(
     db,
-    `SELECT e.id, e.document_date, e.document_number, e.document_type, s.name AS supplier, c.name_en AS category, e.status, e.currency,
+    `SELECT e.id, e.document_date, e.document_number, e.document_type, s.name AS supplier, COALESCE(NULLIF(bc.name_en, ''), c.name_en) AS category, e.status, e.currency,
             e.amount_minor, e.vat_amount_minor, e.amount_ils_minor, e.allocation_number, f.r2_key, f.filename, e.notes
        FROM expenses e
        LEFT JOIN suppliers s ON s.id = e.supplier_id
        LEFT JOIN expense_categories c ON c.id = e.category_id
+       LEFT JOIN business_expense_categories bc ON bc.business_id = e.business_id AND bc.category_key = c.key
        LEFT JOIN expense_files f ON f.id = e.file_id
       WHERE e.business_id = ? AND substr(COALESCE(e.document_date, e.created_at), 1, 4) = ?
       ORDER BY e.id`,

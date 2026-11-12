@@ -46,10 +46,11 @@ export const incomeParams = (businessId: number, from: string, to: string) => [b
 export const EXPENSE_ROWS_SQL = `
   SELECT e.id AS id, e.document_date AS date, e.currency AS currency, e.amount_minor AS amount_minor,
     ${ILS('e.amount_minor', 'e.currency', 'e.amount_ils_minor')} AS ils_minor,
-    e.category_id AS category_id, cat.name_en AS category_name, e.supplier_id AS supplier_id, s.name AS supplier_name,
+    e.category_id AS category_id, COALESCE(NULLIF(bc.name_en, ''), cat.name_en) AS category_name, e.supplier_id AS supplier_id, s.name AS supplier_name,
     e.is_fixed AS is_fixed
   FROM expenses e
   LEFT JOIN expense_categories cat ON cat.id = e.category_id
+  LEFT JOIN business_expense_categories bc ON bc.business_id = e.business_id AND bc.category_key = cat.key
   LEFT JOIN suppliers s ON s.id = e.supplier_id
   WHERE e.business_id = ? AND e.status IN ('new', 'filed') AND e.document_date BETWEEN ? AND ?`;
 

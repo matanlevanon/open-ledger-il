@@ -1,8 +1,9 @@
+import { categoryUsableIn } from './categories';
 import type { AuditActor } from '../../core/audit';
 import { readBusinessSetting, settingKey } from '../../core/business';
 import { auditAs, auditStatement, actorBiz } from '../../core/audit';
 import { all, first, nowIso, run, stmt, transaction } from '../../core/db';
-import { ConflictError, NotFoundError } from '../../core/errors';
+import { ConflictError, NotFoundError, ValidationError } from '../../core/errors';
 import { type Currency, assertCurrency, formatMinor, parseMajor } from '../../core/money';
 import type { Env } from '../../env';
 import { ProviderBusyError } from '../ai';
@@ -80,12 +81,17 @@ export async function updateSupplier(db: D1Database, id: number, input: Partial<
   return (await first<SupplierRow>(db, 'SELECT * FROM suppliers WHERE id = ?', id))!;
 }
 
+/** R48 task 6: a category the business has hidden, or another business's own, is refused. */
+async function assertCategoryUsable(db: D1Database, businessId: number, categoryId: number): Promise<void> {
+  if (!(await categoryUsableIn(db, businessId, categoryId))) throw new ValidationError('Pick one of this business\'s expense categories.');
+}
+
 export async function listCategories(db: D1Database, includeInactive = false): Promise<CategoryRow[]> {
   return all<CategoryRow>(
     db,
     includeInactive
-      ? 'SELECT * FROM expense_categories ORDER BY sort_order, name_en'
-      : 'SELECT * FROM expense_categories WHERE active = 1 ORDER BY sort_order, name_en',
+      ? "SELECT * FROM expense_categories WHERE key NOT GLOB 'b[0-9]*:*' ORDER BY sort_order, name_en"
+      : "SELECT * FROM expense_categories WHERE active = 1 AND key NOT GLOB 'b[0-9]*:*' ORDER BY sort_order, name_en",
   );
 }
 
@@ -726,7 +732,7 @@ export async function listExpenses(db: D1Database, filter: ListFilter, businessI
   const limit = Math.min(Math.max(filter.limit ?? 50, 1), 200);
   const offset = Math.max(filter.offset ?? 0, 0);
   params.push(limit, offset);
-  return all<ExpenseRow>(db, `SELECT e.*, s.name AS supplier_name, s.tax_id AS supplier_tax_id, c.name_en AS category_name FROM expenses e LEFT JOIN suppliers s ON s.id = e.supplier_id LEFT JOIN expense_categories c ON c.id = e.category_id ${where} ORDER BY e.document_date DESC, e.id DESC LIMIT ? OFFSET ?`, ...params);
+  return all<ExpenseRow>(db, `SELECT e.*, s.name AS supplier_name, s.tax_id AS supplier_tax_id, COALESCE(NULLIF(bc.name_en, ''), c.name_en) AS category_name FROM expenses e LEFT JOIN suppliers s ON s.id = e.supplier_id LEFT JOIN expense_categories c ON c.id = e.category_id LEFT JOIN business_expense_categories bc ON bc.business_id = e.business_id AND bc.category_key = c.key ${where} ORDER BY e.document_date DESC, e.id DESC LIMIT ? OFFSET ?`, ...params);
 }
 
 /** The next expense awaiting review, for the review screen's auto-advance. */
@@ -778,6 +784,9 @@ export async function updateExpense(db: D1Database, deps: Pick<Deps, 'fx'>, id: 
       ? await convertToIls(deps.fx, currency, documentDate, amountMinor)
       : { amountIlsMinor: existing.amount_ils_minor, fxRate: existing.fx_rate, fxRateDate: existing.fx_rate_date, fxSource: existing.fx_source };
 
+  if (update.categoryId !== undefined && update.categoryId !== null && update.categoryId !== existing.category_id) {
+    await assertCategoryUsable(db, actorBiz(actor), update.categoryId);
+  }
   await transaction(db, [
     stmt(
       db,
@@ -814,6 +823,9 @@ export async function updateExpenseCategoryAndNotes(
   actor: AuditActor,
 ): Promise<ExpenseRow> {
   const existing = await getExpense(db, id, actorBiz(actor));
+  if (update.categoryId !== undefined && update.categoryId !== null && update.categoryId !== existing.category_id) {
+    await assertCategoryUsable(db, actorBiz(actor), update.categoryId);
+  }
   await transaction(db, [
     stmt(
       db,

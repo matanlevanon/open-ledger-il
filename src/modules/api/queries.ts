@@ -232,8 +232,9 @@ export async function expensesPage(db: D1Database, businessId: number, q: { from
     updated_at: string;
   }>(
     db,
-    `SELECT e.*, s.name AS supplier_name, s.tax_id AS supplier_tax_id, c.name_en AS category_name
+    `SELECT e.*, s.name AS supplier_name, s.tax_id AS supplier_tax_id, COALESCE(NULLIF(bc.name_en, ''), c.name_en) AS category_name
        FROM expenses e LEFT JOIN suppliers s ON s.id = e.supplier_id LEFT JOIN expense_categories c ON c.id = e.category_id
+       LEFT JOIN business_expense_categories bc ON bc.business_id = e.business_id AND bc.category_key = c.key
       WHERE ${where.join(' AND ')} ORDER BY e.id LIMIT ?`,
     ...params,
     q.limit + 1,

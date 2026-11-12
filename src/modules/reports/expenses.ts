@@ -37,10 +37,11 @@ export async function expenseDetail(db: D1Database, from: string, to: string, bu
   const rows = await all<ExpenseSqlRow>(
     db,
     `SELECT e.id, e.document_date, e.currency, e.amount_minor, e.amount_ils_minor,
-       s.id AS supplier_id, s.name AS supplier_name, c.id AS category_id, c.name_en AS category_name
+       s.id AS supplier_id, s.name AS supplier_name, c.id AS category_id, COALESCE(NULLIF(bc.name_en, ''), c.name_en) AS category_name
      FROM expenses e
      LEFT JOIN suppliers s ON s.id = e.supplier_id
      LEFT JOIN expense_categories c ON c.id = e.category_id
+     LEFT JOIN business_expense_categories bc ON bc.business_id = e.business_id AND bc.category_key = c.key
      WHERE e.business_id = ? AND ${COUNTED_STATUS} AND e.document_date BETWEEN ? AND ?
      ORDER BY e.document_date, e.id`,
     businessId,

@@ -8,6 +8,7 @@ import { NotFoundError, ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import { todayIsrael } from '../../core/db';
 import * as driveImport from './drive-import';
+import { addBusinessCategory, businessCategories, changeBusinessCategory } from './categories';
 import { readFile } from './files';
 import * as service from './service';
 import { registerInboxSettingsRoutes } from './inbox-routes';
@@ -42,6 +43,14 @@ const listQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).optional(),
 });
 
+// R48 task 6: a business's change to one category, and a category of its own.
+const BusinessCategoryChange = z.object({
+  nameEn: z.string().trim().max(100).nullish(),
+  nameHe: z.string().trim().max(100).nullish(),
+  hidden: z.boolean().optional(),
+  sortOrder: z.number().int().min(0).max(10000).nullish(),
+});
+const BusinessCategoryAdd = z.object({ nameEn: z.string().trim().min(1).max(100), nameHe: z.string().trim().max(100).nullish() });
 const driveRootFolderInput = z.object({ folderId: z.string().trim().min(1) });
 const importMonthInput = z.object({ yearMonth: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM').optional() });
 const dailySyncInput = z.object({ enabled: z.boolean() });
@@ -81,7 +90,22 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
     return c.json({ supplier });
   });
 
-  app.get('/categories', async (c) => c.json({ categories: await service.listCategories(c.env.DB, c.req.query('all') === '1') }));
+  // R48 task 6: the categories of the current business: defaults minus hidden, plus its own.
+  app.get('/categories', async (c) => c.json({ categories: await businessCategories(c.env.DB, businessIdOf(c), c.req.query('all') === '1') }));
+
+  // R48: the shared defaults as they are, for the Ledger admin's screen.
+  app.get('/categories/defaults', requireLedgerAdmin(), async (c) => c.json({ categories: await service.listCategories(c.env.DB, true) }));
+
+  // R48 task 6: Settings > Expenses > Categories of this business. Rename, hide, reorder, add.
+  app.put('/business-categories/:key', requireRole('owner'), async (c) => {
+    const input = BusinessCategoryChange.parse(await c.req.json().catch(() => ({})));
+    return c.json({ categories: await changeBusinessCategory(c.env.DB, actorFrom(c), c.req.param('key'), input) });
+  });
+
+  app.post('/business-categories', requireRole('owner'), async (c) => {
+    const input = BusinessCategoryAdd.parse(await c.req.json().catch(() => ({})));
+    return c.json({ categories: await addBusinessCategory(c.env.DB, actorFrom(c), input) }, 201);
+  });
 
   // R48: expense_categories is shared by every business. Admins edit the defaults.
   app.post('/categories', requireLedgerAdmin(), async (c) => {
