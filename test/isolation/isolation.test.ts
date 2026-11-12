@@ -29,7 +29,7 @@ async function call(email: string, businessId: number | null, method: string, pa
   const res = await app.request(
     path.startsWith('/mcp') || path.startsWith('/v1') ? path : `/api${path}`,
     { method, headers, body: body === undefined || method === 'GET' ? undefined : JSON.stringify(body) },
-    { ...env, DEV_AUTH_EMAIL: email, LEDGER_EDITION: edition, MCP_TOKEN: undefined, MAIL_API_KEY: 'test-not-a-key' },
+    { ...env, DEV_AUTH_EMAIL: email, LEDGER_EDITION: edition, MCP_TOKEN: undefined, MAIL_API_KEY: 'test-not-a-key', MAIL_FROM: 'Test <test@example.com>' },
   );
   const text = await res.text();
   let parsed: any = null;
