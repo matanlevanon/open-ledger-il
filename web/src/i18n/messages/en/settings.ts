@@ -628,4 +628,13 @@ export const settings = {
   'settings.signing.saved': 'The signing key is saved.',
   'settings.signing.error': 'Could not save the signing key.',
   'dashboard.noSigningKey': 'This business has no signing key yet, so it cannot send documents. Create one in Settings > Signature.',
+  'businesses.export.title': 'Export this business',
+  'businesses.export.hint': 'Every file of this business: its data, the unified file and documents for each year, expenses with their receipts, contracts and a manifest with a hash of each file. No keys or tokens.',
+  'businesses.export.start': 'Export',
+  'businesses.export.building': 'Building…',
+  'businesses.export.waiting': 'Waiting',
+  'businesses.export.retry': 'Retry',
+  'businesses.export.download': 'Download',
+  'businesses.export.part': 'Part {n}',
+  'businesses.export.done': 'Every file is built. Download each one.',
 };

@@ -626,4 +626,13 @@ export const settings: Record<keyof typeof en, string> = {
   'settings.signing.saved': 'מפתח החתימה נשמר.',
   'settings.signing.error': 'לא ניתן לשמור את מפתח החתימה.',
   'dashboard.noSigningKey': 'לעסק הזה אין עדיין מפתח חתימה, ולכן הוא לא יכול לשלוח מסמכים. צרו מפתח בהגדרות > חתימה.',
+  'businesses.export.title': 'ייצוא העסק הזה',
+  'businesses.export.hint': 'כל הקבצים של העסק: הנתונים, קובץ אחיד ומסמכים לכל שנה, הוצאות עם הקבלות, חוזים וקובץ manifest עם חתימת hash לכל קובץ. בלי מפתחות ובלי טוקנים.',
+  'businesses.export.start': 'ייצוא',
+  'businesses.export.building': 'בונה…',
+  'businesses.export.waiting': 'ממתין',
+  'businesses.export.retry': 'ניסיון חוזר',
+  'businesses.export.download': 'הורדה',
+  'businesses.export.part': 'חלק {n}',
+  'businesses.export.done': 'כל הקבצים מוכנים. הורידו כל אחד מהם.',
 };

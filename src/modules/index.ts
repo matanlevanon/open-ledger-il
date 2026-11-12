@@ -71,6 +71,9 @@ import { financyModule } from './financy';
 // R41: Settings > MCP and API, the API keys. The /v1 router mounts in src/index.ts.
 import { apiSettingsModule } from './api';
 
+// R48: export one business, file by file.
+import { businessExportModule } from './business-export';
+
 // R14 mcp: `mcpModule` mounts at the top-level `/mcp` path in src/index.ts, not under /api. It
 // authenticates with the MCP_TOKEN bearer secret, not Cloudflare Access, and owns no cron, so it
 // does not belong in this registry.
@@ -155,4 +158,6 @@ export const modules: ModuleDef[] = [
   financyModule,
 
   apiSettingsModule,
+
+  businessExportModule,
 ];

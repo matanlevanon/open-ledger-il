@@ -179,6 +179,8 @@ const PROBES: Record<string, Probe> = {
   'POST /sending/documents/:id/send': { id: 'finalDocument' },
   'POST /sending/documents/:id/whatsapp-link': { id: 'finalDocument' },
   'POST /sending/public/consent/:token/accept': pub,
+  'GET /business-export/runs/:run': { id: 'exportRun' },
+  'POST /business-export/runs/:run/files/:name': { id: 'exportRun', sub: 'exportFile' },
   'PATCH /services/:id': { id: 'service' },
   'POST /services/:id/activate': { id: 'service' },
   'POST /services/:id/archive': { id: 'service' },
@@ -226,6 +228,7 @@ function fill(path: string, probe: { id: string; sub?: string }): string {
     const key = first ? probe.id : probe.sub!;
     first = false;
     if (key === 'packFile') return 'pdf';
+    if (key === 'exportFile') return 'data.json';
     const value = B[key];
     if (value === undefined) throw new Error(`No B id for ${key}`);
     return String(value);
@@ -310,6 +313,7 @@ beforeAll(async () => {
   );
   const series = await first<{ id: string }>(env.DB, "SELECT id FROM series WHERE business_id = ? AND doc_type = '305'", b);
   B.series = series!.id;
+  B.exportRun = (await ok(OWNER_B, b, 'POST', '/business-export/runs')).run.id;
   B.service = await ins("INSERT INTO items (name_en, business_id) VALUES ('B item', ?)", b).catch(() => 0);
 });
 

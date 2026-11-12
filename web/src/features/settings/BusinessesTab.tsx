@@ -6,6 +6,7 @@ import { type MessageKey, useT } from '../../i18n';
 import { btnPrimary, btnSecondary, input, label } from '../documents/ui';
 import { readCertificate, uploadDocument } from '../business-documents/api';
 import { TypedConfirm, confirmMatches } from './BusinessTypeSwitchDialog';
+import { BusinessExportPanel } from './BusinessExportPanel';
 import { createKeyInBrowser } from './DigitalSignatureCard';
 
 interface Props {
@@ -213,6 +214,8 @@ export function BusinessesTab({ load = fetchBusinesses, create = createBusiness,
             {t('businesses.switcher.add')}
           </button>
         ))}
+      {/* R48 task 4: the current business, file by file. */}
+      <BusinessExportPanel />
     </div>
   );
 }
