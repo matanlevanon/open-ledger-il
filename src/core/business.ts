@@ -1,6 +1,7 @@
 import type { Context } from 'hono';
 import type { AppEnv } from '../env';
 import { all } from './db';
+import { DomainError } from './errors';
 
 /**
  * R24 Phase B: more than one business in one Ledger. Business 1 is the data that existed before,
@@ -44,6 +45,8 @@ export async function forEachBusiness(
 ): Promise<number[]> {
   const failed: number[] = [];
   for (const businessId of ids ?? (await listBusinessIds(db))) {
+    // R48 task 5: a moved-out business is read-only. No recurring run, reminder or sync.
+    if (await isMovedOut(db, businessId).catch(() => false)) continue;
     try {
       await fn(businessId);
     } catch (err) {
@@ -52,6 +55,19 @@ export async function forEachBusiness(
     }
   }
   return failed;
+}
+
+/** R48 task 5: true when the business was marked as moved out. It is read-only from then on. */
+export async function isMovedOut(db: D1Database, businessId: number): Promise<boolean> {
+  const row = await db.prepare('SELECT status FROM businesses WHERE id = ?').bind(businessId).first<{ status: string }>();
+  return row?.status === 'moved_out';
+}
+
+/** R48 task 5: refuses any change to a moved-out business with 409 business_moved_out. */
+export async function assertBusinessActive(db: D1Database, businessId: number): Promise<void> {
+  if (await isMovedOut(db, businessId)) {
+    throw new DomainError('business_moved_out', 'This business moved to its own Ledger. Its books here are read-only.', 409);
+  }
 }
 
 /** R2 key prefix for files of a business. Business 1 keeps the keys it had. */

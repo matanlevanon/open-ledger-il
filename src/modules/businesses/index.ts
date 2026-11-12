@@ -12,7 +12,8 @@ import type { DocumentsModuleOptions } from '../documents';
 import { allowedNewBusinessTypes } from '../legal-mode/business-type';
 import { switchToMurshe } from '../legal-mode/service';
 import { isValidIsraeliId } from '../ops/israeli-id';
-import { createBrand, createBusiness, listBrands, listMyBusinesses, updateBrand } from './service';
+import { hasCompleteExport } from '../business-export/service';
+import { createBrand, createBusiness, listBrands, listMyBusinesses, markMovedOut, updateBrand } from './service';
 
 export * from './service';
 
@@ -38,6 +39,7 @@ const newBusinessInput = z.object({
 });
 
 const optionalText = z.string().trim().max(500).nullish();
+const movedOutInput = z.object({ confirmName: z.string().max(300), note: z.string().trim().max(1000).nullish() });
 const brandInput = z.object({
   nameEn: z.string().trim().max(200).optional(),
   nameHe: z.string().trim().max(200).optional(),
@@ -92,6 +94,15 @@ export function createBusinessesModule(documentsOptions: DocumentsModuleOptions 
       );
     }
     return c.json({ businessId: id }, 201);
+  });
+
+  // R48 task 5: Mark as moved out. Ledger admins, typed confirmation, after a complete export.
+  r.post('/:id/moved-out', requireLedgerAdmin(), async (c) => {
+    const id = Number(c.req.param('id'));
+    if (!Number.isSafeInteger(id) || !c.get('user').businesses.some((b) => b.id === id)) throw new NotFoundError('Business', c.req.param('id'));
+    const input = movedOutInput.parse(await body(c));
+    await markMovedOut(c.env.DB, actorFrom(c), id, input, hasCompleteExport);
+    return c.json({ businesses: await listMyBusinesses(c.env.DB, c.get('user')) });
   });
 
   r.get('/brands', requireFeature('income_documents'), async (c) => c.json({ brands: await listBrands(c.env.DB, businessIdOf(c)) }));

@@ -58,4 +58,15 @@ describe('R48 business switcher', () => {
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: '514000009' } });
     expect(screen.getAllByRole('menuitemradio').map((b) => b.textContent)).toEqual([expect.stringContaining('Epsilon Ltd')]);
   });
+
+  it('lists a moved-out client last, greyed, under Moved out', async () => {
+    const data = list(3);
+    data.businesses[0] = { ...data.businesses[0]!, status: 'moved_out' };
+    wrap(<BusinessSwitcher load={async () => data} onSwitch={vi.fn()} />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Business' }));
+    const group = screen.getByRole('group', { name: 'Moved out' });
+    expect(group.textContent).toContain('Zeta Ltd');
+    const items = screen.getAllByRole('menuitemradio');
+    expect(items.at(-1)!.textContent).toContain('Zeta Ltd');
+  });
 });

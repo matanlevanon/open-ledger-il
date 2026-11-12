@@ -111,6 +111,8 @@ const TRIGGER_CODES: Record<string, () => DomainError> = {
   // R48, migrations/4500_ledger_admin.sql: a Ledger keeps at least one admin.
   // R48, migrations/4504_business_signing.sql: a signing key row is only ever retired.
   signing_key_fixed: () => new DomainError('signing_key_fixed', 'A signing key is never deleted or changed. Make a new one instead.', 409),
+  // R48, migrations/4505_business_status.sql: a moved-out business is read-only.
+  business_moved_out: () => new DomainError('business_moved_out', 'This business moved to its own Ledger. Its books here are read-only.', 409),
   last_ledger_admin: () => new DomainError('last_ledger_admin', 'A Ledger keeps at least one admin. Make another admin first.', 409),
 };
 

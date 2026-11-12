@@ -5,6 +5,7 @@ import { actorFrom } from '../../core/audit';
 import { requireRole } from '../../core/auth';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
+import { importLedgerData } from './ledger-move';
 import * as service from './service';
 import { setSeriesStartSchema, waveCustomerMappingSchema, waveInvoiceMappingSchema } from './types';
 import { type UploadDeps, fileExternalDocument, linkReceipt, listExternalDocuments, updateExternalDocument, uploadExternalDocument } from './upload-service';
@@ -37,6 +38,14 @@ export function createImportRoutes(resolveUploadDeps: (env: AppEnv['Bindings']) 
     const input = setSeriesStartSchema.parse(await c.req.json());
     const series = await service.confirmSeriesStart(c.env.DB, actorFrom(c), c.req.param('id'), input.startNumber, input.note ?? null);
     return c.json({ series });
+  });
+
+  // R48 task 5: data.json from another Ledger. New rows, no ids kept, duplicates listed.
+  app.post('/ledger-data', async (c) => {
+    const data: unknown = await c.req.json().catch(() => {
+      throw new ValidationError('Upload the data.json file of a Ledger export.');
+    });
+    return c.json(await importLedgerData(c.env.DB, actorFrom(c), data), 201);
   });
 
   app.get('/history', async (c) => {

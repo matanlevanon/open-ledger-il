@@ -10,6 +10,8 @@ export interface BusinessSummary {
   taxId: string | null;
   entityType: EntityType;
   role: 'owner' | 'assistant' | 'accountant';
+  /** R48: a client that moved to its own Ledger. Read-only here. */
+  status?: 'active' | 'moved_out';
 }
 
 export interface BusinessList {

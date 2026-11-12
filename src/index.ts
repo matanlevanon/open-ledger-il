@@ -2,7 +2,8 @@ import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import { z, ZodError } from 'zod';
-import { type AuthOptions, authenticate, isLedgerAdmin } from './core/auth';
+import { type AuthOptions, type AuthUser, authenticate, isLedgerAdmin } from './core/auth';
+import { assertBusinessActive } from './core/business';
 import { nowIso, run } from './core/db';
 import { issuingEnabled } from './core/issuing';
 import { DomainError, mapDbError } from './core/errors';
@@ -35,6 +36,16 @@ function errorBody(code: string, message: string, details?: unknown) {
 }
 
 /** Builds the Worker app. Tests call this with a local JWKS and extra modules. */
+/** R48 task 5: POST routes that only read, open in a moved-out business. */
+const MOVED_OUT_OPEN = [
+  /^\/api\/business-export(\/|$)/,
+  /^\/api\/pdf\/documents\/\d+\/(view|download)$/,
+  /^\/api\/me\/preferences$/,
+  /^\/api\/businesses$/,
+  /^\/api\/businesses\/\d+\/moved-out$/,
+  /^\/api\/access\//,
+];
+
 export function createApp(options: AppOptions = {}): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const api = new Hono<AppEnv>();
@@ -78,6 +89,18 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
 
   // R26, R29: the sample data read-only, private drafts, caps, the outbox and the watermark, for demo sessions only.
   api.use('*', demoGuard());
+
+  // R48 task 5: a moved-out business is read-only. Reads, PDF views, exports and the person's own
+  // preferences stay open. Every other write answers 409 business_moved_out.
+  api.use('*', async (c, next) => {
+    const method = c.req.method;
+    if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return next();
+    const user = c.get('user') as AuthUser | undefined;
+    if (!user || !MOVED_OUT_OPEN.some((re) => re.test(c.req.path))) {
+      if (user) await assertBusinessActive(c.env.DB, user.businessId);
+    }
+    return next();
+  });
 
   api.get('/me', async (c) => {
     const user = c.get('user');

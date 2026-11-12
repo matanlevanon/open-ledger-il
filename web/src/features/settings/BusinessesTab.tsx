@@ -8,6 +8,7 @@ import { readCertificate, uploadDocument } from '../business-documents/api';
 import { TypedConfirm, confirmMatches } from './BusinessTypeSwitchDialog';
 import { BusinessExportPanel } from './BusinessExportPanel';
 import { createKeyInBrowser } from './DigitalSignatureCard';
+import { ImportLedgerData, MarkMovedOut } from './MoveLedgerPanels';
 
 interface Props {
   /** Injected in tests. */
@@ -108,6 +109,7 @@ export function BusinessesTab({ load = fetchBusinesses, create = createBusiness,
     }
   };
 
+  const current = data?.businesses.find((b) => b.id === data.current);
   return (
     <div className="flex max-w-2xl flex-col gap-6">
       <section>
@@ -216,6 +218,11 @@ export function BusinessesTab({ load = fetchBusinesses, create = createBusiness,
         ))}
       {/* R48 task 4: the current business, file by file. */}
       <BusinessExportPanel />
+      {/* R48 task 5: bring a client's data in, or mark the current client as moved out. */}
+      <ImportLedgerData />
+      {data && current && current.status !== 'moved_out' && data.addableTypes.length > 0 && data.businesses.length > 1 && (
+        <MarkMovedOut businessId={current.id} name={(current.nameHe || current.nameEn).trim()} onDone={() => void load().then(setData)} />
+      )}
     </div>
   );
 }

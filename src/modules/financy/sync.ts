@@ -270,7 +270,11 @@ export async function syncAllDaily(env: Env, deps: FinancyDeps): Promise<{ synce
   // The demo's bank data is invented and never synced.
   if (isDemo(env)) return { synced: 0, failed: 0 };
   const result = { synced: 0, failed: 0 };
-  const rows = await all<{ business_id: number }>(env.DB, "SELECT business_id FROM financy_connection WHERE status = 'connected'");
+  // R48 task 5: a moved-out business is never synced.
+  const rows = await all<{ business_id: number }>(
+    env.DB,
+    "SELECT f.business_id FROM financy_connection f JOIN businesses b ON b.id = f.business_id WHERE f.status = 'connected' AND b.status = 'active'",
+  );
   for (const { business_id } of rows) {
     try {
       await syncFinancy(env, deps, business_id, { days: DEFAULT_SYNC_DAYS });

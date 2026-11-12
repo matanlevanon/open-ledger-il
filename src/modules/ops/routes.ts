@@ -8,6 +8,7 @@ import { skipMissedRuns } from '../recurring/service';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import { setStartNumber } from '../../core/numbering';
 import type { AppEnv } from '../../env';
+import { continueFromManifest, startNumbersFromManifest } from '../import/ledger-move';
 import { runGapCheck } from './checks';
 import { runBackup } from './backup';
 import { businessPatch, ceilingInput, issuingInput, signatureModeInput, startNumberInput, vatRateInput } from './schemas';
@@ -128,6 +129,14 @@ export function opsRoutes(): Hono<AppEnv> {
     if (!own.some((s) => s.id === c.req.param('id'))) throw new NotFoundError('Series', c.req.param('id'));
     await setStartNumber(c.env.DB, c.req.param('id'), input.startNumber, actorFrom(c));
     return c.json({ series: await listSeries(c.env.DB, businessIdOf(c)) });
+  });
+
+  // R48 task 5: Settings > Numbering > Continue from another Ledger. The manifest.json of the old
+  // Ledger's export sets each open series' start number. A series in use is skipped.
+  r.post('/series/continue', async (c) => {
+    const entries = startNumbersFromManifest(await jsonBody(c));
+    const result = await continueFromManifest(c.env.DB, actorFrom(c), entries);
+    return c.json({ ...result, series: await listSeries(c.env.DB, businessIdOf(c)) });
   });
 
   r.get('/ceilings', async (c) => c.json({ ceilings: await listCeilings(c.env.DB) }));

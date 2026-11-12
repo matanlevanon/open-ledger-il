@@ -9,6 +9,7 @@ import { decodeCsvText } from './encoding';
 import { guessCustomerMapping, guessInvoiceMapping } from './mapping';
 import { countByRecordType, DECODE_STUB_NOTE, HISTORY_RECORD_TYPES, recordHash, splitBkmvdataRecords } from './sumit';
 import type { CommitSummary, HistoryRow, ImportKind, WaveCustomerMapping, WaveInvoiceMapping } from './types';
+import { decodeC100 } from './ledger-move';
 import { extractUnifiedFile } from './zip';
 
 function decodeText(bytes: ArrayBuffer): string {
@@ -350,7 +351,14 @@ export async function commitSumitUnified(db: D1Database, actor: AuditActor, zipB
   for (const record of records) {
     if (!record.recordType || !(record.recordType in HISTORY_RECORD_TYPES)) continue;
     const sourceKind = HISTORY_RECORD_TYPES[record.recordType]!;
-    const externalId = await recordHash(record.line);
+    // R48: the dedupe key is per business. Business 1 keeps the bare hash it always had, so a
+    // re-import there stays a no-op. Before, the same file imported into a second business was
+    // skipped line by line as a duplicate of the first.
+    const businessId = actorBiz(actor);
+    const externalId = await recordHash(businessId === 1 ? record.line : `b${businessId}:${record.line}`);
+    // R48: a document header (C100) is decoded with the same layout the Ledger's own builder
+    // writes (section 4.3): type code, number, date and total. Lines and payments stay raw.
+    const header = record.recordType === 'C100' && record.line.length >= 444 ? decodeC100(record.line) : null;
     const inserted = await insertHistoryRow(db, {
       import_batch_id: batchId,
       source: 'sumit',
@@ -358,17 +366,17 @@ export async function commitSumitUnified(db: D1Database, actor: AuditActor, zipB
       external_id: externalId,
       client_id: null,
       client_name: null,
-      doc_type: record.recordType,
-      doc_number: null,
-      doc_date: null,
-      currency: null,
-      amount_minor: null,
-      status: null,
+      doc_type: header ? header.docType : record.recordType,
+      doc_number: header ? header.docNumber : null,
+      doc_date: header ? header.docDate : null,
+      currency: header ? 'ILS' : null,
+      amount_minor: header ? header.totalMinor : null,
+      status: header ? (header.cancelled ? 'cancelled' : 'final') : null,
       raw_line: record.line,
       raw_json: JSON.stringify({ lineNumber: record.lineNumber, recordType: record.recordType }),
-      decoded: 0,
-      decode_note: DECODE_STUB_NOTE,
-    }, actorBiz(actor));
+      decoded: header ? 1 : 0,
+      decode_note: header ? null : DECODE_STUB_NOTE,
+    }, businessId);
     if (inserted) summary.created++;
     else summary.skipped++;
   }

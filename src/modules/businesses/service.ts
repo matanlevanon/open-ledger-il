@@ -23,15 +23,17 @@ export interface BusinessSummary {
   taxId: string | null;
   entityType: EntityType;
   role: AuthUser['role'];
+  /** R48: 'moved_out' once the client moved to its own Ledger. */
+  status: 'active' | 'moved_out';
 }
 
 /** The businesses this person may open, with their role in each. */
 export async function listMyBusinesses(db: D1Database, user: AuthUser): Promise<BusinessSummary[]> {
   if (user.businesses.length === 0) return [];
   const ids = user.businesses.map((b) => b.id);
-  const rows = await all<{ id: number; name_en: string; name_he: string; tax_id: string | null; entity_type: EntityType }>(
+  const rows = await all<{ id: number; name_en: string; name_he: string; tax_id: string | null; entity_type: EntityType; status: 'active' | 'moved_out' }>(
     db,
-    `SELECT id, name_en, name_he, tax_id, entity_type FROM businesses WHERE id IN (${ids.map(() => '?').join(',')}) ORDER BY id`,
+    `SELECT id, name_en, name_he, tax_id, entity_type, status FROM businesses WHERE id IN (${ids.map(() => '?').join(',')}) ORDER BY id`,
     ...ids,
   );
   return rows.map((r) => ({
@@ -41,6 +43,7 @@ export async function listMyBusinesses(db: D1Database, user: AuthUser): Promise<
     taxId: r.tax_id,
     entityType: r.entity_type,
     role: user.businesses.find((b) => b.id === r.id)!.role,
+    status: r.status ?? 'active',
   }));
 }
 
@@ -136,6 +139,34 @@ export async function assertTaxIdFree(db: D1Database, taxId: string | null | und
     exceptBusinessId,
   );
   if (clash) throw new ConflictError('tax_id_taken', 'Another business in this Ledger has this tax ID.');
+}
+
+/**
+ * R48 task 5: "Mark as moved out". A Ledger admin, the business name typed to confirm, and only
+ * after an export run with every file built. From then on the business is read-only. Its data
+ * stays for the retention period. Nothing is deleted.
+ */
+export async function markMovedOut(
+  db: D1Database,
+  actor: AuditActor,
+  businessId: number,
+  input: { confirmName: string; note?: string | null },
+  hasCompleteExport: (db: D1Database, businessId: number) => Promise<boolean>,
+): Promise<void> {
+  const row = await first<{ name_en: string; name_he: string; status: string }>(db, 'SELECT name_en, name_he, status FROM businesses WHERE id = ?', businessId);
+  if (!row) throw new NotFoundError('Business', businessId);
+  if (row.status === 'moved_out') throw new ConflictError('business_moved_out', 'This business is already marked as moved out.');
+  const typed = input.confirmName.trim();
+  if (!typed || (typed !== row.name_en.trim() && typed !== row.name_he.trim())) {
+    throw new ConflictError('confirm_name', 'Type the business name exactly to confirm.');
+  }
+  if (!(await hasCompleteExport(db, businessId))) {
+    throw new ConflictError('export_required', 'Export this business first, with every file built.');
+  }
+  await transaction(db, [
+    stmt(db, "UPDATE businesses SET status = 'moved_out', moved_out_at = ?, moved_note = ? WHERE id = ? AND status = 'active'", nowIso(), input.note ?? null, businessId),
+    auditStatement(db, { ...actor, businessId }, 'business.moved_out', 'business', businessId, { note: input.note ?? null }),
+  ]);
 }
 
 // ---------------------------------------------------------------------------

@@ -3,6 +3,7 @@ import { usePreferences } from '../../app/preferences';
 import { useToast } from '../../components/Toast';
 import { useT } from '../../i18n';
 import { ApiError, fetchSeries, setSeriesStartNumber, type SeriesRow } from './api';
+import { ContinueFromLedger } from './MoveLedgerPanels';
 
 export function NumberingTab() {
   const [series, setSeries] = useState<SeriesRow[] | null>(null);
@@ -53,6 +54,7 @@ export function NumberingTab() {
   };
 
   return (
+    <>
     <table className="w-full text-start text-sm">
       <caption className="sr-only">{t('settings.numbering.caption')}</caption>
       <thead>
@@ -105,5 +107,8 @@ export function NumberingTab() {
         ))}
       </tbody>
     </table>
+    {/* R48 task 5: a client arriving from a firm's Ledger continues its numbers here. */}
+    <ContinueFromLedger onDone={load} />
+    </>
   );
 }

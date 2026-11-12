@@ -55,11 +55,14 @@ export function BusinessSwitcher({ load = fetchBusinesses, onSwitch = switchBusi
   // under each name, and a search box filters it. Up to 8, the list stays as it was.
   const many = data.businesses.length > SEARCH_ABOVE;
   const q = query.trim().toLowerCase();
-  const shown = many
+  const matching = many
     ? [...data.businesses]
         .sort((a, b) => name(a).localeCompare(name(b), locale === 'he' ? 'he' : 'en'))
         .filter((b) => !q || `${b.nameEn} ${b.nameHe} ${b.taxId ?? ''}`.toLowerCase().includes(q))
     : data.businesses;
+  // R48 task 5: clients that moved to their own Ledger come last, greyed, under "Moved out".
+  const shown = matching.filter((b) => b.status !== 'moved_out');
+  const movedOut = matching.filter((b) => b.status === 'moved_out');
 
   return (
     <div ref={ref} className="relative">
@@ -106,6 +109,26 @@ export function BusinessSwitcher({ load = fetchBusinesses, onSwitch = switchBusi
               <span className="text-xs text-muted">{t(`businessType.${b.entityType}` as MessageKey)}</span>
             </button>
           ))}
+          {movedOut.length > 0 && (
+            <div role="group" aria-label={t('businesses.switcher.movedOut')} className="mt-1 border-t border-line pt-1">
+              <p className="px-3 py-1 text-xs text-muted">{t('businesses.switcher.movedOut')}</p>
+              {movedOut.map((b) => (
+                <button
+                  key={b.id}
+                  role="menuitemradio"
+                  aria-checked={b.id === data.current}
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    if (b.id !== data.current) onSwitch(b.id);
+                  }}
+                  className="flex w-full flex-col items-start rounded px-3 py-2 text-start text-sm text-muted opacity-70 hover:bg-surface"
+                >
+                  <span>{name(b)}</span>
+                </button>
+              ))}
+            </div>
+          )}
           {canAdd && (
             <button
               role="menuitem"

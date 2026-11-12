@@ -1,6 +1,7 @@
 import { type Context, Hono } from 'hono';
 import { ZodError } from 'zod';
 import type { AuditActor } from '../../core/audit';
+import { assertBusinessActive } from '../../core/business';
 import { DomainError, mapDbError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import { type McpScope, mcpTokenScope } from './tokens';
@@ -23,6 +24,8 @@ interface JsonRpcMessage {
 }
 
 const PROTOCOL_VERSION = '2025-06-18';
+/** R48: tools that change the books. Refused in a moved-out business. */
+const MCP_WRITE_TOOLS = new Set(['create_client', 'send_document', 'credit_document', 'create_draft', 'finalize_document', 'record_payment', 'add_expense']);
 const SERVER_INFO = { name: 'open-ledger-il', version: APP_VERSION };
 
 function mcpActor(headers: { get(name: string): string | null }): AuditActor {
@@ -62,6 +65,8 @@ export async function handleMcpMessage(env: McpEnv, msg: JsonRpcMessage): Promis
       const tool = params.name ? findTool(params.name) : undefined;
       if (!tool) return fail(-32602, `Unknown tool "${params.name ?? ''}".`);
       try {
+        // R48 task 5: a moved-out business is read-only for MCP too.
+        if (MCP_WRITE_TOOLS.has(tool.name)) await assertBusinessActive(env.db, env.businessId);
         const result = await tool.handler(env, params.arguments);
         return reply({ content: [{ type: 'text', text: JSON.stringify(result) }] });
       } catch (err) {

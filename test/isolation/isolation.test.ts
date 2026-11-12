@@ -72,6 +72,7 @@ const PROBES: Record<string, Probe> = {
   'POST /business-documents/:id/share/email': { id: 'businessDocument' },
   'POST /business-documents/links/:id/revoke': { id: 'businessDocumentLink' },
   'PATCH /businesses/brands/:id': { id: 'brand' },
+  'POST /businesses/:id/moved-out': ledger,
   'DELETE /clients/:id/contacts/:contactId': { id: 'client', sub: 'contact' },
   'GET /clients/:id': { id: 'client' },
   'GET /clients/:id/ledger': { id: 'client' },

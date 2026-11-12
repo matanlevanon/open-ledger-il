@@ -2,6 +2,7 @@ import { type Context, Hono } from 'hono';
 import { ZodError, z } from 'zod';
 import type { AuditActor } from '../../core/audit';
 import { auditAs } from '../../core/audit';
+import { isMovedOut } from '../../core/business';
 import { first, run, todayIsrael } from '../../core/db';
 import { DomainError, mapDbError } from '../../core/errors';
 import type { Env } from '../../env';
@@ -176,6 +177,10 @@ export function createApiRoutes(options: ApiRoutesOptions = {}): Hono<ApiEnv> {
     }
     c.set('apiKey', verdict.key);
     c.set('businessId', businessId!);
+    // R48 task 5: a moved-out business is read-only through the API too.
+    if (c.req.method !== 'GET' && c.req.method !== 'HEAD' && (await isMovedOut(c.env.DB, businessId!))) {
+      return c.json(err('business_moved_out', 'This business moved to its own Ledger. Its books here are read-only.'), 409);
+    }
     await next();
   });
 
