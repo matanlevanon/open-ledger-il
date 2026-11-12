@@ -11,7 +11,9 @@ import { openDemands } from '../documents/balances';
  *    a supplier name that shares a word with the merchant. One bank row per expense.
  * 3. Money in on a bank account gets a suggested open payment request or transaction invoice with
  *    the same open amount and currency, dated 10 days before the deposit or later. Only a
- *    suggestion: the row stays unmatched and no payment is recorded.
+ *    suggestion: the row stays unmatched and no payment is recorded. R49: a deposit that arrived
+ *    net of a bank fee (a wire into Wise) also matches on the amount the payer sent, which the
+ *    sync keeps as the original amount in the same currency.
  */
 
 export const OUT_DAYS = 5;
@@ -122,7 +124,11 @@ export async function matchBankTransactions(db: D1Database, businessId: number):
     for (const tx of ins) {
       const day = dayNumber(tx.booked_on);
       const fits = demands.filter(
-        (d) => !suggested.has(d.id) && d.currency === tx.currency && d.remaining_minor === tx.amount_minor && day >= dayNumber(d.date) - IN_DAYS,
+        (d) =>
+          !suggested.has(d.id) &&
+          d.currency === tx.currency &&
+          (d.remaining_minor === tx.amount_minor || (tx.original_currency === tx.currency && tx.original_amount_minor !== null && d.remaining_minor === tx.original_amount_minor)) &&
+          day >= dayNumber(d.date) - IN_DAYS,
       );
       if (fits.length === 0) continue;
       fits.sort((a, b) => Math.abs(dayNumber(a.date) - day) - Math.abs(dayNumber(b.date) - day) || a.id - b.id);

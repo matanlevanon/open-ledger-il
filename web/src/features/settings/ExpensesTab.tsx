@@ -17,6 +17,7 @@ import { ImportCounts } from '../expenses/ImportSummaryView';
 import { ApiError } from './api';
 import { ExpenseCategoriesSection } from './ExpenseCategoriesSection';
 import { FinancySection } from './FinancySection';
+import { WiseSection } from './WiseSection';
 import { InboxSection } from './InboxSection';
 import { showDateTime } from '../../lib/dates';
 
@@ -119,6 +120,12 @@ export function ExpensesTab() {
       <div className={GROUP_FIRST}>
         <FinancySection demo={Boolean(demo)} />
       </div>
+      {/* R49: the Wise Business connection. */}
+      {!demo && (
+        <div className={GROUP}>
+          <WiseSection demo={false} />
+        </div>
+      )}
       {/* R48 task 6: this business's categories. */}
       <div className={GROUP}>
         <ExpenseCategoriesSection />

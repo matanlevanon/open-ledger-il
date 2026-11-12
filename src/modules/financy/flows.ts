@@ -22,6 +22,13 @@ export const CARD_COMPANIES: readonly { key: string; providers: readonly string[
   { key: 'diners', providers: ['diners'], names: ['diners', 'דיינרס'] },
 ];
 
+/**
+ * R49: a conversion between two of the business's own Wise balances (USD to EUR). The two sides are
+ * in different currencies, so the pair rule below never finds them. The Wise sync marks both with
+ * this category, and they count as a transfer between own accounts.
+ */
+export const OWN_MOVE_CATEGORY = 'CURRENCY_CONVERSION';
+
 /** A Financy category that names a card bill, if such a category shows up. */
 const CARD_PAYMENT_CATEGORY = /CREDIT_?CARD|CARD_?PAYMENT/i;
 
@@ -98,7 +105,8 @@ export async function classifyFlows(db: D1Database, businessId: number): Promise
   }
   for (const r of rows) {
     if (r.flow_locked || paired.has(r.id)) continue;
-    if (isCardPayment(r, companies)) next.set(r.id, 'card_payment');
+    if (r.category_main === OWN_MOVE_CATEGORY) next.set(r.id, 'own_transfer');
+    else if (isCardPayment(r, companies)) next.set(r.id, 'card_payment');
   }
 
   const changes = rows.filter((r) => next.get(r.id) !== r.flow);

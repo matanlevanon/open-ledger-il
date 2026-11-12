@@ -3,7 +3,7 @@ import { type Currency, convert, isCurrency } from '../../core/money';
 import type { RateSource } from '../fx';
 import { type BankTransactionView, listBankAccounts, listBankTransactions } from './activity';
 import { categoryLabel } from './categories';
-import { loadConnection, pickedIds } from './connection';
+import { bankFeed } from './connection';
 
 /**
  * R42 task 2: the Financy Dashboard tab's numbers in one call, from the picked accounts' rows. Only
@@ -90,8 +90,10 @@ interface Row {
 }
 
 export async function financyDashboard(db: D1Database, fx: RateSource, businessId: number, today: string, months = 3): Promise<FinancyDashboard | null> {
-  const connection = await loadConnection(db, businessId);
-  if (!connection || connection.status === 'disconnected' || pickedIds(connection).length === 0) return null;
+  // R49: Financy with a picked account, a Wise connection, or both.
+  const feed = await bankFeed(db, businessId);
+  if (!feed.financy && !feed.wise) return null;
+  const syncTimes = [feed.financy?.last_sync_at, feed.wise?.last_sync_at].filter((t): t is string => Boolean(t)).sort();
   const span = months === 6 ? 6 : 3;
 
   // One rate per currency, today's. A currency the Ledger cannot convert stays out of the totals.
@@ -215,8 +217,8 @@ export async function financyDashboard(db: D1Database, fx: RateSource, businessI
 
   return {
     accountCount: accounts.length,
-    lastSyncAt: connection.last_sync_at,
-    status: connection.status === 'error' ? 'error' : 'connected',
+    lastSyncAt: syncTimes[syncTimes.length - 1] ?? null,
+    status: feed.financy?.status === 'error' || feed.wise?.status === 'error' ? 'error' : 'connected',
     months: span,
     liquidity: { cash, cardsCurrent, net: cash - cardsCurrent },
     month: {

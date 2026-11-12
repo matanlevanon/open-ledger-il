@@ -72,10 +72,29 @@ export function pickedIds(row: Pick<ConnectionRow, 'account_ids'> | null): strin
   }
 }
 
-/** R42: the Financy Dashboard tab shows when Financy is connected and at least one account is picked. */
-export async function financyTabAvailable(db: D1Database, businessId: number): Promise<boolean> {
+/**
+ * R49: what feeds the bank tables. Financy counts when it is connected and an account is picked.
+ * Wise counts when it is connected: every balance of the business profile is business money.
+ */
+export interface BankFeed {
+  financy: ConnectionRow | null;
+  wise: { status: 'connected' | 'error'; last_sync_at: string | null } | null;
+}
+
+export async function bankFeed(db: D1Database, businessId: number): Promise<BankFeed> {
   const row = await first<ConnectionRow>(db, 'SELECT * FROM financy_connection WHERE business_id = ?', businessId);
-  return Boolean(row && row.status !== 'disconnected' && pickedIds(row).length > 0);
+  const wise = await first<{ status: 'connected' | 'error'; last_sync_at: string | null }>(
+    db,
+    "SELECT status, last_sync_at FROM wise_connection WHERE business_id = ? AND status <> 'disconnected'",
+    businessId,
+  );
+  return { financy: row && row.status !== 'disconnected' && pickedIds(row).length > 0 ? row : null, wise };
+}
+
+/** R42: the Financy Dashboard tab shows when Financy is connected and at least one account is picked. R49: or when Wise is connected. */
+export async function financyTabAvailable(db: D1Database, businessId: number): Promise<boolean> {
+  const feed = await bankFeed(db, businessId);
+  return Boolean(feed.financy || feed.wise);
 }
 
 export async function loadConnection(db: D1Database, businessId: number): Promise<ConnectionRow | null> {

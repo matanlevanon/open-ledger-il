@@ -8,7 +8,7 @@ import { displayNumber } from '../documents/types';
 import { recordGivenExpense } from '../expenses/service';
 import { boiRateSource } from '../fx';
 import { categoryLabel } from './categories';
-import { loadConnection } from './connection';
+import { bankFeed, loadConnection } from './connection';
 import { FLOWS, type Flow } from './flows';
 
 /**
@@ -409,6 +409,8 @@ function parseBalances(json: string | null, currency: string | null, minor: numb
 export async function assertConnected(db: D1Database, businessId: number): Promise<void> {
   const row = await loadConnection(db, businessId);
   if (!row || row.status === 'disconnected') {
+    // R49: a Wise connection alone feeds Bank activity too.
+    if ((await bankFeed(db, businessId)).wise) return;
     throw new ConflictError('financy_not_connected', 'Financy is not connected. Connect it in Settings > Expenses > Financy connection.');
   }
 }

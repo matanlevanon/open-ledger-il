@@ -13,6 +13,7 @@ import { modules as registeredModules } from './modules';
 import { isPublicApiPath } from './modules/sending/public-paths';
 import { mcpModule } from './modules/mcp';
 import { type ApiRoutesOptions, createApiRoutes } from './modules/api';
+import { type WiseDeps, createWiseHookRoutes, defaultWiseDeps } from './modules/wise';
 import { demoEnv, demoGuard, demoMisconfigured, isDemo, visitorReady } from './modules/demo';
 import { demoTexts } from './modules/demo/config';
 import { type AdminOptions, createDemoAdminRoutes } from './modules/demo/admin';
@@ -29,6 +30,8 @@ export interface AppOptions {
   demoAdmin?: AdminOptions;
   /** R41: the /v1 router's fakes, for example the client copy PDF. */
   api?: ApiRoutesOptions;
+  /** R49: the Wise webhook's fetch and signing key. Tests pass a fake Wise and their own key. */
+  wise?: (env: Env) => WiseDeps;
 }
 
 function errorBody(code: string, message: string, details?: unknown) {
@@ -173,6 +176,10 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
 
   // R41: the public REST API. API keys, not Cloudflare Access, so it mounts beside /mcp.
   // wrangler.toml routes /v1 and /v1/* to the Worker.
+  // R49: Wise's webhook, POST /v1/hooks/wise/<hook id>. Known by Wise's signature, not an API key,
+  // so it mounts before the /v1 router and its key check. /v1 is already open in Cloudflare Access.
+  app.route('/v1/hooks/wise', createWiseHookRoutes(options.wise ?? defaultWiseDeps));
+
   app.route('/v1', createApiRoutes(options.api) as never);
 
   app.notFound(async (c) => {

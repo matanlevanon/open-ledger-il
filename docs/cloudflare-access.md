@@ -66,7 +66,8 @@ application on a new install and on an update. For a Ledger set up by hand:
 3. Policy: name "API", action **Bypass**, include **Everyone**. Save.
 
 Every call under `/v1` still needs a valid API key and the business id, checked by the Worker.
-`/v1/openapi.json` is the one path that answers without a key.
+`/v1/openapi.json` answers without a key. So does the Wise webhook, `/v1/hooks/wise/<id>`: Wise
+has no API key, so the Worker checks Wise's signature on every call instead.
 
 ## 4. Wire the Worker to this application
 

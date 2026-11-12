@@ -68,6 +68,9 @@ import { mcpSettingsModule } from './mcp/settings-routes';
 // R40: the Financy connection, bank and card data read only, and Bank activity.
 import { financyModule } from './financy';
 
+// R49: the Wise Business connection, balances and money in, read only. Its webhook mounts in src/index.ts.
+import { wiseModule } from './wise';
+
 // R41: Settings > MCP and API, the API keys. The /v1 router mounts in src/index.ts.
 import { apiSettingsModule } from './api';
 
@@ -159,6 +162,8 @@ export const modules: ModuleDef[] = [
   createInboxModule(expensesDeps),
 
   financyModule,
+
+  wiseModule,
 
   apiSettingsModule,
 

@@ -556,6 +556,16 @@ Source: https://open-ledger.dev/help/
 
 יומן השינויים נכתב באנגלית.
 
+## Unreleased
+
+### Wise Business
+
+- Settings > Expenses > Wise connection: paste a Wise Business API token and the Ledger reads the business profile's balances and statements, read only. The token is stored encrypted and never shown again. A personal profile is never read.
+- Each Wise balance shows as an account in Expenses > Bank activity and the bank dashboard tab. The tab and Bank activity open with Wise alone, without Financy.
+- A webhook at `/v1/hooks/wise/<id>` hears about money in. Each call is checked against Wise's RSA signature. The Ledger creates the webhook in Wise when the token allows it, and shows the address to add by hand when it does not. Money in pulls the last week at once. A daily sync covers the rest.
+- A deposit that arrived net of a bank fee matches a payment request for the amount the payer sent. A conversion between two of the business's own balances is not counted as income or an expense.
+- Migration `4600_wise_connection.sql`.
+
 ## 1.8.1 (2026-11-12)
 
 ### Accounting firms
@@ -1437,6 +1447,16 @@ Source: https://open-ledger.dev/en/help/
 # Changelog
 
 Every release, newest first. The current version is 1.8.1.
+
+## Unreleased
+
+### Wise Business
+
+- Settings > Expenses > Wise connection: paste a Wise Business API token and the Ledger reads the business profile's balances and statements, read only. The token is stored encrypted and never shown again. A personal profile is never read.
+- Each Wise balance shows as an account in Expenses > Bank activity and the bank dashboard tab. The tab and Bank activity open with Wise alone, without Financy.
+- A webhook at `/v1/hooks/wise/<id>` hears about money in. Each call is checked against Wise's RSA signature. The Ledger creates the webhook in Wise when the token allows it, and shows the address to add by hand when it does not. Money in pulls the last week at once. A daily sync covers the rest.
+- A deposit that arrived net of a bank fee matches a payment request for the amount the payer sent. A conversion between two of the business's own balances is not counted as income or an expense.
+- Migration `4600_wise_connection.sql`.
 
 ## 1.8.1 (2026-11-12)
 
@@ -4318,7 +4338,7 @@ Source: https://open-ledger.dev/help/email/
 
 העברת קבלות במייל, העלאה, או ייבוא חודש מגוגל דרייב. כל אחת נקראת עם AI ומחכה לבדיקה שלכם.
 
-עודכן 2026-10-18
+עודכן 2026-11-12
 
 ## העברת קבלות במייל
 
@@ -4493,6 +4513,39 @@ Source: https://open-ledger.dev/help/email/
 **Choose accounts** משנה את הבחירה. ביטול סימון של חשבון מוחק את התנועות שנשמרו ממנו. **Disconnect** עוצר את הסנכרון. **Delete bank data** מוחק את כל מה שנמשך.
 
 הקישור ל-Financy הוא קישור שותפים. אם תצטרפו לתוכנית בתשלום, המפתח של הלדג'ר מקבל עמלה.
+
+## Wise Business
+
+עסק שמקבל תשלומים מחו"ל מחזיק לא פעם חשבון Wise Business. הלדג'ר קורא את היתרות והתנועות שלו, לקריאה בלבד, ו-Wise מודיע ל-Ledger ברגע שנכנס כסף. הפקדה שמתאימה לדרישת תשלום פתוחה מקבלת **Record payment**, ממולא מראש לאישור שלכם. הלדג'ר לעולם לא מעביר כסף: אין לו קריאה ששולחת, ממירה או מושכת.
+
+### חיבור, פעם אחת
+
+1. ב-Wise, כשהחשבון העסקי נבחר: **Settings > Integrations and tools > API tokens > Add new token**. מספיק Read only. מעתיקים את הטוקן.
+2. ב-Ledger: **Settings > Expenses > Wise connection**. מדביקים את הטוקן ולוחצים **Connect**. הלדג'ר בודק אותו לפני שהוא שומר משהו, וקורא רק את פרופיל Wise Business, אף פעם לא פרופיל אישי.
+3. הסנכרון הראשון מושך 90 יום. אחריו הלדג'ר מסנכרן פעם ביום, ומיד כש-Wise מדווח על כסף שנכנס.
+
+### ה-Webhook
+
+ה-Webhook הוא הדרך שבה Wise מדווח על כסף שנכנס. הלדג'ר מנסה ליצור אותו ב-Wise בשבילכם. אז מופיע בחלונית **Webhook: On**.
+
+אם Wise לא מאפשר זאת לטוקן שלכם, החלונית מציגה את הכתובת ומוסיפים אותה ידנית: ב-Wise, **Settings > Integrations and tools > Webhooks > Create a new webhook**, בוחרים את אירועי היתרה (deposits או updates) ומדביקים את הכתובת. Wise שולח אירוע בדיקה, והחלונית מציגה **Last event** עם השעה.
+
+גם בלי ה-Webhook הכול עובד. כסף שנכנס מופיע אז אחרי הסנכרון היומי, או בלחיצה על **Sync now**.
+
+הכתובת נמצאת תחת `/v1`, ש-Cloudflare Access כבר מעביר, כך ששום דבר לא משתנה ב-Cloudflare. כל אירוע נושא את החתימה של Wise, והלדג'ר זורק כל קריאה בלעדיה.
+
+### מה מקבלים
+
+- כל יתרה ב-Wise (דולר, אירו והשאר) מופיעה כחשבון ב-**Expenses > Bank activity** ובלשונית דשבורד הבנק, לצד החשבונות מ-Financy.
+- כסף שנכנס מציג את המשלם ואת האסמכתא. העברה שהגיעה בניכוי עמלת בנק עדיין מותאמת לדרישת התשלום על הסכום המלא.
+- המרה בין שתי יתרות שלכם מסומנת **Not counted**, כך שהיא אף פעם לא הכנסה או הוצאה.
+- חיובי כרטיס והעברות מותאמים להוצאות שלכם כמו חיובי בנק.
+
+### כדאי לדעת
+
+- דפי חשבון באמצעות טוקן API עובדים לחשבונות Wise שרשומים בארה"ב, קנדה, אוסטרליה, ניו זילנד, סינגפור ומלזיה. לחשבון שרשום במקום אחר, Wise מסרב לדף החשבון והחלונית אומרת זאת.
+- הטוקן נשמר מוצפן ולא מוצג שוב. החלונית מציגה את 4 התווים האחרונים שלו. **Replace the token** מחליפה אותו ושומרת על כתובת ה-Webhook. **Disconnect** שוכח את הטוקן ומסיר Webhook שהלדג'ר יצר. תנועות שכבר נמשכו נשארות.
+- כדי להציע את Wise כדרך תשלום, מוסיפים את פרטי החשבון שלו ב-**Settings > Payment methods** כהעברה בנקאית, ומסמנים אותו במסמכים של לקוחות שמשלמים כך.
 
 עדיין תקועים? [כתבו לנו מעמוד המחירים.](https://open-ledger.dev/pricing/#setup)
 
@@ -5811,7 +5864,7 @@ Source: https://open-ledger.dev/en/help/email/
 
 Forward receipts by email, upload them, or import a month from Google Drive. Each one is read by AI and waits for your check.
 
-Updated 2026-10-18
+Updated 2026-11-12
 
 ## Forward receipts by email
 
@@ -5986,6 +6039,39 @@ It keeps the picked accounts' balances and transactions: date, amount, currency,
 **Choose accounts** changes the picks. Unticking an account deletes its stored transactions. **Disconnect** stops the sync. **Delete bank data** removes everything pulled.
 
 The Financy link is a partner link. If you join a paid plan, the Ledger's developer earns a commission.
+
+## Wise Business
+
+A business paid from abroad often holds a Wise Business account. The Ledger reads its balances and transactions, read only, and Wise tells the Ledger the moment money arrives. A deposit that matches an open payment request gets **Record payment**, filled in for you to confirm. The Ledger never moves money: it has no call that sends, converts or withdraws.
+
+### Connect, once
+
+1. In Wise, with the business account selected: **Settings > Integrations and tools > API tokens > Add new token**. Read only is enough. Copy the token.
+2. In the Ledger: **Settings > Expenses > Wise connection**. Paste the token and click **Connect**. The Ledger tests it before it saves anything, and reads only the Wise Business profile, never a personal one.
+3. The first sync pulls 90 days. After that the Ledger syncs once a day, and at once when Wise reports money in.
+
+### The webhook
+
+The webhook is how Wise reports money in. The Ledger tries to create it in Wise for you. The panel then shows **Webhook: On**.
+
+If Wise does not allow that for your token, the panel shows the address and you add it by hand: in Wise, **Settings > Integrations and tools > Webhooks > Create a new webhook**, pick the balance events (deposits or updates) and paste the address. Wise sends a test event, and the panel shows **Last event** with the time.
+
+Without the webhook everything still works. Money in then shows after the daily sync, or when you click **Sync now**.
+
+The address sits under `/v1`, which Cloudflare Access already lets through, so nothing changes in Cloudflare. Every event carries Wise's signature, and the Ledger drops any call without it.
+
+### What you get
+
+- Each Wise balance (USD, EUR and the rest) shows as an account in **Expenses > Bank activity** and in the bank dashboard tab, next to the accounts from Financy.
+- Money in shows the payer and the reference. A wire that arrives net of a bank fee still matches the payment request for the full amount.
+- A conversion between two of your own balances is marked **Not counted**, so it is never income or an expense.
+- Card and transfer charges match your expenses the same way bank charges do.
+
+### Good to know
+
+- Statements by API token work for Wise accounts based in the US, Canada, Australia, New Zealand, Singapore and Malaysia. For an account based elsewhere, Wise refuses the statement and the panel says so.
+- The token is stored encrypted and never shown again. The panel shows its last 4 characters. **Replace the token** swaps it and keeps the webhook address. **Disconnect** forgets the token and removes a webhook the Ledger made. Transactions already pulled stay.
+- To offer Wise as a way to pay, add its account details in **Settings > Payment methods** as a bank transfer, and tick it on the documents of clients who pay that way.
 
 Still stuck? [Write to us from the pricing page.](https://open-ledger.dev/en/pricing/#setup)
 

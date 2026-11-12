@@ -4,6 +4,16 @@
 
 יומן השינויים נכתב באנגלית.
 
+## Unreleased
+
+### Wise Business
+
+- Settings > Expenses > Wise connection: paste a Wise Business API token and the Ledger reads the business profile's balances and statements, read only. The token is stored encrypted and never shown again. A personal profile is never read.
+- Each Wise balance shows as an account in Expenses > Bank activity and the bank dashboard tab. The tab and Bank activity open with Wise alone, without Financy.
+- A webhook at `/v1/hooks/wise/<id>` hears about money in. Each call is checked against Wise's RSA signature. The Ledger creates the webhook in Wise when the token allows it, and shows the address to add by hand when it does not. Money in pulls the last week at once. A daily sync covers the rest.
+- A deposit that arrived net of a bank fee matches a payment request for the amount the payer sent. A conversion between two of the business's own balances is not counted as income or an expense.
+- Migration `4600_wise_connection.sql`.
+
 ## 1.8.1 (2026-11-12)
 
 ### Accounting firms
