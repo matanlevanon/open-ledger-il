@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { actorFrom, auditAs } from '../../core/audit';
-import { requireFeature } from '../../core/auth';
+import { requireFeature, requireLedgerAdmin } from '../../core/auth';
 import type { ModuleDef } from '../../core/module';
 import type { AppEnv, Env } from '../../env';
 import { APP_VERSION } from '../../version';
@@ -10,6 +10,8 @@ import { UPDATE_CHECK_CRON, checkForUpdate, lastCheck, saveCheck, updateRepo, up
 export function createUpdatesModule(fetcher?: typeof fetch): ModuleDef {
   const r = new Hono<AppEnv>();
   r.use('*', requireFeature('settings'));
+  // R48: Updates act on the whole Ledger.
+  r.use('*', requireLedgerAdmin());
 
   r.get('/', async (c) =>
     c.json({ current: APP_VERSION, repo: updateRepo(c.env), last: await lastCheck(c.env.DB) }),

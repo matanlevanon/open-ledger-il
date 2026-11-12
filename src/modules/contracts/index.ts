@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
 import { todayIsrael } from '../../core/db';
 import { requireFeature, requireRole } from '../../core/auth';
-import { businessIdOf, listBusinessIds } from '../../core/business';
+import { businessIdOf, forEachBusiness } from '../../core/business';
 import { ValidationError } from '../../core/errors';
 import type { ModuleDef } from '../../core/module';
 import type { AppEnv, Env } from '../../env';
@@ -281,10 +281,10 @@ export function createContractsModule(options: ContractsOptions = {}): ModuleDef
         baseUrl: env.PUBLIC_APP_URL ?? '',
         now: options.now,
       };
-      for (const businessId of await listBusinessIds(env.DB)) {
+      await forEachBusiness(env.DB, 'contracts.daily', async (businessId) => {
         await contractsCron(env.DB, businessId, notifier, options.now ? options.now() : new Date());
         await runContractReminders(deps, businessId);
-      }
+      });
     },
   };
 }

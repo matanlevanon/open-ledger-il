@@ -22,6 +22,11 @@ export interface McpSettings {
   address: string;
   enabled: boolean;
   token: McpTokenState;
+  /** R48: firm edition, a business owner's token reaches this business only. */
+  scope?: 'ledger' | 'business';
+  businessId?: number | null;
+  /** R48: MCP on or off is one switch for the whole Ledger, for admins only. */
+  canToggle?: boolean;
 }
 
 export const mcpApi = {
@@ -182,7 +187,13 @@ export function McpTab() {
         </button>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-ink">
+      {info.scope === 'business' && (
+        <p className="text-xs text-muted" data-testid="mcp-business-scope">
+          {t('settings.mcp.businessScope', { id: String(info.businessId ?? '') })}
+        </p>
+      )}
+
+      <label className="flex items-center gap-2 text-sm text-ink" hidden={info.canToggle === false}>
         <input type="checkbox" role="switch" checked={info.enabled} disabled={busy} onChange={(e) => void toggle(e.target.checked)} />
         {t('settings.mcp.enabled')}
       </label>

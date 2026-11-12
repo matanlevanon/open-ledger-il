@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { audit } from '../../core/audit';
-import { requireFeature } from '../../core/auth';
+import { requireFeature, requireLedgerAdmin } from '../../core/auth';
 import { todayIsrael } from '../../core/db';
 import { type Currency, isCurrency } from '../../core/money';
 import type { AppEnv } from '../../env';
@@ -39,7 +39,8 @@ export function createFxRoutes(deps: FxRouteDeps): Hono<AppEnv> {
 
   const fetchBodySchema = z.object({ currency: currencySchema });
 
-  routes.post('/rates/fetch', async (c) => {
+  // R48: fx_rates is shared by every business. Fetch and backfill are Ledger admin actions.
+  routes.post('/rates/fetch', requireLedgerAdmin(), async (c) => {
     const body = fetchBodySchema.parse(await c.req.json().catch(() => ({})));
     const date = todayIsrael();
     const rate = await fetchAndCache(c.env.DB, deps.current(), body.currency, date);
@@ -50,7 +51,7 @@ export function createFxRoutes(deps: FxRouteDeps): Hono<AppEnv> {
   const backfillBodySchema = z.object({ currency: currencySchema, from: dateSchema, to: dateSchema.optional() });
 
   /** Loads Bank of Israel rates for any past range into the cache. */
-  routes.post('/rates/backfill', async (c) => {
+  routes.post('/rates/backfill', requireLedgerAdmin(), async (c) => {
     const body = backfillBodySchema.parse(await c.req.json().catch(() => ({})));
     const today = todayIsrael();
     const to = body.to && body.to < today ? body.to : today;

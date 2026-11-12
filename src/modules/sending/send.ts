@@ -8,7 +8,7 @@ import { displayNumber } from '../documents/types';
 import { BrowserRenderingPdfEngine, type PdfEngine, assertSigningForSend, pdfForSend, resolveSigningIdentity } from '../pdf';
 import { finalCc, splitCc } from './cc';
 import { isConsentGranted } from './consent';
-import type { Mailer } from './mailer';
+import { type Mailer, businessReplyTo } from './mailer';
 import { businessDisplayName, ccSetting, paymentLinkSettings } from './settings';
 import { documentEmailHtml, documentEmailText } from './templates';
 
@@ -145,6 +145,7 @@ export async function sendDocumentEmail(deps: SendDeps, input: SendEmailInput): 
       bcc,
       subject: number ? `${number} from ${businessName}` : `Your document from ${businessName}`,
       fromName: businessName,
+      replyTo: await businessReplyTo(db, businessId),
       html: documentEmailHtml(clientName, number, links, input.message ?? null, businessName),
       text: documentEmailText(clientName, number, links, input.message ?? null, businessName),
       attachments: [{ filename: `${number ?? doc.id}.pdf`, content: clientPdf.bytes, contentType: 'application/pdf' }],

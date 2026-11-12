@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import { z, ZodError } from 'zod';
-import { type AuthOptions, authenticate } from './core/auth';
+import { type AuthOptions, authenticate, isLedgerAdmin } from './core/auth';
 import { nowIso, run } from './core/db';
 import { issuingEnabled } from './core/issuing';
 import { DomainError, mapDbError } from './core/errors';
@@ -93,6 +93,9 @@ export function createApp(options: AppOptions = {}): Hono<AppEnv> {
         // R24: the business this session acts on, and every business the person may open.
         businessId: user.businessId,
         businesses: user.businesses,
+        // R48: the edition, and whether Ledger-wide settings are open to this person.
+        edition: user.edition ?? 'single',
+        ledgerAdmin: isLedgerAdmin(user),
         // R26: the banner and the Settings lock read this. Absent outside demo mode.
         // R29: ownKey tags this visitor's own rows, so the app knows which ones it may change.
         ...(isDemo(c.env)

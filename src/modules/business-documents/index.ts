@@ -3,7 +3,7 @@ import { type Context, Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom, auditStatement } from '../../core/audit';
 import { requireFeature, requireRole } from '../../core/auth';
-import { businessIdOf, listBusinessIds } from '../../core/business';
+import { businessIdOf, forEachBusiness } from '../../core/business';
 import { todayIsrael, transaction } from '../../core/db';
 import { ConfigError, ValidationError } from '../../core/errors';
 import type { ModuleDef } from '../../core/module';
@@ -11,7 +11,7 @@ import type { AppEnv, Env } from '../../env';
 import { readerStatus } from '../ai';
 import { CEILING_ALERT_CRON } from '../ceiling/cron';
 import { slackNotifier } from '../ita/notify';
-import { type Mailer, ResendMailer } from '../sending/mailer';
+import { type Mailer, ResendMailer, businessReplyTo } from '../sending/mailer';
 import { senderName } from '../sending/share-page';
 import { type BusinessDocumentReader, businessDocumentReaderFor } from './reader';
 import {
@@ -172,6 +172,7 @@ export function createBusinessDocumentsModule(options: BusinessDocumentsOptions 
       to: input.to,
       subject: `${sender} shared a document with you`,
       fromName: sender,
+      replyTo: await businessReplyTo(c.env.DB, businessId),
       html: `<!doctype html><html><body style="font-family:sans-serif;line-height:1.5"><p>${escapeHtml(sender)} shared a document with you.</p>${note}<p><a href="${link.url}">Open the document</a></p><p>The link works until ${link.expiresAt.slice(0, 10)}.</p></body></html>`,
       text: `${sender} shared a document with you.\n${input.message ? `\n${input.message}\n` : ''}\nOpen it: ${link.url}\nThe link works until ${link.expiresAt.slice(0, 10)}.\n`,
     });
@@ -193,7 +194,9 @@ export function createBusinessDocumentsModule(options: BusinessDocumentsOptions 
     async scheduled(controller, env) {
       if (controller.cron !== BUSINESS_DOCUMENTS_CRON) return;
       const notifier = slackNotifier(env.SLACK_WEBHOOK_URL, options.fetchFn ?? ((input, init) => fetch(input, init)));
-      for (const businessId of await listBusinessIds(env.DB)) await alertExpiringDocuments(env.DB, businessId, todayIsrael(), notifier);
+      await forEachBusiness(env.DB, 'business_documents.expiry', async (businessId) => {
+        await alertExpiringDocuments(env.DB, businessId, todayIsrael(), notifier);
+      });
     },
   };
 }

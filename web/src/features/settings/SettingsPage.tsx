@@ -12,6 +12,7 @@ import { BusinessesTab } from './BusinessesTab';
 import { BusinessTab } from './BusinessTab';
 import { DashboardTab } from './DashboardTab';
 import { ExpensesTab } from './ExpensesTab';
+import { FirmTeamTab } from './FirmTeamTab';
 import { EmailTab } from './EmailTab';
 import { IssuingTab } from './IssuingTab';
 import { McpTab } from './McpTab';
@@ -23,7 +24,7 @@ import { SignatureTab } from './SignatureTab';
 import { TaxTab } from './TaxTab';
 import { UpdatesTab } from './UpdatesTab';
 
-type Tab = 'business' | 'documents' | 'businesses' | 'brands' | 'issuing' | 'email' | 'mcp' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'contracts' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates';
+type Tab = 'business' | 'documents' | 'businesses' | 'brands' | 'issuing' | 'email' | 'mcp' | 'numbering' | 'tax' | 'rates' | 'paymentMethods' | 'services' | 'contracts' | 'signature' | 'expenses' | 'dashboard' | 'backups' | 'updates' | 'firmTeam';
 
 /** The help section on the site for each tab that has one, behind the "?" on the panel's corner. */
 const TAB_GUIDE: Partial<Record<Tab, GuideId>> = {
@@ -60,6 +61,8 @@ const TABS: [Tab, MessageKey][] = [
   ['dashboard', 'settings.tabs.dashboard'],
   ['backups', 'settings.tabs.backups'],
   ['updates', 'settings.tabs.updates'],
+  // R48: firm edition, Ledger admins only.
+  ['firmTeam', 'settings.tabs.firmTeam'],
 ];
 
 /**
@@ -81,13 +84,17 @@ export function SettingsPage() {
   const locked = demoLocked;
   const demo = useDemo();
   const [isOwner, setIsOwner] = useState(false);
+  const [firmAdmin, setFirmAdmin] = useState(false);
   useEffect(() => {
     fetchMe()
-      .then((me) => setIsOwner(me.role === 'owner'))
+      .then((me) => {
+        setIsOwner(me.role === 'owner');
+        setFirmAdmin(me.edition === 'firm' && me.ledgerAdmin === true);
+      })
       .catch(() => setIsOwner(false));
   }, []);
   const showMcp = isOwner && !demo;
-  const tabs = TABS.filter(([key]) => key !== 'mcp' || showMcp);
+  const tabs = TABS.filter(([key]) => (key !== 'mcp' || showMcp) && (key !== 'firmTeam' || firmAdmin));
 
   return (
     <section aria-labelledby="page-title" className="mx-auto max-w-5xl">
@@ -136,6 +143,7 @@ export function SettingsPage() {
           {tab === 'dashboard' && <DashboardTab />}
           {tab === 'backups' && <BackupsTab />}
           {tab === 'updates' && <UpdatesTab />}
+          {tab === 'firmTeam' && firmAdmin && <FirmTeamTab />}
         </fieldset>
       </div>
     </section>

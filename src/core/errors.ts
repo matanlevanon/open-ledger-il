@@ -108,6 +108,8 @@ const TRIGGER_CODES: Record<string, () => DomainError> = {
   // R25, migrations/2500_contracts.sql: a sent contract keeps its values, a signed one never changes.
   contract_fixed: () => new DomainError('contract_fixed', 'A sent contract keeps its values and a signed contract never changes.', 409),
   business_document_fixed: () => new DomainError('business_document_fixed', 'A business document never changes once confirmed. Upload a new one instead.', 409),
+  // R48, migrations/4500_ledger_admin.sql: a Ledger keeps at least one admin.
+  last_ledger_admin: () => new DomainError('last_ledger_admin', 'A Ledger keeps at least one admin. Make another admin first.', 409),
 };
 
 /** Maps a D1 trigger error to a typed domain error. Returns the input when no code matches. */

@@ -1,7 +1,7 @@
 import type { ModuleDef } from '../../core/module';
 import type { Env } from '../../env';
 import { systemActorFor } from '../../core/audit';
-import { listBusinessIds } from '../../core/business';
+import { forEachBusiness, listBusinessIds } from '../../core/business';
 import { todayIsrael } from '../../core/db';
 import { GoogleDriveSource } from './drive';
 import { DRIVE_DAILY_CRON, runDailyDriveImport } from './drive-import';
@@ -38,6 +38,7 @@ export async function retryUnreadDaily(env: Env, deps: Deps, businessIds: number
       total.stoppedBusy ||= batch.stoppedBusy;
     } catch (err) {
       console.error('expense.reread_daily_failed', businessId, err instanceof Error ? err.message : 'unknown');
+      console.error('business_job_failed', 'expenses.reread_daily', businessId);
     }
   }
   console.log('expense.reread_daily', { tried: total.tried, read: total.read, stillFailed: total.failed, stoppedBusy: total.stoppedBusy });
@@ -56,9 +57,14 @@ export function createExpensesModule(resolveDeps: (env: Env) => Deps = defaultDe
       const businessIds = await listBusinessIds(env.DB);
       try {
         // R24: each business imports from its own Drive folder, when its daily sync is on.
-        for (const businessId of businessIds) {
-          await runDailyDriveImport(env, resolveDeps(env), todayIsrael(), systemActorFor(businessId));
-        }
+        await forEachBusiness(
+          env.DB,
+          'expenses.drive_daily',
+          async (businessId) => {
+            await runDailyDriveImport(env, resolveDeps(env), todayIsrael(), systemActorFor(businessId));
+          },
+          businessIds,
+        );
       } finally {
         // R39: on the same daily cron, unread expenses get another read. The account is near its cron limit.
         await retryUnreadDaily(env, resolveDeps(env), businessIds);

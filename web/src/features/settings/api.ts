@@ -182,3 +182,34 @@ export interface BusinessTypeStatus {
 }
 
 export const fetchBusinessTypeStatus = () => apiGet<BusinessTypeStatus>('/legal-mode/status');
+
+// R48 task 1: Settings > Firm team (firm edition, Ledger admins only).
+export interface FirmTeamMember {
+  id: number;
+  email: string;
+  name: string | null;
+  role: 'admin' | 'assistant' | 'accountant';
+  endsAt: string | null;
+  active: boolean;
+  lastAdmin?: true;
+}
+
+async function firmSend(path: string, method: string, body?: unknown): Promise<FirmTeamMember[] | void> {
+  const res = await fetch(`/api/access/firm-team${path}`, {
+    method,
+    headers: { Accept: 'application/json', ...(body === undefined ? {} : { 'content-type': 'application/json' }) },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const errorBody = (await res.json().catch(() => null)) as { error: { code: string; message: string } } | null;
+    throw new ApiError(res.status, errorBody?.error.code ?? 'http_error', errorBody?.error.message ?? 'Request failed.');
+  }
+  if (res.status === 204) return;
+  return ((await res.json()) as { team: FirmTeamMember[] }).team;
+}
+
+export const fetchFirmTeam = async () => (await apiGet<{ team: FirmTeamMember[] }>('/access/firm-team')).team;
+export const addFirmTeamMember = (input: { email: string; role: FirmTeamMember['role']; endsAt: string | null }) => firmSend('', 'POST', input);
+export const revokeFirmTeamMember = (id: number) => firmSend(`/${id}`, 'DELETE');
+export const makeFirmAdmin = (id: number) => firmSend(`/${id}/admin`, 'POST');
+export const removeFirmAdmin = (id: number) => firmSend(`/${id}/admin`, 'DELETE');

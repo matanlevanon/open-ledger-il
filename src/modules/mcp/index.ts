@@ -1,9 +1,9 @@
-import { Hono } from 'hono';
+import { type Context, Hono } from 'hono';
 import { ZodError } from 'zod';
 import type { AuditActor } from '../../core/audit';
 import { DomainError, mapDbError } from '../../core/errors';
 import type { AppEnv } from '../../env';
-import { checkMcpToken } from './tokens';
+import { type McpScope, mcpTokenScope } from './tokens';
 import { MCP_TOOLS, type McpEnv, findTool } from './tools';
 import { APP_VERSION } from '../../version';
 
@@ -76,13 +76,19 @@ export async function handleMcpMessage(env: McpEnv, msg: JsonRpcMessage): Promis
 export function mcpRoutes(): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
 
+  const scopes = new WeakMap<Request, McpScope>();
+  const refuse = (c: Context<AppEnv>) => c.json({ jsonrpc: '2.0', id: null, error: { code: -32000, message: 'A valid bearer token is required.' } }, 401);
+
   app.use('*', async (c, next) => {
     const header = c.req.header('Authorization') ?? '';
     const provided = header.startsWith('Bearer ') ? header.slice(7) : '';
     // R34: one body for every refusal. It never says which check failed.
-    if (!provided || !(await checkMcpToken(c.env.DB, c.env.MCP_TOKEN, provided))) {
-      return c.json({ jsonrpc: '2.0', id: null, error: { code: -32000, message: 'A valid bearer token is required.' } }, 401);
-    }
+    const scope = provided ? await mcpTokenScope(c.env.DB, c.env.MCP_TOKEN, provided) : null;
+    if (!scope) return refuse(c);
+    // R48: a token bound to one business never reaches another, with the same refusal.
+    const named = c.req.header('X-Business-Id');
+    if (scope.businessId !== null && named !== undefined && named !== '' && Number(named) !== scope.businessId) return refuse(c);
+    scopes.set(c.req.raw, scope);
     await next();
   });
 
@@ -98,7 +104,9 @@ export function mcpRoutes(): Hono<AppEnv> {
       return c.json({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Invalid JSON.' } }, 400);
     }
     // R24: one token, one business per call. X-Business-Id names it, business 1 by default.
-    const wanted = Number(c.req.header('X-Business-Id') ?? '1');
+    // R48: a business-bound token acts on its own business when no header names one.
+    const scope = scopes.get(c.req.raw);
+    const wanted = Number(c.req.header('X-Business-Id') || String(scope?.businessId ?? 1));
     const businessId = Number.isSafeInteger(wanted) && wanted > 0 ? wanted : 1;
     const known = await c.env.DB.prepare('SELECT id FROM businesses WHERE id = ?').bind(businessId).first();
     if (!known) return c.json({ jsonrpc: '2.0', id: null, error: { code: -32602, message: 'Unknown business.' } }, 400);

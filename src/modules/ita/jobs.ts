@@ -1,3 +1,4 @@
+import { forEachBusiness } from '../../core/business';
 import { SYSTEM_ACTOR } from '../../core/audit';
 import { all, run } from '../../core/db';
 import { DomainError } from '../../core/errors';
@@ -145,6 +146,14 @@ export async function runTokenCheck(env: ItaEnv, deps: ItaDeps, businessId = 1):
 export async function runTokenChecks(env: ItaEnv, deps: ItaDeps): Promise<TokenCheckResult[]> {
   const rows = await all<{ business_id: number }>(env.DB, 'SELECT DISTINCT business_id FROM ita_tokens WHERE environment = ? ORDER BY business_id', itaEnvironment(env));
   const out: TokenCheckResult[] = [];
-  for (const r of rows) out.push(await runTokenCheck(env, deps, r.business_id));
+  // R48: one business that throws never stops the token checks of the rest.
+  await forEachBusiness(
+    env.DB,
+    'ita.token_check',
+    async (businessId) => {
+      out.push(await runTokenCheck(env, deps, businessId));
+    },
+    rows.map((r) => r.business_id),
+  );
   return out;
 }

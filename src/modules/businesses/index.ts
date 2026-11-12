@@ -1,7 +1,7 @@
 import { type Context, Hono } from 'hono';
 import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
-import { requireFeature, requireRole } from '../../core/auth';
+import { isLedgerAdmin, requireFeature, requireLedgerAdmin, requireRole } from '../../core/auth';
 import { businessIdOf } from '../../core/business';
 import { todayIsrael } from '../../core/db';
 import { NotFoundError, ValidationError } from '../../core/errors';
@@ -62,13 +62,14 @@ export function createBusinessesModule(documentsOptions: DocumentsModuleOptions 
       current: businessIdOf(c),
       businesses: await listMyBusinesses(c.env.DB, c.get('user')),
       // B3: the types Add business offers. Only an owner adds one.
-      addableTypes: c.get('user').role === 'owner' ? await allowedNewBusinessTypes(c.env.DB) : [],
+      addableTypes: isLedgerAdmin(c.get('user')) ? await allowedNewBusinessTypes(c.env.DB) : [],
     }),
   );
 
   // B4: Add business. The new business starts פטור, then a מורשה or a company runs the
   // `registered` switch for that business, so it is VAT registered from its first day.
-  r.post('/', requireRole('owner'), async (c) => {
+  // R48: a Ledger-wide action. Single edition: any owner, as before. Firm edition: Ledger admins.
+  r.post('/', requireLedgerAdmin(), async (c) => {
     const input = newBusinessInput.parse(await body(c));
     const user = c.get('user');
     const actor = actorFrom(c);

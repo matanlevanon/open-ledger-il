@@ -5,9 +5,9 @@ import { openDemands } from '../documents/balances';
 import { displayNumber } from '../documents/types';
 import { isConsentGranted } from './consent';
 import { logReminder, ruleFired } from './reminder-log';
-import type { Mailer } from './mailer';
+import { type Mailer, businessReplyTo } from './mailer';
 import { businessDisplayName, paymentLinkSettings, reminderSettings } from './settings';
-import { listBusinessIds } from '../../core/business';
+import { forEachBusiness } from '../../core/business';
 import { reminderEmailHtml, reminderEmailText } from './templates';
 
 function toUtcDays(date: string): number {
@@ -114,6 +114,7 @@ export async function runReminders(deps: ReminderDeps): Promise<ReminderRunResul
         to: client.email,
         subject: number ? `Reminder: ${number}` : 'Payment reminder',
         fromName: businessName,
+        replyTo: await businessReplyTo(db, businessId),
         html: reminderEmailHtml(clientName, number, direction, links, businessName),
         text: reminderEmailText(clientName, number, direction, links, businessName),
       });
@@ -147,10 +148,10 @@ export const REMINDERS_CRON = '0 7 * * *';
 
 export async function runRemindersCron(env: Env, mailer: Mailer | null, today: string): Promise<ReminderRunResult> {
   const total: ReminderRunResult = { sent: 0, skipped: 0 };
-  for (const businessId of await listBusinessIds(env.DB)) {
+  await forEachBusiness(env.DB, 'sending.reminders', async (businessId) => {
     const r = await runReminders({ db: env.DB, mailer, today, businessId });
     total.sent += r.sent;
     total.skipped += r.skipped;
-  }
+  });
   return total;
 }

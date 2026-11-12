@@ -110,7 +110,7 @@ routes.post('/documents/:id/view', requireFeature('issue_documents'), async (c) 
   const id = await documentIdInBusiness(c);
   const variant = parseVariant(c.req.query('variant') ?? 'client');
   const { key } = await ensureStored(c, id, variant);
-  const { path, expiresAt } = await signDownloadUrl(c.env, key, 'issue_documents', undefined, { disposition: 'inline' });
+  const { path, expiresAt } = await signDownloadUrl(c.env, key, 'issue_documents', undefined, { disposition: 'inline', businessId: businessIdOf(c) });
   return c.json({ url: path, expiresAt });
 });
 
@@ -122,6 +122,7 @@ routes.post('/documents/:id/download', requireFeature('issue_documents'), async 
   const { path, expiresAt } = await signDownloadUrl(c.env, key, 'issue_documents', undefined, {
     disposition: 'attachment',
     filename: downloadFilename(doc),
+    businessId: businessIdOf(c),
   });
   return c.json({ url: path, expiresAt });
 });

@@ -4,6 +4,7 @@ import type { AppEnv, Env } from '../env';
 import { SYSTEM_ACTOR, actorFrom, auditAs, auditStatement } from './audit';
 import { all, first, stmt, todayIsrael, transaction } from './db';
 import { ForbiddenError, UnauthorizedError } from './errors';
+import { type Edition, ledgerEdition } from './edition';
 import { isDemo } from '../modules/demo/config';
 import { sessionFromCookie } from '../modules/demo/session';
 
@@ -70,6 +71,20 @@ export interface AuthUser {
   businessId: number;
   /** R24: every business this person may open, with the role there. */
   businesses: { id: number; role: Role }[];
+  /** R48: users.is_ledger_admin. Ledger-wide actions need it in the firm edition. */
+  ledgerAdmin?: boolean;
+  /** R48: LEDGER_EDITION, `single` unless set to `firm`. */
+  edition?: Edition;
+}
+
+/** R48: a business a person may open, the role there, and where the grant comes from. */
+export interface BusinessGrant {
+  id: number;
+  role: Role;
+  /** direct: a user_businesses row. ledger: firm staff (ledger_grants). admin: a Ledger admin in the firm edition. */
+  source?: 'direct' | 'ledger' | 'admin';
+  /** For a firm-staff accountant: the feature switches of the Ledger grant. */
+  features?: string | null;
 }
 
 interface UserRow {
@@ -81,6 +96,7 @@ interface UserRow {
   access_ends_on: string | null;
   theme: ThemePreference | null;
   locale: LocalePreference | null;
+  is_ledger_admin?: number;
 }
 
 export interface AuthOptions {
@@ -127,9 +143,19 @@ async function emailFromAccessJwt(token: string, env: Env, options: AuthOptions)
   }
 }
 
-async function loadFeatures(db: D1Database, user: UserRow, role: Role): Promise<Feature[]> {
+async function loadFeatures(db: D1Database, user: UserRow, role: Role, grant?: BusinessGrant): Promise<Feature[]> {
   if (role === 'owner') return [...FEATURES];
   if (role === 'assistant') return [...ASSISTANT_FEATURES];
+  if (grant?.source === 'ledger') {
+    // R48: a firm-staff accountant carries the switches of the Ledger grant.
+    let parsed: Record<string, boolean> = {};
+    try {
+      parsed = grant.features ? (JSON.parse(grant.features) as Record<string, boolean>) : {};
+    } catch {
+      parsed = {};
+    }
+    return ACCOUNTANT_FEATURES.filter((f) => (parsed[f] ?? DEFAULT_ACCOUNTANT_FEATURES[f]) === true);
+  }
   const rows = await all<{ feature: string; enabled: number }>(
     db,
     'SELECT feature, enabled FROM user_features WHERE user_id = ?',
@@ -159,6 +185,13 @@ async function bootstrapOwner(db: D1Database, env: Env, email: string): Promise<
          AND NOT EXISTS (SELECT 1 FROM user_businesses WHERE role = 'owner')`,
       email,
     ),
+    // R48: the bootstrap owner is the Ledger's first admin.
+    stmt(
+      db,
+      `UPDATE users SET is_ledger_admin = 1 WHERE email = ?
+         AND id IN (SELECT user_id FROM user_businesses WHERE business_id = 1 AND role = 'owner')`,
+      email,
+    ),
     auditStatement(db, { ...SYSTEM_ACTOR, email }, 'user.bootstrap_owner', 'user', email),
   ]);
   return first<UserRow>(db, 'SELECT * FROM users WHERE email = ?', email);
@@ -185,7 +218,9 @@ export function authenticate(options: AuthOptions = {}): MiddlewareHandler<AppEn
     }
 
     let user = await first<UserRow>(env.DB, 'SELECT * FROM users WHERE email = ?', email);
-    const grantsOf = (u: UserRow) => businessGrants(env.DB, u.id, (options.today ?? todayIsrael)());
+    const edition = ledgerEdition(env);
+    const grantsOf = (u: UserRow) =>
+      businessGrants(env.DB, u.id, (options.today ?? todayIsrael)(), { edition, isAdmin: u.is_ledger_admin === 1 });
     if (!user || (await grantsOf(user)).length === 0) user = (await bootstrapOwner(env.DB, env, email)) ?? user;
     if (!user) throw new ForbiddenError('This account has no access to Open Ledger IL.');
     if (user.active !== 1) throw new ForbiddenError('This account is disabled.');
@@ -218,11 +253,13 @@ export function authenticate(options: AuthOptions = {}): MiddlewareHandler<AppEn
       email: user.email,
       name: user.name,
       role: grant.role,
-      features: await loadFeatures(env.DB, user, grant.role),
+      features: await loadFeatures(env.DB, user, grant.role, grant),
       theme: user.theme,
       locale: user.locale,
       businessId: grant.id,
-      businesses: grants,
+      businesses: grants.map((g) => ({ id: g.id, role: g.role })),
+      ledgerAdmin: user.is_ledger_admin === 1,
+      edition,
     });
 
     await next();
@@ -242,8 +279,19 @@ export function businessCookie(header: string | undefined): string | undefined {
   return match?.[1];
 }
 
-/** The businesses a person may open, with the role in each. Ended accountant access is left out. */
-export async function businessGrants(db: D1Database, userId: number, today: string): Promise<{ id: number; role: Role }[]> {
+/**
+ * The businesses a person may open, with the role in each. Ended accountant access is left out.
+ * R48, firm edition only: a Ledger admin owns every business, present and future, without a
+ * user_businesses row. Firm staff (ledger_grants) reach every business with their Ledger role. A
+ * direct grant on a business wins over the Ledger grant. The single edition reads only
+ * user_businesses, exactly as before.
+ */
+export async function businessGrants(
+  db: D1Database,
+  userId: number,
+  today: string,
+  options: { edition?: Edition; isAdmin?: boolean } = {},
+): Promise<BusinessGrant[]> {
   const rows = await all<{ business_id: number; role: Role }>(
     db,
     `SELECT business_id, role FROM user_businesses
@@ -252,7 +300,19 @@ export async function businessGrants(db: D1Database, userId: number, today: stri
     userId,
     today,
   );
-  return rows.map((r) => ({ id: r.business_id, role: r.role }));
+  const direct: BusinessGrant[] = rows.map((r) => ({ id: r.business_id, role: r.role, source: 'direct' }));
+  if (options.edition !== 'firm') return direct;
+  const businessIds = (await all<{ id: number }>(db, 'SELECT id FROM businesses ORDER BY id')).map((r) => r.id);
+  if (options.isAdmin) return businessIds.map((id) => ({ id, role: 'owner', source: 'admin' }));
+  const ledger = await first<{ role: Role; features: string | null }>(
+    db,
+    'SELECT role, features FROM ledger_grants WHERE user_id = ? AND (ends_at IS NULL OR ends_at >= ?)',
+    userId,
+    today,
+  );
+  if (!ledger) return direct;
+  const byId = new Map(direct.map((g) => [g.id, g]));
+  return businessIds.map((id) => byId.get(id) ?? { id, role: ledger.role, source: 'ledger', features: ledger.features });
 }
 
 function currentUser(c: Parameters<MiddlewareHandler<AppEnv>>[0]): AuthUser {
@@ -262,6 +322,28 @@ function currentUser(c: Parameters<MiddlewareHandler<AppEnv>>[0]): AuthUser {
 }
 
 export type RoleMiddleware = MiddlewareHandler<AppEnv> & { roles: readonly Role[] };
+export type LedgerAdminMiddleware = MiddlewareHandler<AppEnv> & { roles: readonly Role[]; ledgerAdmin: true };
+
+/**
+ * R48: true when this person may take Ledger-wide actions. Single edition: any owner of the
+ * current business, as before. Firm edition: Ledger admins only.
+ */
+export function isLedgerAdmin(user: AuthUser): boolean {
+  if (user.edition === 'firm') return user.ledgerAdmin === true;
+  return user.role === 'owner';
+}
+
+/**
+ * R48: Ledger-wide actions, the ones that read or write a table shared by every business, or
+ * act on the Ledger itself. Declared for the route guard like requireRole (`.roles`).
+ */
+export function requireLedgerAdmin(): LedgerAdminMiddleware {
+  const mw: MiddlewareHandler<AppEnv> = async (c, next) => {
+    if (!isLedgerAdmin(currentUser(c))) throw new ForbiddenError('Only a Ledger admin can do this.');
+    await next();
+  };
+  return Object.assign(mw, { roles: ['owner'] as const, ledgerAdmin: true as const });
+}
 export type FeatureMiddleware = MiddlewareHandler<AppEnv> & { feature: Feature };
 
 /** Lets the request through only for the listed roles. */

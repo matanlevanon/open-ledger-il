@@ -47,7 +47,15 @@ describe('GET /api/settings/mcp', () => {
   it('shows the address, on, and the installer token before any Ledger token', async () => {
     const res = await call(OWNER, 'GET', '');
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ address: 'https://ledger.example.com/mcp', enabled: true, token: { state: 'installer' } });
+    // R48: the single edition shows the Ledger-wide token, and the owner may turn MCP off.
+    expect(await res.json()).toEqual({
+      address: 'https://ledger.example.com/mcp',
+      enabled: true,
+      token: { state: 'installer' },
+      scope: 'ledger',
+      businessId: null,
+      canToggle: true,
+    });
   });
 
   it('says none when neither token is set', async () => {

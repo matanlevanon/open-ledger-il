@@ -9,6 +9,7 @@ import { runAccessExpiryCheck } from './expiry';
 import { logRoutes } from './log';
 import { SlackAccessNotifier } from './notifier';
 import { declareManualAuth } from './route-guard';
+import { firmTeamRoutes } from './firm-team';
 import { usersRoutes } from './users';
 
 export { signDownloadUrl } from './downloads';
@@ -20,6 +21,8 @@ const routes = new Hono<AppEnv>();
 
 routes.route('/users', usersRoutes);
 routes.route('/log', logRoutes);
+// R48: Settings > Firm team, firm edition, Ledger admins only.
+routes.route('/firm-team', firmTeamRoutes);
 
 // The feature that gates this download lives inside the signed token, chosen by whoever called
 // signDownloadUrl. Authorization is the hasFeature check below, not a static requireFeature.
@@ -28,7 +31,11 @@ routes.get(
   declareManualAuth('feature is embedded in the signed token, enforced by hasFeature() below'),
   async (c) => {
     const payload = await verifyDownloadToken(c.env, c.req.param('token'));
-    if (!hasFeature(c.get('user'), payload.feature)) throw new ForbiddenError();
+    // R48: the link names its business. The person must hold the feature in that business.
+    const user = c.get('user');
+    const grant = user.businesses.find((b) => b.id === (payload.businessId ?? 1));
+    if (!grant) throw new ForbiddenError();
+    if (!hasFeature({ ...user, role: grant.role, businessId: grant.id }, payload.feature)) throw new ForbiddenError();
 
     const object = await c.env.FILES.get(payload.key);
     if (!object) throw new NotFoundError('file', payload.key);

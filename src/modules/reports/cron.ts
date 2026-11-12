@@ -1,4 +1,4 @@
-import { listBusinessIds } from '../../core/business';
+import { forEachBusiness } from '../../core/business';
 import { todayIsrael } from '../../core/db';
 import type { Env } from '../../env';
 import { buildAccountantPack, previousPeriod } from './pack';
@@ -18,5 +18,7 @@ export function isPackDay(scheduledTime: number): boolean {
 export async function reportsScheduled(controller: ScheduledController, env: Env, _ctx?: ExecutionContext): Promise<void> {
   if (controller.cron !== ACCOUNTANT_PACK_CRON || !isPackDay(controller.scheduledTime)) return;
   // R24: one pack per business, each to that business's own accountants.
-  for (const businessId of await listBusinessIds(env.DB)) await buildAccountantPack(env, previousPeriod(todayIsrael()), businessId);
+  await forEachBusiness(env.DB, 'reports.accountant_pack', async (businessId) => {
+    await buildAccountantPack(env, previousPeriod(todayIsrael()), businessId);
+  });
 }

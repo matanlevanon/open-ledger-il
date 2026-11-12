@@ -1,7 +1,7 @@
 import { Hono, type MiddlewareHandler } from 'hono';
 import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
-import { requireRole } from '../../core/auth';
+import { requireLedgerAdmin } from '../../core/auth';
 import { transaction } from '../../core/db';
 import { DomainError, ForbiddenError } from '../../core/errors';
 import type { ModuleDef } from '../../core/module';
@@ -62,7 +62,8 @@ async function inboxState(env: Env) {
 
 /** R35: Settings > Expenses > Email inbox, under /api/expenses/settings/inbox. Owner only. */
 export function registerInboxSettingsRoutes(app: Hono<AppEnv>, resolveDeps: (env: Env) => Deps): void {
-  const owner = requireRole('owner');
+  // R48: one inbox for the whole Ledger. Its settings are Ledger admin actions.
+  const owner = requireLedgerAdmin();
   const notInDemo: MiddlewareHandler<AppEnv> = async (c, next) => {
     if (!inboxAvailable(c.env)) throw new ForbiddenError();
     await next();

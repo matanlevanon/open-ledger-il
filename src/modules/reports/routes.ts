@@ -199,7 +199,7 @@ export function reportsRoutes(options: { today?: () => string } = {}): Hono<AppE
     const pack = await first<AccountantPackRow>(c.env.DB, 'SELECT * FROM accountant_packs WHERE id = ? AND business_id = ?', id, businessIdOf(c));
     if (!pack) throw new NotFoundError('Accountant pack', id);
     const key = pack[PACK_FILES[file]];
-    const { path } = await signDownloadUrl(c.env, key, 'monthly_pack');
+    const { path } = await signDownloadUrl(c.env, key, 'monthly_pack', undefined, { businessId: businessIdOf(c) });
     return c.json({ path });
   });
 

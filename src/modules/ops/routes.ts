@@ -1,7 +1,7 @@
 import { type Context, Hono } from 'hono';
 import { actorFrom } from '../../core/audit';
 import { businessIdOf } from '../../core/business';
-import { requireFeature } from '../../core/auth';
+import { requireFeature, requireLedgerAdmin } from '../../core/auth';
 import { all, nowIso, todayIsrael } from '../../core/db';
 import { issuingEnabled } from '../../core/issuing';
 import { skipMissedRuns } from '../recurring/service';
@@ -132,7 +132,8 @@ export function opsRoutes(): Hono<AppEnv> {
 
   r.get('/ceilings', async (c) => c.json({ ceilings: await listCeilings(c.env.DB) }));
 
-  r.put('/ceilings', async (c) => {
+  // R48: ceilings, VAT rates, the gap check and backups are Ledger-wide. Reads of law tables stay open.
+  r.put('/ceilings', requireLedgerAdmin(), async (c) => {
     const input = ceilingInput.parse(await jsonBody(c));
     await upsertCeiling(c.env.DB, actorFrom(c), input);
     return c.json({ ceilings: await listCeilings(c.env.DB) });
@@ -140,7 +141,7 @@ export function opsRoutes(): Hono<AppEnv> {
 
   r.get('/vat-rates', async (c) => c.json({ vatRates: await listVatRates(c.env.DB) }));
 
-  r.post('/vat-rates', async (c) => {
+  r.post('/vat-rates', requireLedgerAdmin(), async (c) => {
     const input = vatRateInput.parse(await jsonBody(c));
     await addVatRate(c.env.DB, actorFrom(c), input);
     return c.json({ vatRates: await listVatRates(c.env.DB) }, 201);
@@ -163,11 +164,11 @@ export function opsRoutes(): Hono<AppEnv> {
     return c.json({ mode: input.mode });
   });
 
-  r.post('/checks/run', async (c) => c.json(await runGapCheck(c.env.DB)));
+  r.post('/checks/run', requireLedgerAdmin(), async (c) => c.json(await runGapCheck(c.env.DB)));
 
-  r.get('/backups', async (c) => c.json({ backups: await all<BackupRow>(c.env.DB, 'SELECT * FROM backups ORDER BY ran_at DESC LIMIT 50') }));
+  r.get('/backups', requireLedgerAdmin(), async (c) => c.json({ backups: await all<BackupRow>(c.env.DB, 'SELECT * FROM backups ORDER BY ran_at DESC LIMIT 50') }));
 
-  r.post('/backups/run', async (c) => {
+  r.post('/backups/run', requireLedgerAdmin(), async (c) => {
     const result = await runBackup(c.env, 'manual', nowIso());
     return c.json(result, 201);
   });

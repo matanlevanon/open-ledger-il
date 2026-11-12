@@ -14,7 +14,7 @@ import type { Notifier } from '../ita/notify';
 import type { PdfEngine } from '../pdf/engine';
 import { resolveSigningIdentity } from '../pdf/signing';
 import { imageDataUri } from '../pdf/signature-image';
-import type { Mailer } from '../sending/mailer';
+import { type Mailer, businessReplyTo } from '../sending/mailer';
 import { signSendToken, verifySendToken } from '../sending/tokens';
 import { signPdf } from '../signing';
 import { placeFields } from './fields-pdf';
@@ -734,7 +734,7 @@ export async function sendContract(deps: ContractDeps, actor: AuditActor & { nam
   let emailed = false;
   if (opts.channel === 'email' && deps.mailer) {
     const mail = inviteEmail(sender, row.title, url, expiresAt, false);
-    await deps.mailer.send({ to: row.signer_email, fromName: sender, ...mail });
+    await deps.mailer.send({ to: row.signer_email, fromName: sender, replyTo: await businessReplyTo(db, businessId), ...mail });
     emailed = true;
   }
   return {
@@ -763,7 +763,12 @@ export async function remindContract(deps: ContractDeps, actor: AuditActor, id: 
   const sender = await senderLabel(env.DB, businessId);
   let emailed = false;
   if (opts.channel === 'email' && deps.mailer && row.signer_email) {
-    await deps.mailer.send({ to: row.signer_email, fromName: sender, ...inviteEmail(sender, row.title, url, row.expires_at, true) });
+    await deps.mailer.send({
+      to: row.signer_email,
+      fromName: sender,
+      replyTo: await businessReplyTo(env.DB, businessId),
+      ...inviteEmail(sender, row.title, url, row.expires_at, true),
+    });
     emailed = true;
   }
   return { url, whatsappUrl: whatsappUrl(row.signer_phone, `${sender} sent you ${row.title} to sign: ${url}`), expiresAt: row.expires_at, emailed, sha256: row.sent_pdf_sha256 ?? '' };
@@ -876,6 +881,7 @@ export async function requestCode(deps: ContractDeps, row: ContractRow, req: Pub
   await deps.mailer!.send({
     to: row.signer_email,
     fromName: sender,
+    replyTo: await businessReplyTo(deps.env.DB, row.business_id),
     subject: `Your code to sign ${row.title}`,
     html: `<!doctype html><html><body style="font-family:sans-serif;line-height:1.5"><p>Your code to sign ${escapeHtml(row.title)} from ${escapeHtml(sender)}:</p><p style="font-size:24px;font-weight:700;letter-spacing:4px">${code}</p><p>It works for ${minutes} minutes.</p></body></html>`,
     text: `Your code to sign ${row.title} from ${sender}: ${code}\nIt works for ${minutes} minutes.\n`,
@@ -1069,6 +1075,7 @@ export async function signContract(deps: ContractDeps, row: ContractRow, req: Pu
       await deps.mailer.send({
         to,
         fromName: sender,
+        replyTo: await businessReplyTo(db, row.business_id),
         subject: `Signed: ${row.title}`,
         html: `<!doctype html><html><body style="font-family:sans-serif;line-height:1.5"><p>${escapeHtml(row.title)} is signed. The signed PDF is attached.</p></body></html>`,
         text: `${row.title} is signed. The signed PDF is attached.\n`,

@@ -1,6 +1,6 @@
 import { demoMailerFor } from '../demo/outbox';
 import { type Context, Hono } from 'hono';
-import { listBusinessIds } from '../../core/business';
+import { forEachBusiness } from '../../core/business';
 import { z } from 'zod';
 import { type AuditActor, actorFrom } from '../../core/audit';
 import { type AuthUser, FEATURES, requireFeature } from '../../core/auth';
@@ -172,11 +172,11 @@ export function createRecurringModule(options: RecurringModuleOptions = {}): Mod
     async scheduled(controller, env) {
       if (controller.cron !== RECURRING_CRON) return;
       // R24: each business runs its own schedules, as its own owner.
-      for (const businessId of await listBusinessIds(env.DB)) {
+      await forEachBusiness(env.DB, 'recurring.run_due', async (businessId) => {
         const c = await cronCtx(env, options, businessId);
-        if (!c) continue;
+        if (!c) return;
         await runDue(c, sendFor(env, env.PUBLIC_APP_URL ?? ''), pendingSlack(env, env.PUBLIC_APP_URL ?? ''));
-      }
+      });
     },
   };
 }

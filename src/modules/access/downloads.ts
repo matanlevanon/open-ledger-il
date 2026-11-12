@@ -16,6 +16,8 @@ export interface DownloadPayload {
   disposition?: 'inline' | 'attachment';
   /** Download filename override, e.g. "<type>-<number>-<client>.pdf" (task 3). Default: the R2 key's last segment. */
   filename?: string;
+  /** R48: the business the file belongs to. The link opens only for a person with a grant there. Absent on older links: business 1. */
+  businessId?: number;
 }
 
 const DEFAULT_TTL_SECONDS = 600;
@@ -49,10 +51,10 @@ export async function signDownloadUrl(
   key: string,
   feature: Feature,
   ttlSeconds = DEFAULT_TTL_SECONDS,
-  options: { disposition?: 'inline' | 'attachment'; filename?: string } = {},
+  options: { disposition?: 'inline' | 'attachment'; filename?: string; businessId?: number } = {},
 ): Promise<{ path: string; expiresAt: string }> {
   const exp = Math.floor(Date.now() / 1000) + ttlSeconds;
-  const payload: DownloadPayload = { key, feature, exp, disposition: options.disposition, filename: options.filename };
+  const payload: DownloadPayload = { key, feature, exp, disposition: options.disposition, filename: options.filename, businessId: options.businessId };
   const body = base64url(new TextEncoder().encode(JSON.stringify(payload)));
   const cryptoKey = await hmacKey(env);
   const signature = await crypto.subtle.sign('HMAC', cryptoKey, new TextEncoder().encode(body));

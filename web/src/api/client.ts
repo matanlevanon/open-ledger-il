@@ -21,6 +21,9 @@ export interface Me {
   /** R24: the business this session acts on, and every business the person may open. */
   businessId?: number;
   businesses?: { id: number; role: Role }[];
+  /** R48: the Ledger edition, and whether this person may take Ledger-wide actions. */
+  edition?: 'single' | 'firm';
+  ledgerAdmin?: boolean;
   /** R26: present on the public demo only. admin = the sample set opened from /admin. R29: ownKey tags the visitor's own rows. */
   demo?: { admin: boolean; ctaUrl: string; product: string; ownKey?: string | null };
 }

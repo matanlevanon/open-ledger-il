@@ -31,6 +31,29 @@ export async function listBusinessIds(db: D1Database): Promise<number[]> {
   return (await all<{ id: number }>(db, 'SELECT id FROM businesses ORDER BY id')).map((r) => r.id);
 }
 
+/**
+ * R48: runs a cron job once per business. One business that throws never stops the rest: the
+ * failure is logged as `business_job_failed` with the job and the business id, and the loop goes
+ * on. Returns the ids that failed.
+ */
+export async function forEachBusiness(
+  db: D1Database,
+  job: string,
+  fn: (businessId: number) => Promise<void>,
+  ids?: number[],
+): Promise<number[]> {
+  const failed: number[] = [];
+  for (const businessId of ids ?? (await listBusinessIds(db))) {
+    try {
+      await fn(businessId);
+    } catch (err) {
+      failed.push(businessId);
+      console.error('business_job_failed', job, businessId, err instanceof Error ? `${err.name}: ${err.message}` : 'unknown');
+    }
+  }
+  return failed;
+}
+
 /** R2 key prefix for files of a business. Business 1 keeps the keys it had. */
 export function r2Prefix(businessId: number): string {
   return businessId === FIRST_BUSINESS ? '' : `business/${businessId}/`;

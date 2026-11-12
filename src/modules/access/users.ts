@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { type Context, Hono } from 'hono';
 import { actorFrom, auditStatement } from '../../core/audit';
 import {
   ACCOUNTANT_FEATURES,
@@ -11,6 +11,8 @@ import { businessIdOf } from '../../core/business';
 import { all, first, stmt, todayIsrael, transaction } from '../../core/db';
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
+import { ledgerEdition } from '../../core/edition';
+import { isFirmTeam } from './firm-team';
 import { addUserSchema, updateUserSchema } from './schemas';
 
 /**
@@ -48,6 +50,8 @@ export interface UserSummary {
   businesses: { id: number; role: Role }[];
   /** R39: the business's only active owner. The screen offers no Remove and no role change. */
   lastOwner?: true;
+  /** R48, firm edition: a Ledger admin or firm staff, listed as "Firm team". */
+  firmTeam?: true;
 }
 
 /** Task 7: the step the owner takes in Cloudflare, since the app cannot add people to Access. */
@@ -61,8 +65,37 @@ function featureMapFor(rows: FeatureRow[], userId: number): Record<AccountantFea
   return out;
 }
 
+/**
+ * R48, firm edition: the firm team reaches every business without a row there. They show as
+ * "Firm team". A business owner who is not an admin sees no email and no other business.
+ */
+async function firmTeamOf(db: D1Database, viewerIsAdmin: boolean, exclude: Set<number>): Promise<UserSummary[]> {
+  const today = todayIsrael();
+  const rows = await all<{ id: number; email: string; name: string | null; active: number; is_ledger_admin: number; role: Role | null }>(
+    db,
+    `SELECT u.id, u.email, u.name, u.active, u.is_ledger_admin, g.role
+       FROM users u LEFT JOIN ledger_grants g ON g.user_id = u.id AND (g.ends_at IS NULL OR g.ends_at >= ?)
+      WHERE u.is_ledger_admin = 1 OR g.user_id IS NOT NULL
+      ORDER BY u.is_ledger_admin DESC, u.email`,
+    today,
+  );
+  return rows
+    .filter((r) => !exclude.has(r.id))
+    .map((r) => ({
+      id: r.id,
+      email: viewerIsAdmin ? r.email : '',
+      name: viewerIsAdmin ? r.name : 'Firm team',
+      role: r.is_ledger_admin === 1 ? 'owner' : (r.role ?? 'accountant'),
+      active: r.active === 1,
+      accessEndsOn: null,
+      features: null,
+      businesses: [],
+      firmTeam: true as const,
+    }));
+}
+
 /** The people of one business, with their role there. */
-async function summarize(db: D1Database, businessId: number): Promise<UserSummary[]> {
+async function summarize(db: D1Database, businessId: number, firm?: { viewerIsAdmin: boolean }): Promise<UserSummary[]> {
   const members = await all<MemberRow>(
     db,
     `SELECT u.id, u.email, u.name, ub.role, u.active, COALESCE(ub.ends_at, u.access_ends_on) AS access_ends_on
@@ -75,7 +108,7 @@ async function summarize(db: D1Database, businessId: number): Promise<UserSummar
   const today = todayIsrael();
   const activeOwners = members.filter((u) => u.role === 'owner' && u.active === 1 && (!u.access_ends_on || u.access_ends_on >= today));
   const lastOwnerId = activeOwners.length === 1 ? activeOwners[0]!.id : null;
-  return members.map((u) => ({
+  const own: UserSummary[] = members.map((u) => ({
     id: u.id,
     email: u.email,
     name: u.name,
@@ -83,9 +116,24 @@ async function summarize(db: D1Database, businessId: number): Promise<UserSummar
     active: u.active === 1,
     accessEndsOn: u.access_ends_on,
     features: u.role === 'accountant' ? featureMapFor(features, u.id) : null,
-    businesses: grants.filter((g) => g.user_id === u.id).map((g) => ({ id: g.business_id, role: g.role })),
+    // R48: in the firm edition a business owner sees only this business, never the others.
+    businesses: grants
+      .filter((g) => g.user_id === u.id && (!firm || firm.viewerIsAdmin || g.business_id === businessId))
+      .map((g) => ({ id: g.business_id, role: g.role })),
     ...(u.id === lastOwnerId ? { lastOwner: true as const } : {}),
   }));
+  if (!firm) return own;
+  const team = await firmTeamOf(db, firm.viewerIsAdmin, new Set());
+  const teamIds = new Set(team.map((t) => t.id));
+  // A firm-team member with a row on this business still shows as the firm team, never by email.
+  const masked = own.map((u) => (teamIds.has(u.id) ? { ...team.find((t) => t.id === u.id)!, role: u.role } : u));
+  const ownIds = new Set(own.map((u) => u.id));
+  return [...masked, ...team.filter((t) => !ownIds.has(t.id))];
+}
+
+/** R48: the firm-edition view of the user list, or undefined in the single edition. */
+function firmView(c: Context<AppEnv>): { viewerIsAdmin: boolean } | undefined {
+  return ledgerEdition(c.env) === 'firm' ? { viewerIsAdmin: c.get('user').ledgerAdmin === true } : undefined;
 }
 
 function parseId(raw: string): number {
@@ -128,7 +176,7 @@ async function assertNotLastOwner(db: D1Database, member: MemberRow, businessId:
 export const usersRoutes = new Hono<AppEnv>();
 
 usersRoutes.get('/', requireRole('owner'), async (c) => {
-  return c.json({ users: await summarize(c.env.DB, businessIdOf(c)), accessNote: ACCESS_NOTE });
+  return c.json({ users: await summarize(c.env.DB, businessIdOf(c), firmView(c)), accessNote: ACCESS_NOTE });
 });
 
 /**
@@ -218,7 +266,7 @@ usersRoutes.post('/', requireRole('owner'), async (c) => {
     throw err;
   }
 
-  const created = (await summarize(db, businessIds[0]!)).find((u) => u.email === body.email);
+  const created = (await summarize(db, businessIds[0]!, firmView(c))).find((u) => u.email === body.email && !u.firmTeam);
   return c.json({ user: created, accessNote: ACCESS_NOTE }, 201);
 });
 
@@ -243,10 +291,16 @@ usersRoutes.patch('/:id', requireRole('owner'), async (c) => {
     }
     statements.push(stmt(db, 'UPDATE user_businesses SET role = ?, granted_by = ? WHERE user_id = ? AND business_id = ?', body.role, c.get('user').id, id, businessId));
   }
-  if (body.name !== undefined) {
+  // R48, firm edition: the users row is shared by every business the person reaches. A business
+  // owner changes only the grant on this business, never the account itself.
+  const sharedAccount = ledgerEdition(c.env) === 'firm' && c.get('user').ledgerAdmin !== true;
+  if (sharedAccount && body.accessEndsOn !== undefined) {
+    statements.push(stmt(db, 'UPDATE user_businesses SET ends_at = ? WHERE user_id = ? AND business_id = ?', body.accessEndsOn, id, businessId));
+  }
+  if (body.name !== undefined && !sharedAccount) {
     statements.push(stmt(db, `UPDATE users SET name = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`, body.name, id));
   }
-  if (body.accessEndsOn !== undefined) {
+  if (body.accessEndsOn !== undefined && !sharedAccount) {
     const reactivate = body.accessEndsOn > todayIsrael();
     statements.push(
       stmt(
@@ -277,7 +331,7 @@ usersRoutes.patch('/:id', requireRole('owner'), async (c) => {
   statements.push(auditStatement(db, actorFrom(c), body.role !== undefined ? 'user.role_change' : 'user.update', 'user', target.email, body));
   await transaction(db, statements);
 
-  const updated = (await summarize(db, businessId)).find((u) => u.id === id);
+  const updated = (await summarize(db, businessId, firmView(c))).find((u) => u.id === id && !u.firmTeam);
   return c.json({ user: updated });
 });
 
@@ -293,7 +347,8 @@ usersRoutes.delete('/:id', requireRole('owner'), async (c) => {
   if (target.role === 'owner') await assertNotLastOwner(db, target, businessId);
   const features = await all<FeatureRow>(db, 'SELECT user_id, feature, enabled FROM user_features WHERE user_id = ?', id);
   const others = await first<{ n: number }>(db, 'SELECT COUNT(*) AS n FROM user_businesses WHERE user_id = ? AND business_id != ?', id, businessId);
-  const last = (others?.n ?? 0) === 0;
+  // R48: firm staff and admins keep their account when they leave one business.
+  const last = (others?.n ?? 0) === 0 && !(await isFirmTeam(db, id));
 
   await transaction(db, [
     auditStatement(db, actorFrom(c), 'user.revoke', 'user', target.email, {

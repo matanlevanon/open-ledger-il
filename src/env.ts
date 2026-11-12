@@ -43,6 +43,8 @@ export interface Env {
   PUBLIC_APP_URL?: string;
   /** R14: quarterly backup exports and manifests. */
   BACKUPS: R2Bucket;
+  /** R48: "firm" for an accounting firm with many client businesses. Empty or "single": one person or company. */
+  LEDGER_EDITION?: string;
   /** R14: bearer token for POST /mcp. */
   MCP_TOKEN?: string;
   /** R12: AES-GCM key for stored ITA tokens. R40: also the Financy client secret, with its own additional data. */

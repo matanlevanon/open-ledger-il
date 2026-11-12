@@ -3,7 +3,7 @@ import { businessIdOf } from '../../core/business';
 import { readerStatus } from '../ai';
 import { z } from 'zod';
 import { actorFrom } from '../../core/audit';
-import { requireFeature, requireRole } from '../../core/auth';
+import { requireFeature, requireLedgerAdmin, requireRole } from '../../core/auth';
 import { NotFoundError, ValidationError } from '../../core/errors';
 import type { AppEnv } from '../../env';
 import { todayIsrael } from '../../core/db';
@@ -83,13 +83,14 @@ export function createExpensesRoutes(resolveDeps: (env: AppEnv['Bindings']) => D
 
   app.get('/categories', async (c) => c.json({ categories: await service.listCategories(c.env.DB, c.req.query('all') === '1') }));
 
-  app.post('/categories', requireRole('owner'), async (c) => {
+  // R48: expense_categories is shared by every business. Admins edit the defaults.
+  app.post('/categories', requireLedgerAdmin(), async (c) => {
     const input = CategoryInputSchema.parse(await c.req.json());
     const category = await service.createCategory(c.env.DB, input, actorFrom(c));
     return c.json({ category }, 201);
   });
 
-  app.patch('/categories/:id', requireRole('owner'), async (c) => {
+  app.patch('/categories/:id', requireLedgerAdmin(), async (c) => {
     const input = CategoryUpdateSchema.parse(await c.req.json());
     const category = await service.updateCategory(c.env.DB, idParam(c.req.param('id')), input, actorFrom(c));
     return c.json({ category });

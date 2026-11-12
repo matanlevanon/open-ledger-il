@@ -278,6 +278,7 @@ export async function syncAllDaily(env: Env, deps: FinancyDeps): Promise<{ synce
     } catch (err) {
       result.failed += 1;
       console.error('financy.sync_failed', business_id, err instanceof FinancyError ? err.code : 'error');
+      console.error('business_job_failed', 'financy.sync_daily', business_id);
     }
   }
   console.log('financy.sync_daily', result);
