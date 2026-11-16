@@ -510,6 +510,7 @@ OPTIONS_EN = r'''  <section id="options">
           <ul>
             <li>A Windows installer sets it up in your own Cloudflare account</li>
             <li>Tax Authority connection through MTN, no ITA app of your own</li>
+            <li>Free updates: run the installer again and it updates your Ledger</li>
             <li>One licence key for one business</li>
           </ul>
           <a class="btn btn-primary" href="__SHOP__/buy" target="_blank" rel="noopener">Buy and install</a>
@@ -592,6 +593,7 @@ OPTIONS_HE = r'''  <section id="options">
           <ul>
             <li>תוכנת התקנה ל-Windows מקימה הכול בחשבון Cloudflare שלך</li>
             <li>חיבור לרשות המסים דרך MTN, בלי אפליקציית API משלך</li>
+            <li>עדכונים בחינם: מריצים שוב את תוכנת ההתקנה והיא מעדכנת את הלדג'ר</li>
             <li>מפתח רישיון אחד לעסק אחד</li>
           </ul>
           <a class="btn btn-primary" href="__SHOP__/buy?lang=he" target="_blank" rel="noopener">לרכישה והתקנה</a>

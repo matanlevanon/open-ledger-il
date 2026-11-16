@@ -15,6 +15,7 @@ PRICING = {
             ('Allocation numbers', 'Your own ITA API app', 'Through MTN’s approved app', 'Your own app, or through MTN'),
             ('What you bring', 'A Cloudflare account, Node.js and a PDF signing key', 'A Windows computer, a Cloudflare account and the licence key', 'Your business details and your emails'),
             ('Where the data lives', 'Your Cloudflare account', 'Your Cloudflare account', 'Your Cloudflare account'),
+            ('Updates', 'Free. You pull each release and deploy it yourself', 'Free. Run the installer again: it downloads the latest version and keeps your data', 'Free, with the same installer'),
             ('Subscription', 'None', 'None', 'None'),
         ],
         how_installer_h='With the ₪99 installer',
@@ -34,6 +35,7 @@ PRICING = {
             ('Which option fits an עוסק פטור?', 'Any of them. A פטור business issues receipts, not tax invoices, so it does not need allocation numbers. The ₪99 installer is the quickest way to start without technical work.'),
             ('Who holds my data?', 'You do. Every option creates the database and the files in your own Cloudflare account. MTN does not hold your data.'),
             ('Is the software registered with the Tax Authority?', 'Yes. Open Ledger IL is registered as software for a computerized accounting system. You can check it in the Tax Authority registry.'),
+            ('How do updates work, and do they cost anything?', 'Updates are free. With the installer, run it again: it finds your Ledger, downloads the latest version and keeps your data, keys and business details. The installer always installs the released code, unchanged. A copy with changed code is no longer the registered software.'),
         ],
     ),
     'he': dict(
@@ -47,6 +49,7 @@ PRICING = {
             ('מספרי הקצאה', 'אפליקציית API משלך ברשות המסים', 'דרך האפליקציה המאושרת של MTN', 'אפליקציה משלך, או דרך MTN'),
             ('מה צריך להביא', 'חשבון Cloudflare, Node.js ומפתח חתימה ל-PDF', 'מחשב Windows, חשבון Cloudflare ומפתח הרישיון', 'פרטי העסק וכתובות המייל שלך'),
             ('איפה המידע', 'בחשבון Cloudflare שלך', 'בחשבון Cloudflare שלך', 'בחשבון Cloudflare שלך'),
+            ('עדכונים', 'בחינם. מושכים כל גרסה ופורסים אותה בעצמך', 'בחינם. מריצים שוב את תוכנת ההתקנה: היא מורידה את הגרסה האחרונה ושומרת את המידע שלך', 'בחינם, עם אותה תוכנת התקנה'),
             ('מנוי', 'אין', 'אין', 'אין'),
         ],
         how_installer_h='עם תוכנת ההתקנה ב-₪99',
@@ -66,6 +69,7 @@ PRICING = {
             ('איזו אפשרות מתאימה לעוסק פטור?', 'כל אחת מהן. עוסק פטור מוציא קבלות ולא חשבוניות מס, ולכן לא צריך מספרי הקצאה. תוכנת ההתקנה ב-₪99 היא הדרך המהירה להתחיל בלי עבודה טכנית.'),
             ('מי מחזיק את המידע שלי?', 'אתה. בכל אפשרות מסד הנתונים והקבצים נוצרים בחשבון Cloudflare שלך. MTN לא מחזיקה את המידע שלך.'),
             ('התוכנה רשומה ברשות המסים?', 'כן. Open Ledger IL רשומה כתוכנה לניהול מערכת חשבונות ממוחשבת. אפשר לבדוק את הרישום במאגר של רשות המסים.'),
+            ('איך עובדים העדכונים, והם עולים כסף?', 'העדכונים בחינם. עם תוכנת ההתקנה, מריצים אותה שוב: היא מוצאת את הלדג\'ר שלך, מורידה את הגרסה האחרונה ושומרת את המידע, המפתחות ופרטי העסק. תוכנת ההתקנה מתקינה תמיד את הקוד שפורסם, בלי שינוי. עותק שהקוד שלו שונה כבר אינו התוכנה הרשומה.'),
         ],
     ),
 }

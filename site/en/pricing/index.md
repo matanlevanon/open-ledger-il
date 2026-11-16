@@ -22,6 +22,7 @@ Launch release: 50% off for a limited time
 
 - A Windows installer sets it up in your own Cloudflare account
 - Tax Authority connection through MTN, no ITA app of your own
+- Free updates: run the installer again and it updates your Ledger
 - One licence key for one business
 
 [Buy and install](https://get.open-ledger.dev/buy)
@@ -53,6 +54,7 @@ The software is the same in all three. What changes is who installs it and how i
 | Allocation numbers | Your own ITA API app | Through MTN’s approved app | Your own app, or through MTN |
 | What you bring | A Cloudflare account, Node.js and a PDF signing key | A Windows computer, a Cloudflare account and the licence key | Your business details and your emails |
 | Where the data lives | Your Cloudflare account | Your Cloudflare account | Your Cloudflare account |
+| Updates | Free. You pull each release and deploy it yourself | Free. Run the installer again: it downloads the latest version and keeps your data | Free, with the same installer |
 | Subscription | None | None | None |
 
 ## Key facts
@@ -146,5 +148,9 @@ You do. Every option creates the database and the files in your own Cloudflare a
 **Is the software registered with the Tax Authority?**
 
 Yes. Open Ledger IL is registered as software for a computerized accounting system. You can check it in the Tax Authority registry.
+
+**How do updates work, and do they cost anything?**
+
+Updates are free. With the installer, run it again: it finds your Ledger, downloads the latest version and keeps your data, keys and business details. The installer always installs the released code, unchanged. A copy with changed code is no longer the registered software.
 
 Source: https://open-ledger.dev/en/pricing/
