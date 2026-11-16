@@ -6,6 +6,8 @@ Website: [open-ledger.dev](https://open-ledger.dev/) ([English](https://open-led
 
 > **Not tax or legal advice.** You are responsible for compliance with Israeli law and ITA requirements. Check your setup with your accountant before you issue a real document.
 
+> **ITA registration covers the released code only.** Open Ledger IL is registered with the Israel Tax Authority as software for a computerized bookkeeping system. The registration covers the versions released in this repository, unchanged. If you change any code in your copy, your copy is no longer the registered software. Do not issue real documents with a changed copy, and do not report it as Open Ledger IL in the unified file (`SOFTWARE_NAME`, `SOFTWARE_VERSION` and `SOFTWARE_REGISTRATION_NUMBER` in `wrangler.toml`), unless you register it with the ITA yourself. Configuration in `wrangler.toml` and the settings screens is not a code change.
+
 ## Two ways to run it
 
 **Free, from source.** Open Ledger IL is free to install and use, with no license fee and no usage limits. You register your own ITA API app. The setup guide, [docs/deploy.md](docs/deploy.md), walks you through it step by step: Cloudflare account, database, sign-in and the Tax Authority connection. Updates are published here for free. You apply them when you choose.
