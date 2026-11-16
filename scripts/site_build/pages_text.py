@@ -92,8 +92,8 @@ PAGES = {
 }
 
 NAV = {
-    'en': [('features', 'Features'), ('pricing', 'Pricing'), ('registration', 'Registration'), ('demo', 'Demo'), ('guides', 'Guides'), ('help', 'Help')],
-    'he': [('features', 'יכולות'), ('pricing', 'מחירים'), ('registration', 'רישום'), ('demo', 'הדגמה'), ('guides', 'מדריכים'), ('help', 'עזרה')],
+    'en': [('features', 'Features'), ('pricing', 'Pricing'), ('registration', 'Registration'), ('demo', 'Demo'), ('firms', 'For firms'), ('guides', 'Guides'), ('help', 'Help')],
+    'he': [('features', 'יכולות'), ('pricing', 'מחירים'), ('registration', 'רישום'), ('demo', 'הדגמה'), ('firms', 'למשרדים'), ('guides', 'מדריכים'), ('help', 'עזרה')],
 }
 
 UI = {

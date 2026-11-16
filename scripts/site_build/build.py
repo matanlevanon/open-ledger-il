@@ -340,8 +340,7 @@ def footer(page):
         q = '?lang=he' if lang == 'he' else ''
         items += [(f'{SHOP_URL}/terms{q}', c['foot_terms']), (f'{SHOP_URL}/contact{q}', c['foot_contact'])]
     links = '\n      '.join(f'<a href="{u}">{E(t)}</a>' for u, t in items)
-    firms = [('firms', PAGES[lang]['firms']['crumb'])]
-    pages = ''.join(f'<a href="{path_of(lang, key)}">{E(label)}</a>' for key, label in [('home', 'Home' if lang == 'en' else 'בית')] + nav_items(lang) + firms)
+    pages = ''.join(f'<a href="{path_of(lang, key)}">{E(label)}</a>' for key, label in [('home', 'Home' if lang == 'en' else 'בית')] + nav_items(lang))
     return f'''<footer>
   <nav class="wrap foot-pages" aria-label="{E('Pages' if lang == 'en' else 'עמודים')}">{pages}</nav>
   <div class="wrap foot">
@@ -750,7 +749,7 @@ def hero(lang):
       <p class="demo-note">{E(c['demo_note'])}</p>
       <div class="cta cta-links">
         <a class="btn btn-ghost" href="{REPO}">{E(c['cta'][0])}</a>
-        <a class="btn btn-ghost" href="{DEPLOY}">{E(c['cta'][1])}</a>
+        <a class="btn btn-ghost" href="{path_of(lang, 'helpitem', 'before-you-start')}">{E(c['cta'][1])}</a>
         <a class="btn btn-ghost btn-setup" href="{path_of(lang, 'pricing')}">{E(c['cta'][2])}</a>
       </div>
       <div class="shot">

@@ -8,7 +8,7 @@
 
 בלי התקנה. נתוני דוגמה, נפתח תוך שניות.
 
-[לקוד](https://github.com/matanlevanon/open-ledger-il) [למדריך ההתקנה](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) [לאפשרויות ההתקנה](https://open-ledger.dev/pricing/)
+[לקוד](https://github.com/matanlevanon/open-ledger-il) [למדריך ההתקנה](https://open-ledger.dev/help/before-you-start/) [לאפשרויות ההתקנה](https://open-ledger.dev/pricing/)
 
 כל צילומי המסך בעמוד הזה מציגים עסק דמו בדוי.
 

@@ -8,7 +8,7 @@ Quotes, receipts, tax invoices, contracts and expenses, with legal numbering and
 
 No install. Sample data, opens in seconds.
 
-[Get the code](https://github.com/matanlevanon/open-ledger-il) [Read the deploy guide](https://github.com/matanlevanon/open-ledger-il/blob/main/docs/deploy.md) [See setup options](https://open-ledger.dev/en/pricing/)
+[Get the code](https://github.com/matanlevanon/open-ledger-il) [Read the deploy guide](https://open-ledger.dev/en/help/before-you-start/) [See setup options](https://open-ledger.dev/en/pricing/)
 
 All screenshots on this page use an invented demo business.
 
