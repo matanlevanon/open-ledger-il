@@ -100,6 +100,6 @@ Open Ledger IL מבקשת את מספר ההקצאה בזמן ההפקה, דרך
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/allocation-number/

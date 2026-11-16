@@ -15,6 +15,7 @@ from .config import (CLONE, CONFIG, DEMO_URL, DEPLOY, ITA_REG, ITA_REGISTRY, OUT
 
 md.SPONSORED.append(FINANCY_URL)
 from .pages_text import NAV, PAGES, UI
+from .firms_text import FIRMS
 from .pricing_text import PRICING
 from .style import CSS, FAVICON, LOGO
 from .text import EN, HE, OPTIONS_EN, OPTIONS_HE
@@ -22,7 +23,7 @@ from .text import EN, HE, OPTIONS_EN, OPTIONS_HE
 E = html.escape
 TEXT = {'en': EN, 'he': HE}
 LANGS = ('he', 'en')
-KEYS = ('home', 'features', 'pricing', 'registration', 'demo', 'guides', 'help', 'changelog', 'license')
+KEYS = ('home', 'features', 'pricing', 'firms', 'registration', 'demo', 'guides', 'help', 'changelog', 'license')
 ARTICLE_KEYS = ('guide', 'helpitem')
 HASHED = re.compile(r'\.[0-9a-f]{8}\.[a-z0-9]+$')
 REPORTS = ROOT / 'site-reports'
@@ -339,7 +340,8 @@ def footer(page):
         q = '?lang=he' if lang == 'he' else ''
         items += [(f'{SHOP_URL}/terms{q}', c['foot_terms']), (f'{SHOP_URL}/contact{q}', c['foot_contact'])]
     links = '\n      '.join(f'<a href="{u}">{E(t)}</a>' for u, t in items)
-    pages = ''.join(f'<a href="{path_of(lang, key)}">{E(label)}</a>' for key, label in [('home', 'Home' if lang == 'en' else 'בית')] + nav_items(lang))
+    firms = [('firms', PAGES[lang]['firms']['crumb'])]
+    pages = ''.join(f'<a href="{path_of(lang, key)}">{E(label)}</a>' for key, label in [('home', 'Home' if lang == 'en' else 'בית')] + nav_items(lang) + firms)
     return f'''<footer>
   <nav class="wrap foot-pages" aria-label="{E('Pages' if lang == 'en' else 'עמודים')}">{pages}</nav>
   <div class="wrap foot">
@@ -861,6 +863,62 @@ def build_registration(lang):
     return page, main, ''
 
 
+def build_firms(lang):
+    """The landing page for accounting firms. The facts behind it are in the help page for firms."""
+    page = base_page(lang, 'firms')
+    f = FIRMS[lang]
+    feats = '\n'.join(
+        f'''        <div class="feat">
+          <div class="ico" aria-hidden="true">{ico}</div>
+          <h3>{E(h)}</h3>
+          <p>{E(p)}</p>
+        </div>''' for ico, h, p in f['features'])
+
+    def table(cols, rows, cls=''):
+        head = ''.join(f'<th>{E(c)}</th>' for c in cols)
+        body = ''.join('<tr>' + ''.join(f'<th>{E(r[0])}</th>' if i == 0 else f'<td>{E(x)}</td>' for i, x in enumerate(r)) + '</tr>' for r in rows)
+        return f'<div class="table-scroll"><table{cls}><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
+
+    guide = path_of(lang, 'helpitem', 'for-accounting-firms')
+    talk = path_of(lang, 'pricing') + '#setup-form'
+    cost = ''.join(f'<li>{E(x)}</li>' for x in f['cost'])
+    main = page_intro(page, E(f['lead'])) + f'''
+  <section id="firm-features">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">{E(f['feat_eyebrow'])}</div>
+        <h2>{E(f['feat_h'])}</h2>
+        <p>{E(f['feat_p'])}</p>
+      </div>
+      <div class="features">
+{feats}
+      </div>
+    </div>
+  </section>
+  <section class="plain">
+    <div class="wrap">
+      <div class="prose">
+        <h2>{E(f['who_h'])}</h2>
+        {table(f['who_cols'], f['who_rows'])}
+        <h2>{E(f['cmp_h'])}</h2>
+        {table(f['cmp_cols'], f['cmp_rows'])}
+        <h2>{E(f['cost_h'])}</h2>
+        <ul>{cost}</ul>
+      </div>
+    </div>
+  </section>
+  <section class="strip">
+    <div class="wrap">
+      <div>
+        <h2>{E(f['cta_h'])}</h2>
+        <p><a href="{guide}">{E(f['cta_guide'])}</a> · <a {demo_attrs()}>{E(f['cta_demo'])}</a></p>
+      </div>
+      <a class="btn btn-primary" href="{talk}">{E(f['cta_talk'])}</a>
+    </div>
+  </section>'''
+    return page, main, ''
+
+
 def build_demo(lang):
     page = base_page(lang, 'demo')
     u = UI[lang]
@@ -1168,7 +1226,7 @@ def jsonld(page):
 
 
 BUILDERS = {
-    'home': build_home, 'features': build_features, 'pricing': build_pricing, 'registration': build_registration,
+    'home': build_home, 'features': build_features, 'pricing': build_pricing, 'firms': build_firms, 'registration': build_registration,
     'demo': build_demo, 'changelog': build_changelog, 'license': build_license,
 }
 

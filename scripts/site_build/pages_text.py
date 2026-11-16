@@ -18,6 +18,10 @@ PAGES = {
             title='Open Ledger IL pricing: free, ₪99 installer, or setup',
             desc='Run Open Ledger IL free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. No subscription.',
             h1='Pricing and setup options', crumb='Pricing'),
+        'firms': dict(
+            title='Open Ledger IL for accounting firms: one Ledger',
+            desc='Run your clients’ books in one Ledger on your own Cloudflare: any number of clients, walls between them, one team grant and a Clients page.',
+            h1='Open Ledger IL for accounting firms', crumb='For accounting firms'),
         'registration': dict(
             title='Open Ledger IL: registered with the Israel Tax Authority',
             desc='Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system. Check it in the Tax Authority registry.',
@@ -45,8 +49,8 @@ PAGES = {
     },
     'he': {
         'home': dict(
-            title='Open Ledger IL: חשבוניות והנהלת חשבונות בענן שלך',
-            desc='מערכת בקוד מקור גלוי לחשבוניות, קבלות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.',
+            title='Open Ledger IL: ניהול חשבונות והפקת מסמכים',
+            desc='מערכת בקוד מקור גלוי לחשבוניות, קבלות וניהול חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.',
             crumb='דף הבית'),
         'features': dict(
             title='היכולות של Open Ledger IL: מסמכים, דוחות וכללים',
@@ -56,6 +60,10 @@ PAGES = {
             title='מחירים: Open Ledger IL בחינם, ב-₪99 או בהקמה עבורך',
             desc='הפעלת Open Ledger IL בחינם מקוד המקור, התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99, או הקמה עבורך ב-₪699. תשלום אחד, בלי מנוי.',
             h1='מחירים ואפשרויות התקנה', crumb='מחירים'),
+        'firms': dict(
+            title='Open Ledger IL למשרדי רואי חשבון: לדג\'ר אחד',
+            desc='ניהול הספרים של כל הלקוחות בלדג\'ר אחד ב-Cloudflare של המשרד: כמה לקוחות שצריך, הפרדה ביניהם, הרשאת צוות אחת ועמוד לקוחות.',
+            h1='Open Ledger IL למשרדי רואי חשבון', crumb='למשרדי רואי חשבון'),
         'registration': dict(
             title='Open Ledger IL רשומה ברשות המסים',
             desc='Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת. אפשר לבדוק את הרישום במאגר של רשות המסים.',
@@ -65,7 +73,7 @@ PAGES = {
             desc='פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.',
             h1='נסו את ההדגמה', crumb='הדגמה'),
         'guides': dict(
-            title='מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל',
+            title='מדריכים: חשבוניות וניהול חשבונות לעסק בישראל',
             desc='מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.',
             h1='מדריכים', crumb='מדריכים'),
         'help': dict(

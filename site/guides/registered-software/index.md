@@ -1,6 +1,6 @@
 # תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים
 
-מי חייב לרשום תוכנה להנהלת חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
+מי חייב לרשום תוכנה לניהול חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
 
 עודכן 2026-10-14
 
@@ -94,6 +94,6 @@ Open Ledger IL (חשבונאות פתוחה) רשומה ברשות המסים כ
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/registered-software/

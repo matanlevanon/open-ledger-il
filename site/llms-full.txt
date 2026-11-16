@@ -1,6 +1,6 @@
 **חינם** · קוד מקור גלוי · רשומה ברשות המסים · גרסה 1.8.1
 
-# חשבוניות, קבלות והנהלת חשבונות לעסק ישראלי, על תשתית שבבעלותך.
+# חשבוניות, קבלות וניהול חשבונות לעסק ישראלי, על תשתית שבבעלותך.
 
 הצעות מחיר, קבלות, חשבוניות מס, חוזים והוצאות, עם מספור חוקי ומספרי הקצאה מרשות המסים. המערכת רצה בחשבון Cloudflare שלך, והמידע נשאר שלך.
 
@@ -30,7 +30,7 @@
 
 מסמך שהופק לא משתנה. אחסון ה-PDF נעול למחיקה ל-7 שנים, התקופה שהחוק קובע לשמירת ספרים.
 
-## הנהלת החשבונות בכיס
+## ניהול החשבונות בכיס
 
 מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.
 
@@ -456,6 +456,77 @@ Source: https://open-ledger.dev/pricing/
 
 ---
 
+# Open Ledger IL למשרדי רואי חשבון
+
+ניהול הספרים של כל הלקוחות בלדג'ר אחד, בחשבון Cloudflare של המשרד. כל לקוח הוא עסק נפרד, עם מספור, מפתח חתימה, קבצים ובעלים משלו.
+
+מהדורת המשרד
+
+## בנויה ללקוחות רבים
+
+בוחרים בה בתוכנת ההתקנה בסימון אחד. התוכנה היא אותה Open Ledger IL, הרשומה ברשות המסים.
+
+### כמה לקוחות שצריך
+
+עוסקים פטורים, עוסקים מורשים וחברות, כל אחד עסק נפרד עם מספר עוסק ומספור רציף משלו.
+
+### הפרדה בין לקוחות
+
+בעלים של לקוח ניגש לעסק שלו בלבד. בדיקה אוטומטית עוברת על כל נתיב בכל גרסה.
+
+### עמוד לקוחות אחד
+
+מועד ותשלום מע"מ או ניצול התקרה, החיבור לרשות המסים, תוקף תעודות, דרישות תשלום פתוחות והוצאות לבדיקה.
+
+### כל לקוח חותם בשמו
+
+מפתח חתימה לכל עסק, כך שכל PDF נושא את שם הלקוח עצמו.
+
+### הצוות שלך, בהרשאה אחת
+
+מנהלים, עוזרים ורואי חשבון לקריאה בלבד ניגשים לכל לקוח, קיים ועתידי.
+
+### לקוח שעוזב לוקח הכול
+
+ייצוא לפי שנה, לדג'ר חדש ממשיך את המספור, והספרים נשמרים אצלך לתקופת השמירה.
+
+## מי ניגש למה
+
+| אדם | ניגש ל |
+| --- | --- |
+| מנהל לדג'ר | כל עסק כבעלים, וההגדרות של כל הלדג'ר |
+| איש צוות, עוזר | כל עסק: לקוחות, מסמכים, שליחה, הוצאות. בלי הגדרות |
+| איש צוות, רואה חשבון | כל עסק, קריאה בלבד, לפי ההרשאות שקבעת |
+| בעלים של לקוח | העסק שלו בלבד |
+
+## מהדורת המשרד והמהדורה האישית
+
+| | אישית | משרד |
+| --- | --- | --- |
+| עסקים | תיק עוסק אחד, ועוד חברות | כמה שצריך, מכל סוג |
+| הגדרות של כל הלדג'ר | כל בעלים | מנהלי לדג'ר בלבד |
+| גישת צוות | הרשאה לכל עסק בנפרד | הרשאה אחת לכל הלקוחות |
+| מפתח חתימה | מפתח אחד, או אחד לכל עסק | אחד לכל לקוח |
+| עמוד לקוחות | לא | כן |
+| תוכנית Cloudflare | התוכנית החינמית מספיקה | Workers Paid, $5 לחודש |
+
+## כמה זה עולה
+
+- המחיר למשרד נקבע לפי מספר הלקוחות. דברו איתנו.
+- Cloudflare גובה ממך ישירות: Workers Paid מ-$5 לחודש, ומושבי Cloudflare Access מעל 50 משתמשים. כל מי שנכנס הוא מושב אחד.
+- המידע של הלקוחות נשאר בחשבון Cloudflare של המשרד. ל-MTN אין עותק.
+
+## ניהול הלקוחות שלך ב-Open Ledger IL
+
+[המדריך למשרדים](https://open-ledger.dev/help/for-accounting-firms/) · [לנסות את ההדגמה](https://demo.open-ledger.dev)
+
+[דברו איתנו](https://open-ledger.dev/pricing/#setup-form)
+
+Source: https://open-ledger.dev/firms/
+
+
+---
+
 # רשומה ברשות המסים
 
 חשבונאות פתוחה (Open Ledger IL) רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת. כל מהדורה מקבלת תעודת רישום משלה, וכל מהדורה חדשה מוגשת לאישור. המהדורה הנוכחית היא 1.8.1. [2]
@@ -495,7 +566,7 @@ Source: https://open-ledger.dev/registration/
 
 בלי התקנה. נתוני דוגמה, נפתח תוך שניות.
 
-## הנהלת החשבונות בכיס
+## ניהול החשבונות בכיס
 
 מתקינים על מסך הבית. היא נפתחת מוכנה לקבלה הבאה.
 
@@ -518,11 +589,11 @@ Source: https://open-ledger.dev/demo/
 - [תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה](https://open-ledger.dev/guides/osek-patur-ceiling/)מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.
 - [חשבון עסקה, דרישת תשלום וקבלה: ההבדל ומה נחשב הכנסה](https://open-ledger.dev/guides/invoice-types-income/)מה ההבדל בין חשבון עסקה, דרישת תשלום, קבלה וחשבונית מס, איזה מסמך הוא ההכנסה, ולמה דוח לא סופר דרישה וקבלה פעמיים.
 - [מספר הקצאה: מה זה, מתי חובה ואיך מקבלים אותו אוטומטית](https://open-ledger.dev/guides/allocation-number/)מתי חשבונית מס צריכה מספר הקצאה מרשות המסים, מה קורה בלעדיו, ואיך תוכנה מחוברת מבקשת אותו לבד בזמן ההפקה.
-- [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)מי חייב לרשום תוכנה להנהלת חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
+- [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)מי חייב לרשום תוכנה לניהול חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)כמה עולות מורנינג, iCount, SUMIT, EZcount, Invoice4U וריווחית בשנה, איזו תוכנית פותחת API, ואיך משתווה אפשרות חינמית או חד פעמית.
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)מה זה אומר להריץ את ניהול החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.
 
 Source: https://open-ledger.dev/guides/
 
@@ -1356,6 +1427,77 @@ Source: https://open-ledger.dev/en/pricing/
 
 ---
 
+# Open Ledger IL for accounting firms
+
+Run your clients' books in one Ledger, on your firm's own Cloudflare account. Each client is a separate business with its own numbering, signing key, files and owner.
+
+The firm edition
+
+## Built for many clients
+
+You choose it in the installer with one tick. The software is the same Open Ledger IL, registered with the Israel Tax Authority.
+
+### Any number of clients
+
+עוסק פטור, עוסק מורשה and companies, each a separate business with its own tax id and gapless numbering.
+
+### Walls between clients
+
+A client owner reaches their own business only. An automated test checks every route on every release.
+
+### One Clients page
+
+VAT due or ceiling use, the Tax Authority login, certificate end dates, open payment requests and expenses to review.
+
+### Each client signs as itself
+
+A signing key per business, so every PDF carries the client’s own name.
+
+### Your team, one grant
+
+Admins, assistants and read-only accountants reach every client, present and future.
+
+### A client who leaves takes everything
+
+Export by year, a new Ledger continues the numbering, and the books stay with you for the retention period.
+
+## Who reaches what
+
+| Person | Reaches |
+| --- | --- |
+| Ledger admin | Every business as owner, and the settings of the whole Ledger |
+| Firm staff, assistant | Every business: clients, documents, sending, expenses. No settings |
+| Firm staff, accountant | Every business, read only, with the features you allow |
+| Client owner | Their own business only |
+
+## Firm edition and personal edition
+
+| | Personal | Firm |
+| --- | --- | --- |
+| Businesses | One עוסק file, plus companies | Any number of any type |
+| Settings of the whole Ledger | Any owner | Ledger admins only |
+| Team access | Granted per business | One grant reaches every client |
+| Signing key | One key, or one per business | One per client |
+| Clients page | No | Yes |
+| Cloudflare plan | The free plan works | Workers Paid, $5 a month |
+
+## What it costs
+
+- Firm pricing is set per firm, by the number of clients. Talk to us.
+- Cloudflare bills you directly: Workers Paid from $5 a month, and Cloudflare Access seats above 50 users. Each person who signs in is one seat.
+- Your clients’ data stays in your firm’s Cloudflare account. MTN holds no copy.
+
+## Run your clients on Open Ledger IL
+
+[Read the firm guide](https://open-ledger.dev/en/help/for-accounting-firms/) · [Try the demo](https://demo.open-ledger.dev)
+
+[Talk to us](https://open-ledger.dev/en/pricing/#setup-form)
+
+Source: https://open-ledger.dev/en/firms/
+
+
+---
+
 # Registered with the Israel Tax Authority
 
 Open Ledger IL (חשבונאות פתוחה) is registered with the Israel Tax Authority as software for a computerized accounting system. Each version gets its own registration certificate, and every new version is filed for approval. The current version is 1.8.1. [2]
@@ -1898,7 +2040,7 @@ Open Ledger IL מבקשת את מספר ההקצאה בזמן ההפקה, דרך
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/allocation-number/
 
@@ -1915,7 +2057,7 @@ Source: https://open-ledger.dev/guides/allocation-number/
 
 ## מסמכים שמבקשים כסף
 
-אלה המסמכים שיוצאים לפני שהלקוח שילם. הם לא מסמכי הנהלת חשבונות, ולא נספרים כהכנסה [1]:
+אלה המסמכים שיוצאים לפני שהלקוח שילם. הם לא מסמכי ניהול חשבונות, ולא נספרים כהכנסה [1]:
 
 - **הצעת מחיר**: מה יעלה העבודה. נשארת ניתנת לעריכה עד שהיא הופכת למסמך אחר [1].
 - **דרישת תשלום**: בקשה לשלם סכום [1].
@@ -1963,11 +2105,11 @@ Source: https://open-ledger.dev/guides/allocation-number/
 
 חשבון עסקה יכול להיות במטבע חוץ, למשל ללקוח בחו"ל. כברירת מחדל הוא מציג רק את המטבע הזר, בלי סכום בשקלים [1]. כשהלקוח משלם, הקבלה או חשבונית המס/קבלה שנוצרות ממנו מקבלות את השורות ואת השער שסוכם [1].
 
-הספרים עצמם נרשמים בשקלים. מסמך הנהלת חשבונות במטבע חוץ מציג את המטבע, את הסכום במטבע הזר ואת הסכום בשקלים (הוראה 22) [1]. לכן השער חשוב: הוא קובע את הסכום שנרשם כהכנסה.
+הספרים עצמם נרשמים בשקלים. מסמך ניהול חשבונות במטבע חוץ מציג את המטבע, את הסכום במטבע הזר ואת הסכום בשקלים (הוראה 22) [1]. לכן השער חשוב: הוא קובע את הסכום שנרשם כהכנסה.
 
 ## תיקון
 
-אף אחד מהמסמכים האלה לא נערך אחרי שהופק. מסמך הנהלת חשבונות מתקנים בביטול או בזיכוי (הוראה 18) [1]. הצעת מחיר ודרישת תשלום הן לא מסמכי הנהלת חשבונות, אבל גם הן ממוספרות בסדרה משלהן [1].
+אף אחד מהמסמכים האלה לא נערך אחרי שהופק. מסמך ניהול חשבונות מתקנים בביטול או בזיכוי (הוראה 18) [1]. הצעת מחיר ודרישת תשלום הן לא מסמכי ניהול חשבונות, אבל גם הן ממוספרות בסדרה משלהן [1].
 
 ## איך Open Ledger IL עושה את זה
 
@@ -1995,7 +2137,7 @@ Source: https://open-ledger.dev/guides/allocation-number/
 
 **דרישת תשלום נכנסת לדוח ההכנסות?**
 
-לא. הצעות מחיר ודרישות תשלום לא נספרות בדוחות ההכנסות, כי הן לא מסמכי הנהלת חשבונות.
+לא. הצעות מחיר ודרישות תשלום לא נספרות בדוחות ההכנסות, כי הן לא מסמכי ניהול חשבונות.
 
 ## מקורות
 
@@ -2011,7 +2153,7 @@ Source: https://open-ledger.dev/guides/allocation-number/
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/invoice-types-income/
 
@@ -2138,7 +2280,7 @@ Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מער
 - [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/invoicing-software-prices/
 
@@ -2254,7 +2396,7 @@ Open Ledger IL קרובה לגישה השלישית: קוד המקור גלוי 
 - [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/open-source-invoicing/
 
@@ -2365,7 +2507,7 @@ Open Ledger IL מציגה מד תקרה בלוח הבקרה: המחזור עד �
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/osek-patur-ceiling/
 
@@ -2387,8 +2529,8 @@ Source: https://open-ledger.dev/guides/osek-patur-ceiling/
 - **קבלה**. מתעדת כסף שהתקבל. חובה להפיק קבלה על כל תשלום, סמוך לקבלת התשלום [1]. זה המסמך שנחשב הכנסה.
 - **קבלת זיכוי**. מתקנת קבלה שכבר יצאה, כשמחזירים כסף או כשהייתה טעות.
 - **חשבון עסקה**. מבקש תשלום לפני שהוא מתקבל. הוא מודפס עם הכיתוב "אינו חשבונית מס", ואינו נחשב הכנסה [1].
-- **דרישת תשלום**. כמו חשבון עסקה: מבקשת כסף, ואינה מסמך הנהלת חשבונות [1].
-- **הצעת מחיר**. אינה מסמך הנהלת חשבונות, ונשארת ניתנת לעריכה עד שהיא הופכת למסמך אחר [1].
+- **דרישת תשלום**. כמו חשבון עסקה: מבקשת כסף, ואינה מסמך ניהול חשבונות [1].
+- **הצעת מחיר**. אינה מסמך ניהול חשבונות, ונשארת ניתנת לעריכה עד שהיא הופכת למסמך אחר [1].
 
 חשבונית מס, חשבונית מס/קבלה וחשבונית זיכוי שייכות לעוסק מורשה. כשעוסק פטור עובר למעמד מורשה, הסדרות של עוסק פטור נסגרות ונפתחות סדרות חדשות [1].
 
@@ -2447,7 +2589,7 @@ Source: https://open-ledger.dev/guides/osek-patur-ceiling/
 
 **מה ההבדל בין דרישת תשלום לקבלה?**
 
-דרישת תשלום מבקשת כסף ואינה מסמך הנהלת חשבונות. קבלה מתעדת כסף שהתקבל, והיא ההכנסה.
+דרישת תשלום מבקשת כסף ואינה מסמך ניהול חשבונות. קבלה מתעדת כסף שהתקבל, והיא ההכנסה.
 
 **אפשר לשלוח קבלה במייל?**
 
@@ -2473,16 +2615,16 @@ Source: https://open-ledger.dev/guides/osek-patur-ceiling/
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/osek-patur-invoice/
 
 
 ---
 
-# הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול
+# ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול
 
-מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.
+מה זה אומר להריץ את ניהול החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.
 
 עודכן 2026-10-14
 
@@ -2492,7 +2634,7 @@ Source: https://open-ledger.dev/guides/osek-patur-invoice/
 
 Cloudflare היא חברת תשתית אינטרנט. Workers הוא השירות שלה להרצת קוד בלי שרת: הקוד רץ כשמישהו פונה אליו, ולא צריך להחזיק מחשב דלוק, לעדכן מערכת הפעלה או לנהל גיבויים של שרת [1].
 
-סביב Workers יש שירותים נוספים שמערכת הנהלת חשבונות צריכה:
+סביב Workers יש שירותים נוספים שמערכת ניהול חשבונות צריכה:
 
 - **D1**: מסד נתונים. שם נשמרים הלקוחות, המסמכים והתשלומים.
 - **R2**: אחסון קבצים. שם נשמרים קובצי ה-PDF והגיבויים.
@@ -2501,7 +2643,7 @@ Cloudflare היא חברת תשתית אינטרנט. Workers הוא השירו�
 
 ## למה זה זול
 
-השירותים האלה מתומחרים לפי שימוש, ויש להם מכסות חינמיות [1]. מערכת הנהלת חשבונות של עסק קטן מתחילה בתוכנית החינמית [5].
+השירותים האלה מתומחרים לפי שימוש, ויש להם מכסות חינמיות [1]. מערכת ניהול חשבונות של עסק קטן מתחילה בתוכנית החינמית [5].
 
 התוכנית החינמית מריצה את ה-Worker, את D1, את R2, את Browser Rendering ו-5 משימות מתוזמנות [5]. תוכנית Workers Paid מתחילה ב-$5 לחודש [1].
 
@@ -2595,7 +2737,7 @@ Source: https://open-ledger.dev/guides/own-cloud-bookkeeping/
 
 # תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים
 
-מי חייב לרשום תוכנה להנהלת חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
+מי חייב לרשום תוכנה לניהול חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
 
 עודכן 2026-10-14
 
@@ -2689,7 +2831,7 @@ Open Ledger IL (חשבונאות פתוחה) רשומה ברשות המסים כ
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/registered-software/
 
@@ -2702,7 +2844,7 @@ Source: https://open-ledger.dev/guides/registered-software/
 
 עודכן 2026-10-14
 
-קובץ במבנה אחיד הוא ייצוא של הנתונים מתוכנת הנהלת חשבונות, בפורמט אחד שרשות המסים קבעה. כל תוכנה מפיקה אותו באותו מבנה, כך שמי שמקבל אותו יכול לקרוא אותו בלי לדעת באיזו תוכנה השתמשתם. הגרסה שהמדריך מתאר היא 1.31 של הוראות הרשות [2].
+קובץ במבנה אחיד הוא ייצוא של הנתונים מתוכנת ניהול חשבונות, בפורמט אחד שרשות המסים קבעה. כל תוכנה מפיקה אותו באותו מבנה, כך שמי שמקבל אותו יכול לקרוא אותו בלי לדעת באיזו תוכנה השתמשתם. הגרסה שהמדריך מתאר היא 1.31 של הוראות הרשות [2].
 
 ## מה יש בתוך הקובץ
 
@@ -2716,13 +2858,13 @@ Source: https://open-ledger.dev/guides/registered-software/
 | קוד | מה הוא מכיל |
 | --- | --- |
 | A100 | רשומת פתיחה |
-| B110 | חשבון בהנהלת חשבונות, למשל חשבון לקוח |
+| B110 | חשבון בניהול חשבונות, למשל חשבון לקוח |
 | C100 | כותרת מסמך: סוג, מספר, תאריך, לקוח וסכומים |
 | D110 | שורות המסמך |
 | D120 | פרטי התשלומים בקבלות |
 | Z900 | רשומת סיום |
 
-תוכנה שהיא גם מערכת הנהלת חשבונות כפולה או מערכת מלאי מוסיפה רשומות נוספות, למשל תנועות יומן (B100) ופריטים במלאי (M100) [1].
+תוכנה שהיא גם מערכת ניהול חשבונות כפולה או מערכת מלאי מוסיפה רשומות נוספות, למשל תנועות יומן (B100) ופריטים במלאי (M100) [1].
 
 שני הקבצים ארוזים יחד: BKMVDATA.TXT דחוס בקובץ ZIP פנימי, והוא יחד עם INI.TXT נמצא בתיקייה אחת בתוך קובץ ZIP אחד [1]. זה הקובץ שמעבירים.
 
@@ -2800,7 +2942,7 @@ Open Ledger IL מפיקה קובץ במבנה אחיד גרסה 1.31 לכל תק
 - [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/unified-file/
 

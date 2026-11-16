@@ -7,6 +7,7 @@
 - [Open Ledger IL: invoices and books on your own Cloudflare](https://open-ledger.dev/en/): Source-available invoicing, receipts and bookkeeping for עוסק פטור and עוסק מורשה. Registered with the Israel Tax Authority. Runs on your Cloudflare.
 - [Open Ledger IL features: documents, reports, rules](https://open-ledger.dev/en/features/): Every Open Ledger IL feature: Israeli document types, gapless numbering, ITA allocation numbers, contracts, expenses by email and AI, Claude via MCP.
 - [Open Ledger IL pricing: free, ₪99 installer, or setup](https://open-ledger.dev/en/pricing/): Run Open Ledger IL free from source, install it yourself with the ₪99 connected installer, or have it set up for you for ₪699, once. No subscription.
+- [Open Ledger IL for accounting firms: one Ledger](https://open-ledger.dev/en/firms/): Run your clients’ books in one Ledger on your own Cloudflare: any number of clients, walls between them, one team grant and a Clients page.
 - [Open Ledger IL: registered with the Israel Tax Authority](https://open-ledger.dev/en/registration/): Open Ledger IL is registered with the Israel Tax Authority as software for a computerized accounting system. Check it in the Tax Authority registry.
 - [Open Ledger IL live demo: try it in your browser](https://open-ledger.dev/en/demo/): Open the Open Ledger IL demo: sample businesses, the real screens, private drafts and preview PDFs. No install. The sample data stays as it is.
 - [Open Ledger IL guides: invoicing for Israeli businesses](https://open-ledger.dev/en/guides/): Plain guides to Israeli invoicing: allocation numbers, the עוסק פטור ceiling, registered software, the unified file and which document is income.
@@ -48,12 +49,13 @@
 
 ## Pages in Hebrew
 
-- [Open Ledger IL: חשבוניות והנהלת חשבונות בענן שלך](https://open-ledger.dev/): מערכת בקוד מקור גלוי לחשבוניות, קבלות והנהלת חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.
+- [Open Ledger IL: ניהול חשבונות והפקת מסמכים](https://open-ledger.dev/): מערכת בקוד מקור גלוי לחשבוניות, קבלות וניהול חשבונות לעוסק פטור ולעוסק מורשה. רשומה ברשות המסים. רצה בחשבון Cloudflare שלך.
 - [היכולות של Open Ledger IL: מסמכים, דוחות וכללים](https://open-ledger.dev/features/): כל היכולות של Open Ledger IL: כל סוגי המסמכים, מספור בלי חורים, מספרי הקצאה, חוזים, הוצאות במייל ובקריאת AI, וחיבור Claude.
 - [מחירים: Open Ledger IL בחינם, ב-₪99 או בהקמה עבורך](https://open-ledger.dev/pricing/): הפעלת Open Ledger IL בחינם מקוד המקור, התקנה עצמית עם תוכנת ההתקנה המחוברת ב-₪99, או הקמה עבורך ב-₪699. תשלום אחד, בלי מנוי.
+- [Open Ledger IL למשרדי רואי חשבון: לדג'ר אחד](https://open-ledger.dev/firms/): ניהול הספרים של כל הלקוחות בלדג'ר אחד ב-Cloudflare של המשרד: כמה לקוחות שצריך, הפרדה ביניהם, הרשאת צוות אחת ועמוד לקוחות.
 - [Open Ledger IL רשומה ברשות המסים](https://open-ledger.dev/registration/): Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מערכת חשבונות ממוחשבת. אפשר לבדוק את הרישום במאגר של רשות המסים.
 - [הדגמה חיה של Open Ledger IL: נסו בדפדפן](https://open-ledger.dev/demo/): פתחו את ההדגמה של Open Ledger IL: עסקי דוגמה, המסכים האמיתיים, טיוטות פרטיות ו-PDF לתצוגה. בלי התקנה. נתוני הדוגמה לא משתנים.
-- [מדריכים: חשבוניות והנהלת חשבונות לעסק בישראל](https://open-ledger.dev/guides/): מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.
+- [מדריכים: חשבוניות וניהול חשבונות לעסק בישראל](https://open-ledger.dev/guides/): מדריכים פשוטים: מספרי הקצאה, תקרת עוסק פטור, תוכנה רשומה, מבנה אחיד, ואיזה מסמך נחשב הכנסה.
 - [עזרה ל-Open Ledger IL: התקנה, הגדרה ושימוש](https://open-ledger.dev/help/): צעד אחר צעד: תוכנת ההתקנה, Cloudflare, רשות המסים, תשלומים, הוצאות, מייל, Claude ופתרונות לבעיות נפוצות.
 - [יומן שינויים של Open Ledger IL: מה חדש בכל גרסה](https://open-ledger.dev/changelog/): כל הגרסאות של Open Ledger IL ומה השתנה בכל אחת, מהחדשה לישנה. הגרסה הנוכחית היא 1.8.1.
 - [רישיון Open Ledger IL: FSL-1.1, חינם לעסק שלכם](https://open-ledger.dev/license/): Open Ledger IL ברישיון FSL-1.1. חינם לעסק שלכם, בלי מכירה חוזרת, וכל גרסה עוברת ל-Apache 2.0 אחרי שנתיים.
@@ -66,8 +68,8 @@
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/): שלוש דרכים להפיק חשבוניות ולנהל ספרים בעסק קטן, תוכנה במנוי, המערכת של רואה החשבון וקוד פתוח, ומה לבדוק בכל אחת.
 - [תקרת עוסק פטור: איך עוקבים ומה קורה כשעוברים אותה](https://open-ledger.dev/guides/osek-patur-ceiling/): מה היא תקרת המחזור של עוסק פטור, איך עוקבים אחריה לאורך השנה, ומה קורה ביום שהמחזור עובר אותה.
 - [חשבונית לעוסק פטור: אילו מסמכים מותר להפיק ומה כתוב בהם](https://open-ledger.dev/guides/osek-patur-invoice/): עוסק פטור לא מפיק חשבונית מס. אילו מסמכים כן, מה חייב להופיע בהם, ואיך מספרים, מתקנים ושולחים אותם בצורה דיגיטלית.
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/): מה זה אומר להריץ את הנהלת החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.
-- [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/): מי חייב לרשום תוכנה להנהלת חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/): מה זה אומר להריץ את ניהול החשבונות בחשבון ענן משלכם, מה זה Cloudflare Workers, מה עולה כסף ומה נשאר בחינם.
+- [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/): מי חייב לרשום תוכנה לניהול חשבונות ברשות המסים, מה הרישום אומר ומה לא, ואיך בודקים שתוכנה רשומה.
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/): מה זה קובץ במבנה אחיד של רשות המסים, מה יש בתוכו, ומתי רואה החשבון או הרשות מבקשים אותו מהתוכנה שלכם.
 
 ## Help in Hebrew

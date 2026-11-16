@@ -107,6 +107,6 @@ Open Ledger IL קרובה לגישה השלישית: קוד המקור גלוי 
 - [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [מחירי תוכנות חשבוניות בישראל, השוואה (2026)](https://open-ledger.dev/guides/invoicing-software-prices/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/open-source-invoicing/

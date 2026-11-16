@@ -118,6 +118,6 @@ Open Ledger IL רשומה ברשות המסים כתוכנה לניהול מער
 - [תוכנה רשומה ברשות המסים: מה זה אומר ואיך בודקים](https://open-ledger.dev/guides/registered-software/)
 - [מבנה אחיד: מה זה ומתי רואה החשבון צריך אותו](https://open-ledger.dev/guides/unified-file/)
 - [חלופה בקוד פתוח לתוכנות חשבוניות בתשלום: השוואה עניינית](https://open-ledger.dev/guides/open-source-invoicing/)
-- [הנהלת חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
+- [ניהול חשבונות בענן משלך: מה זה Cloudflare ולמה זה זול](https://open-ledger.dev/guides/own-cloud-bookkeeping/)
 
 Source: https://open-ledger.dev/guides/invoicing-software-prices/
